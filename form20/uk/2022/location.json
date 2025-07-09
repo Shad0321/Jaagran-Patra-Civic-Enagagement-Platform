@@ -1,0 +1,354 @@
+{
+  "Location_2022": [
+    {
+      "Constituency": "Purola (SC)",
+      "Latitude": "31.0667° N",
+      "Longitude": "78.2833° E"
+    },
+    {
+      "Constituency": "Yamunotri",
+      "Latitude": "31.0000° N",
+      "Longitude": "78.4500° E"
+    },
+    {
+      "Constituency": "Gangotri",
+      "Latitude": "30.9897° N",
+      "Longitude": "78.9322° E"
+    },
+    {
+      "Constituency": "Badrinath",
+      "Latitude": "30.7410° N",
+      "Longitude": "79.4930° E"
+    },
+    {
+      "Constituency": "Tharali (SC)",
+      "Latitude": "30.1557° N",
+      "Longitude": "79.5298° E"
+    },
+    {
+      "Constituency": "Karnaprayag",
+      "Latitude": "30.2520° N",
+      "Longitude": "79.2080° E"
+    },
+    {
+      "Constituency": "Kedarnath",
+      "Latitude": "30.7359° N",
+      "Longitude": "79.0669° E"
+    },
+    {
+      "Constituency": "Rudraprayag",
+      "Latitude": "30.2940° N",
+      "Longitude": "78.9810° E"
+    },
+    {
+      "Constituency": "Ghansali (SC)",
+      "Latitude": "30.4900° N",
+      "Longitude": "78.6200° E"
+    },
+    {
+      "Constituency": "Deoprayag",
+      "Latitude": "30.1499° N",
+      "Longitude": "78.5900° E"
+    },
+    {
+      "Constituency": "Narendranagar",
+      "Latitude": "30.1500° N",
+      "Longitude": "78.2600° E"
+    },
+    {
+      "Constituency": "Pratapnagar",
+      "Latitude": "30.4800° N",
+      "Longitude": "78.4300° E"
+    },
+    {
+      "Constituency": "Tehri",
+      "Latitude": "30.3700° N",
+      "Longitude": "78.4800° E"
+    },
+    {
+      "Constituency": "Dhanaulti",
+      "Latitude": "30.4121° N",
+      "Longitude": "78.1091° E"
+    },
+    {
+      "Constituency": "Chakrata (ST)",
+      "Latitude": "30.7077° N",
+      "Longitude": "77.8596° E"
+    },
+    {
+      "Constituency": "Vikasnagar",
+      "Latitude": "30.4578° N",
+      "Longitude": "77.9547° E"
+    },
+    {
+      "Constituency": "Sahaspur",
+      "Latitude": "30.3424° N",
+      "Longitude": "77.9270° E"
+    },
+    {
+      "Constituency": "Dharampur",
+      "Latitude": "30.3000° N",
+      "Longitude": "78.0700° E"
+    },
+    {
+      "Constituency": "Raipur",
+      "Latitude": "30.2227° N",
+      "Longitude": "78.0933° E"
+    },
+    {
+      "Constituency": "Rajpur Road (SC)",
+      "Latitude": "30.3431° N",
+      "Longitude": "78.0536° E"
+    },
+    {
+      "Constituency": "Dehradun Cantonment",
+      "Latitude": "30.3344° N",
+      "Longitude": "78.0494° E"
+    },
+    {
+      "Constituency": "Mussoorie",
+      "Latitude": "30.4560° N",
+      "Longitude": "78.0760° E"
+    },
+    {
+      "Constituency": "Doiwala",
+      "Latitude": "30.1844° N",
+      "Longitude": "78.1070° E"
+    },
+    {
+      "Constituency": "Rishikesh",
+      "Latitude": "30.0867° N",
+      "Longitude": "78.2676° E"
+    },
+    {
+      "Constituency": "Haridwar",
+      "Latitude": "29.9457° N",
+      "Longitude": "78.1642° E"
+    },
+    {
+      "Constituency": "BHEL Ranipur",
+      "Latitude": "29.9167° N",
+      "Longitude": "78.1000° E"
+    },
+    {
+      "Constituency": "Jwalapur (SC)",
+      "Latitude": "29.9576° N",
+      "Longitude": "78.0911° E"
+    },
+    {
+      "Constituency": "Bhagwanpur (SC)",
+      "Latitude": "29.9800° N",
+      "Longitude": "77.8800° E"
+    },
+    {
+      "Constituency": "Jhabrera (SC)",
+      "Latitude": "29.7800° N",
+      "Longitude": "77.9300° E"
+    },
+    {
+      "Constituency": "Piran Kaliyar",
+      "Latitude": "29.8900° N",
+      "Longitude": "77.9700° E"
+    },
+    {
+      "Constituency": "Roorkee",
+      "Latitude": "29.8700° N",
+      "Longitude": "77.8900° E"
+    },
+    {
+      "Constituency": "Khanpur",
+      "Latitude": "29.8700° N",
+      "Longitude": "77.9800° E"
+    },
+    {
+      "Constituency": "Manglaur",
+      "Latitude": "29.7890° N",
+      "Longitude": "77.8800° E"
+    },
+    {
+      "Constituency": "Laksar",
+      "Latitude": "29.7400° N",
+      "Longitude": "78.0400° E"
+    },
+    {
+      "Constituency": "Haridwar Rural",
+      "Latitude": "29.9300° N",
+      "Longitude": "78.1700° E"
+    },
+    {
+      "Constituency": "Yamkeshwar",
+      "Latitude": "29.8400° N",
+      "Longitude": "78.4300° E"
+    },
+    {
+      "Constituency": "Pauri (SC)",
+      "Latitude": "30.1477° N",
+      "Longitude": "78.7770° E"
+    },
+    {
+      "Constituency": "Srinagar",
+      "Latitude": "30.2200° N",
+      "Longitude": "78.7800° E"
+    },
+    {
+      "Constituency": "Chaubattakhal",
+      "Latitude": "29.8700° N",
+      "Longitude": "78.9600° E"
+    },
+    {
+      "Constituency": "Lansdowne",
+      "Latitude": "29.8384° N",
+      "Longitude": "78.6885° E"
+    },
+    {
+      "Constituency": "Kotdwar",
+      "Latitude": "29.7500° N",
+      "Longitude": "78.5300° E"
+    },
+    {
+      "Constituency": "Dharchula",
+      "Latitude": "29.8550° N",
+      "Longitude": "80.2080° E"
+    },
+    {
+      "Constituency": "Didihat",
+      "Latitude": "29.7800° N",
+      "Longitude": "80.2200° E"
+    },
+    {
+      "Constituency": "Pithoragarh",
+      "Latitude": "29.5800° N",
+      "Longitude": "80.2200° E"
+    },
+    {
+      "Constituency": "Gangolihat (SC)",
+      "Latitude": "29.6100° N",
+      "Longitude": "80.0500° E"
+    },
+    {
+      "Constituency": "Kapkot",
+      "Latitude": "29.9300° N",
+      "Longitude": "79.8800° E"
+    },
+    {
+      "Constituency": "Bageshwar (SC)",
+      "Latitude": "29.8400° N",
+      "Longitude": "79.7700° E"
+    },
+    {
+      "Constituency": "Dwarahat",
+      "Latitude": "29.7800° N",
+      "Longitude": "79.6500° E"
+    },
+    {
+      "Constituency": "Salt",
+      "Latitude": "29.7700° N",
+      "Longitude": "79.4800° E"
+    },
+    {
+      "Constituency": "Ranikhet",
+      "Latitude": "29.6500° N",
+      "Longitude": "79.4300° E"
+    },
+    {
+      "Constituency": "Someshwar (SC)",
+      "Latitude": "29.7100° N",
+      "Longitude": "79.7000° E"
+    },
+    {
+      "Constituency": "Almora",
+      "Latitude": "29.5900° N",
+      "Longitude": "79.6600° E"
+    },
+    {
+      "Constituency": "Jageshwar",
+      "Latitude": "29.6400° N",
+      "Longitude": "79.7900° E"
+    },
+    {
+      "Constituency": "Lohaghat",
+      "Latitude": "29.3500° N",
+      "Longitude": "79.9800° E"
+    },
+    {
+      "Constituency": "Champawat",
+      "Latitude": "29.3300° N",
+      "Longitude": "80.0900° E"
+    },
+    {
+      "Constituency": "Lalkuan",
+      "Latitude": "29.2800° N",
+      "Longitude": "79.5200° E"
+    },
+    {
+      "Constituency": "Bhimtal",
+      "Latitude": "29.3400° N",
+      "Longitude": "79.5500° E"
+    },
+    {
+      "Constituency": "Nainital (SC)",
+      "Latitude": "29.3800° N",
+      "Longitude": "79.4500° E"
+    },
+    {
+      "Constituency": "Haldwani",
+      "Latitude": "29.2200° N",
+      "Longitude": "79.5200° E"
+    },
+    {
+      "Constituency": "Kaladhungi",
+      "Latitude": "29.3700° N",
+      "Longitude": "79.3500° E"
+    },
+    {
+      "Constituency": "Ramnagar",
+      "Latitude": "29.3900° N",
+      "Longitude": "79.1200° E"
+    },
+    {
+      "Constituency": "Jaspur",
+      "Latitude": "29.2800° N",
+      "Longitude": "78.9300° E"
+    },
+    {
+      "Constituency": "Kashipur",
+      "Latitude": "29.2200° N",
+      "Longitude": "78.9500° E"
+    },
+    {
+      "Constituency": "Bajpur (SC)",
+      "Latitude": "29.1700° N",
+      "Longitude": "79.1500° E"
+    },
+    {
+      "Constituency": "Gadarpur",
+      "Latitude": "29.0200° N",
+      "Longitude": "79.3900° E"
+    },
+    {
+      "Constituency": "Rudrapur",
+      "Latitude": "28.9800° N",
+      "Longitude": "79.4000° E"
+    },
+    {
+      "Constituency": "Kichha",
+      "Latitude": "28.9200° N",
+      "Longitude": "79.5200° E"
+    },
+    {
+      "Constituency": "Sitarganj",
+      "Latitude": "28.9300° N",
+      "Longitude": "79.7900° E"
+    },
+    {
+      "Constituency": "Nanakmatta (ST)",
+      "Latitude": "28.9200° N",
+      "Longitude": "79.9300° E"
+    },
+    {
+      "Constituency": "Khatima",
+      "Latitude": "28.9100° N",
+      "Longitude": "79.9700° E"
+    }
+  ]
+}

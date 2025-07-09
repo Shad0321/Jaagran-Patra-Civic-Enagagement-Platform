@@ -1,0 +1,422 @@
+[
+  {
+    "constituency_no": 1,
+    "name": "Purola (SC)",
+    "elected_member": "Mal Chand",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 2,
+    "name": "Yamunotri",
+    "elected_member": "Pritam Singh Panwar",
+    "party_affiliation": "UKD(P)"
+  },
+  {
+    "constituency_no": 3,
+    "name": "Gangotri",
+    "elected_member": "Vijaypal Singh Sajwan",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 4,
+    "name": "Badrinath",
+    "elected_member": "Rajendra Singh Bhandari",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 5,
+    "name": "Tharali (SC)",
+    "elected_member": "Prof. Jeet Ram",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 6,
+    "name": "Karnaprayag",
+    "elected_member": "Dr. Anusuya Prasad Maikhuri",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 7,
+    "name": "Kedarnath",
+    "elected_member": "Shaila Rani Rawat",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 8,
+    "name": "Rudraprayag",
+    "elected_member": "Dr. Harak Singh Rawat",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 9,
+    "name": "Ghansali (SC)",
+    "elected_member": "Bhim Lal Arya",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 10,
+    "name": "Devprayag",
+    "elected_member": "Mantri Prasad Naithani",
+    "party_affiliation": "Independent"
+  },
+  {
+    "constituency_no": 11,
+    "name": "Narendranagar",
+    "elected_member": "Subodh Uniyal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 12,
+    "name": "Pratapnagar",
+    "elected_member": "Vikram Singh Negi",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 13,
+    "name": "Tehri",
+    "elected_member": "Dinesh Dhanai",
+    "party_affiliation": "Independent"
+  },
+  {
+    "constituency_no": 14,
+    "name": "Dhanaulti",
+    "elected_member": "Mahavir Singh Rangarh",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 15,
+    "name": "Chakrata (ST)",
+    "elected_member": "Pritam Singh",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 16,
+    "name": "Vikasnagar",
+    "elected_member": "Nav Prabhat",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 17,
+    "name": "Sahaspur",
+    "elected_member": "Sahdev Singh Pundir",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 18,
+    "name": "Dharampur",
+    "elected_member": "Dinesh Agrawal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 19,
+    "name": "Raipur",
+    "elected_member": "Umesh Sharma 'Kau'",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 20,
+    "name": "Rajpur Road (SC)",
+    "elected_member": "Rajkumar",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 21,
+    "name": "Dehradun Cantonment",
+    "elected_member": "Harbans Kapoor",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 22,
+    "name": "Mussoorie",
+    "elected_member": "Ganesh Joshi",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 23,
+    "name": "Doiwala",
+    "elected_member": "Dr. Ramesh Pokhriyal 'Nishank'",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 24,
+    "name": "Rishikesh",
+    "elected_member": "Premchand Aggarwal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 25,
+    "name": "Haridwar",
+    "elected_member": "Madan Kaushik",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 26,
+    "name": "BHEL Ranipur",
+    "elected_member": "Adesh Chauhan",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 27,
+    "name": "Jwalapur (SC)",
+    "elected_member": "Chandra Shekhar",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 28,
+    "name": "Bhagwanpur (SC)",
+    "elected_member": "Surendra Rakesh",
+    "party_affiliation": "BSP"
+  },
+  {
+    "constituency_no": 29,
+    "name": "Jhabrera (SC)",
+    "elected_member": "Hari Das",
+    "party_affiliation": "BSP"
+  },
+  {
+    "constituency_no": 30,
+    "name": "Piran Kaliyar",
+    "elected_member": "Furqan Ahmad",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 31,
+    "name": "Roorkee",
+    "elected_member": "Pradip Batra",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 32,
+    "name": "Khanpur",
+    "elected_member": "Pranav Singh 'Champion'",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 33,
+    "name": "Manglaur",
+    "elected_member": "Sarwat Karim Ansari",
+    "party_affiliation": "BSP"
+  },
+  {
+    "constituency_no": 34,
+    "name": "Laksar",
+    "elected_member": "Sanjay Gupta",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 35,
+    "name": "Haridwar Rural",
+    "elected_member": "Yatishwaranand",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 36,
+    "name": "Yamkeshwar",
+    "elected_member": "Vijaya Barthwal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 37,
+    "name": "Pauri (SC)",
+    "elected_member": "Sundar Lal Mandrawal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 38,
+    "name": "Srinagar",
+    "elected_member": "Ganesh Godiyal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 39,
+    "name": "Chaubattakhal",
+    "elected_member": "Tirath Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 40,
+    "name": "Lansdowne",
+    "elected_member": "Dilip Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 41,
+    "name": "Kotdwar",
+    "elected_member": "Surendra Singh Negi",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 42,
+    "name": "Dharchula",
+    "elected_member": "Harish Singh Dhami",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 43,
+    "name": "Didihat",
+    "elected_member": "Bishan Singh Chuphal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 44,
+    "name": "Pithoragarh",
+    "elected_member": "Mayukh Singh Mahar",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 45,
+    "name": "Gangolihat (SC)",
+    "elected_member": "Narayan Ram Arya",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 46,
+    "name": "Kapkot",
+    "elected_member": "Lalit Pharswan",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 47,
+    "name": "Bageshwar (SC)",
+    "elected_member": "Chandan Ram Das",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 48,
+    "name": "Dwarahat",
+    "elected_member": "Madan Singh Bisht",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 49,
+    "name": "Salt",
+    "elected_member": "Surendra Singh Jeena",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 50,
+    "name": "Ranikhet",
+    "elected_member": "Ajay Bhatt",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 51,
+    "name": "Someshwar (SC)",
+    "elected_member": "Ajay Tamta",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 52,
+    "name": "Almora",
+    "elected_member": "Manoj Tiwari",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 53,
+    "name": "Jageshwar",
+    "elected_member": "Govind Singh Kunjwal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 54,
+    "name": "Lohaghat",
+    "elected_member": "Puran Singh Phartyal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 55,
+    "name": "Champawat",
+    "elected_member": "Hemesh Kharkwal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 56,
+    "name": "Lalkuan",
+    "elected_member": "Harish Chandra Durgapal",
+    "party_affiliation": "Independent"
+  },
+  {
+    "constituency_no": 57,
+    "name": "Bhimtal",
+    "elected_member": "Dan Singh Bhandari",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 58,
+    "name": "Nainital (SC)",
+    "elected_member": "Sarita Arya",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 59,
+    "name": "Haldwani",
+    "elected_member": "Dr. Indira Hridayesh",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 60,
+    "name": "Kaladhungi",
+    "elected_member": "Banshidhar Bhagat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 61,
+    "name": "Ramnagar",
+    "elected_member": "Amrita Rawat",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 62,
+    "name": "Jaspur",
+    "elected_member": "Dr. Shailendra Mohan Singhal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 63,
+    "name": "Kashipur",
+    "elected_member": "Harbhajan Singh Cheema",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 64,
+    "name": "Bajpur (SC)",
+    "elected_member": "Yashpal Arya",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 65,
+    "name": "Gadarpur",
+    "elected_member": "Arvind Pandey",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 66,
+    "name": "Rudrapur",
+    "elected_member": "Rajkumar Thukral",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 67,
+    "name": "Kichha",
+    "elected_member": "Rajesh Shukla",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 68,
+    "name": "Sitarganj",
+    "elected_member": "Kiran Mandal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 69,
+    "name": "Nanakmatta (ST)",
+    "elected_member": "Dr. Prem Singh Rana",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 70,
+    "name": "Khatima",
+    "elected_member": "Pushkar Singh Dhami",
+    "party_affiliation": "BJP"
+  }
+]

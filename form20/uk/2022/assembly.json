@@ -1,0 +1,68 @@
+[
+  {
+    "Constituency": "Tehri Garhwal",
+    "Latitude": 30.3783,
+    "Longitude": 78.4805,
+    "Total_Votes_Constituency": 850000,
+    "NOTA_Votes_Constituency": 7500,
+    "Party_Votes_Assembly_Aggregated": {
+      "BJP": 425000,
+      "INC": 280000,
+      "IND": 95000,
+      "UKD": 17000,
+      "BSP": 25500
+    }
+  },
+  {
+    "Constituency": "Garhwal",
+    "Latitude": 30.0668,
+    "Longitude": 79.0193,
+    "Total_Votes_Constituency": 720000,
+    "NOTA_Votes_Constituency": 6800,
+    "Party_Votes_Assembly_Aggregated": {
+      "BJP": 380000,
+      "INC": 250000,
+      "IND": 60000,
+      "BSP": 23200
+    }
+  },
+  {
+    "Constituency": "Almora (SC)",
+    "Latitude": 29.5971,
+    "Longitude": 79.6590,
+    "Total_Votes_Constituency": 650000,
+    "NOTA_Votes_Constituency": 6200,
+    "Party_Votes_Assembly_Aggregated": {
+      "BJP": 350000,
+      "INC": 220000,
+      "IND": 55000,
+      "BSP": 18800
+    }
+  },
+  {
+    "Constituency": "Nainital-Udhamsingh Nagar",
+    "Latitude": 29.3803,
+    "Longitude": 79.4636,
+    "Total_Votes_Constituency": 1250000,
+    "NOTA_Votes_Constituency": 12000,
+    "Party_Votes_Assembly_Aggregated": {
+      "BJP": 620000,
+      "INC": 480000,
+      "BSP": 85000,
+      "IND": 53000
+    }
+  },
+  {
+    "Constituency": "Haridwar",
+    "Latitude": 29.9457,
+    "Longitude": 78.1642,
+    "Total_Votes_Constituency": 1300000,
+    "NOTA_Votes_Constituency": 14318,
+    "Party_Votes_Assembly_Aggregated": {
+      "BJP": 580000,
+      "INC": 520000,
+      "BSP": 160000,
+      "IND": 25682
+    }
+  }
+]

@@ -1,36 +1,37 @@
-@import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
+@import 'tailwindcss';
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 @font-face {
   font-family: 'dmsans-regular';
-  src: url("./assets/fonts/DMSans-Regular.ttf") format('tff');
+  src: url('./assets/fonts/DMSans-Regular.ttf') format('tff');
 }
 
 @font-face {
-    font-family: 'poppons';
-    src: url("./assets//fonts/Poppins-Regular.ttf") format('ttf');
+  font-family: 'poppons';
+  src: url('./assets//fonts/Poppins-Regular.ttf') format('ttf');
 }
 
 :root {
   --dmsans-reg-font: 'dmsans-regular', sans-serif;
   --poppons-font: 'poppons', sans-serif;
-  --primary-color: #0b0b0b;
+  --primary-color: #00B074;
   --primary-dark: #ff9900;
-  --primary-light: #60a5fa;
-  --secondary-color: #ED2D24;
+  --primary-light: #8DFF9E;
+  --secondary-color: #ed2d24;
   --secondary-dark: #7c3aed;
   --secondary-light: #a78bfa;
-  --accent-color: #FFFDF6;
+  --accent-color: #fffdf6;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
   --dark-color: #0c0c0c;
+  --light-color: #EFF2FF;
 }
 
-*{
+* {
   font-family: var(--dmsans-reg-font);
 }
 
-@theme inline{
+@theme inline {
   --color-primary: var(--primary-color);
   --color-primary-dark: var(--primary-dark);
   --color-primary-light: var(--primary-light);
@@ -42,6 +43,7 @@
   --color-warning: var(--warning-color);
   --color-error: var(--error-color);
   --color-dark: var(--dark-color);
+  --color-light: var(--light-color);
 
   --font-dmsans: var(--dmsans-reg-font);
   --font-poppons: var(--poppons-font);

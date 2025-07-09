@@ -1,97 +1,161 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { authLimiter } from '../middleware/rateLimiting';
-import prisma from '../config/database';
+import express from 'express';
+import * as authController from '../controllers/authController';
+import { authenticate, authorize } from '../middleware/auth';
+import { handleValidationErrors } from '../middleware/validation';
+import rateLimit from 'express-rate-limit';
 
-const router = Router();
+const router = express.Router();
 
-// Apply auth rate limiting to all auth routes
-router.use(authLimiter);
-
-// Registration endpoint
-router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { email, password, name } = req.body;
-        
-        // Basic validation
-        if (!email || !password || !name) {
-            res.status(400).json({
-                success: false,
-                message: 'Email, password, and name are required',
-            });
-            return;
-        }
-        
-        // TODO: Implement user registration logic
-        // - Check if user already exists
-        // - Hash password
-        // - Save user to database
-        // - Generate JWT token
-        
-        res.json({
-            success: true,
-            message: 'User registration endpoint - implement your logic here',
-            data: { email, name },
-        });
-    } catch (error) {
-        next(error);
-    }
+// Rate limiting for authentication routes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500, // limit each IP to 5 requests per windowMs
+  message: {
+    error: 'Too many authentication attempts, please try again later.',
+  },
 });
 
-// Login endpoint
-router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { email, password } = req.body;
-        
-        // Basic validation
-        if (!email || !password) {
-            res.status(400).json({
-                success: false,
-                message: 'Email and password are required',
-            });
-            return;
-        }
-        
-        // TODO: Implement user login logic
-        // - Find user by email
-        // - Verify password
-        // - Generate JWT token
-        
-        res.json({
-            success: true,
-            message: 'User login endpoint - implement your logic here',
-            data: { email },
-        });
-    } catch (error) {
-        next(error);
-    }
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 
-// Password reset request
-router.post('/forgot-password', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { email } = req.body;
-        
-        // Basic validation
-        if (!email) {
-            res.status(400).json({
-                success: false,
-                message: 'Email is required',
-            });
-            return;
-        }
-        
-        // TODO: Implement password reset logic
-        // - Find user by email
-        // - Generate reset token
-        // - Send reset email
-        
-        res.json({
-            success: true,
-            message: 'Password reset email sent (if email exists)',
-        });
-    } catch (error) {
-        next(error);
-    }
-});
+// Public routes
+router.post('/register', authLimiter, authController.register);
+router.post('/login', authLimiter, authController.login);
+router.post('/refresh-token', authController.refreshToken);
+router.post('/logout', authController.logout);
+
+// Password reset routes
+router.post(
+  '/forgot-password',
+  authLimiter,
+  authController.initiatePasswordReset
+);
+router.post(
+  '/reset-password',
+  authLimiter,
+  authController.completePasswordReset
+);
+
+// Email verification routes
+router.post(
+  '/resend-verification-email',
+  authLimiter,
+  authController.resendVerificationEmail
+);
+router.post('/verify-email', authController.verifyEmail);
+
+// Phone verification routes
+router.post(
+  '/send-phone-verification',
+  authLimiter,
+  authController.sendPhoneVerification
+);
+router.post('/verify-phone', authController.verifyPhone);
+
+// Profile management routes
+router.get('/profile', authenticate, authController.getProfile);
+router.put('/profile', authenticate, authController.updateProfile);
+router.post('/change-password', authenticate, authController.changePassword);
+router.post('/update-location', authenticate, authController.updateLocation);
+
+// Subordinate management routes
+router.get(
+  '/subordinates',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  authController.getSubordinates
+);
+router.post(
+  '/subordinates',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  authController.addSubordinate
+);
+router.put(
+  '/subordinates/:id',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  authController.updateSubordinate
+);
+router.delete(
+  '/subordinates/:id',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  authController.removeSubordinate
+);
+router.get(
+  '/subordinates/hierarchy',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  authController.getSubordinateHierarchy
+);
+
+// Admin routes
+router.get(
+  '/users',
+  authenticate,
+  authorize(['ADMIN']),
+  authController.getAllUsers
+);
+router.get(
+  '/users/:id',
+  authenticate,
+  authorize(['ADMIN']),
+  authController.getUserById
+);
+router.put(
+  '/users/:id',
+  authenticate,
+  authorize(['ADMIN']),
+  authController.updateUser
+);
+router.delete(
+  '/users/:id',
+  authenticate,
+  authorize(['ADMIN']),
+  authController.deleteUser
+);
+router.post(
+  '/users/:id/activate',
+  authenticate,
+  authorize(['ADMIN']),
+  authController.activateUser
+);
+router.post(
+  '/users/:id/deactivate',
+  authenticate,
+  authorize(['ADMIN']),
+  authController.deactivateUser
+);
+
+// Location and hierarchy routes
+router.get('/locations/states', generalLimiter, authController.getStates);
+router.get(
+  '/locations/districts/:stateId',
+  generalLimiter,
+  authController.getDistrictsByState
+);
+router.get(
+  '/locations/constituencies/:districtId',
+  generalLimiter,
+  authController.getConstituenciesByDistrict
+);
+router.get(
+  '/locations/shakti-kendras/:constituencyId',
+  generalLimiter,
+  authController.getShaktiKendrasByConstituency
+);
+router.get(
+  '/locations/local-bodies/:shaktiKendraId',
+  generalLimiter,
+  authController.getLocalBodiesByShaktiKendra
+);
+router.get(
+  '/locations/polling-booths/:localBodyId',
+  generalLimiter,
+  authController.getPollingBoothsByLocalBody
+);
 
 export default router;

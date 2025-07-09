@@ -1,17 +1,18 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { 
-    securityHeaders, 
-    corsConfig, 
-    sanitizeInput, 
-    parameterPollutionProtection,
-    compressionMiddleware,
-    requestLogger,
-    errorHandler,
-    notFoundHandler
+import {
+  securityHeaders,
+  corsConfig,
+  sanitizeInput,
+  parameterPollutionProtection,
+  compressionMiddleware,
+  requestLogger,
+  errorHandler,
+  notFoundHandler,
 } from './middleware/security';
 import { generalLimiter } from './middleware/rateLimiting';
 import routes from './routes';
+import cors from 'cors';
 
 // Load environment variables
 dotenv.config();
@@ -24,7 +25,7 @@ app.set('trust proxy', 1);
 // Apply middleware in order
 app.use(compressionMiddleware);
 app.use(securityHeaders);
-app.use(corsConfig);
+app.use(cors());
 app.use(generalLimiter);
 
 // Body parsing middleware

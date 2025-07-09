@@ -10,11 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Simplified user roles
 enum UserRole {
   ADMIN
   CITIZEN
-  MLA
   MEMBER
+  MLA
 }
 
 enum IssueStatus {
@@ -45,7 +46,23 @@ enum NotificationStatus {
   FAILED
 }
 
-// User management
+// Body types for different political/administrative bodies
+enum BodyType {
+  SHAKTI_KENDRA
+  PANNA_PRAMUKH
+  LOCAL_BODY
+  POLLING_BOOTH
+  WARD
+  BLOCK
+  MANDAL
+  TEHSIL
+  GRAM_PANCHAYAT
+  MUNICIPALITY
+  CORPORATION
+  OTHER
+}
+
+// Simplified User model
 model User {
   id          String   @id @default(cuid())
   email       String   @unique
@@ -60,19 +77,39 @@ model User {
   password    String
   lastLogin   DateTime?
   loginCount  Int      @default(0)
+  resetToken  String?
+  resetTokenExpiry DateTime?
+  emailVerificationToken String?
+  phoneVerificationToken String?
   
-  // Location data
+  // Location data - simplified
   stateId     String?
   districtId  String?
   constituencyId String?
+  bodyId      String?  // Generic body association
+  
+  // Current location tracking
+  currentLatitude   Float?
+  currentLongitude  Float?
+  currentAddress    String?
+  lastLocationUpdate DateTime?
   
   // Relationships
   state       State?        @relation(fields: [stateId], references: [id])
   district    District?     @relation(fields: [districtId], references: [id])
   constituency Constituency? @relation(fields: [constituencyId], references: [id])
+  body        Body?         @relation(fields: [bodyId], references: [id])
   
   // MLA specific
   mlaProfile  MlaProfile?
+  
+  // Member specific
+  memberProfile MemberProfile?
+  
+  // MLA-Member relationship
+  mlaId       String?
+  mla         User?     @relation("MlaMembers", fields: [mlaId], references: [id])
+  members     User[]    @relation("MlaMembers")
   
   // Issues
   reportedIssues Issue[] @relation("ReportedBy")
@@ -96,29 +133,117 @@ model User {
   // Performance tracking
   performanceMetrics PerformanceMetric[]
   
+  // Device tracking for push notifications
+  deviceTokens DeviceToken[]
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
-  // Indexes for performance
   @@index([email])
+  @@index([phone])
   @@index([role])
   @@index([stateId])
   @@index([districtId])
   @@index([constituencyId])
+  @@index([bodyId])
+  @@index([mlaId])
   @@index([isActive])
   @@index([createdAt])
+  @@index([currentLatitude, currentLongitude])
   @@map("users")
+}
+
+// Member profile for different body types
+model MemberProfile {
+  id              String @id @default(cuid())
+  userId          String @unique
+  bodyType        BodyType?  // Type of body they belong to
+  designation     String?
+  description     String?
+  
+  // Permissions for different actions
+  canReceiveIssues Boolean @default(true)
+  canUpdateIssues  Boolean @default(true)
+  canCreateSessions Boolean @default(false)
+  
+  // Performance metrics
+  totalIssues     Int @default(0)
+  resolvedIssues  Int @default(0)
+  pendingIssues   Int @default(0)
+  avgResolutionTime Float @default(0)
+  
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([bodyType])
+  @@index([totalIssues])
+  @@index([resolvedIssues])
+  @@map("member_profiles")
+}
+
+// Enhanced MLA Profile
+model MlaProfile {
+  id              String @id @default(cuid())
+  userId          String @unique
+  constituencyId  String
+  partyName       String?
+  position        String?
+  tenure          String?
+  bio             String?
+  achievements    String?
+  contactEmail    String?
+  contactPhone    String?
+  socialLinks     Json?
+  
+  // Performance metrics
+  totalIssues     Int @default(0)
+  resolvedIssues  Int @default(0)
+  pendingIssues   Int @default(0)
+  avgResolutionTime Float @default(0)
+  
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  constituency    Constituency @relation(fields: [constituencyId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([constituencyId])
+  @@index([totalIssues])
+  @@index([resolvedIssues])
+  @@map("mla_profiles")
+}
+
+// Device token management for push notifications
+model DeviceToken {
+  id        String @id @default(cuid())
+  userId    String
+  token     String @unique
+  platform  String // "ios", "android", "web"
+  isActive  Boolean @default(true)
+  
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([token])
+  @@map("device_tokens")
 }
 
 // Geographic hierarchy
 model State {
   id          String @id @default(cuid())
   name        String @unique
-  code        String @unique // e.g., "UP", "MH"
+  code        String @unique
+  latitude    Float?
+  longitude   Float?
   
-  // Relationships
   districts   District[]
   constituencies Constituency[]
+  bodies      Body[]
   users       User[]
   issues      Issue[]
   news        News[]
@@ -136,11 +261,12 @@ model District {
   name        String
   code        String
   stateId     String
+  latitude    Float?
+  longitude   Float?
   
-  // Relationships
   state       State @relation(fields: [stateId], references: [id], onDelete: Cascade)
   constituencies Constituency[]
-  shaktiKendras ShaktiKendra[]
+  bodies      Body[]
   users       User[]
   issues      Issue[]
   
@@ -156,14 +282,15 @@ model Constituency {
   id          String @id @default(cuid())
   name        String
   code        String
-  type        String // "AC" for Assembly Constituency, "PC" for Parliamentary
+  type        String
   stateId     String
   districtId  String
+  latitude    Float?
+  longitude   Float?
   
-  // Relationships
   state       State @relation(fields: [stateId], references: [id], onDelete: Cascade)
   district    District @relation(fields: [districtId], references: [id], onDelete: Cascade)
-  shaktiKendras ShaktiKendra[]
+  bodies      Body[]
   users       User[]
   mlaProfiles MlaProfile[]
   issues      Issue[]
@@ -177,109 +304,61 @@ model Constituency {
   @@map("constituencies")
 }
 
-model ShaktiKendra {
+// Generic Body model for all political/administrative bodies
+model Body {
   id              String @id @default(cuid())
   name            String
   code            String
-  districtId      String
-  constituencyId  String
+  type            BodyType
+  description     String?
   
-  // Relationships
-  district        District @relation(fields: [districtId], references: [id], onDelete: Cascade)
-  constituency    Constituency @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
-  localBodies     LocalBody[]
-  issues          Issue[]
+  // Hierarchical structure
+  stateId         String?
+  districtId      String?
+  constituencyId  String?
+  parentBodyId    String?    // For nested bodies
   
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  @@unique([constituencyId, code])
-  @@index([districtId])
-  @@index([constituencyId])
-  @@map("shakti_kendras")
-}
-
-model LocalBody {
-  id              String @id @default(cuid())
-  name            String
-  type            String // "Panchayat", "Municipality", "Corporation"
-  code            String
-  shaktiKendraId  String
-  
-  // Relationships
-  shaktiKendra    ShaktiKendra @relation(fields: [shaktiKendraId], references: [id], onDelete: Cascade)
-  pollingBooths   PollingBooth[]
-  issues          Issue[]
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  @@unique([shaktiKendraId, code])
-  @@index([shaktiKendraId])
-  @@map("local_bodies")
-}
-
-model PollingBooth {
-  id              String @id @default(cuid())
-  name            String
-  code            String
-  localBodyId     String
+  // Location data
   address         String?
   latitude        Float?
   longitude       Float?
   
-  // Relationships
-  localBody       LocalBody @relation(fields: [localBodyId], references: [id], onDelete: Cascade)
-  issues          Issue[]
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  @@unique([localBodyId, code])
-  @@index([localBodyId])
-  @@index([latitude, longitude])
-  @@map("polling_booths")
-}
-
-// MLA Profile
-model MlaProfile {
-  id              String @id @default(cuid())
-  userId          String @unique
-  constituencyId  String
-  partyName       String?
-  position        String?
-  tenure          String?
-  bio             String?
-  achievements    String?
+  // Administrative data
+  headName        String?    // Head of this body
   contactEmail    String?
   contactPhone    String?
-  socialLinks     Json? // {"twitter": "url", "facebook": "url"}
-  
-  // Performance metrics
-  totalIssues     Int @default(0)
-  resolvedIssues  Int @default(0)
-  pendingIssues   Int @default(0)
-  avgResolutionTime Float @default(0) // in days
   
   // Relationships
-  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  constituency    Constituency @relation(fields: [constituencyId], references: [id])
+  state           State? @relation(fields: [stateId], references: [id])
+  district        District? @relation(fields: [districtId], references: [id])
+  constituency    Constituency? @relation(fields: [constituencyId], references: [id])
+  parentBody      Body? @relation("BodyHierarchy", fields: [parentBodyId], references: [id])
+  childBodies     Body[] @relation("BodyHierarchy")
+  
+  // Users associated with this body
+  users           User[]
+  issues          Issue[]
+  
+  isActive        Boolean @default(true)
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
+  @@unique([stateId, districtId, constituencyId, code, type])
+  @@index([type])
+  @@index([stateId])
+  @@index([districtId])
   @@index([constituencyId])
-  @@index([totalIssues])
-  @@index([resolvedIssues])
-  @@map("mla_profiles")
+  @@index([parentBodyId])
+  @@index([isActive])
+  @@map("bodies")
 }
 
-// Issues/Problems Management
 model Issue {
   id              String @id @default(cuid())
   title           String
   description     String
-  category        String // "Water", "Electricity", "Roads", "Healthcare", etc.
+  category        String
   status          IssueStatus @default(PENDING)
   priority        IssuePriority @default(MEDIUM)
   
@@ -287,9 +366,7 @@ model Issue {
   stateId         String
   districtId      String?
   constituencyId  String?
-  shaktiKendraId  String?
-  localBodyId     String?
-  pollingBoothId  String?
+  bodyId          String?    // Generic body association
   address         String?
   latitude        Float?
   longitude       Float?
@@ -304,34 +381,31 @@ model Issue {
   resolutionNotes        String?
   
   // Media
-  attachments     Json? // Array of file URLs
-  beforeImages    Json? // Array of image URLs
-  afterImages     Json? // Array of image URLs
+  attachments     Json?
+  beforeImages    Json?
+  afterImages     Json?
   
   // Relationships
   state           State @relation(fields: [stateId], references: [id])
   district        District? @relation(fields: [districtId], references: [id])
   constituency    Constituency? @relation(fields: [constituencyId], references: [id])
-  shaktiKendra    ShaktiKendra? @relation(fields: [shaktiKendraId], references: [id])
-  localBody       LocalBody? @relation(fields: [localBodyId], references: [id])
-  pollingBooth    PollingBooth? @relation(fields: [pollingBoothId], references: [id])
+  body            Body? @relation(fields: [bodyId], references: [id])
   reportedBy      User @relation("ReportedBy", fields: [reportedById], references: [id])
   assignedTo      User? @relation("AssignedTo", fields: [assignedToId], references: [id])
   
-  // Updates/Comments
   updates         IssueUpdate[]
   chatMessages    ChatMessage[]
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
-  // Indexes for performance
   @@index([status])
   @@index([priority])
   @@index([category])
   @@index([stateId])
   @@index([districtId])
   @@index([constituencyId])
+  @@index([bodyId])
   @@index([reportedById])
   @@index([assignedToId])
   @@index([createdAt])
@@ -345,9 +419,8 @@ model IssueUpdate {
   userId      String
   message     String
   status      IssueStatus?
-  attachments Json? // Array of file URLs
+  attachments Json?
   
-  // Relationships
   issue       Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
   user        User @relation(fields: [userId], references: [id])
   
@@ -359,22 +432,19 @@ model IssueUpdate {
   @@map("issue_updates")
 }
 
-// Session Management
 model Session {
   id              String @id @default(cuid())
   title           String
   description     String?
   scheduledAt     DateTime
-  duration        Int // in minutes
+  duration        Int
   status          SessionStatus @default(SCHEDULED)
   meetingLink     String?
   agenda          String?
   summary         String?
   
-  // Host
   hostId          String
   
-  // Relationships
   host            User @relation("HostedBy", fields: [hostId], references: [id])
   participants    SessionParticipant[]
   
@@ -393,9 +463,8 @@ model SessionParticipant {
   userId      String
   invitedAt   DateTime @default(now())
   respondedAt DateTime?
-  status      String @default("INVITED") // INVITED, ACCEPTED, DECLINED, ATTENDED
+  status      String @default("INVITED")
   
-  // Relationships
   session     Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   user        User @relation(fields: [userId], references: [id])
   
@@ -405,7 +474,6 @@ model SessionParticipant {
   @@map("session_participants")
 }
 
-// News Management
 model News {
   id          String @id @default(cuid())
   title       String
@@ -416,25 +484,20 @@ model News {
   isActive    Boolean @default(true)
   isPinned    Boolean @default(false)
   
-  // Targeting
   stateId     String?
   isNational  Boolean @default(false)
   
-  // Media
   featuredImage String?
-  attachments   Json? // Array of file URLs
+  attachments   Json?
   
-  // SEO
   slug        String @unique
   metaTitle   String?
   metaDescription String?
   
-  // Relationships
   state       State? @relation(fields: [stateId], references: [id])
   author      User @relation(fields: [authorId], references: [id])
   authorId    String
   
-  // Analytics
   viewCount   Int @default(0)
   
   publishedAt DateTime @default(now())
@@ -449,22 +512,18 @@ model News {
   @@map("news")
 }
 
-// Notifications
 model Notification {
   id          String @id @default(cuid())
   title       String
   message     String
-  type        String // "ISSUE_UPDATE", "SESSION_REMINDER", "NEWS", etc.
-  data        Json? // Additional data
+  type        String
+  data        Json?
   
-  // Sender
   sentById    String
   
-  // Targeting
   targetRole  UserRole?
   targetStateId String?
   
-  // Relationships
   sentBy      User @relation("SentBy", fields: [sentById], references: [id])
   state       State? @relation(fields: [targetStateId], references: [id])
   recipients  NotificationRecipient[]
@@ -485,7 +544,6 @@ model NotificationRecipient {
   status          NotificationStatus @default(PENDING)
   readAt          DateTime?
   
-  // Relationships
   notification    Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   user            User @relation(fields: [userId], references: [id])
   
@@ -497,18 +555,16 @@ model NotificationRecipient {
   @@map("notification_recipients")
 }
 
-// Chat System
 model ChatMessage {
   id          String @id @default(cuid())
   senderId    String
   receiverId  String?
-  issueId     String? // If message is related to an issue
+  issueId     String?
   message     String
-  messageType String @default("TEXT") // TEXT, FILE, IMAGE
-  attachments Json? // Array of file URLs
+  messageType String @default("TEXT")
+  attachments Json?
   isRead      Boolean @default(false)
   
-  // Relationships
   sender      User @relation(fields: [senderId], references: [id])
   issue       Issue? @relation(fields: [issueId], references: [id])
   
@@ -521,16 +577,14 @@ model ChatMessage {
   @@map("chat_messages")
 }
 
-// Performance Metrics
 model PerformanceMetric {
   id              String @id @default(cuid())
   userId          String
-  metricType      String // "RESOLUTION_TIME", "ISSUE_COUNT", "CITIZEN_SATISFACTION"
+  metricType      String
   value           Float
-  period          String // "DAILY", "WEEKLY", "MONTHLY", "YEARLY"
+  period          String
   date            DateTime
   
-  // Relationships
   user            User @relation(fields: [userId], references: [id])
   
   createdAt       DateTime @default(now())
@@ -543,7 +597,6 @@ model PerformanceMetric {
   @@map("performance_metrics")
 }
 
-// Chatbot Knowledge Base
 model ChatbotKnowledge {
   id          String @id @default(cuid())
   question    String
@@ -552,7 +605,6 @@ model ChatbotKnowledge {
   keywords    String[]
   isActive    Boolean @default(true)
   
-  // Analytics
   usageCount  Int @default(0)
   
   createdAt   DateTime @default(now())
@@ -564,7 +616,6 @@ model ChatbotKnowledge {
   @@map("chatbot_knowledge")
 }
 
-// System Configuration
 model SystemConfig {
   id          String @id @default(cuid())
   key         String @unique

@@ -22,6 +22,7 @@ src/
 ## Key Features
 
 ### Security
+
 - **Helmet**: Security headers
 - **CORS**: Cross-origin resource sharing
 - **XSS Protection**: Input sanitization
@@ -30,23 +31,27 @@ src/
 - **Input Validation**: Express validator integration
 
 ### Middleware Organization
+
 - **Security**: All security-related middleware in one place
 - **Validation**: Input validation and error handling
 - **Rate Limiting**: Different rate limits for different route types
 
 ### Database
+
 - **Prisma**: ORM with connection pooling
 - **Graceful Shutdown**: Proper database connection cleanup
 
 ## Getting Started
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Set up environment variables**:
    Create a `.env` file with:
+
    ```
    DATABASE_URL="your-database-url"
    PORT=3001
@@ -56,6 +61,7 @@ src/
    ```
 
 3. **Set up Prisma**:
+
    ```bash
    npx prisma migrate dev
    npx prisma generate
@@ -83,6 +89,7 @@ src/
 ## Development
 
 The structure is designed to be:
+
 - **Modular**: Each file has a single responsibility
 - **Scalable**: Easy to add new routes, middleware, or configurations
 - **Maintainable**: Clear separation of concerns

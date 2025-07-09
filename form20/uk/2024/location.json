@@ -1,0 +1,377 @@
+[
+  {
+    "Constituency": "Tehri Garhwal",
+    "Assembly Segments": [
+      {
+        "Name": "Purola (SC)",
+        "latitude": 30.8789,
+        "longitude": 78.0852
+      },
+      {
+        "Name": "Yamunotri",
+        "latitude": 31.0129,
+        "longitude": 78.4483
+      },
+      {
+        "Name": "Gangotri",
+        "latitude": 30.9959,
+        "longitude": 78.9432
+      },
+      {
+        "Name": "Ghansali (SC)",
+        "latitude": 30.3809,
+        "longitude": 78.6019
+      },
+      {
+        "Name": "Pratapnagar",
+        "latitude": 30.4497,
+        "longitude": 78.4780
+      },
+      {
+        "Name": "Tehri",
+        "latitude": 30.3763,
+        "longitude": 78.4354
+      },
+      {
+        "Name": "Dhanaulti",
+        "latitude": 30.45,
+        "longitude": 78.25
+      },
+      {
+        "Name": "Chakrata (ST)",
+        "latitude": 30.702,
+        "longitude": 77.869
+      },
+      {
+        "Name": "Vikasnagar",
+        "latitude": 30.468,
+        "longitude": 77.774
+      },
+      {
+        "Name": "Sahaspur",
+        "latitude": 30.3919,
+        "longitude": 77.8087
+      },
+      {
+        "Name": "Raipur",
+        "latitude": 30.306,
+        "longitude": 78.098
+      },
+      {
+        "Name": "Rajpur Road (SC)",
+        "latitude": 30.3837,
+        "longitude": 78.0907
+      },
+      {
+        "Name": "Dehradun Cantonment",
+        "latitude": 30.34,
+        "longitude": 77.97
+      },
+      {
+        "Name": "Mussoorie",
+        "latitude": 30.45,
+        "longitude": 78.08
+      }
+    ]
+  },
+  {
+    "Constituency": "Garhwal",
+    "Assembly Segments": [
+      {
+        "Name": "Badrinath",
+        "latitude": 30.744,
+        "longitude": 79.493
+      },
+      {
+        "Name": "Tharali (SC)",
+        "latitude": 30.0717,
+        "longitude": 79.5292
+      },
+      {
+        "Name": "Karnaprayag",
+        "latitude": 30.2587,
+        "longitude": 79.2183
+      },
+      {
+        "Name": "Kedarnath",
+        "latitude": 30.733,
+        "longitude": 79.067
+      },
+      {
+        "Name": "Rudraprayag",
+        "latitude": 30.2844,
+        "longitude": 78.9811
+      },
+      {
+        "Name": "Devprayag",
+        "latitude": 30.146,
+        "longitude": 78.598
+      },
+      {
+        "Name": "Narendranagar",
+        "latitude": 30.16,
+        "longitude": 78.2851
+      },
+      {
+        "Name": "Yamkeshwar",
+        "latitude": 29.992,
+        "longitude": 78.402
+      },
+      {
+        "Name": "Pauri (SC)",
+        "latitude": 29.9952,
+        "longitude": 78.7222
+      },
+      {
+        "Name": "Srinagar",
+        "latitude": 30.22,
+        "longitude": 78.78
+      },
+      {
+        "Name": "Chaubattakhal",
+        "latitude": 29.99285,
+        "longitude": 78.6197
+      },
+      {
+        "Name": "Lansdowne",
+        "latitude": 29.8375,
+        "longitude": 78.6819
+      },
+      {
+        "Name": "Kotdwar",
+        "latitude": 29.75,
+        "longitude": 78.53
+      }
+    ]
+  },
+  {
+    "Constituency": "Almora",
+    "Assembly Segments": [
+      {
+        "Name": "Ramnagar",
+        "latitude": 29.395,
+        "longitude": 79.126
+      },
+      {
+        "Name": "Dharchula",
+        "latitude": 29.8485,
+        "longitude": 80.5430
+      },
+      {
+        "Name": "Didihat",
+        "latitude": 29.8007,
+        "longitude": 80.2461
+      },
+      {
+        "Name": "Gangolihat (SC)",
+        "latitude": 29.657042,
+        "longitude": 80.039345
+      },
+      {
+        "Name": "Pithoragarh",
+        "latitude": 29.582861,
+        "longitude": 80.218185
+      },
+      {
+        "Name": "Kapkot",
+        "latitude": 29.9517,
+        "longitude": 79.5829
+      },
+      {
+        "Name": "Bageshwar (SC)",
+        "latitude": 29.49,
+        "longitude": 79.45
+      },
+      {
+        "Name": "Dwarahat",
+        "latitude": 29.78,
+        "longitude": 79.43
+      },
+      {
+        "Name": "Salt",
+        "latitude": 29.58661,
+        "longitude": 79.60553
+      },
+      {
+        "Name": "Ranikhet",
+        "latitude": 29.65,
+        "longitude": 79.42
+      },
+      {
+        "Name": "Someshwar (SC)",
+        "latitude": 29.78087,
+        "longitude": 79.60340
+      },
+      {
+        "Name": "Almora",
+        "latitude": 29.592347,
+        "longitude": 79.655848
+      },
+      {
+        "Name": "Jageshwar",
+        "latitude": 29.63,
+        "longitude": 79.85
+      },
+      {
+        "Name": "Lohaghat",
+        "latitude": 29.42,
+        "longitude": 80.10
+      },
+      {
+        "Name": "Champawat",
+        "latitude": 29.33,
+        "longitude": 80.10
+      }
+    ]
+  },
+  {
+    "Constituency": "Nainital-Udhamsingh Nagar",
+    "Assembly Segments": [
+      {
+        "Name": "Lalkuan",
+        "latitude": 29.08,
+        "longitude": 79.52
+      },
+      {
+        "Name": "Bhimtal",
+        "latitude": 29.3469,
+        "longitude": 79.5533
+      },
+      {
+        "Name": "Nainital (SC)",
+        "latitude": 29.40,
+        "longitude": 79.47
+      },
+      {
+        "Name": "Haldwani",
+        "latitude": 29.22,
+        "longitude": 79.52
+      },
+      {
+        "Name": "Kaladhungi",
+        "latitude": 29.28,
+        "longitude": 79.35
+      },
+      {
+        "Name": "Jaspur",
+        "latitude": 29.283331,
+        "longitude": 78.816673
+      },
+      {
+        "Name": "Kashipur",
+        "latitude": 29.22,
+        "longitude": 78.95
+      },
+      {
+        "Name": "Bajpur (SC)",
+        "latitude": 29.162411,
+        "longitude": 79.152168
+      },
+      {
+        "Name": "Gadarpur",
+        "latitude": 29.36,
+        "longitude": 79.46
+      },
+      {
+        "Name": "Rudrapur",
+        "latitude": 28.98,
+        "longitude": 79.40
+      },
+      {
+        "Name": "Kichha",
+        "latitude": 28.92,
+        "longitude": 79.50
+      },
+      {
+        "Name": "Sitarganj",
+        "latitude": 28.93,
+        "longitude": 79.70
+      },
+      {
+        "Name": "Nanakmatta (ST)",
+        "latitude": 28.8637,
+        "longitude": 79.7091
+      },
+      {
+        "Name": "Khatima",
+        "latitude": 28.92,
+        "longitude": 79.97
+      }
+    ]
+  },
+  {
+    "Constituency": "Haridwar",
+    "Assembly Segments": [
+      {
+        "Name": "Dharampur",
+        "latitude": 30.2991,
+        "longitude": 78.0571
+      },
+      {
+        "Name": "Doiwala",
+        "latitude": 30.1758,
+        "longitude": 78.1242
+      },
+      {
+        "Name": "Rishikesh",
+        "latitude": 30.1083,
+        "longitude": 78.2974
+      },
+      {
+        "Name": "Haridwar",
+        "latitude": 29.945690,
+        "longitude": 78.164246
+      },
+      {
+        "Name": "BHEL Ranipur",
+        "latitude": 29.96,
+        "longitude": 78.16
+      },
+      {
+        "Name": "Jwalapur (SC)",
+        "latitude": 29.927059,
+        "longitude": 78.107979
+      },
+      {
+        "Name": "Bhagwanpur (SC)",
+        "latitude": 30.06941,
+        "longitude": 77.83997
+      },
+      {
+        "Name": "Jhabrera (SC)",
+        "latitude": 29.804342,
+        "longitude": 77.796700
+      },
+      {
+        "Name": "Piran Kaliyar",
+        "latitude": 29.9144,
+        "longitude": 77.9291
+      },
+      {
+        "Name": "Roorkee",
+        "latitude": 29.8667,
+        "longitude": 77.8978
+      },
+      {
+        "Name": "Khanpur",
+        "latitude": 29.917894,
+        "longitude": 78.039279
+      },
+      {
+        "Name": "Manglaur",
+        "latitude": 29.80,
+        "longitude": 77.87
+      },
+      {
+        "Name": "Laksar",
+        "latitude": 29.749,
+        "longitude": 78.024
+      },
+      {
+        "Name": "Haridwar Rural",
+        "latitude": 29.917894,
+        "longitude": 78.039279
+      }
+    ]
+  }
+]

@@ -1,0 +1,1402 @@
+[
+  {
+    "constituency_no": 1,
+    "name": "Purola",
+    "turnout_percentage": "73.38",
+    "winner": {
+      "candidate": "Raj Kumar",
+      "party": "INC",
+      "votes": "17,798",
+      "percentage": "36.49"
+    },
+    "runner_up": {
+      "candidate": "Mal Chand",
+      "party": "BJP",
+      "votes": "16,785",
+      "percentage": "34.41"
+    },
+    "margin": "1,013",
+    "elected_member": "Raj Kumar",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 2,
+    "name": "Yamunotri",
+    "turnout_percentage": "66.91",
+    "winner": {
+      "candidate": "Kedar Singh Rawat",
+      "party": "BJP",
+      "votes": "19,800",
+      "percentage": "42.41"
+    },
+    "runner_up": {
+      "candidate": "Sanjay Dobhal",
+      "party": "INC",
+      "votes": "13,840",
+      "percentage": "29.64"
+    },
+    "margin": "5,960",
+    "elected_member": "Kedar Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 3,
+    "name": "Gangotri",
+    "turnout_percentage": "67.53",
+    "winner": {
+      "candidate": "Gopal Singh Rawat",
+      "party": "BJP",
+      "votes": "25,683",
+      "percentage": "46.93"
+    },
+    "runner_up": {
+      "candidate": "Vijaypal Singh Sajwan",
+      "party": "INC",
+      "votes": "16,073",
+      "percentage": "29.37"
+    },
+    "margin": "9,610",
+    "elected_member": "Gopal Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 4,
+    "name": "Badrinath",
+    "turnout_percentage": "62.32",
+    "winner": {
+      "candidate": "Mahendra Bhatt",
+      "party": "BJP",
+      "votes": "29,676",
+      "percentage": "47.31"
+    },
+    "runner_up": {
+      "candidate": "Rajendra Singh Bhandari",
+      "party": "INC",
+      "votes": "24,042",
+      "percentage": "38.33"
+    },
+    "margin": "5,634",
+    "elected_member": "Mahendra Bhatt",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 5,
+    "name": "Tharali",
+    "turnout_percentage": "57.17",
+    "winner": {
+      "candidate": "Magan Lal Shah",
+      "party": "BJP",
+      "votes": "25,931",
+      "percentage": "45.37"
+    },
+    "runner_up": {
+      "candidate": "Prof. Jeet Ram",
+      "party": "INC",
+      "votes": "21,073",
+      "percentage": "36.87"
+    },
+    "margin": "4,864",
+    "elected_member": "Magan Lal Shah",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 6,
+    "name": "Karnaprayag",
+    "turnout_percentage": "56.57",
+    "winner": {
+      "candidate": "Surendra Singh Negi",
+      "party": "BJP",
+      "votes": "28,159",
+      "percentage": "52.50"
+    },
+    "runner_up": {
+      "candidate": "Anusuya Prasad Maikhuri",
+      "party": "INC",
+      "votes": "20,610",
+      "percentage": "38.42"
+    },
+    "margin": "7,549",
+    "elected_member": "Surendra Singh Negi",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 7,
+    "name": "Kedarnath",
+    "turnout_percentage": "65.25",
+    "winner": {
+      "candidate": "Manoj Rawat",
+      "party": "INC",
+      "votes": "13,906",
+      "percentage": "25.06"
+    },
+    "runner_up": {
+      "candidate": "Kuldip Singh Rawat",
+      "party": "IND",
+      "votes": "13,037",
+      "percentage": "23.49"
+    },
+    "margin": "869",
+    "elected_member": "Manoj Rawat",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 8,
+    "name": "Rudraprayag",
+    "turnout_percentage": "58.96",
+    "winner": {
+      "candidate": "Bharat Singh Rawat",
+      "party": "BJP",
+      "votes": "29,333",
+      "percentage": "51.54"
+    },
+    "runner_up": {
+      "candidate": "Lakshmi Singh Rana",
+      "party": "INC",
+      "votes": "14,701",
+      "percentage": "25.83"
+    },
+    "margin": "16,632",
+    "elected_member": "Bharat Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 9,
+    "name": "Ghansali",
+    "turnout_percentage": "49.03",
+    "winner": {
+      "candidate": "Shakti Lal Shah",
+      "party": "BJP",
+      "votes": "22,103",
+      "percentage": "50.46"
+    },
+    "runner_up": {
+      "candidate": "Dhani Lal Shah",
+      "party": "IND",
+      "votes": "10,450",
+      "percentage": "23.86"
+    },
+    "margin": "11,653",
+    "elected_member": "Shakti Lal Shah",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 10,
+    "name": "Devprayag",
+    "turnout_percentage": "53.03",
+    "winner": {
+      "candidate": "Vinod Kandari",
+      "party": "BJP",
+      "votes": "13,824",
+      "percentage": "31.97"
+    },
+    "runner_up": {
+      "candidate": "Diwakar Bhatt",
+      "party": "IND",
+      "votes": "10,325",
+      "percentage": "23.97"
+    },
+    "margin": "3,499",
+    "elected_member": "Vinod Kandari",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 11,
+    "name": "Narendranagar",
+    "turnout_percentage": "53.03",
+    "winner": {
+      "candidate": "Subodh Uniyal",
+      "party": "BJP",
+      "votes": "24,104",
+      "percentage": "46.37"
+    },
+    "runner_up": {
+      "candidate": "Om Gopal Rawat",
+      "party": "IND",
+      "votes": "19,132",
+      "percentage": "36.81"
+    },
+    "margin": "4,972",
+    "elected_member": "Subodh Uniyal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 12,
+    "name": "Pratapnagar",
+    "turnout_percentage": "51.23",
+    "winner": {
+      "candidate": "Vijay Singh Panwar",
+      "party": "BJP",
+      "votes": "15,058",
+      "percentage": "36.93"
+    },
+    "runner_up": {
+      "candidate": "Vikram Singh Negi",
+      "party": "INC",
+      "votes": "13,119",
+      "percentage": "32.17"
+    },
+    "margin": "1,939",
+    "elected_member": "Vijay Singh Panwar",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 13,
+    "name": "Tehri",
+    "turnout_percentage": "54.65",
+    "winner": {
+      "candidate": "Dhan Singh Negi",
+      "party": "BJP",
+      "votes": "20,896",
+      "percentage": "47.62"
+    },
+    "runner_up": {
+      "candidate": "Dinesh Dhanai",
+      "party": "IND",
+      "votes": "14,056",
+      "percentage": "32.02"
+    },
+    "margin": "6,840",
+    "elected_member": "Dhan Singh Negi",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 14,
+    "name": "Dhanaulti",
+    "turnout_percentage": "64.42",
+    "winner": {
+      "candidate": "Pritam Singh Panwar",
+      "party": "IND",
+      "votes": "17,811",
+      "percentage": "36.45"
+    },
+    "runner_up": {
+      "candidate": "Narayan Singh Rana",
+      "party": "BJP",
+      "votes": "16,196",
+      "percentage": "33.14"
+    },
+    "margin": "1,615",
+    "elected_member": "Pritam Singh Panwar",
+    "party_affiliation": "Independent"
+  },
+  {
+    "constituency_no": 15,
+    "name": "Chakrata",
+    "turnout_percentage": "72.19",
+    "winner": {
+      "candidate": "Pritam Singh",
+      "party": "INC",
+      "votes": "34,968",
+      "percentage": "48.91"
+    },
+    "runner_up": {
+      "candidate": "Madhu Chauhan",
+      "party": "BJP",
+      "votes": "33,425",
+      "percentage": "46.75"
+    },
+    "margin": "1,543",
+    "elected_member": "Pritam Singh",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 16,
+    "name": "Vikasnagar",
+    "turnout_percentage": "70.58",
+    "winner": {
+      "candidate": "Munna Singh Chauhan",
+      "party": "BJP",
+      "votes": "38,895",
+      "percentage": "50.76"
+    },
+    "runner_up": {
+      "candidate": "Nav Prabhat",
+      "party": "INC",
+      "votes": "32,477",
+      "percentage": "42.38"
+    },
+    "margin": "6,508",
+    "elected_member": "Munna Singh Chauhan",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 17,
+    "name": "Sahaspur",
+    "turnout_percentage": "72.80",
+    "winner": {
+      "candidate": "Sahdev Singh Pundir",
+      "party": "BJP",
+      "votes": "44,055",
+      "percentage": "40.75"
+    },
+    "runner_up": {
+      "candidate": "Kishore Upadhyaya",
+      "party": "INC",
+      "votes": "25,192",
+      "percentage": "23.30"
+    },
+    "margin": "18,863",
+    "elected_member": "Sahdev Singh Pundir",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 18,
+    "name": "Dharampur",
+    "turnout_percentage": "57.43",
+    "winner": {
+      "candidate": "Vinod Chamoli",
+      "party": "BJP",
+      "votes": "53,828",
+      "percentage": "50.96"
+    },
+    "runner_up": {
+      "candidate": "Dinesh Agrawal",
+      "party": "INC",
+      "votes": "42,875",
+      "percentage": "40.59"
+    },
+    "margin": "10,953",
+    "elected_member": "Vinod Chamoli",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 19,
+    "name": "Raipur",
+    "turnout_percentage": "59.64",
+    "winner": {
+      "candidate": "Umesh Sharma 'Kau'",
+      "party": "BJP",
+      "votes": "59,764",
+      "percentage": "61.07"
+    },
+    "runner_up": {
+      "candidate": "Prabhulal Bahuguna",
+      "party": "INC",
+      "votes": "22,993",
+      "percentage": "23.49"
+    },
+    "margin": "36,771",
+    "elected_member": "Umesh Sharma 'Kau'",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 20,
+    "name": "Rajpur Road",
+    "turnout_percentage": "57.97",
+    "winner": {
+      "candidate": "Khajan Dass",
+      "party": "BJP",
+      "votes": "36,601",
+      "percentage": "53.22"
+    },
+    "runner_up": {
+      "candidate": "Raj Kumar",
+      "party": "INC",
+      "votes": "27,969",
+      "percentage": "40.67"
+    },
+    "margin": "8,632",
+    "elected_member": "Khajan Dass",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 21,
+    "name": "Dehradun Cantonment",
+    "turnout_percentage": "57.07",
+    "winner": {
+      "candidate": "Harbans Kapoor",
+      "party": "BJP",
+      "votes": "41,142",
+      "percentage": "56.98"
+    },
+    "runner_up": {
+      "candidate": "Suryakant Dhasmana",
+      "party": "INC",
+      "votes": "24,472",
+      "percentage": "33.89"
+    },
+    "margin": "16,670",
+    "elected_member": "Harbans Kapoor",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 22,
+    "name": "Mussoorie",
+    "turnout_percentage": "57.91",
+    "winner": {
+      "candidate": "Ganesh Joshi",
+      "party": "BJP",
+      "votes": "41,322",
+      "percentage": "55.14"
+    },
+    "runner_up": {
+      "candidate": "Godavari Thapli",
+      "party": "INC",
+      "votes": "29,245",
+      "percentage": "39.02"
+    },
+    "margin": "12,077",
+    "elected_member": "Ganesh Joshi",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 23,
+    "name": "Doiwala",
+    "turnout_percentage": "67.83",
+    "winner": {
+      "candidate": "Trivendra Singh Rawat",
+      "party": "BJP",
+      "votes": "58,502",
+      "percentage": "61.08"
+    },
+    "runner_up": {
+      "candidate": "Hira Singh Bisht",
+      "party": "INC",
+      "votes": "33,633",
+      "percentage": "35.11"
+    },
+    "margin": "24,869",
+    "elected_member": "Trivendra Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 24,
+    "name": "Rishikesh",
+    "turnout_percentage": "64.70",
+    "winner": {
+      "candidate": "Premchand Aggarwal",
+      "party": "BJP",
+      "votes": "45,082",
+      "percentage": "46.20"
+    },
+    "runner_up": {
+      "candidate": "Rajpal Kharola",
+      "party": "INC",
+      "votes": "30,281",
+      "percentage": "31.03"
+    },
+    "margin": "14,801",
+    "elected_member": "Premchand Aggarwal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 25,
+    "name": "Haridwar",
+    "turnout_percentage": "65.18",
+    "winner": {
+      "candidate": "Madan Kaushik",
+      "party": "BJP",
+      "votes": "61,742",
+      "percentage": "66.45"
+    },
+    "runner_up": {
+      "candidate": "Brahmaswarup Brahmachari",
+      "party": "INC",
+      "votes": "25,815",
+      "percentage": "27.78"
+    },
+    "margin": "35,927",
+    "elected_member": "Madan Kaushik",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 26,
+    "name": "BHEL Ranipur",
+    "turnout_percentage": "70.65",
+    "winner": {
+      "candidate": "Adesh Chauhan",
+      "party": "BJP",
+      "votes": "56,644",
+      "percentage": "54.84"
+    },
+    "runner_up": {
+      "candidate": "Ambrish Kumar",
+      "party": "INC",
+      "votes": "34,404",
+      "percentage": "33.31"
+    },
+    "margin": "22,240",
+    "elected_member": "Adesh Chauhan",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 27,
+    "name": "Jwalapur",
+    "turnout_percentage": "66.91",
+    "winner": {
+      "candidate": "Suresh Rathod",
+      "party": "BJP",
+      "votes": "29,513",
+      "percentage": "34.22"
+    },
+    "runner_up": {
+      "candidate": "S. P. Singh 'Engineer'",
+      "party": "INC",
+      "votes": "24,725",
+      "percentage": "28.67"
+    },
+    "margin": "4,788",
+    "elected_member": "Suresh Rathod",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 28,
+    "name": "Bhagwanpur",
+    "turnout_percentage": "80.02",
+    "winner": {
+      "candidate": "Mamta Rakesh",
+      "party": "INC",
+      "votes": "44,882",
+      "percentage": "48.36"
+    },
+    "runner_up": {
+      "candidate": "Subodh Rakesh",
+      "party": "BJP",
+      "votes": "42,369",
+      "percentage": "45.66"
+    },
+    "margin": "2,513",
+    "elected_member": "Mamta Rakesh",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 29,
+    "name": "Jhabrera",
+    "turnout_percentage": "76.28",
+    "winner": {
+      "candidate": "Deshraj Karnwal",
+      "party": "BJP",
+      "votes": "32,146",
+      "percentage": "38.25"
+    },
+    "runner_up": {
+      "candidate": "Rajpal Singh",
+      "party": "INC",
+      "votes": "29,893",
+      "percentage": "35.57"
+    },
+    "margin": "2,253",
+    "elected_member": "Deshraj Karnwal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 30,
+    "name": "Piran Kaliyar",
+    "turnout_percentage": "81.52",
+    "winner": {
+      "candidate": "Furqan Ahmad",
+      "party": "INC",
+      "votes": "29,243",
+      "percentage": "32.43"
+    },
+    "runner_up": {
+      "candidate": "Jai Bhagwan",
+      "party": "BJP",
+      "votes": "27,894",
+      "percentage": "30.93"
+    },
+    "margin": "1,349",
+    "elected_member": "Furqan Ahmad",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 31,
+    "name": "Roorkee",
+    "turnout_percentage": "63.84",
+    "winner": {
+      "candidate": "Pradip Batra",
+      "party": "BJP",
+      "votes": "40,000",
+      "percentage": "55.58"
+    },
+    "runner_up": {
+      "candidate": "Suresh Chand Jain",
+      "party": "INC",
+      "votes": "27,458",
+      "percentage": "38.16"
+    },
+    "margin": "12,542",
+    "elected_member": "Pradip Batra",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 32,
+    "name": "Khanpur",
+    "turnout_percentage": "76.28",
+    "winner": {
+      "candidate": "Kunwar Pranav Singh 'Champion'",
+      "party": "BJP",
+      "votes": "53,192",
+      "percentage": "49.89"
+    },
+    "runner_up": {
+      "candidate": "Riyasat Ali",
+      "party": "BSP",
+      "votes": "39,457",
+      "percentage": "37.01"
+    },
+    "margin": "13,735",
+    "elected_member": "Pranav Singh 'Champion'",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 33,
+    "name": "Manglaur",
+    "turnout_percentage": "78.22",
+    "winner": {
+      "candidate": "Muhammad Nizamuddin",
+      "party": "INC",
+      "votes": "31,352",
+      "percentage": "38.75"
+    },
+    "runner_up": {
+      "candidate": "Sarwat Karim Ansari",
+      "party": "BSP",
+      "votes": "28,684",
+      "percentage": "35.45"
+    },
+    "margin": "2,668",
+    "elected_member": "Muhammad Nizamuddin",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 34,
+    "name": "Laksar",
+    "turnout_percentage": "81.94",
+    "winner": {
+      "candidate": "Sanjay Gupta",
+      "party": "BJP",
+      "votes": "25,248",
+      "percentage": "32.46"
+    },
+    "runner_up": {
+      "candidate": "Taslim Ahmad",
+      "party": "INC",
+      "votes": "23,644",
+      "percentage": "30.40"
+    },
+    "margin": "1,604",
+    "elected_member": "Sanjay Gupta",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 35,
+    "name": "Haridwar Rural",
+    "turnout_percentage": "81.71",
+    "winner": {
+      "candidate": "Yatishwaranand",
+      "party": "BJP",
+      "votes": "44,964",
+      "percentage": "46.08"
+    },
+    "runner_up": {
+      "candidate": "Harish Rawat",
+      "party": "INC",
+      "votes": "32,686",
+      "percentage": "33.50"
+    },
+    "margin": "12,278",
+    "elected_member": "Yatishwaranand",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 36,
+    "name": "Yamkeshwar",
+    "turnout_percentage": "52.70",
+    "winner": {
+      "candidate": "Ritu Khanduri Bhushan",
+      "party": "BJP",
+      "votes": "19,671",
+      "percentage": "43.96"
+    },
+    "runner_up": {
+      "candidate": "Renu Bisht",
+      "party": "IND",
+      "votes": "10,689",
+      "percentage": "23.89"
+    },
+    "margin": "8,982",
+    "elected_member": "Ritu Khanduri Bhushan",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 37,
+    "name": "Pauri",
+    "turnout_percentage": "51.83",
+    "winner": {
+      "candidate": "Mukesh Singh Koli",
+      "party": "BJP",
+      "votes": "24,469",
+      "percentage": "55.19"
+    },
+    "runner_up": {
+      "candidate": "Naval Kishor",
+      "party": "INC",
+      "votes": "19,439",
+      "percentage": "40.53"
+    },
+    "margin": "7,030",
+    "elected_member": "Mukesh Singh Koli",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 38,
+    "name": "Srinagar",
+    "turnout_percentage": "57.12",
+    "winner": {
+      "candidate": "Dr. Dhan Singh Rawat",
+      "party": "BJP",
+      "votes": "30,816",
+      "percentage": "51.84"
+    },
+    "runner_up": {
+      "candidate": "Ganesh Godiyal",
+      "party": "INC",
+      "votes": "22,118",
+      "percentage": "37.21"
+    },
+    "margin": "8,698",
+    "elected_member": "Dr. Dhan Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 39,
+    "name": "Chaubattakhal",
+    "turnout_percentage": "48.16",
+    "winner": {
+      "candidate": "Satpal Maharaj",
+      "party": "BJP",
+      "votes": "20,931",
+      "percentage": "31.23"
+    },
+    "runner_up": {
+      "candidate": "Rajpal Singh Bisht",
+      "party": "INC",
+      "votes": "13,567",
+      "percentage": "16.93"
+    },
+    "margin": "7,354",
+    "elected_member": "Satpal Maharaj",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 40,
+    "name": "Lansdowne",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Dilip Singh Rawat",
+      "party": "BJP",
+      "votes": "22,246",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Tejpal Singh Rawat",
+      "party": "INC",
+      "votes": "15,771",
+      "percentage": null
+    },
+    "margin": "6,475",
+    "elected_member": "Dilip Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 41,
+    "name": "Kotdwar",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Harak Singh Rawat",
+      "party": "BJP",
+      "votes": "39,859",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Surendra Singh Negi",
+      "party": "INC",
+      "votes": "28,541",
+      "percentage": null
+    },
+    "margin": "11,318",
+    "elected_member": "Dr. Harak Singh Rawat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 42,
+    "name": "Dharchula",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Harish Singh Dhami",
+      "party": "INC",
+      "votes": "25,597",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Virendra Singh Pal",
+      "party": "BJP",
+      "votes": "22,512",
+      "percentage": null
+    },
+    "margin": "3,085",
+    "elected_member": "Harish Singh Dhami",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 43,
+    "name": "Didihat",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Bishan Singh Chuphal",
+      "party": "BJP",
+      "votes": "17,392",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Kishan Bhandari",
+      "party": "IND",
+      "votes": "15,024",
+      "percentage": null
+    },
+    "margin": "2,368",
+    "elected_member": "Bishan Singh Chuphal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 44,
+    "name": "Pithoragarh",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Prakash Pant",
+      "party": "BJP",
+      "votes": "32,941",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Mayukh Singh Mahar",
+      "party": "INC",
+      "votes": "30,257",
+      "percentage": null
+    },
+    "margin": "2,684",
+    "elected_member": "Prakash Pant",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 45,
+    "name": "Gangolihat",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Meena Gangola",
+      "party": "BJP",
+      "votes": "20,418",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Narayan Ram Arya",
+      "party": "INC",
+      "votes": "19,613",
+      "percentage": null
+    },
+    "margin": "805",
+    "elected_member": "Mina Gangola",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 46,
+    "name": "Kapkot",
+    "turnout_percentage": "61.78",
+    "winner": {
+      "candidate": "Balwant Singh Bhauryal",
+      "party": "BJP",
+      "votes": "27,213",
+      "percentage": "46.39"
+    },
+    "runner_up": {
+      "candidate": "Lalit Pharswan",
+      "party": "INC",
+      "votes": "21,231",
+      "percentage": "36.19"
+    },
+    "margin": "5,982",
+    "elected_member": "Balwant Singh Bhauryal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 47,
+    "name": "Bageshwar",
+    "turnout_percentage": "59.86",
+    "winner": {
+      "candidate": "Chandan Ram Das",
+      "party": "BJP",
+      "votes": "33,792",
+      "percentage": "51.24"
+    },
+    "runner_up": {
+      "candidate": "Bal Krishna",
+      "party": "INC",
+      "votes": "19,225",
+      "percentage": "29.15"
+    },
+    "margin": "14,567",
+    "elected_member": "Chandan Ram Das",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 48,
+    "name": "Dwarahat",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Mahesh Singh Negi",
+      "party": "BJP",
+      "votes": "20,221",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Madan Singh Bisht",
+      "party": "INC",
+      "votes": "13,628",
+      "percentage": null
+    },
+    "margin": "6,593",
+    "elected_member": "Mahesh Singh Negi",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 49,
+    "name": "Salt",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Surendra Singh Jeena",
+      "party": "BJP",
+      "votes": "21,581",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Ganga Pancholi",
+      "party": "INC",
+      "votes": "18,677",
+      "percentage": null
+    },
+    "margin": "2,904",
+    "elected_member": "Surendra Singh Jeena",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 50,
+    "name": "Ranikhet",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Karan Mahra",
+      "party": "INC",
+      "votes": "19,035",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Ajay Bhatt",
+      "party": "BJP",
+      "votes": "14,054",
+      "percentage": null
+    },
+    "margin": "4,981",
+    "elected_member": "Karan Mahara",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 51,
+    "name": "Someshwar",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Rekha Arya",
+      "party": "BJP",
+      "votes": "23,107",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Rajendra Barakoti",
+      "party": "INC",
+      "votes": "22,397",
+      "percentage": null
+    },
+    "margin": "710",
+    "elected_member": "Rekha Arya",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 52,
+    "name": "Almora",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Raghunath Singh Chauhan",
+      "party": "BJP",
+      "votes": "26,464",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Manoj Tiwari",
+      "party": "INC",
+      "votes": "21,085",
+      "percentage": null
+    },
+    "margin": "5,379",
+    "elected_member": "Raghunath Singh Chauhan",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 53,
+    "name": "Jageshwar",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Govind Singh Kunjwal",
+      "party": "INC",
+      "votes": "24,132",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Subhash Pandey",
+      "party": "BJP",
+      "votes": "23,733",
+      "percentage": null
+    },
+    "margin": "399",
+    "elected_member": "Govind Singh Kunjwal",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 54,
+    "name": "Lohaghat",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Puran Singh Phartyal",
+      "party": "BJP",
+      "votes": "26,468",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Khushal Singh",
+      "party": "INC",
+      "votes": "26,320",
+      "percentage": null
+    },
+    "margin": "848",
+    "elected_member": "Puran Singh Phartyal",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 55,
+    "name": "Champawat",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Kailash Chandra Gahtori",
+      "party": "BJP",
+      "votes": "36,601",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Hemesh Kharkwal",
+      "party": "INC",
+      "votes": "19,241",
+      "percentage": null
+    },
+    "margin": "17,360",
+    "elected_member": "Kailash Chandra Gahtori",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 56,
+    "name": "Lalkuan",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Navin Chandra Dumka",
+      "party": "BJP",
+      "votes": "44,293",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Harish Chandra Durgapal",
+      "party": "INC",
+      "votes": "17,185",
+      "percentage": null
+    },
+    "margin": "27,108",
+    "elected_member": "Navin Chandra Dumka",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 57,
+    "name": "Bhimtal",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Ram Singh Kaira",
+      "party": "IND",
+      "votes": "18,878",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Govind Singh Bisht",
+      "party": "BJP",
+      "votes": "15,432",
+      "percentage": null
+    },
+    "margin": "3,446",
+    "elected_member": "Ram Singh Kaira",
+    "party_affiliation": "Independent"
+  },
+  {
+    "constituency_no": 58,
+    "name": "Nainital",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Sanjiv Arya",
+      "party": "BJP",
+      "votes": "30,036",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Sarita Arya",
+      "party": "INC",
+      "votes": "22,789",
+      "percentage": null
+    },
+    "margin": "7,247",
+    "elected_member": "Sanjiv Arya",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 59,
+    "name": "Haldwani",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Indira Hridayesh",
+      "party": "INC",
+      "votes": "43,786",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Dr. Jogendra Pal Singh Rautela",
+      "party": "BJP",
+      "votes": "37,229",
+      "percentage": null
+    },
+    "margin": "6,557",
+    "elected_member": "Dr. Indira Hridayesh",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 60,
+    "name": "Kaladhungi",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Banshidhar Bhagat",
+      "party": "BJP",
+      "votes": "45,704",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Prakash Joshi",
+      "party": "INC",
+      "votes": "25,107",
+      "percentage": null
+    },
+    "margin": "20,597",
+    "elected_member": "Banshidhar Bhagat",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 61,
+    "name": "Ramnagar",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Diwan Singh Bisht",
+      "party": "BJP",
+      "votes": "35,839",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Ranjit Singh Rawat",
+      "party": "INC",
+      "votes": "27,228",
+      "percentage": null
+    },
+    "margin": "8,611",
+    "elected_member": "Diwan Singh Bisht",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 62,
+    "name": "Jaspur",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Adesh Singh Chauhan",
+      "party": "INC",
+      "votes": "42,551",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Dr. Shailendra Mohan Singhal",
+      "party": "BJP",
+      "votes": "38,347",
+      "percentage": null
+    },
+    "margin": "4,204",
+    "elected_member": "Adesh Singh Chauhan",
+    "party_affiliation": "INC"
+  },
+  {
+    "constituency_no": 63,
+    "name": "Kashipur",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Harbhajan Singh Cheema",
+      "party": "BJP",
+      "votes": "50,156",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Manoj Joshi",
+      "party": "INC",
+      "votes": "30,042",
+      "percentage": null
+    },
+    "margin": "20,114",
+    "elected_member": "Harbhajan Singh Cheema",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 64,
+    "name": "Bajpur",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Yashpal Arya",
+      "party": "BJP",
+      "votes": "54,965",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Sunita Tamta",
+      "party": "INC",
+      "votes": "42,329",
+      "percentage": null
+    },
+    "margin": "12,636",
+    "elected_member": "Yashpal Arya",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 65,
+    "name": "Gadarpur",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Arvind Pandey",
+      "party": "BJP",
+      "votes": "41,530",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Rajendra Pal Singh",
+      "party": "INC",
+      "votes": "27,424",
+      "percentage": null
+    },
+    "margin": "14,106",
+    "elected_member": "Arvind Pandey",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 66,
+    "name": "Rudrapur",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Rajkumar Thukral",
+      "party": "BJP",
+      "votes": "68,754",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Tilak Raj Behar",
+      "party": "INC",
+      "votes": "43,983",
+      "percentage": null
+    },
+    "margin": "24,771",
+    "elected_member": "Rajkumar Thukral",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 67,
+    "name": "Kichha",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Rajesh Shukla",
+      "party": "BJP",
+      "votes": "40,363",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Harish Rawat",
+      "party": "INC",
+      "votes": "38,236",
+      "percentage": null
+    },
+    "margin": "2,127",
+    "elected_member": "Rajesh Shukla",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 68,
+    "name": "Sitarganj",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Saurabh Bahuguna",
+      "party": "BJP",
+      "votes": "50,597",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Malti Biswas",
+      "party": "INC",
+      "votes": "22,147",
+      "percentage": null
+    },
+    "margin": "28,450",
+    "elected_member": "Saurabh Bahuguna",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 69,
+    "name": "Nanakmatta",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Prem Singh Rana",
+      "party": "BJP",
+      "votes": "42,785",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Gopal Singh Rana",
+      "party": "INC",
+      "votes": "33,254",
+      "percentage": null
+    },
+    "margin": "9,531",
+    "elected_member": "Dr. Prem Singh Rana",
+    "party_affiliation": "BJP"
+  },
+  {
+    "constituency_no": 70,
+    "name": "Khatima",
+    "turnout_percentage": null,
+    "winner": {
+      "candidate": "Pushkar Singh Dhami",
+      "party": "BJP",
+      "votes": "29,539",
+      "percentage": null
+    },
+    "runner_up": {
+      "candidate": "Bhuwan Chandra Kapri",
+      "party": "INC",
+      "votes": "26,830",
+      "percentage": null
+    },
+    "margin": "2,709",
+    "elected_member": "Pushkar Singh Dhami",
+    "party_affiliation": "BJP"
+  }
+]

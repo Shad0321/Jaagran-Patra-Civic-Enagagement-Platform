@@ -1,0 +1,87 @@
+{
+  "election_name": "2017 Uttarakhand Legislative Assembly election",
+  "election_date": "15 February 2017",
+  "results_declaration_date": "11 March 2017",
+  "total_seats": 70,
+  "seats_needed_for_majority": 36,
+  "chief_minister_before_election": {
+    "name": "Harish Rawat",
+    "party": "INC"
+  },
+  "elected_chief_minister": {
+    "name": "Trivendra Singh Rawat",
+    "party": "BJP"
+  },
+  "parties_and_alliances": [
+    {
+      "party": "Bharatiya Janata Party",
+      "leader": "Trivendra Singh Rawat",
+      "contesting_seats": 70
+    },
+    {
+      "party": "Indian National Congress",
+      "leader": "Harish Rawat",
+      "contesting_seats": 70
+    },
+    {
+      "party": "Bahujan Samaj Party",
+      "leader": "Mayawati",
+      "contesting_seats": 69
+    },
+    {
+      "party": "Uttarakhand Kranti Dal",
+      "contesting_seats": 63
+    }
+  ],
+  "party_wise_results": [
+    {
+      "party": "Bharatiya Janata Party (BJP)",
+      "votes": "2,314,250",
+      "vote_percentage": "46.5%",
+      "seats_won": 57,
+      "seat_change": "▲26"
+    },
+    {
+      "party": "Indian National Congress (INC)",
+      "votes": "1,666,379",
+      "vote_percentage": "33.5%",
+      "seats_won": 11,
+      "seat_change": "▼21"
+    },
+    {
+      "party": "Bahujan Samaj Party (BSP)",
+      "votes": "347,533",
+      "vote_percentage": "7.0%",
+      "seats_won": 0,
+      "seat_change": "▼3"
+    },
+    {
+      "party": "Uttarakhand Kranti Dal (UKD)",
+      "votes": "37,041",
+      "vote_percentage": "0.7%",
+      "seats_won": 0,
+      "seat_change": "▼1"
+    },
+    {
+      "party": "Samajwadi Party (SP)",
+      "votes": "18,202",
+      "vote_percentage": "0.4%",
+      "seats_won": 0,
+      "seat_change": null
+    },
+    {
+      "party": "Independents (IND)",
+      "votes": "499,674",
+      "vote_percentage": "10.0%",
+      "seats_won": 2,
+      "seat_change": "▼1"
+    },
+    {
+      "party": "None of the Above (NOTA)",
+      "votes": "50,439",
+      "vote_percentage": "1.0%",
+      "seats_won": null,
+      "seat_change": null
+    }
+  ]
+}
