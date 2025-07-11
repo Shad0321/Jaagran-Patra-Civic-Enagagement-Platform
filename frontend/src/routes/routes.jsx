@@ -1,70 +1,73 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "../App.jsx";
-import Home from "../pages/Home.jsx";
-import Login from "../pages/Login.jsx";
-import SignUp from "../pages/SignUp.jsx";
-import Dashboard from "../pages/Dashboard.jsx";
-import ChooseLanguage from "../pages/ChooseLanguage.jsx";
-import ProtectedRoute from "../components/common/ProtectedRoute.jsx";
-import LanguageGuard from "../components/common/LanguageGuard.jsx";
-import Settings from "../pages/Settings.jsx";
-import Profile from "../pages/Profile.jsx";
-
+import { createBrowserRouter } from 'react-router-dom';
+import App from '../App.jsx';
+import Home from '../pages/Home.jsx';
+import Login from '../pages/Login.jsx';
+import SignUp from '../pages/SignUp.jsx';
+import Dashboard from '../pages/Dashboard.jsx';
+import ChooseLanguage from '../pages/ChooseLanguage.jsx';
+import ForgotPassword from '../pages/ForgotPassword.jsx';
+import ResetPassword from '../pages/ResetPassword.jsx';
+import ProtectedRoute from '../components/common/ProtectedRoute.jsx';
+import LanguageGuard from '../components/common/LanguageGuard.jsx';
+import Settings from '../pages/Settings.jsx';
+import Profile from '../pages/Profile.jsx';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <App />, 
+    path: '/',
+    element: <App />,
     children: [
       { index: true, element: <Home /> },
-      { path: "choose-language", element: <ChooseLanguage /> },
-      { 
-        path: "login", 
+      { path: 'choose-language', element: <ChooseLanguage /> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'reset-password', element: <ResetPassword /> },
+      {
+        path: 'login',
         element: (
           <LanguageGuard>
             <Login />
           </LanguageGuard>
-        )
+        ),
       },
-      { 
-        path: "signup", 
+      {
+        path: 'signup',
         element: (
           <LanguageGuard>
             <SignUp />
           </LanguageGuard>
-        )
+        ),
       },
-      { 
-        path: "dashboard", 
+      {
+        path: 'dashboard',
         element: (
           <LanguageGuard>
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
           </LanguageGuard>
-        )
+        ),
       },
       {
-        path: "settings",
+        path: 'settings',
         element: (
           <LanguageGuard>
             <ProtectedRoute>
-              <Settings/>
+              <Settings />
             </ProtectedRoute>
           </LanguageGuard>
-        )
+        ),
       },
       {
-        path: "my-account",
+        path: 'my-account',
         element: (
           <LanguageGuard>
             <ProtectedRoute>
-              <Profile/>
+              <Profile />
             </ProtectedRoute>
           </LanguageGuard>
-        )
-      }
-    //   { path: "*", element: <NotFound /> },
+        ),
+      },
+      //   { path: "*", element: <NotFound /> },
     ],
   },
 ]);

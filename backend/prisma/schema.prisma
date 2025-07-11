@@ -32,6 +32,21 @@ enum IssuePriority {
   URGENT
 }
 
+enum UpdateType {
+  MEMBER_UPDATE    // Updates from assigned MEMBER
+  CITIZEN_COMMENT  // Comments from CITIZENS
+  STATUS_CHANGE    // System-generated status changes
+  ASSIGNMENT       // Assignment notifications
+}
+
+enum MediaType {
+  TEXT
+  AUDIO
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
 enum SessionStatus {
   SCHEDULED
   ONGOING
@@ -362,6 +377,11 @@ model Issue {
   status          IssueStatus @default(PENDING)
   priority        IssuePriority @default(MEDIUM)
   
+  // Media attachments for initial issue report
+  voiceNote       String?    // URL to voice recording
+  images          Json?      // Array of image URLs
+  isUrgent        Boolean @default(false)
+  
   // Location
   stateId         String
   districtId      String?
@@ -417,9 +437,20 @@ model IssueUpdate {
   id          String @id @default(cuid())
   issueId     String
   userId      String
-  message     String
+  message     String?
   status      IssueStatus?
-  attachments Json?
+  updateType  UpdateType @default(CITIZEN_COMMENT)
+  mediaType   MediaType @default(TEXT)
+  
+  // Media attachments for updates
+  audioUrl    String?    // URL to audio recording
+  imageUrls   Json?      // Array of image URLs
+  attachments Json?      // Other attachments
+  
+  // For member updates - additional tracking
+  hoursWorked Float?
+  progressPercentage Int?
+  nextSteps   String?
   
   issue       Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
   user        User @relation(fields: [userId], references: [id])
@@ -428,6 +459,7 @@ model IssueUpdate {
   
   @@index([issueId])
   @@index([userId])
+  @@index([updateType])
   @@index([createdAt])
   @@map("issue_updates")
 }

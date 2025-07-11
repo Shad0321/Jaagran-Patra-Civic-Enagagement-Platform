@@ -2,11 +2,19 @@ import { Router, Request, Response } from 'express';
 import prisma from '../config/database';
 import { asyncHandler } from '../middleware/validation';
 import authRoutes from './auth';
+import issueRoutes from './issues';
+import adminRoutes from './admin';
 
 const router = Router();
 
 // Auth routes
 router.use('/auth', authRoutes);
+
+// Issue routes
+router.use('/issues', issueRoutes);
+
+// Admin routes
+router.use('/admin', adminRoutes);
 
 // Health check endpoint
 router.get('/health', (req: Request, res: Response) => {

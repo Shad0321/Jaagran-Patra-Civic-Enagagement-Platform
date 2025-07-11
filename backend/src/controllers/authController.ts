@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, UserRole } from '@prisma/client';
+import { PrismaClient, UserRole, BodyType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest } from '../middleware/auth';
@@ -9,26 +9,18 @@ const prisma = new PrismaClient();
 const JWT_SECRET: string = process.env.JWT_SECRET || 'your_jwt_secret';
 const JWT_EXPIRES_IN: string = process.env.JWT_EXPIRY_TIME || '7d';
 
-// Register
+// Register (Public registration for CITIZENS only)
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log('Request body:', req.body); // Debugging line to log request body
-
-    const { email, phone, name, password, role } = req.body;
+    const { email, phone, name, password } = req.body;
 
     // Validate required fields
-    if (!email || !password || !name || !role) {
+    if (!email || !password || !name) {
       res.status(400).json({ error: 'Missing required fields' });
       return;
     }
 
-    // Validate role is a valid UserRole
-    const validRoles = ['ADMIN', 'CITIZEN', 'MLA', 'MEMBER'];
-    if (!validRoles.includes(role)) {
-      res.status(400).json({ error: 'Invalid role specified' });
-      return;
-    }
-
+    // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: { OR: [{ email }, { phone }] },
     });
@@ -40,33 +32,267 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const emailVerificationToken = Math.random().toString(36).substring(2, 15);
 
-    console.log('Creating user with data:', {
-      email,
-      phone,
-      name,
-      role,
-      hashedPassword: hashedPassword.substring(0, 10) + '...',
-      emailVerificationToken,
-    });
-
+    // Public registration defaults to CITIZEN role
     const user = await prisma.user.create({
       data: {
         email,
-        phone: phone || null, // Ensure null instead of undefined
+        phone: phone || null,
         name,
         password: hashedPassword,
-        role: role as UserRole,
+        role: 'CITIZEN',
         emailVerificationToken,
       },
     });
 
     await sendVerificationEmail(user.email, emailVerificationToken);
-    res
-      .status(201)
-      .json({ message: 'User registered. Please verify your email.' });
+    res.status(201).json({
+      message: 'User registered successfully. Please verify your email.',
+    });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed', details: error });
+  }
+};
+
+// Admin creates MLA
+export const createMLA = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const {
+      email,
+      phone,
+      name,
+      password,
+      constituencyId,
+      stateId,
+      districtId,
+      partyName,
+      position,
+      tenure,
+      bio,
+      achievements,
+      contactEmail,
+      contactPhone,
+      socialLinks,
+    } = req.body;
+
+    // Validate required fields
+    if (!email || !password || !name || !constituencyId || !stateId) {
+      res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findFirst({
+      where: { OR: [{ email }, { phone }] },
+    });
+    if (existingUser) {
+      res.status(409).json({ error: 'User already exists' });
+      return;
+    }
+
+    // Check if constituency exists
+    const constituency = await prisma.constituency.findUnique({
+      where: { id: constituencyId },
+    });
+    if (!constituency) {
+      res.status(400).json({ error: 'Invalid constituency' });
+      return;
+    }
+
+    // Check if MLA already exists for this constituency
+    const existingMLA = await prisma.mlaProfile.findFirst({
+      where: { constituencyId },
+    });
+    if (existingMLA) {
+      res
+        .status(409)
+        .json({ error: 'MLA already exists for this constituency' });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const emailVerificationToken = Math.random().toString(36).substring(2, 15);
+
+    // Create MLA user with profile
+    const user = await prisma.user.create({
+      data: {
+        email,
+        phone: phone || null,
+        name,
+        password: hashedPassword,
+        role: 'MLA',
+        stateId,
+        districtId,
+        constituencyId,
+        isVerified: true, // Admin-created users are pre-verified
+        emailVerificationToken,
+        mlaProfile: {
+          create: {
+            constituencyId,
+            partyName,
+            position,
+            tenure,
+            bio,
+            achievements,
+            contactEmail: contactEmail || email,
+            contactPhone: contactPhone || phone,
+            socialLinks: socialLinks || {},
+          },
+        },
+      },
+      include: {
+        mlaProfile: true,
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+      },
+    });
+
+    res.status(201).json({
+      message: 'MLA created successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        constituency: user.constituency,
+        mlaProfile: user.mlaProfile,
+      },
+    });
+  } catch (error) {
+    console.error('Create MLA error:', error);
+    res.status(500).json({ error: 'Failed to create MLA', details: error });
+  }
+};
+
+// MLA/Admin adds MEMBER
+export const addMember = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const {
+      email,
+      phone,
+      name,
+      password,
+      bodyType,
+      bodyId,
+      designation,
+      description,
+      stateId,
+      districtId,
+      constituencyId,
+      canReceiveIssues = true,
+      canUpdateIssues = true,
+      canCreateSessions = false,
+    } = req.body;
+
+    const currentUserId = req.user!.id;
+    const currentUserRole = req.user!.role;
+
+    // Validate required fields
+    if (!email || !password || !name || !bodyType) {
+      res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+
+    // Validate body type
+    const validBodyTypes = Object.values(BodyType);
+    if (!validBodyTypes.includes(bodyType)) {
+      res.status(400).json({ error: 'Invalid body type' });
+      return;
+    }
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findFirst({
+      where: { OR: [{ email }, { phone }] },
+    });
+    if (existingUser) {
+      res.status(409).json({ error: 'User already exists' });
+      return;
+    }
+
+    // Get the current user's details for validation
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      include: { mlaProfile: true },
+    });
+
+    if (!currentUser) {
+      res.status(404).json({ error: 'Current user not found' });
+      return;
+    }
+
+    // If bodyId is provided, validate it exists
+    if (bodyId) {
+      const body = await prisma.body.findUnique({
+        where: { id: bodyId },
+      });
+      if (!body) {
+        res.status(400).json({ error: 'Invalid body ID' });
+        return;
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const emailVerificationToken = Math.random().toString(36).substring(2, 15);
+
+    // Create MEMBER user with profile
+    const user = await prisma.user.create({
+      data: {
+        email,
+        phone: phone || null,
+        name,
+        password: hashedPassword,
+        role: 'MEMBER',
+        stateId: stateId || currentUser.stateId,
+        districtId: districtId || currentUser.districtId,
+        constituencyId: constituencyId || currentUser.constituencyId,
+        bodyId: bodyId || null,
+        mlaId: currentUserRole === 'MLA' ? currentUserId : null,
+        isVerified: true, // Admin/MLA created users are pre-verified
+        emailVerificationToken,
+        memberProfile: {
+          create: {
+            bodyType,
+            designation,
+            description,
+            canReceiveIssues,
+            canUpdateIssues,
+            canCreateSessions,
+          },
+        },
+      },
+      include: {
+        memberProfile: true,
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+        body: { select: { id: true, name: true, type: true } },
+        mla: { select: { id: true, name: true, email: true } },
+      },
+    });
+
+    res.status(201).json({
+      message: 'Member added successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        bodyType: user.memberProfile?.bodyType,
+        designation: user.memberProfile?.designation,
+        body: user.body,
+        mla: user.mla,
+      },
+    });
+  } catch (error) {
+    console.error('Add member error:', error);
+    res.status(500).json({ error: 'Failed to add member', details: error });
   }
 };
 
@@ -74,33 +300,328 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
-    const user = await prisma.user.findUnique({ where: { email } });
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        mlaProfile: true,
+        memberProfile: true,
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+        body: { select: { id: true, name: true, type: true } },
+      },
+    });
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ error: 'Invalid credentials' });
       return;
     }
+
     if (!user.isVerified) {
       res.status(403).json({ error: 'Email not verified' });
       return;
     }
-    const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    } as jwt.SignOptions);
+
+    if (!user.isActive) {
+      res.status(403).json({ error: 'Account is deactivated' });
+      return;
+    }
+
+    // Update login tracking
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        lastLogin: new Date(),
+        loginCount: { increment: 1 },
+      },
+    });
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        userId: user.id,
+        role: user.role,
+        email: user.email,
+      },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions
+    );
+
     res.json({
       token,
       user: {
         id: user.id,
         email: user.email,
-        role: user.role,
+        phone: user.phone,
         name: user.name,
+        role: user.role,
+        avatar: user.avatar,
+        state: user.state,
+        district: user.district,
+        constituency: user.constituency,
+        body: user.body,
+        profile: user.role === 'MLA' ? user.mlaProfile : user.memberProfile,
       },
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed', details: error });
   }
 };
 
-// Email Verification
+// Get Profile
+export const getProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        mlaProfile: true,
+        memberProfile: true,
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+        body: { select: { id: true, name: true, type: true } },
+        mla: { select: { id: true, name: true, email: true } },
+      },
+    });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        name: user.name,
+        role: user.role,
+        avatar: user.avatar,
+        isActive: user.isActive,
+        isVerified: user.isVerified,
+        state: user.state,
+        district: user.district,
+        constituency: user.constituency,
+        body: user.body,
+        mla: user.mla,
+        profile: user.role === 'MLA' ? user.mlaProfile : user.memberProfile,
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin,
+      },
+    });
+  } catch (error) {
+    console.error('Get profile error:', error);
+    res.status(500).json({ error: 'Failed to get profile', details: error });
+  }
+};
+
+// Update Profile
+export const updateProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+    const {
+      name,
+      phone,
+      avatar,
+      currentLatitude,
+      currentLongitude,
+      currentAddress,
+    } = req.body;
+
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (avatar) updateData.avatar = avatar;
+    if (currentLatitude)
+      updateData.currentLatitude = parseFloat(currentLatitude);
+    if (currentLongitude)
+      updateData.currentLongitude = parseFloat(currentLongitude);
+    if (currentAddress) updateData.currentAddress = currentAddress;
+
+    if (currentLatitude || currentLongitude || currentAddress) {
+      updateData.lastLocationUpdate = new Date();
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      include: {
+        mlaProfile: true,
+        memberProfile: true,
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+        body: { select: { id: true, name: true, type: true } },
+      },
+    });
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        name: user.name,
+        role: user.role,
+        avatar: user.avatar,
+        currentLatitude: user.currentLatitude,
+        currentLongitude: user.currentLongitude,
+        currentAddress: user.currentAddress,
+        profile: user.role === 'MLA' ? user.mlaProfile : user.memberProfile,
+      },
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Failed to update profile', details: error });
+  }
+};
+
+// Get Members (for MLA/Admin)
+export const getMembers = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+    const userRole = req.user!.role;
+    const { page = 1, limit = 10, bodyType, search } = req.query;
+
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const take = parseInt(limit as string);
+
+    let whereClause: any = {
+      role: 'MEMBER',
+    };
+
+    // Filter based on user role
+    if (userRole === 'MLA') {
+      whereClause.mlaId = userId;
+    }
+
+    // Add filters
+    if (bodyType) {
+      whereClause.memberProfile = {
+        bodyType: bodyType as BodyType,
+      };
+    }
+
+    if (search) {
+      whereClause.OR = [
+        { name: { contains: search as string, mode: 'insensitive' } },
+        { email: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+
+    const [members, total] = await Promise.all([
+      prisma.user.findMany({
+        where: whereClause,
+        include: {
+          memberProfile: true,
+          state: { select: { id: true, name: true } },
+          district: { select: { id: true, name: true } },
+          constituency: { select: { id: true, name: true } },
+          body: { select: { id: true, name: true, type: true } },
+          assignedIssues: {
+            select: {
+              id: true,
+              status: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take,
+      }),
+      prisma.user.count({ where: whereClause }),
+    ]);
+
+    res.json({
+      members: members.map((member) => ({
+        id: member.id,
+        email: member.email,
+        phone: member.phone,
+        name: member.name,
+        avatar: member.avatar,
+        isActive: member.isActive,
+        bodyType: member.memberProfile?.bodyType,
+        designation: member.memberProfile?.designation,
+        body: member.body,
+        state: member.state,
+        district: member.district,
+        constituency: member.constituency,
+        totalIssues: member.memberProfile?.totalIssues || 0,
+        resolvedIssues: member.memberProfile?.resolvedIssues || 0,
+        pendingIssues: member.memberProfile?.pendingIssues || 0,
+        assignedIssuesCount: member.assignedIssues.length,
+        createdAt: member.createdAt,
+      })),
+      pagination: {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        total,
+        pages: Math.ceil(total / parseInt(limit as string)),
+      },
+    });
+  } catch (error) {
+    console.error('Get members error:', error);
+    res.status(500).json({ error: 'Failed to get members', details: error });
+  }
+};
+
+// Get Bodies (for dropdowns)
+export const getBodies = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { stateId, districtId, constituencyId, type } = req.query;
+
+    let whereClause: any = {
+      isActive: true,
+    };
+
+    if (stateId) whereClause.stateId = stateId as string;
+    if (districtId) whereClause.districtId = districtId as string;
+    if (constituencyId) whereClause.constituencyId = constituencyId as string;
+    if (type) whereClause.type = type as BodyType;
+
+    const bodies = await prisma.body.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        type: true,
+        description: true,
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    res.json({ bodies });
+  } catch (error) {
+    console.error('Get bodies error:', error);
+    res.status(500).json({ error: 'Failed to get bodies', details: error });
+  }
+};
+
+// Export all the existing functions that weren't modified
 export const verifyEmail = async (
   req: Request,
   res: Response
@@ -122,7 +643,6 @@ export const verifyEmail = async (
   }
 };
 
-// Resend Verification Email
 export const resendVerificationEmail = async (
   req: Request,
   res: Response
@@ -152,14 +672,11 @@ export const resendVerificationEmail = async (
   }
 };
 
-// Initiate Password Reset
 export const initiatePasswordReset = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    console.log('Initiating password reset for:', req.body.email); // Debugging line to log email
-
     const { email } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
@@ -179,7 +696,6 @@ export const initiatePasswordReset = async (
   }
 };
 
-// Complete Password Reset
 export const completePasswordReset = async (
   req: Request,
   res: Response
@@ -211,29 +727,47 @@ export const completePasswordReset = async (
   }
 };
 
-// Logout (client-side: just delete token)
-export const logout = async (_req: Request, res: Response): Promise<void> => {
-  res.json({ message: 'Logged out' });
-};
+export const changePassword = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+    const { currentPassword, newPassword } = req.body;
 
-// Middleware for role-based access
-export const requireRole =
-  (roles: UserRole[]) => (req: any, res: Response, next: NextFunction) => {
-    const user = req.user;
-    if (!user || !roles.includes(user.role)) {
-      res.status(403).json({ error: 'Forbidden' });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
       return;
     }
-    next();
-  };
 
-// Token refresh (optional, if using refresh tokens)
+    if (!(await bcrypt.compare(currentPassword, user.password))) {
+      res.status(401).json({ error: 'Current password is incorrect' });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: 'Failed to change password', details: error });
+  }
+};
+
+export const logout = async (_req: Request, res: Response): Promise<void> => {
+  res.json({ message: 'Logged out successfully' });
+};
+
 export const refreshToken = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  // Implement if using refresh tokens
-
   res.status(501).json({ error: 'Not implemented' });
 };
 
@@ -277,187 +811,31 @@ export const verifyPhone = async (
   }
 };
 
-// Profile Management
-export const getProfile = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
+// Role-based access middleware
+export const requireRole =
+  (roles: UserRole[]) => (req: any, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!user || !roles.includes(user.role)) {
+      res.status(403).json({ error: 'Forbidden' });
       return;
     }
+    next();
+  };
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        phone: true,
-        name: true,
-        role: true,
-        avatar: true,
-        isActive: true,
-        isVerified: true,
-        lastLogin: true,
-        currentLatitude: true,
-        currentLongitude: true,
-        currentAddress: true,
-        lastLocationUpdate: true,
-        state: { select: { id: true, name: true, code: true } },
-        district: { select: { id: true, name: true, code: true } },
-        constituency: { select: { id: true, name: true, code: true } },
-        shaktiKendra: { select: { id: true, name: true, code: true } },
-        localBody: { select: { id: true, name: true, code: true } },
-        pollingBooth: { select: { id: true, name: true, code: true } },
-        mlaProfile: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    if (!user) {
-      res.status(404).json({ error: 'User not found' });
-      return;
-    }
-
-    res.json({ user });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get profile', details: error });
-  }
-};
-
-export const updateProfile = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    const {
-      name,
-      phone,
-      avatar,
-      stateId,
-      districtId,
-      constituencyId,
-      shaktiKendraId,
-      localBodyId,
-      pollingBoothId,
-    } = req.body;
-
-    const updateData: any = {};
-    if (name) updateData.name = name;
-    if (phone) updateData.phone = phone;
-    if (avatar) updateData.avatar = avatar;
-    if (stateId) updateData.stateId = stateId;
-    if (districtId) updateData.districtId = districtId;
-    if (constituencyId) updateData.constituencyId = constituencyId;
-    if (shaktiKendraId) updateData.shaktiKendraId = shaktiKendraId;
-    if (localBodyId) updateData.localBodyId = localBodyId;
-    if (pollingBoothId) updateData.pollingBoothId = pollingBoothId;
-
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: updateData,
-      select: {
-        id: true,
-        email: true,
-        phone: true,
-        name: true,
-        role: true,
-        avatar: true,
-        state: { select: { id: true, name: true, code: true } },
-        district: { select: { id: true, name: true, code: true } },
-        constituency: { select: { id: true, name: true, code: true } },
-        updatedAt: true,
-      },
-    });
-
-    res.json({ message: 'Profile updated successfully', user });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update profile', details: error });
-  }
-};
-
-export const changePassword = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      res
-        .status(400)
-        .json({ error: 'Current password and new password are required' });
-      return;
-    }
-
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      res.status(404).json({ error: 'User not found' });
-      return;
-    }
-
-    const isValidPassword = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
-
-    if (!isValidPassword) {
-      res.status(400).json({ error: 'Current password is incorrect' });
-      return;
-    }
-
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    await prisma.user.update({
-      where: { id: userId },
-      data: { password: hashedNewPassword },
-    });
-
-    res.json({ message: 'Password changed successfully' });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to change password', details: error });
-  }
-};
-
+// Update location
 export const updateLocation = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
+    const userId = req.user!.id;
     const { latitude, longitude, address } = req.body;
-
-    if (!latitude || !longitude) {
-      res.status(400).json({ error: 'Latitude and longitude are required' });
-      return;
-    }
 
     await prisma.user.update({
       where: { id: userId },
       data: {
-        currentLatitude: parseFloat(latitude),
-        currentLongitude: parseFloat(longitude),
+        currentLatitude: latitude ? parseFloat(latitude) : null,
+        currentLongitude: longitude ? parseFloat(longitude) : null,
         currentAddress: address || null,
         lastLocationUpdate: new Date(),
       },
@@ -471,348 +849,20 @@ export const updateLocation = async (
   }
 };
 
-// Subordinate Management
-export const getSubordinates = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    const userRole = req.user?.role;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    const { page = 1, limit = 10, type, isActive = true } = req.query;
-    const skip = (Number(page) - 1) * Number(limit);
-
-    const whereClause: any = { supervisorId: userId };
-    if (type) whereClause.type = type;
-    if (isActive !== undefined) whereClause.isActive = isActive === 'true';
-
-    const subordinateRelations = await prisma.subordinateRelation.findMany({
-      where: whereClause,
-      include: {
-        subordinate: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            role: true,
-            avatar: true,
-            isActive: true,
-            currentLatitude: true,
-            currentLongitude: true,
-            currentAddress: true,
-            lastLocationUpdate: true,
-            state: { select: { id: true, name: true, code: true } },
-            district: { select: { id: true, name: true, code: true } },
-            constituency: { select: { id: true, name: true, code: true } },
-            shaktiKendra: { select: { id: true, name: true, code: true } },
-            localBody: { select: { id: true, name: true, code: true } },
-            pollingBooth: { select: { id: true, name: true, code: true } },
-          },
-        },
-        state: { select: { id: true, name: true, code: true } },
-        district: { select: { id: true, name: true, code: true } },
-        constituency: { select: { id: true, name: true, code: true } },
-        shaktiKendra: { select: { id: true, name: true, code: true } },
-        localBody: { select: { id: true, name: true, code: true } },
-        pollingBooth: { select: { id: true, name: true, code: true } },
-      },
-      skip,
-      take: Number(limit),
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const total = await prisma.subordinateRelation.count({
-      where: whereClause,
-    });
-
-    res.json({
-      subordinates: subordinateRelations,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total,
-        pages: Math.ceil(total / Number(limit)),
-      },
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to get subordinates', details: error });
-  }
-};
-
-export const addSubordinate = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    const {
-      subordinateId,
-      type = 'DIRECT',
-      designation,
-      permissions,
-      stateId,
-      districtId,
-      constituencyId,
-      shaktiKendraId,
-      localBodyId,
-      pollingBoothId,
-    } = req.body;
-
-    if (!subordinateId) {
-      res.status(400).json({ error: 'Subordinate ID is required' });
-      return;
-    }
-
-    // Check if subordinate exists
-    const subordinate = await prisma.user.findUnique({
-      where: { id: subordinateId },
-    });
-    if (!subordinate) {
-      res.status(404).json({ error: 'Subordinate user not found' });
-      return;
-    }
-
-    // Check if relationship already exists
-    const existingRelation = await prisma.subordinateRelation.findUnique({
-      where: {
-        supervisorId_subordinateId: { supervisorId: userId, subordinateId },
-      },
-    });
-
-    if (existingRelation) {
-      res
-        .status(409)
-        .json({ error: 'Subordinate relationship already exists' });
-      return;
-    }
-
-    const subordinateRelation = await prisma.subordinateRelation.create({
-      data: {
-        supervisorId: userId,
-        subordinateId,
-        type,
-        designation,
-        permissions,
-        stateId,
-        districtId,
-        constituencyId,
-        shaktiKendraId,
-        localBodyId,
-        pollingBoothId,
-      },
-      include: {
-        subordinate: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            role: true,
-            avatar: true,
-          },
-        },
-      },
-    });
-
-    res
-      .status(201)
-      .json({ message: 'Subordinate added successfully', subordinateRelation });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to add subordinate', details: error });
-  }
-};
-
-export const updateSubordinate = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    const relationId = req.params.id;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    const {
-      type,
-      designation,
-      permissions,
-      isActive,
-      stateId,
-      districtId,
-      constituencyId,
-      shaktiKendraId,
-      localBodyId,
-      pollingBoothId,
-    } = req.body;
-
-    const updateData: any = {};
-    if (type) updateData.type = type;
-    if (designation) updateData.designation = designation;
-    if (permissions) updateData.permissions = permissions;
-    if (isActive !== undefined) updateData.isActive = isActive;
-    if (stateId) updateData.stateId = stateId;
-    if (districtId) updateData.districtId = districtId;
-    if (constituencyId) updateData.constituencyId = constituencyId;
-    if (shaktiKendraId) updateData.shaktiKendraId = shaktiKendraId;
-    if (localBodyId) updateData.localBodyId = localBodyId;
-    if (pollingBoothId) updateData.pollingBoothId = pollingBoothId;
-
-    const subordinateRelation = await prisma.subordinateRelation.update({
-      where: {
-        id: relationId,
-        supervisorId: userId, // Ensure only supervisor can update
-      },
-      data: updateData,
-      include: {
-        subordinate: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            role: true,
-            avatar: true,
-          },
-        },
-      },
-    });
-
-    res.json({
-      message: 'Subordinate updated successfully',
-      subordinateRelation,
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to update subordinate', details: error });
-  }
-};
-
-export const removeSubordinate = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    const relationId = req.params.id;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    await prisma.subordinateRelation.delete({
-      where: {
-        id: relationId,
-        supervisorId: userId, // Ensure only supervisor can delete
-      },
-    });
-
-    res.json({ message: 'Subordinate removed successfully' });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to remove subordinate', details: error });
-  }
-};
-
-export const getSubordinateHierarchy = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    // Get direct subordinates with their nested subordinates
-    const buildHierarchy = async (
-      supervisorId: string,
-      depth = 0
-    ): Promise<any[]> => {
-      if (depth > 3) return []; // Prevent infinite recursion
-
-      const relations = await prisma.subordinateRelation.findMany({
-        where: { supervisorId, isActive: true },
-        include: {
-          subordinate: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              phone: true,
-              role: true,
-              avatar: true,
-              currentLatitude: true,
-              currentLongitude: true,
-              currentAddress: true,
-              state: { select: { id: true, name: true, code: true } },
-              district: { select: { id: true, name: true, code: true } },
-              constituency: { select: { id: true, name: true, code: true } },
-              shaktiKendra: { select: { id: true, name: true, code: true } },
-              localBody: { select: { id: true, name: true, code: true } },
-              pollingBooth: { select: { id: true, name: true, code: true } },
-            },
-          },
-        },
-      });
-
-      const hierarchyNodes = [];
-      for (const relation of relations) {
-        const subSubordinates = await buildHierarchy(
-          relation.subordinateId,
-          depth + 1
-        );
-        hierarchyNodes.push({
-          ...relation,
-          subordinates: subSubordinates,
-        });
-      }
-      return hierarchyNodes;
-    };
-
-    const hierarchy = await buildHierarchy(userId);
-    res.json({ hierarchy });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to get subordinate hierarchy', details: error });
-  }
-};
-
-// Admin Routes
+// Get all users (Admin only)
 export const getAllUsers = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const { page = 1, limit = 10, role, isActive, search } = req.query;
-    const skip = (Number(page) - 1) * Number(limit);
+    const { page = 1, limit = 10, role, search } = req.query;
 
-    const whereClause: any = {};
-    if (role) whereClause.role = role;
-    if (isActive !== undefined) whereClause.isActive = isActive === 'true';
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const take = parseInt(limit as string);
+
+    let whereClause: any = {};
+
+    if (role) whereClause.role = role as UserRole;
     if (search) {
       whereClause.OR = [
         { name: { contains: search as string, mode: 'insensitive' } },
@@ -820,353 +870,53 @@ export const getAllUsers = async (
       ];
     }
 
-    const users = await prisma.user.findMany({
-      where: whereClause,
-      select: {
-        id: true,
-        email: true,
-        phone: true,
-        name: true,
-        role: true,
-        avatar: true,
-        isActive: true,
-        isVerified: true,
-        lastLogin: true,
-        loginCount: true,
-        state: { select: { id: true, name: true, code: true } },
-        district: { select: { id: true, name: true, code: true } },
-        constituency: { select: { id: true, name: true, code: true } },
-        createdAt: true,
-        updatedAt: true,
-      },
-      skip,
-      take: Number(limit),
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const total = await prisma.user.count({ where: whereClause });
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where: whereClause,
+        include: {
+          mlaProfile: true,
+          memberProfile: true,
+          state: { select: { id: true, name: true } },
+          district: { select: { id: true, name: true } },
+          constituency: { select: { id: true, name: true } },
+          body: { select: { id: true, name: true, type: true } },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take,
+      }),
+      prisma.user.count({ where: whereClause }),
+    ]);
 
     res.json({
-      users,
+      users: users.map((user) => ({
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        name: user.name,
+        role: user.role,
+        avatar: user.avatar,
+        isActive: user.isActive,
+        isVerified: user.isVerified,
+        state: user.state,
+        district: user.district,
+        constituency: user.constituency,
+        body: user.body,
+        profile: user.role === 'MLA' ? user.mlaProfile : user.memberProfile,
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin,
+      })),
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
         total,
-        pages: Math.ceil(total / Number(limit)),
+        pages: Math.ceil(total / parseInt(limit as string)),
       },
     });
   } catch (error) {
+    console.error('Get all users error:', error);
     res.status(500).json({ error: 'Failed to get users', details: error });
-  }
-};
-
-export const getUserById = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-
-    const user = await prisma.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        email: true,
-        phone: true,
-        name: true,
-        role: true,
-        avatar: true,
-        isActive: true,
-        isVerified: true,
-        lastLogin: true,
-        loginCount: true,
-        currentLatitude: true,
-        currentLongitude: true,
-        currentAddress: true,
-        lastLocationUpdate: true,
-        state: { select: { id: true, name: true, code: true } },
-        district: { select: { id: true, name: true, code: true } },
-        constituency: { select: { id: true, name: true, code: true } },
-        shaktiKendra: { select: { id: true, name: true, code: true } },
-        localBody: { select: { id: true, name: true, code: true } },
-        pollingBooth: { select: { id: true, name: true, code: true } },
-        mlaProfile: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    if (!user) {
-      res.status(404).json({ error: 'User not found' });
-      return;
-    }
-
-    res.json({ user });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get user', details: error });
-  }
-};
-
-export const updateUser = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const {
-      name,
-      email,
-      phone,
-      role,
-      isActive,
-      stateId,
-      districtId,
-      constituencyId,
-    } = req.body;
-
-    const updateData: any = {};
-    if (name) updateData.name = name;
-    if (email) updateData.email = email;
-    if (phone) updateData.phone = phone;
-    if (role) updateData.role = role;
-    if (isActive !== undefined) updateData.isActive = isActive;
-    if (stateId) updateData.stateId = stateId;
-    if (districtId) updateData.districtId = districtId;
-    if (constituencyId) updateData.constituencyId = constituencyId;
-
-    const user = await prisma.user.update({
-      where: { id },
-      data: updateData,
-      select: {
-        id: true,
-        email: true,
-        phone: true,
-        name: true,
-        role: true,
-        isActive: true,
-        updatedAt: true,
-      },
-    });
-
-    res.json({ message: 'User updated successfully', user });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update user', details: error });
-  }
-};
-
-export const deleteUser = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-
-    await prisma.user.delete({ where: { id } });
-    res.json({ message: 'User deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete user', details: error });
-  }
-};
-
-export const activateUser = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-
-    const user = await prisma.user.update({
-      where: { id },
-      data: { isActive: true },
-      select: { id: true, name: true, email: true, isActive: true },
-    });
-
-    res.json({ message: 'User activated successfully', user });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to activate user', details: error });
-  }
-};
-
-export const deactivateUser = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-
-    const user = await prisma.user.update({
-      where: { id },
-      data: { isActive: false },
-      select: { id: true, name: true, email: true, isActive: true },
-    });
-
-    res.json({ message: 'User deactivated successfully', user });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to deactivate user', details: error });
-  }
-};
-
-// Location Routes
-export const getStates = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const states = await prisma.state.findMany({
-      select: {
-        id: true,
-        name: true,
-        code: true,
-        latitude: true,
-        longitude: true,
-      },
-      orderBy: { name: 'asc' },
-    });
-
-    res.json({ states });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get states', details: error });
-  }
-};
-
-export const getDistrictsByState = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { stateId } = req.params;
-
-    const districts = await prisma.district.findMany({
-      where: { stateId },
-      select: {
-        id: true,
-        name: true,
-        code: true,
-        latitude: true,
-        longitude: true,
-        state: { select: { id: true, name: true, code: true } },
-      },
-      orderBy: { name: 'asc' },
-    });
-
-    res.json({ districts });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get districts', details: error });
-  }
-};
-
-export const getConstituenciesByDistrict = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { districtId } = req.params;
-
-    const constituencies = await prisma.constituency.findMany({
-      where: { districtId },
-      select: {
-        id: true,
-        name: true,
-        code: true,
-        type: true,
-        latitude: true,
-        longitude: true,
-        district: { select: { id: true, name: true, code: true } },
-        state: { select: { id: true, name: true, code: true } },
-      },
-      orderBy: { name: 'asc' },
-    });
-
-    res.json({ constituencies });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to get constituencies', details: error });
-  }
-};
-
-export const getShaktiKendrasByConstituency = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { constituencyId } = req.params;
-
-    const shaktiKendras = await prisma.shaktiKendra.findMany({
-      where: { constituencyId },
-      select: {
-        id: true,
-        name: true,
-        code: true,
-        latitude: true,
-        longitude: true,
-        constituency: { select: { id: true, name: true, code: true } },
-        district: { select: { id: true, name: true, code: true } },
-      },
-      orderBy: { name: 'asc' },
-    });
-
-    res.json({ shaktiKendras });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to get shakti kendras', details: error });
-  }
-};
-
-export const getLocalBodiesByShaktiKendra = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { shaktiKendraId } = req.params;
-
-    const localBodies = await prisma.localBody.findMany({
-      where: { shaktiKendraId },
-      select: {
-        id: true,
-        name: true,
-        type: true,
-        code: true,
-        latitude: true,
-        longitude: true,
-        shaktiKendra: { select: { id: true, name: true, code: true } },
-      },
-      orderBy: { name: 'asc' },
-    });
-
-    res.json({ localBodies });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to get local bodies', details: error });
-  }
-};
-
-export const getPollingBoothsByLocalBody = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { localBodyId } = req.params;
-
-    const pollingBooths = await prisma.pollingBooth.findMany({
-      where: { localBodyId },
-      select: {
-        id: true,
-        name: true,
-        code: true,
-        address: true,
-        latitude: true,
-        longitude: true,
-        localBody: { select: { id: true, name: true, code: true } },
-      },
-      orderBy: { name: 'asc' },
-    });
-
-    res.json({ pollingBooths });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to get polling booths', details: error });
   }
 };

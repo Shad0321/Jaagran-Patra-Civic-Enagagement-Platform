@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 // interface for request user
 export interface AuthenticatedRequest extends Request {
   user?: {
+    id: string;
     userId: string;
     role: string;
     iat?: number;

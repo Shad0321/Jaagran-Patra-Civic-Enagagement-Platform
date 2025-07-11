@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const data = await authAPI.login(credentials);
-      
+
       // Store token in localStorage
       if (data.token) {
         localStorage.setItem('token', data.token);
@@ -26,7 +26,7 @@ export const signupUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const data = await authAPI.signup(userData);
-      
+
       // Store token in localStorage if login is automatic after signup
       if (data.token) {
         localStorage.setItem('token', data.token);
@@ -45,10 +45,10 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await authAPI.logout();
-      
+
       // Clear token
       localStorage.removeItem('token');
-      
+
       return {};
     } catch (error) {
       // Still clear token on error
@@ -72,6 +72,71 @@ export const getUserProfile = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(error.message || 'Failed to fetch profile');
+    }
+  }
+);
+
+// Async thunk for updating user profile
+export const updateUserProfile = createAsyncThunk(
+  'user/updateProfile',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const data = await authAPI.updateProfile(userData);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Failed to update profile');
+    }
+  }
+);
+
+// Async thunk for change password
+export const changePassword = createAsyncThunk(
+  'user/changePassword',
+  async (passwordData, { rejectWithValue }) => {
+    try {
+      const data = await authAPI.changePassword(passwordData);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Failed to change password');
+    }
+  }
+);
+
+// Async thunk for forgot password
+export const forgotPassword = createAsyncThunk(
+  'user/forgotPassword',
+  async (email, { rejectWithValue }) => {
+    try {
+      const data = await authAPI.forgotPassword(email);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Failed to send reset email');
+    }
+  }
+);
+
+// Async thunk for reset password
+export const resetPassword = createAsyncThunk(
+  'user/resetPassword',
+  async (resetData, { rejectWithValue }) => {
+    try {
+      const data = await authAPI.resetPassword(resetData);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Failed to reset password');
+    }
+  }
+);
+
+// Async thunk for updating location
+export const updateLocation = createAsyncThunk(
+  'user/updateLocation',
+  async (locationData, { rejectWithValue }) => {
+    try {
+      const data = await authAPI.updateLocation(locationData);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Failed to update location');
     }
   }
 );
@@ -172,6 +237,72 @@ const userSlice = createSlice({
           state.isAuthenticated = false;
           state.token = null;
         }
+      })
+      // Update profile cases
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Change password cases
+      .addCase(changePassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Forgot password cases
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Reset password cases
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update location cases
+      .addCase(updateLocation.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateLocation.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updateLocation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

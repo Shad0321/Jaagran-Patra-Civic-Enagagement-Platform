@@ -13,9 +13,9 @@
 :root {
   --dmsans-reg-font: 'dmsans-regular', sans-serif;
   --poppons-font: 'poppons', sans-serif;
-  --primary-color: #00B074;
+  --primary-color: #00b074;
   --primary-dark: #ff9900;
-  --primary-light: #8DFF9E;
+  --primary-light: #8dff9e;
   --secondary-color: #ed2d24;
   --secondary-dark: #7c3aed;
   --secondary-light: #a78bfa;
@@ -24,7 +24,7 @@
   --warning-color: #f59e0b;
   --error-color: #ef4444;
   --dark-color: #0c0c0c;
-  --light-color: #EFF2FF;
+  --light-color: #eff2ff;
 }
 
 * {
