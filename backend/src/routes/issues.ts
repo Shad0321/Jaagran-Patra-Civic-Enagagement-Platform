@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { Response } from 'express';
-import { authenticate, authorize } from '../middleware/auth';
-import { AuthenticatedRequest } from '../middleware/auth';
+import { authenticate, authorize, AuthenticatedRequest } from '../middleware/auth';
 import { PrismaClient } from '@prisma/client';
 import { uploadIssueFiles, handleUploadError } from '../middleware/upload';
 import {
@@ -23,6 +22,50 @@ const prisma = new PrismaClient();
 const router = Router();
 
 // Routes
+
+/**
+ * @route   GET /api/issues/stats
+ * @desc    Get issue statistics
+ * @access  Private
+ */
+router.get('/stats', authenticate, getIssueStats);
+
+/**
+ * @route   GET /api/issues/assigned-to-me
+ * @desc    Get issues assigned to the current user (MLAs and Members)
+ * @access  Private (MLA, MEMBER)
+ */
+router.get(
+  '/assigned-to-me',
+  authenticate,
+  authorize(['MLA', 'MEMBER']),
+  getAssignedIssues
+);
+
+/**
+ * @route   GET /api/issues/my-issues
+ * @desc    Get issues reported by the current user (Citizens)
+ * @access  Private (CITIZEN)
+ */
+router.get(
+  '/my-issues',
+  authenticate,
+  authorize(['CITIZEN']),
+  getMyIssues
+);
+
+/**
+ * @route   GET /api/issues/:id
+ * @desc    Get a specific issue with all details
+ * @access  Private
+ */
+router.get(
+  '/:id',
+  authenticate,
+  [param('id').isString().notEmpty().withMessage('Issue ID is required')],
+  handleValidationErrors,
+  getIssueById
+);
 
 /**
  * @route   POST /api/issues
@@ -680,6 +723,10 @@ router.put(
     body('progressUpdate').isString().notEmpty().withMessage('Progress update is required'),
     body('status').optional().isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED']).withMessage('Invalid status'),
     body('estimatedCompletion').optional().isISO8601().withMessage('Invalid date format'),
+    body('progressPercentage').optional().isInt({ min: 0, max: 100 }).withMessage('Progress percentage must be between 0 and 100'),
+    body('hoursWorked').optional().isFloat({ min: 0 }).withMessage('Hours worked must be positive'),
+    body('nextSteps').optional().isString().withMessage('Next steps must be a string'),
+    body('attachments').optional().isArray().withMessage('Attachments must be an array'),
   ],
   handleValidationErrors,
   updateIssueProgress

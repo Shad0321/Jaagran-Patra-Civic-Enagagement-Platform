@@ -3,6 +3,7 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || [
     'http://localhost:3000',
+    'http://localhost:5173',
   ],
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret:

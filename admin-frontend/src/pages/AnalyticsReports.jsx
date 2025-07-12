@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { TrendingUp, Users, FileText, Clock, CheckCircle, Calendar, Download } from 'lucide-react';
 import api from '../utils/api';
@@ -28,22 +28,80 @@ const AnalyticsReports = () => {
 
   const COLORS = ['#3B82F6', '#EF4444', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899', '#6B7280'];
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [dateRange]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       const response = await api.get(`/admin/analytics?range=${dateRange}`);
-      setAnalytics(response.data);
+      const apiData = response.data?.data || {};
+      
+      // Map API response to expected format
+      const totalUsers = (apiData.userGrowth || []).reduce((sum, item) => sum + (item._count?._all || 0), 0);
+      const totalMLAs = (apiData.userGrowth || []).find(item => item.role === 'MLA')?._count?._all || 0;
+      const totalMembers = (apiData.userGrowth || []).find(item => item.role === 'MEMBER')?._count?._all || 0;
+      const totalIssues = (apiData.issueStats || []).reduce((sum, item) => sum + (item._count?._all || 0), 0);
+      const resolvedIssues = apiData.resolvedIssuesCount || 0;
+      const pendingIssues = (apiData.issueStats || []).find(item => item.status === 'PENDING')?._count?._all || 0;
+      
+      setAnalytics({
+        summary: {
+          totalUsers,
+          totalMLAs,
+          totalMembers,
+          totalIssues,
+          resolvedIssues,
+          pendingIssues,
+          totalSessions: 0,
+          averageResolutionTime: 0
+        },
+        issuesByCategory: (apiData.newsStats || []).map(item => ({
+          category: item.category || 'Unknown',
+          count: item._count?._all || 0
+        })),
+        issuesByStatus: (apiData.issueStats || []).map(item => ({
+          name: item.status || 'Unknown',
+          count: item._count?._all || 0
+        })),
+        issuesByMonth: [], // No month data in current API
+        mlaPerformance: [], // No MLA performance data in current API
+        userGrowth: (apiData.userGrowth || []).map(item => ({
+          month: item.role || 'Unknown',
+          users: item._count?._all || 0
+        })),
+        responseTimeMetrics: {
+          fastest: 0,
+          slowest: 0
+        }
+      });
     } catch (error) {
       toast.error('Failed to fetch analytics data');
       console.error('Error fetching analytics:', error);
+      // Set default values on error
+      setAnalytics({
+        summary: {
+          totalUsers: 0,
+          totalMLAs: 0,
+          totalMembers: 0,
+          totalIssues: 0,
+          resolvedIssues: 0,
+          pendingIssues: 0,
+          totalSessions: 0,
+          averageResolutionTime: 0
+        },
+        issuesByCategory: [],
+        issuesByStatus: [],
+        issuesByMonth: [],
+        mlaPerformance: [],
+        userGrowth: [],
+        responseTimeMetrics: {}
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [dateRange, fetchAnalytics]);
 
   const exportReport = async (format) => {
     try {
@@ -64,12 +122,12 @@ const AnalyticsReports = () => {
     }
   };
 
-  const StatCard = ({ title, value, subtitle, color, trend }) => (
+  const StatCard = ({ title, value, subtitle, color, trend, icon: Icon }) => (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-2xl font-bold text-gray-900">{value || 0}</p>
           {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
           {trend && (
             <div className={`flex items-center mt-2 text-sm ${trend.positive ? 'text-green-600' : 'text-red-600'}`}>
@@ -78,7 +136,7 @@ const AnalyticsReports = () => {
             </div>
           )}
         </div>
-        <Icon className="h-8 w-8" style={{ color }} />
+        {Icon && <Icon className="h-8 w-8" style={{ color }} />}
       </div>
     </div>
   );
@@ -130,28 +188,28 @@ const AnalyticsReports = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
           title="Total Users"
-          value={analytics.summary.totalUsers}
+          value={analytics.summary?.totalUsers || 0}
           icon={Users}
           color="#3B82F6"
           trend={{ positive: true, value: 12 }}
         />
         <StatCard
           title="Total Issues"
-          value={analytics.summary.totalIssues}
+          value={analytics.summary?.totalIssues || 0}
           icon={FileText}
           color="#EF4444"
-          subtitle={`${analytics.summary.resolvedIssues} resolved`}
+          subtitle={`${analytics.summary?.resolvedIssues || 0} resolved`}
         />
         <StatCard
           title="Pending Issues"
-          value={analytics.summary.pendingIssues}
+          value={analytics.summary?.pendingIssues || 0}
           icon={Clock}
           color="#F59E0B"
           trend={{ positive: false, value: 8 }}
         />
         <StatCard
           title="Resolution Rate"
-          value={`${Math.round((analytics.summary.resolvedIssues / analytics.summary.totalIssues) * 100)}%`}
+          value={`${Math.round(((analytics.summary?.resolvedIssues || 0) / (analytics.summary?.totalIssues || 1)) * 100)}%`}
           icon={CheckCircle}
           color="#10B981"
           trend={{ positive: true, value: 5 }}
@@ -164,7 +222,7 @@ const AnalyticsReports = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Issues by Category</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={analytics.issuesByCategory}>
+            <BarChart data={analytics.issuesByCategory || []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="category" />
               <YAxis />
@@ -180,7 +238,7 @@ const AnalyticsReports = () => {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={analytics.issuesByStatus}
+                data={analytics.issuesByStatus || []}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -202,7 +260,7 @@ const AnalyticsReports = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Issues Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={analytics.issuesByMonth}>
+            <LineChart data={analytics.issuesByMonth || []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -216,7 +274,7 @@ const AnalyticsReports = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">User Growth</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={analytics.userGrowth}>
+            <LineChart data={analytics.userGrowth || []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -260,24 +318,24 @@ const AnalyticsReports = () => {
               {(analytics.mlaPerformance || []).map((mla, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{mla.name}</div>
+                    <div className="text-sm font-medium text-gray-900">{mla.name || 'N/A'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.constituency}</div>
+                    <div className="text-sm text-gray-900">{mla.constituency || 'N/A'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.totalIssues}</div>
+                    <div className="text-sm text-gray-900">{mla.totalIssues || 0}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.resolvedIssues}</div>
+                    <div className="text-sm text-gray-900">{mla.resolvedIssues || 0}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {Math.round((mla.resolvedIssues / mla.totalIssues) * 100)}%
+                      {mla.totalIssues ? Math.round((mla.resolvedIssues / mla.totalIssues) * 100) : 0}%
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.avgResponseTime} hrs</div>
+                    <div className="text-sm text-gray-900">{mla.avgResponseTime || 0} hrs</div>
                   </td>
                 </tr>
               ))}
@@ -292,21 +350,21 @@ const AnalyticsReports = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-600 mb-2">
-              {analytics.summary.averageResolutionTime}
+              {analytics.summary?.averageResolutionTime || 0}
             </div>
             <div className="text-sm text-gray-600">Hours</div>
             <div className="text-xs text-gray-500">Average Resolution Time</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-green-600 mb-2">
-              {analytics.responseTimeMetrics.fastest || 0}
+              {analytics.responseTimeMetrics?.fastest || 0}
             </div>
             <div className="text-sm text-gray-600">Hours</div>
             <div className="text-xs text-gray-500">Fastest Resolution</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-red-600 mb-2">
-              {analytics.responseTimeMetrics.slowest || 0}
+              {analytics.responseTimeMetrics?.slowest || 0}
             </div>
             <div className="text-sm text-gray-600">Hours</div>
             <div className="text-xs text-gray-500">Slowest Resolution</div>

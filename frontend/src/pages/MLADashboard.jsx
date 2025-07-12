@@ -15,6 +15,9 @@ import {
 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import ProgressUpdateModal from '../components/ProgressUpdateModal';
+import MediaDisplay from '../components/common/MediaDisplay';
+import UpdateMediaDisplay from '../components/common/UpdateMediaDisplay';
 
 const MLADashboard = () => {
   const { user } = useSelector((state) => state.user);
@@ -30,11 +33,6 @@ const MLADashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [updateData, setUpdateData] = useState({
-    status: '',
-    progressUpdate: '',
-    estimatedCompletion: ''
-  });
 
   useEffect(() => {
     fetchDashboardData();
@@ -50,7 +48,9 @@ const MLADashboard = () => {
       
       // Fetch members under this MLA
       const membersResponse = await api.get('/admin/members?mlaId=' + user.id);
-      const members = membersResponse.data.data || [];
+      console.log('membersResponse', membersResponse.data);
+      
+      const members = membersResponse.data?.data?.members || [];
       
       // Calculate stats
       const stats = {
@@ -72,27 +72,13 @@ const MLADashboard = () => {
     }
   };
 
-  const handleUpdateIssue = async (issueId) => {
-    try {
-      await api.put(`/issues/${issueId}/update-progress`, updateData);
-      toast.success('Issue updated successfully');
-      setShowUpdateModal(false);
-      setSelectedIssue(null);
-      setUpdateData({ status: '', progressUpdate: '', estimatedCompletion: '' });
-      fetchDashboardData(); // Refresh data
-    } catch (error) {
-      console.error('Error updating issue:', error);
-      toast.error('Failed to update issue');
-    }
+  const handleUpdateIssue = async () => {
+    // This function is now handled by the ProgressUpdateModal component
+    fetchDashboardData(); // Refresh data after update
   };
 
   const openUpdateModal = (issue) => {
     setSelectedIssue(issue);
-    setUpdateData({
-      status: issue.status,
-      progressUpdate: '',
-      estimatedCompletion: issue.estimatedCompletion || ''
-    });
     setShowUpdateModal(true);
   };
 
@@ -256,10 +242,13 @@ const MLADashboard = () => {
                       <h3 className="font-medium text-gray-900 mb-1">{issue.title}</h3>
                       <p className="text-sm text-gray-600 mb-2 line-clamp-2">{issue.description}</p>
                       
+                      {/* Media Display */}
+                      <MediaDisplay issue={issue} className="mb-2" />
+                      
                       <div className="flex items-center space-x-4 text-xs text-gray-500 mb-2">
                         <div className="flex items-center">
                           <MapPin className="h-3 w-3 mr-1" />
-                          {issue.location || 'Location not specified'}
+                          {issue.address || 'Location not specified'}
                         </div>
                         <div className="flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
@@ -294,8 +283,9 @@ const MLADashboard = () => {
                     <div className="mt-3 p-3 bg-gray-50 rounded-md">
                       <p className="text-sm font-medium text-gray-700 mb-1">Latest Update:</p>
                       <p className="text-sm text-gray-600">
-                        {issue.progressUpdates[issue.progressUpdates.length - 1].update}
+                        {issue.progressUpdates[issue.progressUpdates.length - 1].message}
                       </p>
+                      <UpdateMediaDisplay update={issue.progressUpdates[issue.progressUpdates.length - 1]} className="mt-1" />
                       <p className="text-xs text-gray-500 mt-1">
                         {new Date(issue.progressUpdates[issue.progressUpdates.length - 1].createdAt).toLocaleDateString()}
                       </p>
@@ -314,73 +304,13 @@ const MLADashboard = () => {
         </div>
       </div>
 
-      {/* Update Issue Modal */}
-      {showUpdateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Update Issue Progress</h2>
-              <button
-                onClick={() => setShowUpdateModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select
-                  value={updateData.status}
-                  onChange={(e) => setUpdateData({ ...updateData, status: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="PENDING">Pending</option>
-                  <option value="IN_PROGRESS">In Progress</option>
-                  <option value="RESOLVED">Resolved</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Progress Update</label>
-                <textarea
-                  value={updateData.progressUpdate}
-                  onChange={(e) => setUpdateData({ ...updateData, progressUpdate: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Describe the progress made on this issue..."
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Completion</label>
-                <input
-                  type="date"
-                  value={updateData.estimatedCompletion}
-                  onChange={(e) => setUpdateData({ ...updateData, estimatedCompletion: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-            
-            <div className="flex justify-end space-x-3 mt-6">
-              <button
-                onClick={() => setShowUpdateModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleUpdateIssue(selectedIssue.id)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Update Issue
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Progress Update Modal */}
+      <ProgressUpdateModal
+        isOpen={showUpdateModal}
+        onClose={() => setShowUpdateModal(false)}
+        issue={selectedIssue}
+        onUpdate={handleUpdateIssue}
+      />
     </div>
   );
 };

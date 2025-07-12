@@ -68,9 +68,16 @@ const Settings = () => {
     const fetchSettings = async () => {
         try {
             const response = await api.get('/admin/settings');
-            setSettings(response.data);
+            if (response.data) {
+                setSettings(prevSettings => ({
+                    ...prevSettings,
+                    ...response.data
+                }));
+            }
         } catch (error) {
             console.error('Error fetching settings:', error);
+            // Keep default settings if fetch fails
+            toast.error('Failed to load settings. Using default values.');
         }
     };
 
@@ -124,7 +131,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
                     <input
                         type="text"
-                        value={settings.general.siteName}
+                        value={settings.general?.siteName || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             general: { ...prev.general, siteName: e.target.value }
@@ -136,7 +143,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
                     <input
                         type="email"
-                        value={settings.general.contactEmail}
+                        value={settings.general?.contactEmail || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             general: { ...prev.general, contactEmail: e.target.value }
@@ -148,7 +155,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Support Phone</label>
                     <input
                         type="tel"
-                        value={settings.general.supportPhone}
+                        value={settings.general?.supportPhone || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             general: { ...prev.general, supportPhone: e.target.value }
@@ -159,7 +166,7 @@ const Settings = () => {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
                     <select
-                        value={settings.general.timezone}
+                        value={settings.general?.timezone || 'Asia/Kolkata'}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             general: { ...prev.general, timezone: e.target.value }
@@ -176,7 +183,7 @@ const Settings = () => {
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Site Description</label>
                 <textarea
-                    value={settings.general.siteDescription}
+                    value={settings.general?.siteDescription || ''}
                     onChange={(e) => setSettings(prev => ({
                         ...prev,
                         general: { ...prev.general, siteDescription: e.target.value }
@@ -188,7 +195,7 @@ const Settings = () => {
             <div className="flex items-center">
                 <input
                     type="checkbox"
-                    checked={settings.general.maintenanceMode}
+                    checked={settings.general?.maintenanceMode || false}
                     onChange={(e) => setSettings(prev => ({
                         ...prev,
                         general: { ...prev.general, maintenanceMode: e.target.checked }
@@ -250,7 +257,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Session Timeout (minutes)</label>
                     <input
                         type="number"
-                        value={settings.security.sessionTimeout}
+                        value={settings.security?.sessionTimeout || 30}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             security: { ...prev.security, sessionTimeout: parseInt(e.target.value) }
@@ -262,7 +269,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Password Expiry (days)</label>
                     <input
                         type="number"
-                        value={settings.security.passwordExpiry}
+                        value={settings.security?.passwordExpiry || 90}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             security: { ...prev.security, passwordExpiry: parseInt(e.target.value) }
@@ -274,7 +281,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Max Login Attempts</label>
                     <input
                         type="number"
-                        value={settings.security.maxLoginAttempts}
+                        value={settings.security?.maxLoginAttempts || 5}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             security: { ...prev.security, maxLoginAttempts: parseInt(e.target.value) }
@@ -286,7 +293,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Data Retention (days)</label>
                     <input
                         type="number"
-                        value={settings.security.dataRetentionDays}
+                        value={settings.security?.dataRetentionDays || 365}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             security: { ...prev.security, dataRetentionDays: parseInt(e.target.value) }
@@ -298,7 +305,7 @@ const Settings = () => {
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">IP Whitelist</label>
                 <textarea
-                    value={settings.security.ipWhitelist}
+                    value={settings.security?.ipWhitelist || ''}
                     onChange={(e) => setSettings(prev => ({
                         ...prev,
                         security: { ...prev.security, ipWhitelist: e.target.value }
@@ -312,7 +319,7 @@ const Settings = () => {
                 <div className="flex items-center">
                     <input
                         type="checkbox"
-                        checked={settings.security.twoFactorAuth}
+                        checked={settings.security?.twoFactorAuth || false}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             security: { ...prev.security, twoFactorAuth: e.target.checked }
@@ -324,7 +331,7 @@ const Settings = () => {
                 <div className="flex items-center">
                     <input
                         type="checkbox"
-                        checked={settings.security.securityLogging}
+                        checked={settings.security?.securityLogging || false}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             security: { ...prev.security, securityLogging: e.target.checked }
@@ -352,7 +359,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Host</label>
                     <input
                         type="text"
-                        value={settings.email.smtpHost}
+                        value={settings.email?.smtpHost || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             email: { ...prev.email, smtpHost: e.target.value }
@@ -364,7 +371,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Port</label>
                     <input
                         type="number"
-                        value={settings.email.smtpPort}
+                        value={settings.email?.smtpPort || 587}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             email: { ...prev.email, smtpPort: parseInt(e.target.value) }
@@ -376,7 +383,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Username</label>
                     <input
                         type="text"
-                        value={settings.email.smtpUsername}
+                        value={settings.email?.smtpUsername || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             email: { ...prev.email, smtpUsername: e.target.value }
@@ -388,7 +395,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Password</label>
                     <input
                         type="password"
-                        value={settings.email.smtpPassword}
+                        value={settings.email?.smtpPassword || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             email: { ...prev.email, smtpPassword: e.target.value }
@@ -400,7 +407,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">From Email</label>
                     <input
                         type="email"
-                        value={settings.email.fromEmail}
+                        value={settings.email?.fromEmail || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             email: { ...prev.email, fromEmail: e.target.value }
@@ -412,7 +419,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">From Name</label>
                     <input
                         type="text"
-                        value={settings.email.fromName}
+                        value={settings.email?.fromName || ''}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             email: { ...prev.email, fromName: e.target.value }
@@ -447,7 +454,7 @@ const Settings = () => {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Backup Frequency</label>
                     <select
-                        value={settings.database.backupFrequency}
+                        value={settings.database?.backupFrequency || 'daily'}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             database: { ...prev.database, backupFrequency: e.target.value }
@@ -463,7 +470,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Backup Retention (days)</label>
                     <input
                         type="number"
-                        value={settings.database.backupRetention}
+                        value={settings.database?.backupRetention || 30}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             database: { ...prev.database, backupRetention: parseInt(e.target.value) }
@@ -475,7 +482,7 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Maintenance Window</label>
                     <input
                         type="time"
-                        value={settings.database.maintenanceWindow}
+                        value={settings.database?.maintenanceWindow || '02:00'}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             database: { ...prev.database, maintenanceWindow: e.target.value }
@@ -488,7 +495,7 @@ const Settings = () => {
                 <div className="flex items-center">
                     <input
                         type="checkbox"
-                        checked={settings.database.backupEnabled}
+                        checked={settings.database?.backupEnabled || false}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             database: { ...prev.database, backupEnabled: e.target.checked }
@@ -500,7 +507,7 @@ const Settings = () => {
                 <div className="flex items-center">
                     <input
                         type="checkbox"
-                        checked={settings.database.indexOptimization}
+                        checked={settings.database?.indexOptimization || false}
                         onChange={(e) => setSettings(prev => ({
                             ...prev,
                             database: { ...prev.database, indexOptimization: e.target.checked }

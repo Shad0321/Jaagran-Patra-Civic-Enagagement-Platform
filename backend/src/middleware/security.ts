@@ -14,14 +14,31 @@ export const securityHeaders = helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
+      imgSrc: ["'self'", 'data:', 'https:', 'http://localhost:3001'],
+      mediaSrc: ["'self'", 'http://localhost:3001'],
+      connectSrc: ["'self'", 'http://localhost:3001'],
     },
   },
 });
 
 // CORS configuration
 export const corsConfig = cors({
-  origin: config.allowedOrigins,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl requests, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Check if the origin is in the allowed origins
+    if (config.allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // In development, allow localhost with any port
+    if (config.nodeEnv === 'development' && origin.match(/^http:\/\/localhost:\d+$/)) {
+      return callback(null, true);
+    }
+    
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

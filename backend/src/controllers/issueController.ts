@@ -6,6 +6,7 @@ import {
   IssuePriority,
   UpdateType,
   MediaType,
+  NotificationStatus,
 } from '@prisma/client';
 import { AuthenticatedRequest } from '../middleware/auth';
 
@@ -16,7 +17,7 @@ const logMLAInfo = async (stateId: string) => {
   try {
     const mlas = await prisma.user.findMany({
       where: {
-        role: 'MLA',
+        role: UserRole.MLA,
         stateId: stateId,
         isActive: true,
       },
@@ -50,7 +51,7 @@ export const createIssue = async (
       title,
       description,
       category,
-      priority = 'MEDIUM',
+      priority = IssuePriority.MEDIUM,
       isUrgent = false,
       assignedToId,
       address,
@@ -83,7 +84,7 @@ export const createIssue = async (
     }
 
     // Verify the user is an MLA or CITIZEN
-    if (userRole !== 'MLA' && userRole !== 'CITIZEN') {
+    if (userRole !== UserRole.MLA && userRole !== UserRole.CITIZEN) {
       res.status(403).json({ error: 'Only MLAs and Citizens can create issues' });
       return;
     }
@@ -101,12 +102,12 @@ export const createIssue = async (
 
     // Handle assignment logic based on user role
     if (assignedToId) {
-      if (userRole === 'MLA') {
+      if (userRole === UserRole.MLA) {
         // For MLAs, verify they are assigning to a MEMBER under their supervision
         const assignee = await prisma.user.findFirst({
           where: {
             id: assignedToId,
-            role: 'MEMBER',
+            role: UserRole.MEMBER,
             mlaId: userId,
           },
         });
@@ -119,12 +120,12 @@ export const createIssue = async (
             });
           return;
         }
-      } else if (userRole === 'CITIZEN') {
+      } else if (userRole === UserRole.CITIZEN) {
         // For CITIZENS, verify they are assigning to a valid MEMBER or MLA
         const assignee = await prisma.user.findFirst({
           where: {
             id: assignedToId,
-            role: { in: ['MEMBER', 'MLA'] },
+            role: { in: [UserRole.MEMBER, UserRole.MLA] },
           },
         });
 
@@ -143,7 +144,7 @@ export const createIssue = async (
     let finalAssignedToId = assignedToId;
     let autoAssignedConstituencyId = constituencyId;
     
-    if (userRole === 'CITIZEN' && !assignedToId) {
+    if (userRole === UserRole.CITIZEN && !assignedToId) {
       console.log('🔍 Auto-assignment logic triggered for CITIZEN');
       console.log('📍 Initial constituency ID:', constituencyId);
       console.log('📍 Coordinates:', latitude, longitude);
@@ -214,7 +215,7 @@ export const createIssue = async (
         
         const mla = await prisma.user.findFirst({
           where: {
-            role: 'MLA',
+            role: UserRole.MLA,
             constituencyId: autoAssignedConstituencyId,
             isActive: true,
           },
@@ -308,7 +309,7 @@ export const createIssue = async (
       });
       
       let assignmentMessage = `Issue assigned to ${assignedUser?.name || 'Unknown'}`;
-      if (userRole === 'CITIZEN' && !assignedToId) {
+      if (userRole === UserRole.CITIZEN && !assignedToId) {
         assignmentMessage = `Issue automatically assigned to MLA ${assignedUser?.name || 'Unknown'} based on your location`;
       }
       
@@ -317,8 +318,8 @@ export const createIssue = async (
           issueId: issue.id,
           userId,
           message: assignmentMessage,
-          updateType: 'ASSIGNMENT',
-          mediaType: 'TEXT',
+          updateType: UpdateType.ASSIGNMENT,
+          mediaType: MediaType.TEXT,
         },
       });
 
@@ -327,11 +328,11 @@ export const createIssue = async (
       console.log('⚠️ No assignment made - issue remains unassigned');
       
       // If no MLA found, try to find any MLA in the same state as fallback
-      if (userRole === 'CITIZEN' && !finalAssignedToId && stateId) {
+      if (userRole === UserRole.CITIZEN && !finalAssignedToId && stateId) {
         console.log('🔄 Attempting fallback assignment to any MLA in state...');
         const fallbackMla = await prisma.user.findFirst({
           where: {
-            role: 'MLA',
+            role: UserRole.MLA,
             stateId: stateId,
             isActive: true,
           },
@@ -351,9 +352,9 @@ export const createIssue = async (
             data: {
               issueId: issue.id,
               userId,
-              message: `Issue assigned to MLA ${fallbackMla.name} (fallback assignment within state)`,
-              updateType: 'ASSIGNMENT',
-              mediaType: 'TEXT',
+              message: `Issue assigned to MLA ${fallbackMla.name}`,
+              updateType: UpdateType.ASSIGNMENT,
+              mediaType: MediaType.TEXT,
             },
           });
         } else {
@@ -389,20 +390,22 @@ export const getIssues = async (
       search,
     } = req.query;
 
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-    const take = parseInt(limit as string);
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const skip = (pageNum - 1) * limitNum;
+    const take = limitNum;
 
     let whereClause: any = {};
 
     // Filter based on user role
-    if (userRole === 'MLA') {
+    if (userRole === UserRole.MLA) {
       whereClause.reportedById = userId;
-    } else if (userRole === 'MEMBER') {
+    } else if (userRole === UserRole.MEMBER) {
       whereClause.assignedToId = userId;
-    } else if (userRole === 'CITIZEN') {
+    } else if (userRole === UserRole.CITIZEN) {
       // Citizens can only see issues they reported
       whereClause.reportedById = userId;
-    } else if (userRole === 'ADMIN') {
+    } else if (userRole === UserRole.ADMIN) {
       // Admins can see all issues - no additional filter
     }
 
@@ -489,12 +492,15 @@ export const getIssues = async (
     ]);
 
     res.json({
-      issues,
-      pagination: {
-        page: parseInt(page as string),
-        limit: parseInt(limit as string),
-        total,
-        pages: Math.ceil(total / parseInt(limit as string)),
+      success: true,
+      data: {
+        issues,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          pages: Math.ceil(total / limitNum),
+        },
       },
     });
   } catch (error) {
@@ -582,11 +588,11 @@ export const getIssueById = async (
 
     // Check access permissions
     const hasAccess =
-      userRole === 'ADMIN' ||
+      userRole === UserRole.ADMIN ||
       issue.reportedById === userId ||
       issue.assignedToId === userId ||
-      (userRole === 'MLA' &&
-        issue.reportedBy.role === 'MEMBER' &&
+      (userRole === UserRole.MLA &&
+        issue.reportedBy.role === UserRole.MEMBER &&
         issue.reportedBy.mlaId === userId);
 
     if (!hasAccess) {
@@ -612,7 +618,7 @@ export const addIssueUpdate = async (
       message,
       status,
       updateType,
-      mediaType = 'TEXT',
+      mediaType = MediaType.TEXT,
       audioUrl,
       imageUrls,
       hoursWorked,
@@ -640,24 +646,46 @@ export const addIssueUpdate = async (
     // Determine update type based on user role and permissions
     let finalUpdateType: UpdateType;
 
-    if (userRole === 'MEMBER' && issue.assignedToId === userId) {
-      finalUpdateType = 'MEMBER_UPDATE';
-    } else if (userRole === 'CITIZEN') {
-      finalUpdateType = 'CITIZEN_COMMENT';
-    } else if (userRole === 'MLA' && issue.reportedById === userId) {
-      finalUpdateType = updateType || 'MEMBER_UPDATE';
-    } else if (userRole === 'ADMIN') {
-      finalUpdateType = updateType || 'MEMBER_UPDATE';
+    if (userRole === UserRole.MEMBER) {
+      // Check if member can update this issue (directly assigned or assigned to their MLA)
+      if (issue.assignedToId === userId) {
+        finalUpdateType = UpdateType.MEMBER_UPDATE;
+      } else {
+        // Check if member is under the MLA who is assigned to this issue
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { mlaId: true }
+        });
+        
+        if (currentUser?.mlaId === issue.assignedToId) {
+          finalUpdateType = UpdateType.MEMBER_UPDATE;
+        } else {
+          res.status(403).json({ error: 'Not authorized to update this issue' });
+          return;
+        }
+      }
+    } else if (userRole === UserRole.CITIZEN) {
+      finalUpdateType = UpdateType.CITIZEN_COMMENT;
+    } else if (userRole === UserRole.MLA && issue.reportedById === userId) {
+      finalUpdateType = updateType || UpdateType.MEMBER_UPDATE;
+    } else if (userRole === UserRole.ADMIN) {
+      finalUpdateType = updateType || UpdateType.MEMBER_UPDATE;
     } else {
       res.status(403).json({ error: 'Not authorized to update this issue' });
       return;
     }
 
     // Validate required fields based on update type
-    if (finalUpdateType === 'MEMBER_UPDATE' && !message && !audioUrl) {
+    if (finalUpdateType === UpdateType.MEMBER_UPDATE && !message && !audioUrl) {
       res
         .status(400)
         .json({ error: 'Message or audio is required for member updates' });
+      return;
+    }
+
+    // Validate mediaType
+    if (mediaType && !Object.values(MediaType).includes(mediaType as MediaType)) {
+      res.status(400).json({ error: 'Invalid media type' });
       return;
     }
 
@@ -693,13 +721,21 @@ export const addIssueUpdate = async (
       },
     });
 
-    // Update issue status if provided
+    // Update issue status if provided, or auto-set to IN_PROGRESS for member updates
     if (status) {
       await prisma.issue.update({
         where: { id },
         data: {
           status: status as IssueStatus,
-          ...(status === 'RESOLVED' && { actualResolutionDate: new Date() }),
+          ...(status === IssueStatus.RESOLVED && { actualResolutionDate: new Date() }),
+        },
+      });
+    } else if (finalUpdateType === UpdateType.MEMBER_UPDATE && issue.status === IssueStatus.PENDING) {
+      // Auto-set to IN_PROGRESS when member makes first update on pending issue
+      await prisma.issue.update({
+        where: { id },
+        data: {
+          status: IssueStatus.IN_PROGRESS,
         },
       });
     }
@@ -751,10 +787,28 @@ export const updateIssue = async (
     }
 
     // Check permissions
-    const canUpdate =
-      userRole === 'ADMIN' ||
-      (userRole === 'MLA' && issue.reportedById === userId) ||
-      (userRole === 'MEMBER' && issue.assignedToId === userId);
+    let canUpdate = false;
+    
+    if (userRole === UserRole.ADMIN) {
+      canUpdate = true;
+    } else if (userRole === UserRole.MLA && issue.reportedById === userId) {
+      canUpdate = true;
+    } else if (userRole === UserRole.MEMBER) {
+      // Check if member can update this issue (directly assigned or assigned to their MLA)
+      if (issue.assignedToId === userId) {
+        canUpdate = true;
+      } else {
+        // Check if member is under the MLA who is assigned to this issue
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { mlaId: true }
+        });
+        
+        if (currentUser?.mlaId === issue.assignedToId) {
+          canUpdate = true;
+        }
+      }
+    }
 
     if (!canUpdate) {
       res.status(403).json({ error: 'Not authorized to update this issue' });
@@ -766,7 +820,7 @@ export const updateIssue = async (
       const assignee = await prisma.user.findFirst({
         where: {
           id: assignedToId,
-          role: 'MEMBER',
+          role: UserRole.MEMBER,
         },
       });
 
@@ -822,8 +876,8 @@ export const updateIssue = async (
           issueId: id,
           userId,
           message: `Issue ${assignedToId ? 'assigned to' : 'unassigned from'} ${assigneeName}`,
-          updateType: 'ASSIGNMENT',
-          mediaType: 'TEXT',
+          updateType: UpdateType.ASSIGNMENT,
+          mediaType: MediaType.TEXT,
         },
       });
     }
@@ -836,8 +890,8 @@ export const updateIssue = async (
           userId,
           message: `Status changed from ${issue.status} to ${status}`,
           status: status as IssueStatus,
-          updateType: 'STATUS_CHANGE',
-          mediaType: 'TEXT',
+          updateType: UpdateType.STATUS_CHANGE,
+          mediaType: MediaType.TEXT,
         },
       });
     }
@@ -864,11 +918,11 @@ export const getIssueStats = async (
     let whereClause: any = {};
 
     // Filter based on user role
-    if (userRole === 'MLA') {
+    if (userRole === UserRole.MLA) {
       whereClause.reportedById = userId;
-    } else if (userRole === 'MEMBER') {
+    } else if (userRole === UserRole.MEMBER) {
       whereClause.assignedToId = userId;
-    } else if (userRole === 'CITIZEN') {
+    } else if (userRole === UserRole.CITIZEN) {
       whereClause.reportedById = userId;
     }
     // ADMIN sees all issues
@@ -884,9 +938,9 @@ export const getIssueStats = async (
       recentIssues,
     ] = await Promise.all([
       prisma.issue.count({ where: whereClause }),
-      prisma.issue.count({ where: { ...whereClause, status: 'PENDING' } }),
-      prisma.issue.count({ where: { ...whereClause, status: 'IN_PROGRESS' } }),
-      prisma.issue.count({ where: { ...whereClause, status: 'RESOLVED' } }),
+      prisma.issue.count({ where: { ...whereClause, status: IssueStatus.PENDING } }),
+      prisma.issue.count({ where: { ...whereClause, status: IssueStatus.IN_PROGRESS } }),
+      prisma.issue.count({ where: { ...whereClause, status: IssueStatus.RESOLVED } }),
       prisma.issue.count({ where: { ...whereClause, isUrgent: true } }),
 
       // Group by priority
@@ -978,8 +1032,8 @@ export const deleteIssue = async (
 
     // Check permissions
     const canDelete =
-      userRole === 'ADMIN' ||
-      (userRole === 'MLA' && issue.reportedById === userId);
+      userRole === UserRole.ADMIN ||
+      (userRole === UserRole.MLA && issue.reportedById === userId);
 
     if (!canDelete) {
       res.status(403).json({ error: 'Not authorized to delete this issue' });
@@ -1018,17 +1072,37 @@ export const getAssignedIssues = async (
     console.log('🔍 getAssignedIssues - User Role:', userRole);
 
     // Only MLAs and Members can access assigned issues
-    if (userRole !== 'MLA' && userRole !== 'MEMBER') {
+    if (userRole !== UserRole.MLA && userRole !== UserRole.MEMBER) {
       res.status(403).json({ error: 'Access denied. Only MLAs and Members can view assigned issues.' });
       return;
     }
 
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-    const take = parseInt(limit as string);
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const skip = (pageNum - 1) * limitNum;
+    const take = limitNum;
 
-    let whereClause: any = {
-      assignedToId: userId,
-    };
+    let whereClause: any = {};
+
+    // For MLAs: get issues assigned to them
+    // For Members: get issues assigned to their MLA (if they have one)
+    if (userRole === UserRole.MLA) {
+      whereClause.assignedToId = userId;
+    } else if (userRole === UserRole.MEMBER) {
+      // Get current user's MLA information
+      const currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { mlaId: true }
+      });
+      
+      if (currentUser?.mlaId) {
+        // Show issues assigned to the member's MLA
+        whereClause.assignedToId = currentUser.mlaId;
+      } else {
+        // If member has no MLA, show issues directly assigned to them
+        whereClause.assignedToId = userId;
+      }
+    }
 
     console.log('🔍 getAssignedIssues - Where clause:', whereClause);
 
@@ -1152,10 +1226,10 @@ export const getAssignedIssues = async (
       data: {
         issues: issuesWithProgressUpdates,
         pagination: {
-          page: parseInt(page as string),
-          limit: parseInt(limit as string),
+          page: pageNum,
+          limit: limitNum,
           total,
-          pages: Math.ceil(total / parseInt(limit as string)),
+          pages: Math.ceil(total / limitNum),
         },
       }
     });
@@ -1183,13 +1257,15 @@ export const getMyIssues = async (
     } = req.query;
 
     // Only Citizens can access their own issues
-    if (userRole !== 'CITIZEN') {
+    if (userRole !== UserRole.CITIZEN) {
       res.status(403).json({ error: 'Access denied. Only Citizens can view their own issues.' });
       return;
     }
 
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-    const take = parseInt(limit as string);
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const skip = (pageNum - 1) * limitNum;
+    const take = limitNum;
 
     let whereClause: any = {
       reportedById: userId,
@@ -1288,10 +1364,10 @@ export const getMyIssues = async (
       data: {
         issues: issuesWithProgressUpdates,
         pagination: {
-          page: parseInt(page as string),
-          limit: parseInt(limit as string),
+          page: pageNum,
+          limit: limitNum,
           total,
-          pages: Math.ceil(total / parseInt(limit as string)),
+          pages: Math.ceil(total / limitNum),
         },
       }
     });
@@ -1308,7 +1384,15 @@ export const updateIssueProgress = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { status, progressUpdate, estimatedCompletion } = req.body;
+    const { 
+      status, 
+      progressUpdate, 
+      estimatedCompletion, 
+      progressPercentage, 
+      hoursWorked, 
+      nextSteps,
+      attachments 
+    } = req.body;
     const userId = req.user!.id;
     const userRole = req.user!.role;
 
@@ -1326,9 +1410,26 @@ export const updateIssueProgress = async (
       return;
     }
 
-    // Check permissions: only assigned user can update
-    if (issue.assignedToId !== userId) {
-      res.status(403).json({ error: 'You can only update issues assigned to you' });
+    // Check permissions: assigned user or member under the assigned MLA can update
+    let canUpdate = false;
+    
+    if (issue.assignedToId === userId) {
+      // User is directly assigned to the issue
+      canUpdate = true;
+    } else if (userRole === UserRole.MEMBER) {
+      // Check if member is under the MLA who is assigned to this issue
+      const currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { mlaId: true }
+      });
+      
+      if (currentUser?.mlaId === issue.assignedToId) {
+        canUpdate = true;
+      }
+    }
+    
+    if (!canUpdate) {
+      res.status(403).json({ error: 'You can only update issues assigned to you or your MLA' });
       return;
     }
 
@@ -1338,15 +1439,26 @@ export const updateIssueProgress = async (
       return;
     }
 
-    // Update the issue status if provided
+    // Prepare update data for the issue
     const updateData: any = {};
-    if (status && ['PENDING', 'IN_PROGRESS', 'RESOLVED'].includes(status)) {
+    
+    // Auto-set status to IN_PROGRESS if it's currently PENDING and member is making first update
+    if (!status && issue.status === IssueStatus.PENDING) {
+      updateData.status = IssueStatus.IN_PROGRESS;
+    } else if (status && Object.values(IssueStatus).includes(status as IssueStatus)) {
       updateData.status = status;
     }
+    
+    // Set resolution date if status is RESOLVED
+    if (updateData.status === IssueStatus.RESOLVED) {
+      updateData.actualResolutionDate = new Date();
+    }
+    
     if (estimatedCompletion) {
-      updateData.estimatedCompletion = new Date(estimatedCompletion);
+      updateData.expectedResolutionDate = new Date(estimatedCompletion);
     }
 
+    // Update the issue if there are changes
     if (Object.keys(updateData).length > 0) {
       await prisma.issue.update({
         where: { id },
@@ -1355,15 +1467,36 @@ export const updateIssueProgress = async (
     }
 
     // Create the progress update
+    const progressUpdateData: any = {
+      issueId: id,
+      userId,
+      message: progressUpdate,
+      updateType: UpdateType.MEMBER_UPDATE, // Both MLAs and Members use MEMBER_UPDATE
+      mediaType: MediaType.TEXT,
+    };
+
+    // Set the status in the update record (either provided or auto-set to IN_PROGRESS)
+    if (status) {
+      progressUpdateData.status = status;
+    } else if (issue.status === IssueStatus.PENDING) {
+      progressUpdateData.status = IssueStatus.IN_PROGRESS;
+    }
+    
+    if (progressPercentage !== undefined && progressPercentage >= 0 && progressPercentage <= 100) {
+      progressUpdateData.progressPercentage = parseInt(progressPercentage);
+    }
+    if (hoursWorked !== undefined && hoursWorked >= 0) {
+      progressUpdateData.hoursWorked = parseFloat(hoursWorked);
+    }
+    if (nextSteps && nextSteps.trim()) {
+      progressUpdateData.nextSteps = nextSteps.trim();
+    }
+    if (attachments && Array.isArray(attachments)) {
+      progressUpdateData.attachments = attachments;
+    }
+
     const update = await prisma.issueUpdate.create({
-      data: {
-        issueId: id,
-        userId,
-        message: progressUpdate,
-        updateType: 'MEMBER_UPDATE', // Both MLAs and Members use MEMBER_UPDATE
-        mediaType: 'TEXT',
-        status: status || undefined,
-      },
+      data: progressUpdateData,
       include: {
         user: {
           select: {
@@ -1375,12 +1508,44 @@ export const updateIssueProgress = async (
       },
     });
 
+    // Notify the citizen who reported the issue
+    /* 
+    try {
+      // Get the user details for the notification
+      const currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true }
+      });
+
+      if (currentUser) {
+        await prisma.notification.create({
+          data: {
+            title: 'Issue Update',
+            message: `Your issue "${issue.title}" has been updated by ${currentUser.name}`,
+            type: 'ISSUE_UPDATE',
+            sentById: userId,
+            targetStateId: issue.stateId,
+            recipients: {
+              create: {
+                userId: issue.reportedById,
+                status: NotificationStatus.PENDING
+              }
+            }
+          }
+        });
+      }
+    } catch (notificationError) {
+      console.error('Failed to create notification:', notificationError);
+      // Don't fail the entire request if notification fails
+    }
+    */
+
     res.json({
       success: true,
       message: 'Issue progress updated successfully',
       data: {
         update,
-        newStatus: status || issue.status,
+        newStatus: updateData.status || issue.status,
       },
     });
   } catch (error) {

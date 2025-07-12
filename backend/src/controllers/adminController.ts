@@ -26,8 +26,8 @@ export const getDashboardStats = async (
       recentUsers,
     ] = await Promise.all([
       prisma.user.count(),
-      prisma.user.count({ where: { role: 'MLA' } }),
-      prisma.user.count({ where: { role: 'MEMBER' } }),
+      prisma.user.count({ where: { role: UserRole.MLA } }),
+      prisma.user.count({ where: { role: UserRole.MEMBER } }),
       prisma.issue.count(),
       prisma.issue.count({ where: { status: 'PENDING' } }),
       prisma.issue.count({ where: { status: 'RESOLVED' } }),
@@ -337,7 +337,7 @@ export const getAllMLAs = async (
     const limitNum = parseInt(limit as string);
     const skip = (pageNum - 1) * limitNum;
 
-    const where: any = { role: 'MLA' };
+    const where: any = { role: UserRole.MLA };
     if (search) {
       where.OR = [
         { name: { contains: search as string, mode: 'insensitive' } },
@@ -485,7 +485,7 @@ export const createMLA = async (
         phone: phone || null,
         name,
         password: hashedPassword,
-        role: 'MLA',
+        role: UserRole.MLA,
         isVerified: true, // Admin created users are pre-verified
         isActive: isActive !== undefined ? isActive : true,
         stateId,
@@ -644,13 +644,20 @@ export const getAllMembers = async (
       bodyType,
       sortBy = 'createdAt',
       sortOrder = 'desc',
+      mlaId,
     } = req.query;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
     const skip = (pageNum - 1) * limitNum;
 
-    const where: any = { role: 'MEMBER' };
+    const where: any = { role: UserRole.MEMBER };
+    
+    // Filter by MLA if mlaId is provided
+    if (mlaId) {
+      where.mlaId = mlaId as string;
+    }
+    
     if (search) {
       where.OR = [
         { name: { contains: search as string, mode: 'insensitive' } },
@@ -785,7 +792,7 @@ export const createMember = async (
       email,
       phone,
       name,
-      role: 'MEMBER',
+      role: UserRole.MEMBER,
       mlaId: mlaId || null,
       finalStateId,
       finalConstituencyId,
@@ -801,7 +808,7 @@ export const createMember = async (
         phone: phone || null,
         name,
         password: hashedPassword,
-        role: 'MEMBER',
+        role: UserRole.MEMBER,
         mlaId: mlaId || null,
         stateId: finalStateId || null,
         constituencyId: finalConstituencyId || null,
@@ -1356,7 +1363,7 @@ export const getSettings = async (
       issueAutoAssignment: true,
       newsAutoPublish: false,
       userRegistration: true,
-      defaultUserRole: 'CITIZEN',
+      defaultUserRole: UserRole.CITIZEN,
       sessionTimeout: 3600, // 1 hour
       passwordMinLength: 8,
       passwordRequireSpecial: true,

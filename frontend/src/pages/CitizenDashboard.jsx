@@ -22,11 +22,11 @@ const CitizenDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch user's issues
       const issuesResponse = await api.get('/issues/citizen/my-issues?page=1&limit=10');
-      const issues = issuesResponse.data.issues || [];
-      
+      const issues = issuesResponse.data.data.issues || [];
+
       // Calculate stats
       const stats = {
         totalIssues: issues.length,
@@ -34,13 +34,13 @@ const CitizenDashboard = () => {
         inProgressIssues: issues.filter(issue => issue.status === 'IN_PROGRESS').length,
         resolvedIssues: issues.filter(issue => issue.status === 'RESOLVED').length
       };
-      
+
       setStats(stats);
       setRecentIssues(issues.slice(0, 5)); // Show latest 5 issues
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       console.error('Error details:', error.response?.data);
-      
+
       // Show more specific error message
       if (error.response?.status === 401) {
         toast.error('Session expired. Please log in again.');
@@ -171,14 +171,14 @@ const CitizenDashboard = () => {
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Recent Issues</h2>
-              <a 
-                href="/issues" 
+              <a
+                href="/issues"
                 className="text-blue-600 hover:text-blue-800 text-sm font-medium"
               >
                 View All
               </a>
             </div>
-            
+
             {recentIssues.length > 0 ? (
               <div className="space-y-4">
                 {recentIssues.map((issue) => (
@@ -192,9 +192,9 @@ const CitizenDashboard = () => {
                         </span>
                       </div>
                     </div>
-                    
+
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{issue.description}</p>
-                    
+
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center">
@@ -210,7 +210,7 @@ const CitizenDashboard = () => {
                         {issue.priority}
                       </span>
                     </div>
-                    
+
                     {issue.assignedTo && (
                       <div className="mt-2 text-xs text-gray-600">
                         Assigned to: {issue.assignedTo.name} ({issue.assignedTo.role})
@@ -228,21 +228,21 @@ const CitizenDashboard = () => {
             )}
           </div>
         </div>
-        
+
         <div className="space-y-6">
           {/* Quick Actions */}
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              <a 
-                href="/issues" 
+              <a
+                href="/issues"
                 className="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
               >
                 <Plus className="h-5 w-5 text-blue-600 mr-3" />
                 <span className="font-medium text-blue-900">Report New Issue</span>
               </a>
-              <a 
-                href="/issues" 
+              <a
+                href="/issues"
                 className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <MessageSquare className="h-5 w-5 text-gray-600 mr-3" />

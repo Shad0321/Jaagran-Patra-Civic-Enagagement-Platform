@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { Plus, Search, Filter, AlertCircle, Clock, CheckCircle, X, MapPin, Mic, MicOff, Camera, Upload, Volume2 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import ProgressUpdateModal from '../components/ProgressUpdateModal';
+import MediaDisplay from '../components/common/MediaDisplay';
+import UpdateMediaDisplay from '../components/common/UpdateMediaDisplay';
 
+// eslint-disable-next-line no-unused-vars
 const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, nearbyBodies, loadingBodies }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
@@ -148,7 +153,7 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
                 </select>
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Assign to Body</label>
                 <select
                   value={formData.bodyId}
@@ -163,7 +168,7 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
             </div>
 
             {/* Location */}
@@ -303,7 +308,7 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
   );
 };
 
-const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, onAddComment, addingComment }) => {
+const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, onAddComment, addingComment, user, onUpdateProgress }) => {
   if (!isOpen || !issue) return null;
 
   const getStatusColor = (status) => {
@@ -368,6 +373,9 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
                 <label className="block text-sm font-medium text-gray-600">Description</label>
                 <p className="text-gray-900">{issue.description}</p>
               </div>
+              
+              {/* Media Display */}
+              <MediaDisplay issue={issue} className="my-4" />
               
               {issue.address && (
                 <div>
@@ -453,6 +461,10 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
                     </span>
                   </div>
                   <p className="text-gray-700">{update.message}</p>
+                  
+                  {/* Update Media Display */}
+                  <UpdateMediaDisplay update={update} className="mt-2" />
+                  
                   {update.progressPercentage && (
                     <div className="mt-2">
                       <div className="flex items-center justify-between text-sm">
@@ -482,26 +494,40 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
 
         {/* Add Comment Section */}
         <div className="border-t pt-4">
-          <h4 className="text-md font-semibold mb-3">Add Comment</h4>
-          <form onSubmit={onAddComment}>
-            <div className="flex space-x-3">
-              <textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                rows="3"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Add your comment..."
-                disabled={addingComment}
-              />
+          <h4 className="text-md font-semibold mb-3">
+            {user?.role === 'MLA' || user?.role === 'MEMBER' ? 'Update Progress' : 'Add Comment'}
+          </h4>
+          
+          {user?.role === 'MLA' || user?.role === 'MEMBER' ? (
+            <div className="text-center">
               <button
-                type="submit"
-                disabled={addingComment || !newComment.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => onUpdateProgress(issue)}
+                className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
-                {addingComment ? 'Adding...' : 'Comment'}
+                Update Issue Progress
               </button>
             </div>
-          </form>
+          ) : (
+            <form onSubmit={onAddComment}>
+              <div className="flex space-x-3">
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  rows="3"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Add your comment..."
+                  disabled={addingComment}
+                />
+                <button
+                  type="submit"
+                  disabled={addingComment || !newComment.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {addingComment ? 'Adding...' : 'Comment'}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
 
         <div className="flex justify-end mt-6">
@@ -518,6 +544,7 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
 };
 
 const IssueManagement = () => {
+  const { user } = useSelector((state) => state.user);
   const [issues, setIssues] = useState([]);
   const [nearbyBodies, setNearbyBodies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -529,6 +556,7 @@ const IssueManagement = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [addingComment, setAddingComment] = useState(false);
@@ -587,16 +615,23 @@ const IssueManagement = () => {
       if (filterStatus !== 'all') params.append('status', filterStatus);
       if (filterPriority !== 'all') params.append('priority', filterPriority);
 
-      const response = await api.get(`/issues/citizen/my-issues?${params}`);
-      setIssues(response.data.issues || []);
-      setTotalPages(response.data.pagination?.pages || 1);
+      let endpoint = '/issues/citizen/my-issues'; // Default for citizens
+      
+      // Use different endpoints based on user role
+      if (user?.role === 'MLA' || user?.role === 'MEMBER') {
+        endpoint = '/issues/assigned-to-me';
+      }
+
+      const response = await api.get(`${endpoint}?${params}`);
+      setIssues(response.data.data.issues || []);
+      setTotalPages(response.data.data.pagination?.pages || 1);
     } catch (error) {
       toast.error('Failed to fetch issues');
       console.error('Error fetching issues:', error);
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, filterStatus, filterPriority]);
+  }, [currentPage, searchTerm, filterStatus, filterPriority, user?.role]);
 
   const fetchNearbyBodies = useCallback(async () => {
     try {
@@ -620,8 +655,11 @@ const IssueManagement = () => {
 
   useEffect(() => {
     fetchIssues();
-    fetchNearbyBodies();
-  }, [fetchIssues, fetchNearbyBodies]);
+    // Only fetch nearby bodies for citizens who can report issues
+    if (user?.role === 'CITIZEN' || !user?.role) {
+      fetchNearbyBodies();
+    }
+  }, [fetchIssues, fetchNearbyBodies, user?.role]);
 
   const handleAddIssue = async (e) => {
     e.preventDefault();
@@ -713,7 +751,14 @@ const IssueManagement = () => {
 
   const handleViewDetails = async (issueId) => {
     try {
-      const response = await api.get(`/issues/citizen/${issueId}/details`);
+      let endpoint = `/issues/citizen/${issueId}/details`; // Default for citizens
+      
+      // Use different endpoints based on user role
+      if (user?.role === 'MLA' || user?.role === 'MEMBER') {
+        endpoint = `/issues/${issueId}`; // Generic endpoint for MLAs and Members
+      }
+
+      const response = await api.get(endpoint);
       setSelectedIssue(response.data.issue);
       setShowDetailsModal(true);
     } catch (error) {
@@ -725,6 +770,9 @@ const IssueManagement = () => {
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+
+    // This function is only for citizens now
+    if (user?.role !== 'CITIZEN') return;
 
     try {
       setAddingComment(true);
@@ -744,20 +792,64 @@ const IssueManagement = () => {
     }
   };
 
+  // Get title and description based on user role
+  const getPageTitle = () => {
+    switch (user?.role) {
+      case 'MLA':
+        return 'Assigned Issues';
+      case 'MEMBER':
+        return 'My Assigned Issues';
+      default:
+        return 'My Issues';
+    }
+  };
+
+  const getPageDescription = () => {
+    switch (user?.role) {
+      case 'MLA':
+        return 'Manage and track issues assigned to you and your team';
+      case 'MEMBER':
+        return 'Manage and track issues assigned to you';
+      default:
+        return 'Track and manage your submitted issues';
+    }
+  };
+
+  const canReportIssue = () => {
+    // Only citizens can report new issues
+    return user?.role === 'CITIZEN' || !user?.role;
+  };
+
+  const handleUpdateProgress = (issue) => {
+    setSelectedIssue(issue);
+    setShowProgressModal(true);
+  };
+
+  const handleProgressUpdate = () => {
+    setShowProgressModal(false);
+    fetchIssues(); // Refresh the issues list
+    if (showDetailsModal) {
+      // If details modal is open, refresh the issue details
+      handleViewDetails(selectedIssue.id);
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Issues</h1>
-          <p className="text-gray-600">Track and manage your submitted issues</p>
+          <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
+          <p className="text-gray-600">{getPageDescription()}</p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Report Issue
-        </button>
+        {canReportIssue() && (
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Report Issue
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -843,6 +935,9 @@ const IssueManagement = () => {
               
               <p className="text-gray-700 mb-3">{issue.description}</p>
               
+              {/* Media Display */}
+              <MediaDisplay issue={issue} className="mb-3" />
+              
               {issue.address && (
                 <div className="flex items-center text-sm text-gray-600 mb-2">
                   <MapPin className="h-4 w-4 mr-1" />
@@ -860,6 +955,7 @@ const IssueManagement = () => {
                         <span className="text-xs text-gray-500 ml-2">
                           {new Date(update.createdAt).toLocaleDateString()}
                         </span>
+                        <UpdateMediaDisplay update={update} className="mt-1" />
                       </div>
                     ))}
                   </div>
@@ -917,17 +1013,19 @@ const IssueManagement = () => {
         </div>
       )}
 
-      {/* Add Issue Modal */}
-      <IssueModal
-        isOpen={showAddModal}
-        onClose={() => { setShowAddModal(false); resetForm(); }}
-        title="Report New Issue"
-        onSubmit={handleAddIssue}
-        formData={formData}
-        setFormData={setFormData}
-        nearbyBodies={nearbyBodies}
-        loadingBodies={loadingBodies}
-      />
+      {/* Add Issue Modal - Only for Citizens */}
+      {canReportIssue() && (
+        <IssueModal
+          isOpen={showAddModal}
+          onClose={() => { setShowAddModal(false); resetForm(); }}
+          title="Report New Issue"
+          onSubmit={handleAddIssue}
+          formData={formData}
+          setFormData={setFormData}
+          nearbyBodies={nearbyBodies}
+          loadingBodies={loadingBodies}
+        />
+      )}
 
       {/* Issue Details Modal */}
       <IssueDetailsModal
@@ -938,6 +1036,16 @@ const IssueManagement = () => {
         setNewComment={setNewComment}
         onAddComment={handleAddComment}
         addingComment={addingComment}
+        user={user}
+        onUpdateProgress={handleUpdateProgress}
+      />
+
+      {/* Progress Update Modal */}
+      <ProgressUpdateModal
+        isOpen={showProgressModal}
+        onClose={() => setShowProgressModal(false)}
+        issue={selectedIssue}
+        onUpdate={handleProgressUpdate}
       />
     </div>
   );

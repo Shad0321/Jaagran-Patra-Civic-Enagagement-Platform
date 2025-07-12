@@ -39,7 +39,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         phone: phone || null,
         name,
         password: hashedPassword,
-        role: 'CITIZEN',
+        role: UserRole.CITIZEN,
         emailVerificationToken,
       },
     });
@@ -134,7 +134,7 @@ export const addMember = async (
         phone: phone || null,
         name,
         password: hashedPassword,
-        role: 'MEMBER',
+        role: UserRole.MEMBER,
         stateId: stateId || currentUser.stateId,
         districtId: districtId || currentUser.districtId,
         constituencyId: constituencyId || currentUser.constituencyId,
@@ -386,7 +386,7 @@ export const getMembers = async (
     const take = parseInt(limit as string);
 
     let whereClause: any = {
-      role: 'MEMBER',
+      role: UserRole.MEMBER,
     };
 
     // Filter based on user role
