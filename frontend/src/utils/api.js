@@ -1,6 +1,6 @@
 // API configuration and utility functions
 export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+  import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 // Common API request function
 export const apiRequest = async (endpoint, options = {}) => {
@@ -23,6 +23,113 @@ export const apiRequest = async (endpoint, options = {}) => {
 
   return response.json();
 };
+
+// Axios-like API instance
+const api = {
+  get: async (endpoint, config = {}) => {
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...config.headers,
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'GET',
+      headers,
+      ...config,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      throw { response: { data: error, status: response.status } };
+    }
+
+    return { data: await response.json() };
+  },
+
+  post: async (endpoint, data, config = {}) => {
+    const token = localStorage.getItem('token');
+    const isFormData = data instanceof FormData;
+    
+    // Don't set Content-Type for FormData - let browser set it with boundary
+    const headers = {
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(!isFormData && { 'Content-Type': 'application/json' }),
+      ...config.headers,
+    };
+
+    // If FormData, don't set Content-Type at all
+    if (isFormData && headers['Content-Type']) {
+      delete headers['Content-Type'];
+    }
+
+    console.log('API POST request:', endpoint, 'Headers:', headers, 'Token:', token);
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: isFormData ? data : JSON.stringify(data),
+      ...config,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      throw { response: { data: error, status: response.status } };
+    }
+
+    return { data: await response.json() };
+  },
+
+  put: async (endpoint, data, config = {}) => {
+    const token = localStorage.getItem('token');
+    const isFormData = data instanceof FormData;
+    
+    const headers = {
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(!isFormData && { 'Content-Type': 'application/json' }),
+      ...config.headers,
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers,
+      body: isFormData ? data : JSON.stringify(data),
+      ...config,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      throw { response: { data: error, status: response.status } };
+    }
+
+    return { data: await response.json() };
+  },
+
+  delete: async (endpoint, config = {}) => {
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...config.headers,
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers,
+      ...config,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      throw { response: { data: error, status: response.status } };
+    }
+
+    return { data: await response.json() };
+  },
+};
+
+export default api;
 
 // Auth API endpoints
 export const authAPI = {

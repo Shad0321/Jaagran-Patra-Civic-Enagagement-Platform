@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
 import {
   securityHeaders,
   corsConfig,
@@ -36,6 +37,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(parameterPollutionProtection);
 app.use(sanitizeInput);
 app.use(requestLogger);
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
 app.use('/', routes);

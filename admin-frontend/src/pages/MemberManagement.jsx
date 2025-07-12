@@ -3,6 +3,7 @@ import { Users, Plus, Search, Edit, Trash2, Filter, MapPin, Phone, Mail, Buildin
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
+// eslint-disable-next-line no-unused-vars
 const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFormData, mlas, bodyTypes, localBodies, onMLAChange, onBodyTypeChange }) => {
   if (!isOpen) return null;
 
@@ -75,7 +76,7 @@ const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFo
                   <option value="">Select MLA</option>
                   {mlas.map(mla => (
                     <option key={mla.id} value={mla.id}>
-                      {mla.name} - {mla.constituency?.name || 'No Constituency'}
+                      {mla.name} - {mla?.constituency || 'No Constituency'}
                     </option>
                   ))}
                 </select>
@@ -124,7 +125,7 @@ const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFo
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Existing Local Body</label>
               <select
                 value={formData.bodyId}
@@ -138,7 +139,7 @@ const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFo
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
@@ -159,6 +160,58 @@ const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFo
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Brief description of role and responsibilities..."
               />
+            </div>
+
+            {/* Password Section */}
+            <div className="border-t pt-4">
+              <h3 className="text-md font-medium text-gray-900 mb-3">Password Settings</h3>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="passwordOption"
+                      value="auto"
+                      checked={formData.passwordOption === 'auto'}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        passwordOption: e.target.value,
+                        password: ''
+                      })}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700">Auto-generate password</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="passwordOption"
+                      value="custom"
+                      checked={formData.passwordOption === 'custom'}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        passwordOption: e.target.value 
+                      })}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700">Set custom password</span>
+                  </label>
+                </div>
+                
+                {formData.passwordOption === 'custom' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Custom Password</label>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter custom password (min 6 characters)"
+                      minLength="6"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             
             <div className="flex items-center">
@@ -193,6 +246,71 @@ const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFo
   );
 };
 
+const PasswordDisplayModal = ({ isOpen, onClose, password, userType, userName }) => {
+  if (!isOpen) return null;
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(password);
+    toast.success('Password copied to clipboard');
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold mb-4">Account Created Successfully</h2>
+        
+        <div className="space-y-4">
+          <div>
+            <p className="text-gray-700">
+              {userType} <strong>{userName}</strong> has been created successfully.
+            </p>
+          </div>
+          
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+            <div className="flex items-start space-x-2">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-800">
+                  Generated Password
+                </h3>
+                <div className="mt-2">
+                  <div className="flex items-center space-x-2">
+                    <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">
+                      {password}
+                    </code>
+                    <button
+                      onClick={copyToClipboard}
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-yellow-700">
+                  Please save this password securely. The user will need it to log in.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MemberManagement = () => {
   const [members, setMembers] = useState([]);
   const [mlas, setMLAs] = useState([]);
@@ -205,6 +323,7 @@ const MemberManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [generatedPassword, setGeneratedPassword] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -217,7 +336,9 @@ const MemberManagement = () => {
     city: '',
     address: '',
     description: '',
-    isActive: true
+    isActive: true,
+    passwordOption: 'auto',
+    password: ''
   });
 
   const bodyTypes = [
@@ -234,11 +355,6 @@ const MemberManagement = () => {
     { value: 'CORPORATION', label: 'Corporation' },
     { value: 'OTHER', label: 'Other' }
   ];
-
-  useEffect(() => {
-    fetchMembers();
-    fetchMLAs();
-  }, [fetchMembers, currentPage, searchTerm, filterMLA]);
 
   const fetchMembers = useCallback(async () => {
     try {
@@ -269,6 +385,11 @@ const MemberManagement = () => {
       console.error('Error fetching MLAs:', error);
     }
   };
+
+  useEffect(() => {
+    fetchMembers();
+    fetchMLAs();
+  }, [fetchMembers]);
 
   const fetchLocalBodies = async (stateId, constituencyId) => {
     try {
@@ -303,8 +424,33 @@ const MemberManagement = () => {
   const handleAddMember = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/admin/members', formData);
-      toast.success('Member added successfully');
+      // Prepare form data
+      const submitData = { ...formData };
+      
+      // Only include password if custom option is selected and password is provided
+      if (formData.passwordOption === 'custom' && formData.password) {
+        submitData.password = formData.password;
+      }
+      
+      // Remove password option fields from submit data
+      delete submitData.passwordOption;
+      if (formData.passwordOption === 'auto') {
+        delete submitData.password;
+      }
+
+      const response = await api.post('/admin/members', submitData);
+      
+      // Show success message
+      if (response.data.data.password && response.data.data.isGenerated) {
+        setGeneratedPassword({
+          password: response.data.data.password,
+          userName: formData.name,
+          userType: 'Member'
+        });
+      } else {
+        toast.success('Member added successfully');
+      }
+      
       setShowAddModal(false);
       resetForm();
       fetchMembers();
@@ -376,10 +522,13 @@ const MemberManagement = () => {
       city: '',
       address: '',
       description: '',
-      isActive: true
+      isActive: true,
+      passwordOption: 'auto',
+      password: ''
     });
     setSelectedMember(null);
     setLocalBodies([]);
+    setGeneratedPassword(null);
   };
 
   return (
@@ -576,6 +725,17 @@ const MemberManagement = () => {
         onMLAChange={handleMLAChange}
         onBodyTypeChange={handleBodyTypeChange}
       />
+
+      {/* Password Display Modal */}
+      {generatedPassword && (
+        <PasswordDisplayModal
+          isOpen={!!generatedPassword}
+          onClose={() => setGeneratedPassword(null)}
+          password={generatedPassword.password}
+          userType="Member"
+          userName={generatedPassword.userName}
+        />
+      )}
     </div>
   );
 };

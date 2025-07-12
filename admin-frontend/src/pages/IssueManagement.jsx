@@ -188,17 +188,17 @@ const IssueManagement = () => {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-              <p className="text-gray-900">{issue.location}</p>
+              <p className="text-gray-900">{issue.constituency?.name || ""} {issue.state?.name || ""}</p>
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Submitted By</label>
-              <p className="text-gray-900">{issue.user?.name} ({issue.user?.email})</p>
+              <p className="text-gray-900">{issue.reportedBy?.name} ({issue.reportedBy?.email})</p>
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Assigned MLA</label>
-              <p className="text-gray-900">{issue.assignedMLA?.name || 'Not assigned'}</p>
+              <p className="text-gray-900">{issue.assignedTo?.name || 'Not assigned'} ({issue.assignedTo?.email || ""})</p>
             </div>
             
             {issue.response && (
@@ -381,6 +381,9 @@ const IssueManagement = () => {
                   Submitted By
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  User email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -431,7 +434,10 @@ const IssueManagement = () => {
                       {issue.category}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {issue.user?.name}
+                      {issue.reportedBy?.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {issue.reportedBy?.email}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(issue.createdAt).toLocaleDateString()}

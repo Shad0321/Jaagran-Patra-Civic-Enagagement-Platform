@@ -376,11 +376,15 @@ export const getAllMLAs = async (
       phone: mla.phone,
       isActive: mla.isActive,
       createdAt: mla.createdAt,
-      constituency:
-        mla.mlaProfile?.constituencyId || mla.constituency?.name || '',
+      stateId: mla.stateId,
+      constituencyId: mla.constituencyId,
+      constituency: mla.constituency?.name || 'No Constituency',
       party: mla.mlaProfile?.partyName || '',
+      position: mla.mlaProfile?.position || '',
+      tenure: mla.mlaProfile?.tenure || '',
       bio: mla.mlaProfile?.bio || '',
-      address: '', // Add if you have this field
+      achievements: mla.mlaProfile?.achievements || '',
+      address: mla.currentAddress || '',
       members: mla.members,
       assignedIssues: mla.assignedIssues,
     }));
@@ -412,6 +416,7 @@ export const createMLA = async (
       name,
       email,
       phone,
+      password, // Optional custom password
       stateId,
       constituencyId,
       party,
@@ -469,9 +474,9 @@ export const createMLA = async (
       return;
     }
 
-    // Generate a temporary password
-    const tempPassword = Math.random().toString(36).substring(2, 10);
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    // Use provided password or generate a temporary password
+    const finalPassword = password || Math.random().toString(36).substring(2, 12);
+    const hashedPassword = await bcrypt.hash(finalPassword, 10);
 
     // Create user with MLA role
     const user = await prisma.user.create({
@@ -519,7 +524,8 @@ export const createMLA = async (
       success: true,
       data: {
         ...createdMLA,
-        tempPassword, // Send temp password to admin (in production, send via email)
+        password: finalPassword, // Send password to admin (temporary if generated, custom if provided)
+        isGenerated: !password, // Flag to indicate if password was auto-generated
       },
     });
   } catch (error) {
@@ -534,8 +540,20 @@ export const updateMLA = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, email, phone, constituency, party, address, bio, isActive } =
-      req.body;
+    const {
+      name,
+      email,
+      phone,
+      stateId,
+      constituencyId,
+      party,
+      position,
+      tenure,
+      address,
+      bio,
+      achievements,
+      isActive,
+    } = req.body;
 
     // Update user
     const user = await prisma.user.update({
@@ -544,6 +562,9 @@ export const updateMLA = async (
         name,
         email,
         phone,
+        stateId,
+        constituencyId,
+        currentAddress: address,
         isActive,
       },
     });
@@ -552,16 +573,23 @@ export const updateMLA = async (
     await prisma.mlaProfile.upsert({
       where: { userId: id },
       update: {
+        constituencyId,
         partyName: party,
+        position: position || null,
+        tenure: tenure || null,
         bio: bio || null,
+        achievements: achievements || null,
         contactEmail: email,
         contactPhone: phone || null,
       },
       create: {
         userId: id,
-        constituencyId: constituency,
+        constituencyId,
         partyName: party,
+        position: position || null,
+        tenure: tenure || null,
         bio: bio || null,
+        achievements: achievements || null,
         contactEmail: email,
         contactPhone: phone || null,
       },
@@ -572,6 +600,8 @@ export const updateMLA = async (
       where: { id },
       include: {
         mlaProfile: true,
+        state: { select: { name: true } },
+        constituency: { select: { name: true } },
       },
     });
 
@@ -672,6 +702,7 @@ export const createMember = async (
       name,
       email,
       phone,
+      password, // Optional custom password
       bodyType,
       designation,
       description,
@@ -698,10 +729,16 @@ export const createMember = async (
 
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
-      where: { OR: [{ email }, { phone: phone || undefined }] },
+      where: { 
+        OR: [
+          { email }, 
+          ...(phone && phone.trim() !== '' ? [{ phone: phone }] : [])
+        ] 
+      },
     });
     if (existingUser) {
-      res.status(409).json({ success: false, error: 'User already exists' });
+      console.log('User already exists:', { email, phone, existingUserId: existingUser.id });
+      res.status(409).json({ success: false, error: 'User with this email or phone already exists' });
       return;
     }
 
@@ -729,8 +766,8 @@ export const createMember = async (
     const finalConstituencyId =
       constituencyId || mlaLocationData?.constituencyId;
 
-    // If bodyId is provided, verify it exists
-    if (bodyId) {
+    // If bodyId is provided and not empty, verify it exists
+    if (bodyId && bodyId.trim() !== '') {
       const body = await prisma.body.findUnique({
         where: { id: bodyId },
       });
@@ -740,9 +777,22 @@ export const createMember = async (
       }
     }
 
-    // Generate a temporary password
-    const tempPassword = Math.random().toString(36).substring(2, 10);
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    // Use provided password or generate a temporary password
+    const finalPassword = password || Math.random().toString(36).substring(2, 12);
+    const hashedPassword = await bcrypt.hash(finalPassword, 10);
+
+    console.log('Creating member with data:', {
+      email,
+      phone,
+      name,
+      role: 'MEMBER',
+      mlaId: mlaId || null,
+      finalStateId,
+      finalConstituencyId,
+      bodyId: (bodyId && bodyId.trim() !== '') ? bodyId : null,
+      currentAddress: address || null,
+      isActive: isActive !== undefined ? isActive : true,
+    });
 
     // Create user with MEMBER role
     const user = await prisma.user.create({
@@ -755,7 +805,7 @@ export const createMember = async (
         mlaId: mlaId || null,
         stateId: finalStateId || null,
         constituencyId: finalConstituencyId || null,
-        bodyId: bodyId || null,
+        bodyId: (bodyId && bodyId.trim() !== '') ? bodyId : null,
         currentAddress: address || null,
         isVerified: true, // Admin created users are pre-verified
         isActive: isActive !== undefined ? isActive : true,
@@ -774,32 +824,54 @@ export const createMember = async (
 
     // Create or update local body if localBodyName is provided
     if (localBodyName && finalStateId && finalConstituencyId) {
-      const localBody = await prisma.body.upsert({
-        where: {
-          stateId_districtId_constituencyId_code_type: {
+      try {
+        console.log('Creating/updating local body:', {
+          localBodyName,
+          finalStateId,
+          finalConstituencyId,
+          bodyType,
+          code: localBodyName.replace(/\s+/g, '_').toUpperCase()
+        });
+
+        const localBody = await prisma.body.upsert({
+          where: {
+            stateId_districtId_constituencyId_code_type: {
+              stateId: finalStateId,
+              districtId: finalStateId, // Using state as district for now
+              constituencyId: finalConstituencyId,
+              code: localBodyName.replace(/\s+/g, '_').toUpperCase(),
+              type: bodyType || 'LOCAL_BODY',
+            },
+          },
+          update: {},
+          create: {
+            name: localBodyName,
+            code: localBodyName.replace(/\s+/g, '_').toUpperCase(),
+            type: bodyType || 'LOCAL_BODY',
             stateId: finalStateId,
             districtId: finalStateId, // Using state as district for now
             constituencyId: finalConstituencyId,
-            code: localBodyName.replace(/\s+/g, '_').toUpperCase(),
-            type: bodyType || 'LOCAL_BODY',
+            address: city ? `${city}, ${address || ''}` : address || null,
           },
-        },
-        update: {},
-        create: {
-          name: localBodyName,
-          code: localBodyName.replace(/\s+/g, '_').toUpperCase(),
-          type: bodyType || 'LOCAL_BODY',
-          stateId: finalStateId,
-          districtId: finalStateId, // Using state as district for now
-          constituencyId: finalConstituencyId,
-          address: city ? `${city}, ${address || ''}` : address || null,
-        },
-      });
+        });
 
-      // Update user with the local body
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { bodyId: localBody.id },
+        console.log('Local body created/updated:', localBody);
+
+        // Update user with the local body
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { bodyId: localBody.id },
+        });
+      } catch (bodyError) {
+        console.error('Error creating/updating local body:', bodyError);
+        // Don't fail the entire operation, just log the error
+        console.log('Continuing without local body assignment');
+      }
+    } else if (localBodyName) {
+      console.log('Cannot create local body - missing location data:', {
+        localBodyName,
+        finalStateId,
+        finalConstituencyId
       });
     }
 
@@ -825,7 +897,8 @@ export const createMember = async (
       success: true,
       data: {
         ...createdMember,
-        tempPassword, // Send temp password to admin (in production, send via email)
+        password: finalPassword, // Send password to admin (temporary if generated, custom if provided)
+        isGenerated: !password, // Flag to indicate if password was auto-generated
       },
     });
   } catch (error) {
@@ -1549,6 +1622,7 @@ export const initializeLocationData = async (
     // Read the assembly data from JSON file
     const assemblyDataPath = path.join(
       process.cwd(),
+      '..',
       'form20',
       'uk',
       '2024',
@@ -1576,6 +1650,24 @@ export const initializeLocationData = async (
       },
     });
 
+    // Create a default district for UK (since constituencies require a district)
+    const ukDistrict = await prisma.district.upsert({
+      where: {
+        stateId_code: {
+          stateId: ukState.id,
+          code: 'UK',
+        },
+      },
+      update: {},
+      create: {
+        name: 'Uttarakhand',
+        code: 'UK',
+        stateId: ukState.id,
+        latitude: 30.0668,
+        longitude: 79.0193,
+      },
+    });
+
     // Create constituencies from assembly data
     const constituencies = [];
     for (const assembly of assemblyData) {
@@ -1596,7 +1688,7 @@ export const initializeLocationData = async (
           code: assembly.Constituency.replace(/\s+/g, '_').toUpperCase(),
           type: assembly.Constituency.includes('(SC)') ? 'SC' : 'GENERAL',
           stateId: ukState.id,
-          districtId: ukState.id, // Using state as district for now
+          districtId: ukDistrict.id, // Use the actual district
           latitude: assembly.Latitude,
           longitude: assembly.Longitude,
         },
@@ -1609,11 +1701,16 @@ export const initializeLocationData = async (
       data: {
         message: 'Location data initialized successfully',
         state: ukState,
+        district: ukDistrict,
         constituencies: constituencies.length,
       },
     });
   } catch (error) {
     console.error('Initialize location data error:', error);
-    res.status(500).json({ success: false, error: 'Internal server error' });
+    res.status(500).json({ 
+      success: false, 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error' // Include error details for debugging
+    });
   }
 };

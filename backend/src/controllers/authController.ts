@@ -54,120 +54,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Admin creates MLA
-export const createMLA = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const {
-      email,
-      phone,
-      name,
-      password,
-      constituencyId,
-      stateId,
-      districtId,
-      partyName,
-      position,
-      tenure,
-      bio,
-      achievements,
-      contactEmail,
-      contactPhone,
-      socialLinks,
-    } = req.body;
-
-    // Validate required fields
-    if (!email || !password || !name || !constituencyId || !stateId) {
-      res.status(400).json({ error: 'Missing required fields' });
-      return;
-    }
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findFirst({
-      where: { OR: [{ email }, { phone }] },
-    });
-    if (existingUser) {
-      res.status(409).json({ error: 'User already exists' });
-      return;
-    }
-
-    // Check if constituency exists
-    const constituency = await prisma.constituency.findUnique({
-      where: { id: constituencyId },
-    });
-    if (!constituency) {
-      res.status(400).json({ error: 'Invalid constituency' });
-      return;
-    }
-
-    // Check if MLA already exists for this constituency
-    const existingMLA = await prisma.mlaProfile.findFirst({
-      where: { constituencyId },
-    });
-    if (existingMLA) {
-      res
-        .status(409)
-        .json({ error: 'MLA already exists for this constituency' });
-      return;
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const emailVerificationToken = Math.random().toString(36).substring(2, 15);
-
-    // Create MLA user with profile
-    const user = await prisma.user.create({
-      data: {
-        email,
-        phone: phone || null,
-        name,
-        password: hashedPassword,
-        role: 'MLA',
-        stateId,
-        districtId,
-        constituencyId,
-        isVerified: true, // Admin-created users are pre-verified
-        emailVerificationToken,
-        mlaProfile: {
-          create: {
-            constituencyId,
-            partyName,
-            position,
-            tenure,
-            bio,
-            achievements,
-            contactEmail: contactEmail || email,
-            contactPhone: contactPhone || phone,
-            socialLinks: socialLinks || {},
-          },
-        },
-      },
-      include: {
-        mlaProfile: true,
-        state: { select: { id: true, name: true } },
-        district: { select: { id: true, name: true } },
-        constituency: { select: { id: true, name: true } },
-      },
-    });
-
-    res.status(201).json({
-      message: 'MLA created successfully',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        constituency: user.constituency,
-        mlaProfile: user.mlaProfile,
-      },
-    });
-  } catch (error) {
-    console.error('Create MLA error:', error);
-    res.status(500).json({ error: 'Failed to create MLA', details: error });
-  }
-};
-
 // MLA/Admin adds MEMBER
 export const addMember = async (
   req: AuthenticatedRequest,
@@ -815,6 +701,9 @@ export const verifyPhone = async (
 export const requireRole =
   (roles: UserRole[]) => (req: any, res: Response, next: NextFunction) => {
     const user = req.user;
+    if(user && user.role === 'ADMIN') {
+      return next();
+    }
     if (!user || !roles.includes(user.role)) {
       res.status(403).json({ error: 'Forbidden' });
       return;

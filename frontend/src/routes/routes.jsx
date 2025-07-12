@@ -11,6 +11,7 @@ import ProtectedRoute from '../components/common/ProtectedRoute.jsx';
 import LanguageGuard from '../components/common/LanguageGuard.jsx';
 import Settings from '../pages/Settings.jsx';
 import Profile from '../pages/Profile.jsx';
+import IssueManagement from '../pages/IssueManagement.jsx';
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,16 @@ const router = createBrowserRouter([
           <LanguageGuard>
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path: 'issues',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute>
+              <IssueManagement />
             </ProtectedRoute>
           </LanguageGuard>
         ),

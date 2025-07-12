@@ -181,45 +181,6 @@ router.post(
   authController.updateLocation
 );
 
-// Admin routes for user management
-router.post(
-  '/admin/create-mla',
-  authenticate,
-  authorize(['ADMIN']),
-  [
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('password')
-      .isLength({ min: 6 })
-      .withMessage('Password must be at least 6 characters'),
-    body('name').notEmpty().withMessage('Name is required'),
-    body('constituencyId')
-      .notEmpty()
-      .withMessage('Constituency ID is required'),
-    body('stateId').notEmpty().withMessage('State ID is required'),
-    body('phone')
-      .optional()
-      .isMobilePhone('any')
-      .withMessage('Valid phone number required'),
-    body('districtId').optional().isString(),
-    body('partyName').optional().isString(),
-    body('position').optional().isString(),
-    body('tenure').optional().isString(),
-    body('bio').optional().isString(),
-    body('achievements').optional().isString(),
-    body('contactEmail')
-      .optional()
-      .isEmail()
-      .withMessage('Valid contact email required'),
-    body('contactPhone')
-      .optional()
-      .isMobilePhone('any')
-      .withMessage('Valid contact phone required'),
-    body('socialLinks').optional().isObject(),
-  ],
-  handleValidationErrors,
-  authController.createMLA
-);
-
 // MLA/Admin routes for member management
 router.post(
   '/members',

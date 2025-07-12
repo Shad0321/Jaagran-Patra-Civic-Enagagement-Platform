@@ -238,6 +238,31 @@ const Navbar = () => {
                   </Link>
                 </li>
 
+                {/* Issues */}
+                <li>
+                  <Link
+                    className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
+                    to="/issues"
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    <svg
+                      className="size-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    My Issues
+                  </Link>
+                </li>
+
                 {/* Users Accordion */}
                 <li className="relative">
                   <button

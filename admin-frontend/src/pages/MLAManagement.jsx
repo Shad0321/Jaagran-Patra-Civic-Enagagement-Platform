@@ -28,7 +28,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
@@ -39,7 +39,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
@@ -52,7 +52,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -62,10 +62,62 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 <input
                   type="text"
                   value={formData.position}
-                  onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Cabinet Minister, Chief Minister"
                 />
+              </div>
+            </div>
+
+            {/* Password Section */}
+            <div className="border-t pt-4">
+              <h3 className="text-md font-medium text-gray-900 mb-3">Password Settings</h3>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="passwordOption"
+                      value="auto"
+                      checked={formData.passwordOption === 'auto'}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        passwordOption: e.target.value,
+                        password: ''
+                      }))}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700">Auto-generate password</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="passwordOption"
+                      value="custom"
+                      checked={formData.passwordOption === 'custom'}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        passwordOption: e.target.value 
+                      }))}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700">Set custom password</span>
+                  </label>
+                </div>
+                
+                {formData.passwordOption === 'custom' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Custom Password</label>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter custom password (min 6 characters)"
+                      minLength="6"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             
@@ -76,7 +128,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                   value={formData.stateId}
                   onChange={(e) => {
                     const stateId = e.target.value;
-                    setFormData({ ...formData, stateId, constituencyId: '' });
+                    setFormData(prev => ({ ...prev, stateId, constituencyId: '' }));
                     onStateChange(stateId);
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -94,7 +146,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 <label className="block text-sm font-medium text-gray-700 mb-1">Constituency *</label>
                 <select
                   value={formData.constituencyId}
-                  onChange={(e) => setFormData({ ...formData, constituencyId: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, constituencyId: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   disabled={loadingConstituencies || !formData.stateId}
@@ -114,7 +166,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 <label className="block text-sm font-medium text-gray-700 mb-1">Party *</label>
                 <select
                   value={formData.party}
-                  onChange={(e) => setFormData({ ...formData, party: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, party: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 >
@@ -130,7 +182,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 <input
                   type="text"
                   value={formData.tenure}
-                  onChange={(e) => setFormData({ ...formData, tenure: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tenure: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., 2017-2022"
                 />
@@ -141,7 +193,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
               <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
               <textarea
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                 rows="2"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -151,7 +203,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
               <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
               <textarea
                 value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
                 rows="3"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Brief biography or description..."
@@ -162,7 +214,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
               <label className="block text-sm font-medium text-gray-700 mb-1">Achievements</label>
               <textarea
                 value={formData.achievements}
-                onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, achievements: e.target.value }))}
                 rows="3"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Key achievements and accomplishments..."
@@ -173,7 +225,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
               <input
                 type="checkbox"
                 checked={formData.isActive}
-                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
                 className="mr-2"
               />
               <label className="text-sm font-medium text-gray-700">Active</label>
@@ -201,6 +253,71 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
   );
 };
 
+const PasswordDisplayModal = ({ isOpen, onClose, password, userType, userName }) => {
+  if (!isOpen) return null;
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(password);
+    toast.success('Password copied to clipboard');
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold mb-4">Account Created Successfully</h2>
+        
+        <div className="space-y-4">
+          <div>
+            <p className="text-gray-700">
+              {userType} <strong>{userName}</strong> has been created successfully.
+            </p>
+          </div>
+          
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+            <div className="flex items-start space-x-2">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-800">
+                  Generated Password
+                </h3>
+                <div className="mt-2">
+                  <div className="flex items-center space-x-2">
+                    <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">
+                      {password}
+                    </code>
+                    <button
+                      onClick={copyToClipboard}
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-yellow-700">
+                  Please save this password securely. The user will need it to log in.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MLAManagement = () => {
   const [mlas, setMLAs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -211,6 +328,7 @@ const MLAManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMLA, setSelectedMLA] = useState(null);
+  const [generatedPassword, setGeneratedPassword] = useState(null);
   
   // Location data states
   const [states, setStates] = useState([]);
@@ -230,17 +348,35 @@ const MLAManagement = () => {
     address: '',
     bio: '',
     achievements: '',
-    isActive: true
+    isActive: true,
+    passwordOption: 'auto', // 'auto' or 'custom'
+    password: ''
   });
 
   const partyOptions = [
     'BJP', 'INC', 'AAP', 'BSP', 'SP', 'JDU', 'RJD', 'TMC', 'DMK', 'AIADMK', 'Independent', 'Other'
   ];
 
-  useEffect(() => {
-    fetchMLAs();
-    fetchStates();
-  }, [fetchMLAs, currentPage, searchTerm, filterParty]);
+  const fetchMLAs = useCallback(async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: '10',
+        search: searchTerm,
+        party: filterParty === 'all' ? '' : filterParty
+      });
+
+      const response = await api.get(`/admin/mlas?${params}`);
+      setMLAs(response.data.data?.mlas || []);
+      setTotalPages(response.data.data?.pagination?.pages || 1);
+    } catch (error) {
+      toast.error('Failed to fetch MLAs');
+      console.error('Error fetching MLAs:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, searchTerm, filterParty]);
 
   const fetchStates = async () => {
     try {
@@ -285,32 +421,41 @@ const MLAManagement = () => {
     }
   };
 
-  const fetchMLAs = useCallback(async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: '10',
-        search: searchTerm,
-        party: filterParty === 'all' ? '' : filterParty
-      });
-
-      const response = await api.get(`/admin/mlas?${params}`);
-      setMLAs(response.data.data?.mlas || []);
-      setTotalPages(response.data.data?.pagination?.pages || 1);
-    } catch (error) {
-      toast.error('Failed to fetch MLAs');
-      console.error('Error fetching MLAs:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, searchTerm, filterParty]);
+  useEffect(() => {
+    fetchMLAs();
+    fetchStates();
+  }, [fetchMLAs]);
 
   const handleAddMLA = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/admin/mlas', formData);
-      toast.success('MLA added successfully');
+      // Prepare form data
+      const submitData = { ...formData };
+      
+      // Only include password if custom option is selected and password is provided
+      if (formData.passwordOption === 'custom' && formData.password) {
+        submitData.password = formData.password;
+      }
+      
+      // Remove password option fields from submit data
+      delete submitData.passwordOption;
+      if (formData.passwordOption === 'auto') {
+        delete submitData.password;
+      }
+
+      const response = await api.post('/admin/mlas', submitData);
+      
+      // Show success message
+      if (response.data.data.password && response.data.data.isGenerated) {
+        setGeneratedPassword({
+          password: response.data.data.password,
+          userName: formData.name,
+          userType: 'MLA'
+        });
+      } else {
+        toast.success('MLA added successfully');
+      }
+      
       setShowAddModal(false);
       resetForm();
       fetchMLAs();
@@ -355,12 +500,12 @@ const MLAManagement = () => {
       phone: mla.phone || '',
       stateId: mla.stateId || '',
       constituencyId: mla.constituencyId || '',
-      party: mla.mlaProfile?.partyName || '',
-      position: mla.mlaProfile?.position || '',
-      tenure: mla.mlaProfile?.tenure || '',
-      address: mla.currentAddress || '',
-      bio: mla.mlaProfile?.bio || '',
-      achievements: mla.mlaProfile?.achievements || '',
+      party: mla.party || '',
+      position: mla.position || '',
+      tenure: mla.tenure || '',
+      address: mla.address || '',
+      bio: mla.bio || '',
+      achievements: mla.achievements || '',
       isActive: mla.isActive
     });
     if (mla.stateId) {
@@ -382,10 +527,13 @@ const MLAManagement = () => {
       address: '',
       bio: '',
       achievements: '',
-      isActive: true
+      isActive: true,
+      passwordOption: 'auto',
+      password: ''
     });
     setSelectedMLA(null);
     setConstituencies([]);
+    setGeneratedPassword(null);
   };
 
   return (
@@ -456,7 +604,7 @@ const MLAManagement = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">{mla.name}</h3>
-                    <p className="text-sm text-gray-600">{mla.mlaProfile?.partyName || 'No Party'}</p>
+                    <p className="text-sm text-gray-600">{mla?.party || 'No Party'}</p>
                   </div>
                 </div>
                 <div className="flex space-x-2">
@@ -478,7 +626,7 @@ const MLAManagement = () => {
               <div className="space-y-2 mb-4">
                 <div className="flex items-center text-sm text-gray-600">
                   <MapPin className="h-4 w-4 mr-2" />
-                  {mla.constituency?.name || 'No Constituency'}
+                  {mla.constituency || 'No Constituency'}
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <Mail className="h-4 w-4 mr-2" />
@@ -577,6 +725,15 @@ const MLAManagement = () => {
         loadingConstituencies={loadingConstituencies}
         onStateChange={handleStateChange}
         onInitializeData={initializeLocationData}
+      />
+
+      {/* Password Display Modal */}
+      <PasswordDisplayModal
+        isOpen={generatedPassword !== null}
+        onClose={() => setGeneratedPassword(null)}
+        password={generatedPassword?.password}
+        userType={generatedPassword?.userType}
+        userName={generatedPassword?.userName}
       />
     </div>
   );
