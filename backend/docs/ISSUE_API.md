@@ -27,7 +27,7 @@ Authorization: Bearer <your-jwt-token>
 
 ### 1. Create Issue (MLA Only)
 
-**POST** `/api/issues`
+**POST** `/issues`
 
 Creates a new issue that can be assigned to subordinate members.
 
@@ -134,7 +134,7 @@ Creates a new issue that can be assigned to subordinate members.
 
 ### 2. Get Issues
 
-**GET** `/api/issues`
+**GET** `/issues`
 
 Retrieves issues based on user role and permissions.
 
@@ -149,7 +149,7 @@ Retrieves issues based on user role and permissions.
 - `limit` (optional): Items per page (default: 10, max: 100)
 - `search` (optional): Search in title and description
 
-**Example**: `/api/issues?status=PENDING&priority=HIGH&page=1&limit=20`
+**Example**: `/issues?status=PENDING&priority=HIGH&page=1&limit=20`
 
 **Response**:
 
@@ -204,7 +204,7 @@ Retrieves issues based on user role and permissions.
 
 ### 3. Get Issue by ID
 
-**GET** `/api/issues/:id`
+**GET** `/issues/:id`
 
 Retrieves detailed information about a specific issue.
 
@@ -285,7 +285,7 @@ Retrieves detailed information about a specific issue.
 
 ### 4. Add Issue Update/Comment
 
-**POST** `/api/issues/:id/updates`
+**POST** `/issues/:id/updates`
 
 Adds an update or comment to an existing issue.
 
@@ -347,7 +347,7 @@ Adds an update or comment to an existing issue.
 
 ### 5. Update Issue
 
-**PUT** `/api/issues/:id`
+**PUT** `/issues/:id`
 
 Updates issue details (assignment, priority, status, etc.).
 
@@ -403,7 +403,7 @@ Updates issue details (assignment, priority, status, etc.).
 
 ### 6. Get Issue Statistics
 
-**GET** `/api/issues/stats`
+**GET** `/issues/stats`
 
 Retrieves issue statistics for dashboard display.
 
@@ -478,7 +478,7 @@ Retrieves issue statistics for dashboard display.
 
 ### 7. Delete Issue
 
-**DELETE** `/api/issues/:id`
+**DELETE** `/issues/:id`
 
 Deletes an issue (Admin and MLA who created it only).
 
@@ -608,7 +608,7 @@ Deletes an issue (Admin and MLA who created it only).
 1. **Create Issue**:
 
 ```bash
-curl -X POST https://api.jagranpatra.com/api/issues \
+curl -X POST https://api.jagranpatra.com/issues \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -627,7 +627,7 @@ curl -X POST https://api.jagranpatra.com/api/issues \
 2. **Member Adds Progress Update**:
 
 ```bash
-curl -X POST https://api.jagranpatra.com/api/issues/ISSUE_ID/updates \
+curl -X POST https://api.jagranpatra.com/issues/ISSUE_ID/updates \
   -H "Authorization: Bearer MEMBER_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -645,7 +645,7 @@ curl -X POST https://api.jagranpatra.com/api/issues/ISSUE_ID/updates \
 3. **Citizen Adds Comment**:
 
 ```bash
-curl -X POST https://api.jagranpatra.com/api/issues/ISSUE_ID/updates \
+curl -X POST https://api.jagranpatra.com/issues/ISSUE_ID/updates \
   -H "Authorization: Bearer CITIZEN_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -658,14 +658,14 @@ curl -X POST https://api.jagranpatra.com/api/issues/ISSUE_ID/updates \
 ### Example 2: Get Issues with Filters
 
 ```bash
-curl -X GET "https://api.jagranpatra.com/api/issues?status=PENDING&priority=HIGH&category=Infrastructure&page=1&limit=10" \
+curl -X GET "https://api.jagranpatra.com/issues?status=PENDING&priority=HIGH&category=Infrastructure&page=1&limit=10" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ### Example 3: Get Issue Statistics
 
 ```bash
-curl -X GET https://api.jagranpatra.com/api/issues/stats \
+curl -X GET https://api.jagranpatra.com/issues/stats \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 

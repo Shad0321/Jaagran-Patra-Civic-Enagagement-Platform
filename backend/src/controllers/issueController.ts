@@ -1238,8 +1238,6 @@ export const getAssignedIssues = async (
     ]);
 
     if (issues.length === 0) {
-      console.log('⚠️ getAssignedIssues - No issues found for user:', userId);
-      
       // Let's check what issues exist for debugging
       const allIssuesForDebugging = await prisma.issue.findMany({
         select: {

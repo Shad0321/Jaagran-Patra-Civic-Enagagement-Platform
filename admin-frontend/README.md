@@ -189,14 +189,14 @@ The admin frontend communicates with the backend API through:
 
 ### Key API Endpoints
 
-- `GET /api/admin/dashboard` - Dashboard statistics
-- `GET /api/admin/users` - User management
-- `GET /api/admin/mlas` - MLA management
-- `GET /api/admin/members` - Member management
-- `GET /api/admin/issues` - Issue management
-- `GET /api/admin/news` - News management
-- `GET /api/admin/analytics` - Analytics data
-- `GET /api/admin/settings` - System settings
+- `GET /admin/dashboard` - Dashboard statistics
+- `GET /admin/users` - User management
+- `GET /admin/mlas` - MLA management
+- `GET /admin/members` - Member management
+- `GET /admin/issues` - Issue management
+- `GET /admin/news` - News management
+- `GET /admin/analytics` - Analytics data
+- `GET /admin/settings` - System settings
 
 ## Development
 

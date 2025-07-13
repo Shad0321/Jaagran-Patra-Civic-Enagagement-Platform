@@ -76,7 +76,7 @@ src/
 
 - `GET /health` - Server health check
 - `GET /health/db` - Database connection health check
-- `GET /api/example` - Example API endpoint
+- `GET /example` - Example API endpoint
 
 ## Environment Variables
 

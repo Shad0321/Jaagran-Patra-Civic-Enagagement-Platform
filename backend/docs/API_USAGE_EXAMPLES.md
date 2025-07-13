@@ -18,8 +18,8 @@ const headers = {
 ### Get User Profile
 
 ```javascript
-// GET /api/auth/profile
-const response = await fetch('/api/auth/profile', {
+// GET /auth/profile
+const response = await fetch('/auth/profile', {
   method: 'GET',
   headers: headers,
 });
@@ -31,7 +31,7 @@ console.log('User profile:', data.user);
 ### Update Profile
 
 ```javascript
-// PUT /api/auth/profile
+// PUT /auth/profile
 const updateData = {
   name: 'Updated Name',
   phone: '+919876543210',
@@ -39,7 +39,7 @@ const updateData = {
   districtId: 'district_456',
 };
 
-const response = await fetch('/api/auth/profile', {
+const response = await fetch('/auth/profile', {
   method: 'PUT',
   headers: headers,
   body: JSON.stringify(updateData),
@@ -52,13 +52,13 @@ console.log('Profile updated:', result.message);
 ### Change Password
 
 ```javascript
-// POST /api/auth/change-password
+// POST /auth/change-password
 const passwordData = {
   currentPassword: 'oldPassword123',
   newPassword: 'NewSecurePass@123',
 };
 
-const response = await fetch('/api/auth/change-password', {
+const response = await fetch('/auth/change-password', {
   method: 'POST',
   headers: headers,
   body: JSON.stringify(passwordData),
@@ -68,14 +68,14 @@ const response = await fetch('/api/auth/change-password', {
 ### Update Location
 
 ```javascript
-// POST /api/auth/update-location
+// POST /auth/update-location
 const locationData = {
   latitude: 28.6139,
   longitude: 77.209,
   address: 'New Delhi, India',
 };
 
-const response = await fetch('/api/auth/update-location', {
+const response = await fetch('/auth/update-location', {
   method: 'POST',
   headers: headers,
   body: JSON.stringify(locationData),
@@ -87,9 +87,9 @@ const response = await fetch('/api/auth/update-location', {
 ### Get Subordinates List
 
 ```javascript
-// GET /api/auth/subordinates?page=1&limit=10&type=DIRECT
+// GET /auth/subordinates?page=1&limit=10&type=DIRECT
 const response = await fetch(
-  '/api/auth/subordinates?page=1&limit=10&type=DIRECT',
+  '/auth/subordinates?page=1&limit=10&type=DIRECT',
   {
     method: 'GET',
     headers: headers,
@@ -104,7 +104,7 @@ console.log('Pagination:', data.pagination);
 ### Add New Subordinate
 
 ```javascript
-// POST /api/auth/subordinates
+// POST /auth/subordinates
 const subordinateData = {
   subordinateId: 'user_123',
   type: 'DIRECT',
@@ -114,7 +114,7 @@ const subordinateData = {
   localBodyId: 'lb_789',
 };
 
-const response = await fetch('/api/auth/subordinates', {
+const response = await fetch('/auth/subordinates', {
   method: 'POST',
   headers: headers,
   body: JSON.stringify(subordinateData),
@@ -127,7 +127,7 @@ console.log('Subordinate added:', result.subordinateRelation);
 ### Update Subordinate
 
 ```javascript
-// PUT /api/auth/subordinates/relation_id_123
+// PUT /auth/subordinates/relation_id_123
 const updateData = {
   type: 'INDIRECT',
   designation: 'Updated Position',
@@ -135,7 +135,7 @@ const updateData = {
   permissions: ['view_reports', 'manage_local_issues'],
 };
 
-const response = await fetch('/api/auth/subordinates/relation_id_123', {
+const response = await fetch('/auth/subordinates/relation_id_123', {
   method: 'PUT',
   headers: headers,
   body: JSON.stringify(updateData),
@@ -145,8 +145,8 @@ const response = await fetch('/api/auth/subordinates/relation_id_123', {
 ### Get Subordinate Hierarchy
 
 ```javascript
-// GET /api/auth/subordinates/hierarchy
-const response = await fetch('/api/auth/subordinates/hierarchy', {
+// GET /auth/subordinates/hierarchy
+const response = await fetch('/auth/subordinates/hierarchy', {
   method: 'GET',
   headers: headers,
 });
@@ -160,7 +160,7 @@ console.log('Hierarchy:', data.hierarchy);
 ### Get All Users
 
 ```javascript
-// GET /api/auth/users?page=1&limit=10&role=MLA&search=john
+// GET /auth/users?page=1&limit=10&role=MLA&search=john
 const params = new URLSearchParams({
   page: '1',
   limit: '10',
@@ -169,7 +169,7 @@ const params = new URLSearchParams({
   isActive: 'true',
 });
 
-const response = await fetch(`/api/auth/users?${params}`, {
+const response = await fetch(`/auth/users?${params}`, {
   method: 'GET',
   headers: headers,
 });
@@ -181,8 +181,8 @@ console.log('Users:', data.users);
 ### Get Specific User
 
 ```javascript
-// GET /api/auth/users/user_id_123
-const response = await fetch('/api/auth/users/user_id_123', {
+// GET /auth/users/user_id_123
+const response = await fetch('/auth/users/user_id_123', {
   method: 'GET',
   headers: headers,
 });
@@ -194,7 +194,7 @@ console.log('User details:', data.user);
 ### Update User
 
 ```javascript
-// PUT /api/auth/users/user_id_123
+// PUT /auth/users/user_id_123
 const userData = {
   name: 'Updated User Name',
   role: 'MLA',
@@ -203,7 +203,7 @@ const userData = {
   constituencyId: 'const_789',
 };
 
-const response = await fetch('/api/auth/users/user_id_123', {
+const response = await fetch('/auth/users/user_id_123', {
   method: 'PUT',
   headers: headers,
   body: JSON.stringify(userData),
@@ -213,15 +213,15 @@ const response = await fetch('/api/auth/users/user_id_123', {
 ### Activate/Deactivate User
 
 ```javascript
-// POST /api/auth/users/user_id_123/activate
-const activateResponse = await fetch('/api/auth/users/user_id_123/activate', {
+// POST /auth/users/user_id_123/activate
+const activateResponse = await fetch('/auth/users/user_id_123/activate', {
   method: 'POST',
   headers: headers,
 });
 
-// POST /api/auth/users/user_id_123/deactivate
+// POST /auth/users/user_id_123/deactivate
 const deactivateResponse = await fetch(
-  '/api/auth/users/user_id_123/deactivate',
+  '/auth/users/user_id_123/deactivate',
   {
     method: 'POST',
     headers: headers,
@@ -234,8 +234,8 @@ const deactivateResponse = await fetch(
 ### Get States
 
 ```javascript
-// GET /api/auth/locations/states
-const response = await fetch('/api/auth/locations/states');
+// GET /auth/locations/states
+const response = await fetch('/auth/locations/states');
 const data = await response.json();
 console.log('States:', data.states);
 ```
@@ -243,8 +243,8 @@ console.log('States:', data.states);
 ### Get Districts by State
 
 ```javascript
-// GET /api/auth/locations/districts/state_id_123
-const response = await fetch('/api/auth/locations/districts/state_id_123');
+// GET /auth/locations/districts/state_id_123
+const response = await fetch('/auth/locations/districts/state_id_123');
 const data = await response.json();
 console.log('Districts:', data.districts);
 ```
@@ -252,9 +252,9 @@ console.log('Districts:', data.districts);
 ### Get Constituencies by District
 
 ```javascript
-// GET /api/auth/locations/constituencies/district_id_456
+// GET /auth/locations/constituencies/district_id_456
 const response = await fetch(
-  '/api/auth/locations/constituencies/district_id_456'
+  '/auth/locations/constituencies/district_id_456'
 );
 const data = await response.json();
 console.log('Constituencies:', data.constituencies);
@@ -267,13 +267,13 @@ console.log('Constituencies:', data.constituencies);
 async function getLocationHierarchy(stateId) {
   try {
     // Get state info
-    const statesResponse = await fetch('/api/auth/locations/states');
+    const statesResponse = await fetch('/auth/locations/states');
     const statesData = await statesResponse.json();
     const state = statesData.states.find((s) => s.id === stateId);
 
     // Get districts
     const districtsResponse = await fetch(
-      `/api/auth/locations/districts/${stateId}`
+      `/auth/locations/districts/${stateId}`
     );
     const districtsData = await districtsResponse.json();
 
@@ -281,7 +281,7 @@ async function getLocationHierarchy(stateId) {
     if (districtsData.districts.length > 0) {
       const districtId = districtsData.districts[0].id;
       const constituenciesResponse = await fetch(
-        `/api/auth/locations/constituencies/${districtId}`
+        `/auth/locations/constituencies/${districtId}`
       );
       const constituenciesData = await constituenciesResponse.json();
 
@@ -312,7 +312,7 @@ function trackUserLocation() {
         };
 
         try {
-          const response = await fetch('/api/auth/update-location', {
+          const response = await fetch('/auth/update-location', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(locationData),
@@ -382,7 +382,7 @@ async function makeAuthenticatedRequest(url, options = {}) {
 
 // Usage example with error handling
 try {
-  const profileData = await makeAuthenticatedRequest('/api/auth/profile');
+  const profileData = await makeAuthenticatedRequest('/auth/profile');
   console.log('Profile loaded:', profileData.user);
 } catch (error) {
   console.log('Failed to load profile:', error.message);
@@ -407,7 +407,7 @@ function useUserProfile() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/auth/profile', {
+      const response = await fetch('/auth/profile', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
@@ -429,7 +429,7 @@ function useUserProfile() {
 
   const updateProfile = async (updateData) => {
     try {
-      const response = await fetch('/api/auth/profile', {
+      const response = await fetch('/auth/profile', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,

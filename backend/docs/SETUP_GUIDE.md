@@ -237,7 +237,7 @@ Frontend will run on `http://localhost:3000`
 1. **Login as Admin**:
 
 ```bash
-POST http://localhost:5000/api/auth/login
+POST http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
@@ -249,7 +249,7 @@ Content-Type: application/json
 2. **Create an Issue (as MLA)**:
 
 ```bash
-POST http://localhost:5000/api/issues
+POST http://localhost:5000/issues
 Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
@@ -266,14 +266,14 @@ Content-Type: application/json
 3. **Get Issues**:
 
 ```bash
-GET http://localhost:5000/api/issues
+GET http://localhost:5000/issues
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 4. **Add Issue Update**:
 
 ```bash
-POST http://localhost:5000/api/issues/ISSUE_ID/updates
+POST http://localhost:5000/issues/ISSUE_ID/updates
 Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
@@ -408,15 +408,15 @@ psql -U username -h localhost jagranpatra < backup.sql
 
 ```bash
 # Health check
-curl http://localhost:5000/api/health
+curl http://localhost:5000/health
 
 # Register a citizen
-curl -X POST http://localhost:5000/api/auth/register \
+curl -X POST http://localhost:5000/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","name":"Test User","password":"password123"}'
 
 # Login
-curl -X POST http://localhost:5000/api/auth/login \
+curl -X POST http://localhost:5000/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@jagranpatra.com","password":"admin123"}'
 ```

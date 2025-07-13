@@ -6,7 +6,7 @@ This document describes the enhanced authentication API endpoints for the MLA Da
 
 ## Base URL
 
-All endpoints are prefixed with `/api/auth`
+All endpoints are prefixed with `/auth`
 
 ## Authentication
 

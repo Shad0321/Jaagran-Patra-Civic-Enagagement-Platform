@@ -31,7 +31,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await api.put('/api/auth/profile', formData);
+      const response = await api.put('/auth/profile', formData);
       await updateUser(response.data.user);
       setEditing(false);
       toast.success('Profile updated successfully');
@@ -55,7 +55,7 @@ const Profile = () => {
     }
     try {
       setLoading(true);
-      await api.put('/api/auth/change-password', {
+      await api.put('/auth/change-password', {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });

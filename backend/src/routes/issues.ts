@@ -25,14 +25,14 @@ const router = Router();
 // Routes
 
 /**
- * @route   GET /api/issues/stats
+ * @route   GET /issues/stats
  * @desc    Get issue statistics
  * @access  Private
  */
 router.get('/stats', authenticate, getIssueStats);
 
 /**
- * @route   GET /api/issues/nearby
+ * @route   GET /issues/nearby
  * @desc    Get nearby issues (public route)
  * @access  Public
  */
@@ -75,7 +75,7 @@ router.get(
 );
 
 /**
- * @route   GET /api/issues/assigned-to-me
+ * @route   GET /issues/assigned-to-me
  * @desc    Get issues assigned to the current user (MLAs and Members)
  * @access  Private (MLA, MEMBER)
  */
@@ -87,7 +87,7 @@ router.get(
 );
 
 /**
- * @route   GET /api/issues/my-issues
+ * @route   GET /issues/my-issues
  * @desc    Get issues reported by the current user (Citizens)
  * @access  Private (CITIZEN)
  */
@@ -99,7 +99,7 @@ router.get(
 );
 
 /**
- * @route   GET /api/issues/:id
+ * @route   GET /issues/:id
  * @desc    Get a specific issue with all details
  * @access  Private
  */
@@ -112,7 +112,7 @@ router.get(
 );
 
 /**
- * @route   POST /api/issues
+ * @route   POST /issues
  * @desc    Create a new issue (MLA only)
  * @access  Private (MLA only)
  * @body    {
@@ -171,7 +171,7 @@ router.post(
 );
 
 /**
- * @route   GET /api/issues
+ * @route   GET /issues
  * @desc    Get all issues for the authenticated user
  * @access  Private
  * @query   {
@@ -211,14 +211,14 @@ router.get(
 );
 
 /**
- * @route   GET /api/issues/stats
+ * @route   GET /issues/stats
  * @desc    Get issue statistics for dashboard
  * @access  Private
  */
 router.get('/stats', authenticate, getIssueStats);
 
 /**
- * @route   GET /api/issues/:id
+ * @route   GET /issues/:id
  * @desc    Get a specific issue with all details
  * @access  Private
  */
@@ -231,7 +231,7 @@ router.get(
 );
 
 /**
- * @route   PUT /api/issues/:id
+ * @route   PUT /issues/:id
  * @desc    Update an issue (assign, reassign, change priority, etc.)
  * @access  Private (MLA, MEMBER, ADMIN)
  */
@@ -274,7 +274,7 @@ router.put(
 );
 
 /**
- * @route   POST /api/issues/:id/updates
+ * @route   POST /issues/:id/updates
  * @desc    Add an update/comment to an issue
  * @access  Private
  * @body    {
@@ -327,7 +327,7 @@ router.post(
 );
 
 /**
- * @route   DELETE /api/issues/:id
+ * @route   DELETE /issues/:id
  * @desc    Delete an issue
  * @access  Private (ADMIN, MLA who created it)
  */
@@ -341,7 +341,7 @@ router.delete(
 );
 
 /**
- * @route   POST /api/issues/citizen
+ * @route   POST /issues/citizen
  * @desc    Create a new issue (CITIZEN only)
  * @access  Private (CITIZEN only)
  * @body    {
@@ -385,7 +385,7 @@ router.post(
 );
 
 /**
- * @route   GET /api/issues/citizen/my-issues
+ * @route   GET /issues/citizen/my-issues
  * @desc    Get all issues created by the authenticated citizen
  * @access  Private (CITIZEN only)
  */
@@ -405,7 +405,7 @@ router.get(
 );
 
 /**
- * @route   GET /api/issues/citizen/nearby-bodies
+ * @route   GET /issues/citizen/nearby-bodies
  * @desc    Get nearby bodies for issue assignment
  * @access  Private (CITIZEN only)
  */
@@ -454,7 +454,7 @@ router.get(
 );
 
 /**
- * @route   POST /api/issues/citizen/:id/comment
+ * @route   POST /issues/citizen/:id/comment
  * @desc    Add a comment to an issue (CITIZEN only)
  * @access  Private (CITIZEN only)
  */
@@ -521,7 +521,7 @@ router.post(
 );
 
 /**
- * @route   GET /api/issues/citizen/:id/details
+ * @route   GET /issues/citizen/:id/details
  * @desc    Get detailed issue information including updates (CITIZEN only)
  * @access  Private (CITIZEN only)
  */
@@ -631,7 +631,7 @@ router.get(
 );
 
 /**
- * @route   POST /api/issues/:id/progress
+ * @route   POST /issues/:id/progress
  * @desc    Add progress update to an issue (MLA/MEMBER only)
  * @access  Private (MLA/MEMBER only)
  */
@@ -730,7 +730,7 @@ router.post(
 );
 
 /**
- * @route   GET /api/issues/assigned-to-me
+ * @route   GET /issues/assigned-to-me
  * @desc    Get issues assigned to the current user (MLAs and Members)
  * @access  Private (MLA, MEMBER)
  */
@@ -742,7 +742,7 @@ router.get(
 );
 
 /**
- * @route   GET /api/issues/my-issues
+ * @route   GET /issues/my-issues
  * @desc    Get issues reported by the current user (Citizens)
  * @access  Private (CITIZEN)
  */
@@ -754,7 +754,7 @@ router.get(
 );
 
 /**
- * @route   PUT /api/issues/:id/update-progress
+ * @route   PUT /issues/:id/update-progress
  * @desc    Update issue progress (for MLAs and Members)
  * @access  Private (MLA, MEMBER)
  */

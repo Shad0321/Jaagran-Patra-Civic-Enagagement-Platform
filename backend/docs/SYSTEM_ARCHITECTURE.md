@@ -235,24 +235,24 @@ interface Body {
 
 **Authentication Endpoints**:
 
-- `POST /api/auth/register` - Citizen registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/create-mla` - Admin creates MLA
-- `POST /api/auth/add-member` - MLA/Admin adds member
-- `GET /api/auth/profile` - Get user profile
-- `PUT /api/auth/profile` - Update user profile
-- `GET /api/auth/members` - Get members list
-- `GET /api/auth/bodies` - Get bodies list
+- `POST /auth/register` - Citizen registration
+- `POST /auth/login` - User login
+- `POST /auth/create-mla` - Admin creates MLA
+- `POST /auth/add-member` - MLA/Admin adds member
+- `GET /auth/profile` - Get user profile
+- `PUT /auth/profile` - Update user profile
+- `GET /auth/members` - Get members list
+- `GET /auth/bodies` - Get bodies list
 
 **Issue Management Endpoints**:
 
-- `POST /api/issues` - Create issue (MLA only)
-- `GET /api/issues` - Get issues list
-- `GET /api/issues/stats` - Get issue statistics
-- `GET /api/issues/:id` - Get specific issue
-- `PUT /api/issues/:id` - Update issue
-- `POST /api/issues/:id/updates` - Add update/comment
-- `DELETE /api/issues/:id` - Delete issue
+- `POST /issues` - Create issue (MLA only)
+- `GET /issues` - Get issues list
+- `GET /issues/stats` - Get issue statistics
+- `GET /issues/:id` - Get specific issue
+- `PUT /issues/:id` - Update issue
+- `POST /issues/:id/updates` - Add update/comment
+- `DELETE /issues/:id` - Delete issue
 
 #### Database Schema
 
