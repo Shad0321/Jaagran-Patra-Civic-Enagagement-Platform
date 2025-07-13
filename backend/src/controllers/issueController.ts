@@ -9,6 +9,10 @@ import {
   NotificationStatus,
 } from '@prisma/client';
 import { AuthenticatedRequest } from '../middleware/auth';
+import { 
+  createAssignmentNotification, 
+  createIssueUpdateNotification 
+} from './notificationController';
 
 const prisma = new PrismaClient();
 
@@ -324,6 +328,31 @@ export const createIssue = async (
       });
 
       console.log('📝 Assignment notification created:', assignmentMessage);
+
+      // Create notification for the assigned user
+      try {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { name: true }
+        });
+
+        console.log('🔔 About to create assignment notification...');
+        await createAssignmentNotification(
+          issue.id,
+          issue.title,
+          finalAssignedToId,
+          userId,
+          currentUser?.name || 'Unknown'
+        );
+        console.log('✅ Assignment notification creation completed successfully');
+      } catch (error) {
+        console.error('❌ Failed to create assignment notification:', error);
+        if (error instanceof Error) {
+          console.error('Error details:', error.message);
+          console.error('Stack trace:', error.stack);
+        }
+        // Don't throw here - we don't want notification failure to prevent issue creation
+      }
     } else {
       console.log('⚠️ No assignment made - issue remains unassigned');
       
@@ -357,6 +386,31 @@ export const createIssue = async (
               mediaType: MediaType.TEXT,
             },
           });
+
+          // Create notification for fallback assignment
+          try {
+            const currentUser = await prisma.user.findUnique({
+              where: { id: userId },
+              select: { name: true }
+            });
+
+            console.log('🔔 Creating notification for fallback assignment...');
+            await createAssignmentNotification(
+              issue.id,
+              issue.title,
+              fallbackMla.id,
+              userId,
+              currentUser?.name || 'Unknown'
+            );
+            console.log('✅ Fallback assignment notification created successfully');
+          } catch (error) {
+            console.error('❌ Failed to create fallback assignment notification:', error);
+            if (error instanceof Error) {
+              console.error('Error details:', error.message);
+              console.error('Stack trace:', error.stack);
+            }
+            // Don't throw here - we don't want notification failure to prevent issue creation
+          }
         } else {
           console.log('❌ No MLAs found in the entire state');
         }
@@ -1068,9 +1122,6 @@ export const getAssignedIssues = async (
       search,
     } = req.query;
 
-    console.log('🔍 getAssignedIssues - User ID:', userId);
-    console.log('🔍 getAssignedIssues - User Role:', userRole);
-
     // Only MLAs and Members can access assigned issues
     if (userRole !== UserRole.MLA && userRole !== UserRole.MEMBER) {
       res.status(403).json({ error: 'Access denied. Only MLAs and Members can view assigned issues.' });
@@ -1104,8 +1155,6 @@ export const getAssignedIssues = async (
       }
     }
 
-    console.log('🔍 getAssignedIssues - Where clause:', whereClause);
-
     // Add filters
     if (status) whereClause.status = status;
     if (priority) whereClause.priority = priority;
@@ -1117,8 +1166,6 @@ export const getAssignedIssues = async (
         { description: { contains: search as string, mode: 'insensitive' } },
       ];
     }
-
-    console.log('🔍 getAssignedIssues - Final where clause:', whereClause);
 
     const [issues, total] = await Promise.all([
       prisma.issue.findMany({
@@ -1189,9 +1236,6 @@ export const getAssignedIssues = async (
       }),
       prisma.issue.count({ where: whereClause }),
     ]);
-
-    console.log('🔍 getAssignedIssues - Found issues:', issues.length);
-    console.log('🔍 getAssignedIssues - Total count:', total);
 
     if (issues.length === 0) {
       console.log('⚠️ getAssignedIssues - No issues found for user:', userId);
@@ -1509,7 +1553,6 @@ export const updateIssueProgress = async (
     });
 
     // Notify the citizen who reported the issue
-    /* 
     try {
       // Get the user details for the notification
       const currentUser = await prisma.user.findUnique({
@@ -1517,28 +1560,21 @@ export const updateIssueProgress = async (
         select: { name: true }
       });
 
-      if (currentUser) {
-        await prisma.notification.create({
-          data: {
-            title: 'Issue Update',
-            message: `Your issue "${issue.title}" has been updated by ${currentUser.name}`,
-            type: 'ISSUE_UPDATE',
-            sentById: userId,
-            targetStateId: issue.stateId,
-            recipients: {
-              create: {
-                userId: issue.reportedById,
-                status: NotificationStatus.PENDING
-              }
-            }
-          }
-        });
+      if (currentUser && issue.reportedById !== userId) {
+        await createIssueUpdateNotification(
+          issue.id,
+          issue.title,
+          issue.reportedById,
+          userId,
+          currentUser.name,
+          updateData.message || 'Issue has been updated',
+          updateData.status
+        );
       }
     } catch (notificationError) {
       console.error('Failed to create notification:', notificationError);
       // Don't fail the entire request if notification fails
     }
-    */
 
     res.json({
       success: true,
@@ -1551,5 +1587,177 @@ export const updateIssueProgress = async (
   } catch (error) {
     console.error('Update issue progress error:', error);
     res.status(500).json({ error: 'Failed to update issue progress', details: error });
+  }
+};
+
+// Get nearby issues (public - no authentication required)
+export const getNearbyIssues = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const {
+      latitude,
+      longitude,
+      radius = 5, // Default radius in kilometers
+      status,
+      priority,
+      category,
+      page = 1,
+      limit = 10,
+      search,
+    } = req.query;
+
+    // Validate required parameters
+    if (!latitude || !longitude) {
+      res.status(400).json({
+        error: 'Latitude and longitude are required'
+      });
+      return;
+    }
+
+    const lat = parseFloat(latitude as string);
+    const lng = parseFloat(longitude as string);
+    const radiusKm = parseFloat(radius as string);
+
+    if (isNaN(lat) || isNaN(lng) || isNaN(radiusKm)) {
+      res.status(400).json({
+        error: 'Invalid latitude, longitude, or radius values'
+      });
+      return;
+    }
+
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build where conditions for Prisma
+    const whereConditions: any = {
+      latitude: { not: null },
+      longitude: { not: null },
+    };
+
+    if (status) {
+      whereConditions.status = status;
+    }
+    if (priority) {
+      whereConditions.priority = priority;
+    }
+    if (category) {
+      whereConditions.category = category;
+    }
+    if (search) {
+      whereConditions.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+
+    // First, get all issues that match the basic filters
+    const allFilteredIssues = await prisma.issue.findMany({
+      where: whereConditions,
+      include: {
+        reportedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+        assignedTo: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+        state: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        district: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        constituency: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
+        body: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
+
+    // Calculate distance and filter by radius
+    const nearbyIssues = allFilteredIssues
+      .map(issue => {
+        if (!issue.latitude || !issue.longitude) return null;
+        
+        const issueLat = parseFloat(issue.latitude.toString());
+        const issueLng = parseFloat(issue.longitude.toString());
+        
+        // Haversine formula to calculate distance
+        const R = 6371; // Earth's radius in km
+        const dLat = (issueLat - lat) * Math.PI / 180;
+        const dLng = (issueLng - lng) * Math.PI / 180;
+        const a = 
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat * Math.PI / 180) * Math.cos(issueLat * Math.PI / 180) *
+          Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+
+        return {
+          ...issue,
+          distance: parseFloat(distance.toFixed(2))
+        };
+      })
+      .filter(issue => issue && issue.distance <= radiusKm)
+      .sort((a, b) => (a?.distance || 0) - (b?.distance || 0));
+
+    // Apply pagination
+    const total = nearbyIssues.length;
+    const paginatedIssues = nearbyIssues.slice(skip, skip + limitNum);
+
+    res.json({
+      success: true,
+      data: {
+        issues: paginatedIssues,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          pages: Math.ceil(total / limitNum),
+        },
+        filters: {
+          latitude: lat,
+          longitude: lng,
+          radius: radiusKm,
+          status,
+          priority,
+          category,
+          search
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching nearby issues:', error);
+    res.status(500).json({
+      error: 'Failed to fetch nearby issues'
+    });
   }
 };

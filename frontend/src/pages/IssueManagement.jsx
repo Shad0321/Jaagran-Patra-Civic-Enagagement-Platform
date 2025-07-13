@@ -604,6 +604,12 @@ const IssueManagement = () => {
   ];
 
   const fetchIssues = useCallback(async () => {
+    // Don't fetch if user data is not available
+    if (!user) {
+      console.log('🔍 fetchIssues - User not available, skipping');
+      return;
+    }
+
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -622,6 +628,8 @@ const IssueManagement = () => {
         endpoint = '/issues/assigned-to-me';
       }
 
+      console.log('🔍 fetchIssues - User role:', user?.role, 'Endpoint:', endpoint);
+      
       const response = await api.get(`${endpoint}?${params}`);
       setIssues(response.data.data.issues || []);
       setTotalPages(response.data.data.pagination?.pages || 1);
@@ -631,11 +639,19 @@ const IssueManagement = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, filterStatus, filterPriority, user?.role]);
+  }, [currentPage, searchTerm, filterStatus, filterPriority, user]);
 
   const fetchNearbyBodies = useCallback(async () => {
+    // Don't fetch if user data is not available
+    if (!user) {
+      console.log('🔍 fetchNearbyBodies - User not available, skipping');
+      return;
+    }
+
     try {
       setLoadingBodies(true);
+      console.log('🔍 fetchNearbyBodies - User role:', user?.role);
+      
       // Get user's location data from localStorage or API
       const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
       const stateId = userProfile.stateId || 'cmcyt0pwn0000gen8kkequkpi'; // Default to UK state
@@ -651,15 +667,27 @@ const IssueManagement = () => {
     } finally {
       setLoadingBodies(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    fetchIssues();
-    // Only fetch nearby bodies for citizens who can report issues
-    if (user?.role === 'CITIZEN' || !user?.role) {
-      fetchNearbyBodies();
+    console.log('🔍 IssueManagement useEffect - User role:', user?.role, 'User available:', !!user);
+    
+    // Don't make API calls if user data is not loaded yet
+    if (!user) {
+      console.log('🔍 User not loaded yet, skipping API calls');
+      return;
     }
-  }, [fetchIssues, fetchNearbyBodies, user?.role]);
+    
+    fetchIssues();
+    
+    // Only fetch nearby bodies for citizens who can report issues
+    if (user?.role === 'CITIZEN') {
+      console.log('🔍 Fetching nearby bodies for CITIZEN');
+      fetchNearbyBodies();
+    } else {
+      console.log('🔍 Skipping nearby bodies for role:', user?.role);
+    }
+  }, [fetchIssues, fetchNearbyBodies, user]);
 
   const handleAddIssue = async (e) => {
     e.preventDefault();

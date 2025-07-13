@@ -4,6 +4,7 @@ import { asyncHandler } from '../middleware/validation';
 import authRoutes from './auth';
 import issueRoutes from './issues';
 import adminRoutes from './admin';
+import notificationRoutes from './notifications';
 
 const router = Router();
 
@@ -15,6 +16,9 @@ router.use('/issues', issueRoutes);
 
 // Admin routes
 router.use('/admin', adminRoutes);
+
+// Notification routes
+router.use('/notifications', notificationRoutes);
 
 // Health check endpoint
 router.get('/health', (req: Request, res: Response) => {

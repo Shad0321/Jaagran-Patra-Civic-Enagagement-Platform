@@ -12,6 +12,8 @@ import LanguageGuard from '../components/common/LanguageGuard.jsx';
 import Settings from '../pages/Settings.jsx';
 import Profile from '../pages/Profile.jsx';
 import IssueManagement from '../pages/IssueManagement.jsx';
+import NotificationsPage from '../pages/Notifications.jsx';
+import NearbyIssues from '../pages/NearbyIssues.jsx';
 
 const router = createBrowserRouter([
   {
@@ -78,6 +80,26 @@ const router = createBrowserRouter([
           </LanguageGuard>
         ),
       },
+      {
+        path:"notifications",
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path:"nearby-issues",
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute>
+              <NearbyIssues />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      }
       //   { path: "*", element: <NotFound /> },
     ],
   },

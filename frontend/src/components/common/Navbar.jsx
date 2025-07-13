@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux/slices/userSlice';
 import { clearLanguage } from '../../redux/slices/languageSlice';
+import NotificationDropdown from './NotificationDropdown';
+import { getNavigationItems, getIcon } from '../../utils/navigation.jsx';
 
 const Navbar = () => {
   const location = useLocation();
@@ -11,8 +13,6 @@ const Navbar = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [openAccordion, setOpenAccordion] = useState(null);
-  const [openSubAccordion, setOpenSubAccordion] = useState(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   // Don't show navbar on login, signup, choose-language, forgot-password, and reset-password pages
@@ -49,28 +49,10 @@ const Navbar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Function to toggle accordion sections
-  const toggleAccordion = (id) => {
-    setOpenAccordion(openAccordion === id ? null : id);
-    // Close any open sub-accordions when parent closes or a different parent opens
-    if (openAccordion === id || openAccordion !== id) {
-      setOpenSubAccordion(null);
-    }
-  };
-
-  // Function to toggle sub-accordion sections
-  const toggleSubAccordion = (id) => {
-    setOpenSubAccordion(openSubAccordion === id ? null : id);
-  };
-
   // Function to toggle profile dropdown
   const toggleProfileDropdown = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
-
-  if (window.location.pathname === '/login') {
-    return null; // Do not render the Navbar on the login page
-  }
 
   return (
     <div>
@@ -119,24 +101,7 @@ const Navbar = () => {
               </span>
             </span>
           )}
-          <div className="relative bg-blue-400/50 w-fit p-2 text-blue-500 rounded-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="m4.665 7.822l.62-3.096a2.77 2.77 0 0 1 5.43 0l.62 3.096a4.8 4.8 0 0 0 1.305 2.44l.194.193a.567.567 0 0 1-.273.953l-.821.19a16.6 16.6 0 0 1-7.48 0l-.82-.19a.567.567 0 0 1-.274-.953l.194-.193a4.77 4.77 0 0 0 1.305-2.44m-1.47-.294l.619-3.096a4.27 4.27 0 0 1 8.372 0l.62 3.096c.126.634.438 1.216.895 1.673l.194.194a2.066 2.066 0 0 1-.997 3.475l-.821.19q-1.053.24-2.12.358a2 2 0 0 1-3.913 0a18 18 0 0 1-2.12-.359l-.822-.19a2.067 2.067 0 0 1-.997-3.474L2.3 9.2c.457-.457.769-1.04.895-1.673"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="absolute -top-0 -right-0 bg-blue-500 text-light px-1 text-xs rounded-full animate-pulse">
-              4
-            </span>
-          </div>
+          <NotificationDropdown />
           <div className="relative w-10 h-10 rounded-full border-3 border-primary">
             <img
               className="object-cover w-full h-full rounded-full"
@@ -151,557 +116,135 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Sidebar Overlay for mobile */}
+      {/* Sidebar Overlay */}
       {isSidebarOpen && (
         <div
-          className={`fixed inset-0 bg-black/20 bg-opacity-50 z-50 transition-opacity duration-300 ${
-            isSidebarOpen ? 'opacity-100' : 'opacity-0'
-          }`}
-          onClick={toggleSidebar}
-        ></div>
+          className="fixed inset-0 z-50 bg-black/20 bg-opacity-50"
+          onClick={() => setIsSidebarOpen(false)}
+        />
       )}
 
       {/* Sidebar */}
       <div
-        id="hs-sidebar-footer"
-        className={`fixed top-0 start-0 bottom-0 z-60 w-64 h-full bg-primary  transition-transform duration-300 ease-in-out rounded-r-2xl
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed top-0 left-0 z-50 w-64 h-full bg-primary transform transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
         role="dialog"
-        tabIndex="-1"
-        aria-label="Sidebar"
+        aria-modal="true"
+        aria-labelledby="hs-sidebar-footer-label"
       >
-        <div className="relative flex flex-col h-full max-h-full">
+        <div className="flex flex-col h-full">
           {/* Header */}
-          <header className="p-4 flex justify-between items-center gap-x-2">
-            <Link
-              className="flex flex-col leading-7 font-semibold text-2xl focus:outline-none focus:opacity-80 transition-opacity duration-200 cursor-pointer"
-              to="/"
-              aria-label="Brand"
-            >
-              <span className="text-dark">Jaagran</span>
-              <span className="text-light">Patra.</span>
-            </Link>
-
-            {/* Close Button for Mobile */}
-            <div className="-me-2">
+          <header className="p-4 border-b border-gray-700">
+            <div className="flex items-center justify-between">
+              <Link
+                className="flex flex-col leading-7 font-semibold text-xl text-dark focus:outline-none focus:opacity-80 transition-opacity duration-200 cursor-pointer"
+                to="/"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <span>Jaagran</span>
+                <span className="text-light">Patra.</span>
+              </Link>
               <button
                 type="button"
-                className="flex justify-center items-center gap-x-3 size-6 bg-white border border-gray-200 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-100 transition-all duration-200 cursor-pointer"
-                onClick={toggleSidebar}
+                className="text-primary bg-light rounded-full focus:outline-none p-1 cursor-pointer hover:scale-105 transition-transform duration-200"
+                onClick={() => setIsSidebarOpen(false)}
               >
                 <svg
-                  className="shrink-0 size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
+                  className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  viewBox="0 0 24 24"
                 >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
-                <span className="sr-only">Close</span>
               </button>
             </div>
           </header>
 
           {/* Navigation */}
-          <nav className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300">
-            <div className="pb-0 px-2 w-full flex flex-col flex-wrap">
-              <ul className="space-y-1">
-                <li>
+          <nav className="flex-1 overflow-y-auto p-4">
+            <ul className="space-y-2">
+              {getNavigationItems(user?.role || 'CITIZEN').map((item) => (
+                <li key={item.id}>
                   <Link
-                    className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition-all duration-200 cursor-pointer"
-                    to="/dashboard"
+                    className={`flex items-center gap-x-3 py-2 px-3 text-sm rounded-lg transition-all duration-200 cursor-pointer ${
+                      location.pathname === item.path
+                        ? 'bg-white text-black'
+                        : 'text-white hover:bg-white/20'
+                    }`}
+                    to={item.path}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                      <polyline points="9 22 9 12 15 12 15 22" />
-                    </svg>
-                    Dashboard
+                    {getIcon(item.icon)}
+                    {item.label}
                   </Link>
                 </li>
-
-                {/* Issues */}
-                <li>
-                  <Link
-                    className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                    to="/issues"
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                    </svg>
-                    My Issues
-                  </Link>
-                </li>
-
-                {/* Users Accordion */}
-                <li className="relative">
-                  <button
-                    type="button"
-                    className="w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                    aria-expanded={openAccordion === 'users-accordion'}
-                    onClick={() => toggleAccordion('users-accordion')}
-                  >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    Users
-                    <svg
-                      className={`ms-auto size-4 text-current transition-transform duration-300 ${openAccordion === 'users-accordion' ? 'rotate-180' : ''}`}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </button>
-                  {/* Accordion Content */}
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${openAccordion === 'users-accordion' ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-                  >
-                    <ul className="pt-1 ps-7 space-y-1">
-                      <li className="relative">
-                        <button
-                          type="button"
-                          className="w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                          aria-expanded={openSubAccordion === 'users-sub-1'}
-                          onClick={() => toggleSubAccordion('users-sub-1')}
-                        >
-                          Sub Menu 1
-                          <svg
-                            className={`ms-auto size-4 text-current transition-transform duration-300 ${openSubAccordion === 'users-sub-1' ? 'rotate-180' : ''}`}
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="m6 9 6 6 6-6" />
-                          </svg>
-                        </button>
-                        <div
-                          className={`overflow-hidden transition-all duration-300 ease-in-out ${openSubAccordion === 'users-sub-1' ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
-                        >
-                          <ul className="pt-1 ps-2 space-y-1">
-                            <li>
-                              <Link
-                                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                                to="/users/sub1/link1"
-                                onClick={() => setIsSidebarOpen(false)}
-                              >
-                                Link 1
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                                to="/users/sub1/link2"
-                                onClick={() => setIsSidebarOpen(false)}
-                              >
-                                Link 2
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                                to="/users/sub1/link3"
-                                onClick={() => setIsSidebarOpen(false)}
-                              >
-                                Link 3
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                      </li>
-
-                      <li className="relative">
-                        <button
-                          type="button"
-                          className="w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                          aria-expanded={openSubAccordion === 'users-sub-2'}
-                          onClick={() => toggleSubAccordion('users-sub-2')}
-                        >
-                          Sub Menu 2
-                          <svg
-                            className={`ms-auto size-4 text-current transition-transform duration-300 ${openSubAccordion === 'users-sub-2' ? 'rotate-180' : ''}`}
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="m6 9 6 6 6-6" />
-                          </svg>
-                        </button>
-                        <div
-                          className={`overflow-hidden transition-all duration-300 ease-in-out ${openSubAccordion === 'users-sub-2' ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
-                        >
-                          <ul className="pt-1 ps-2 space-y-1">
-                            <li>
-                              <Link
-                                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                                to="/users/sub2/link1"
-                                onClick={() => setIsSidebarOpen(false)}
-                              >
-                                Link 1
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                                to="/users/sub2/link2"
-                                onClick={() => setIsSidebarOpen(false)}
-                              >
-                                Link 2
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                                to="/users/sub2/link3"
-                                onClick={() => setIsSidebarOpen(false)}
-                              >
-                                Link 3
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-
-                {/* Account Accordion */}
-                <li className="relative">
-                  <button
-                    type="button"
-                    className="w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                    aria-expanded={openAccordion === 'account-accordion'}
-                    onClick={() => toggleAccordion('account-accordion')}
-                  >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <circle cx="18" cy="15" r="3" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M10 15H6a4 4 0 0 0-4 4v2" />
-                      <path d="m21.7 16.4-.9-.3" />
-                      <path d="m15.2 13.9-.9-.3" />
-                      <path d="m16.6 18.7.3-.9" />
-                      <path d="m19.1 12.2.3-.9" />
-                      <path d="m19.6 18.7-.4-1" />
-                      <path d="m16.8 12.3-.4-1" />
-                      <path d="m14.3 16.6 1-.4" />
-                      <path d="m20.7 13.8 1-.4" />
-                    </svg>
-                    Account
-                    <svg
-                      className={`ms-auto size-4 text-current transition-transform duration-300 ${openAccordion === 'account-accordion' ? 'rotate-180' : ''}`}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </button>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${openAccordion === 'account-accordion' ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
-                  >
-                    <ul className="pt-1 ps-7 space-y-1">
-                      <li>
-                        <Link
-                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                          to="/account/link1"
-                          onClick={() => setIsSidebarOpen(false)}
-                        >
-                          Link 1
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                          to="/account/link2"
-                          onClick={() => setIsSidebarOpen(false)}
-                        >
-                          Link 2
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                          to="/account/link3"
-                          onClick={() => setIsSidebarOpen(false)}
-                        >
-                          Link 3
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-
-                {/* Projects Accordion */}
-                <li className="relative">
-                  <button
-                    type="button"
-                    className="w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                    aria-expanded={openAccordion === 'projects-accordion'}
-                    onClick={() => toggleAccordion('projects-accordion')}
-                  >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z" />
-                      <path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8" />
-                      <path d="M15 2v5h5" />
-                    </svg>
-                    Chats/Calls
-                    <svg
-                      className={`ms-auto size-4 text-current transition-transform duration-300 ${openAccordion === 'projects-accordion' ? 'rotate-180' : ''}`}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </button>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${openAccordion === 'projects-accordion' ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
-                  >
-                    <ul className="pt-1 ps-7 space-y-1">
-                      <li>
-                        <Link
-                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                          to="/projects/link1"
-                          onClick={() => setIsSidebarOpen(false)}
-                        >
-                          Group Chat
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                          to="/projects/link2"
-                          onClick={() => setIsSidebarOpen(false)}
-                        >
-                          Video Call
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-
-                <li>
-                  <Link
-                    className="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                    to="/calendar"
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                      <line x1="16" x2="16" y1="2" y2="6" />
-                      <line x1="8" x2="8" y1="2" y2="6" />
-                      <line x1="3" x2="21" y1="10" y2="10" />
-                      <path d="M8 14h.01" />
-                      <path d="M12 14h.01" />
-                      <path d="M16 14h.01" />
-                      <path d="M8 18h.01" />
-                      <path d="M12 18h.01" />
-                      <path d="M16 18h.01" />
-                    </svg>
-                    Calendar{' '}
-                    <span className="ms-auto py-0.5 px-1.5 inline-flex items-center gap-x-1.5 text-xs bg-gray-200 text-gray-800 rounded-full">
-                      New
-                    </span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                    to="/documentation"
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
-                    About
-                  </Link>
-                </li>
-              </ul>
-            </div>
+              ))}
+            </ul>
           </nav>
 
-          {/* Footer with Profile Dropdown */}
-          <footer className="mt-auto p-2 border-t border-gray-200">
-            <div className="relative w-full inline-flex">
+          {/* Footer with User Info */}
+          <footer className="p-4 border-t border-gray-700">
+            <div className="relative">
               <button
                 type="button"
-                className="w-full inline-flex shrink-0 items-center gap-x-2 p-2 text-start text-sm text-white rounded-md hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:bg-gray-100 focus:text-gray-800 transition-all duration-200 cursor-pointer"
-                aria-haspopup="menu"
-                aria-expanded={isProfileDropdownOpen}
-                aria-label="Dropdown"
+                className="w-full flex items-center gap-x-3 py-2 px-3 text-sm text-white rounded-lg hover:bg-white/20 hover:text-white transition-all duration-200"
                 onClick={toggleProfileDropdown}
               >
-                <img
-                  className="shrink-0 size-5 rounded-full"
-                  src={
-                    user?.avatar ||
-                    'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg'
-                  }
-                  alt="Avatar"
-                />
-                {user?.name || 'User'}
+                <div className="w-8 h-8 rounded-full overflow-hidden">
+                  <img
+                    className="w-full h-full object-cover"
+                    src={
+                      user?.avatar ||
+                      'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg'
+                    }
+                    alt="Profile"
+                  />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-medium">{user?.name}</div>
+                  <div className="text-xs text-white/80">{user?.role}</div>
+                </div>
                 <svg
-                  className={`shrink-0 size-3.5 ms-auto transition-transform duration-300 ${isProfileDropdownOpen ? 'rotate-180' : ''}`}
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    isProfileDropdownOpen ? 'rotate-180' : ''
+                  }`}
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  viewBox="0 0 24 24"
                 >
-                  <path d="m7 9 5-5 5 5" />
-                  <path d="m7 15 5 5 5-5" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
 
-              {/* Profile Dropdown Menu */}
+              {/* Profile Dropdown */}
               {isProfileDropdownOpen && (
-                <div
-                  className={`absolute bottom-full mb-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-20 origin-bottom transition-all duration-300 ease-out transform ${
-                    isProfileDropdownOpen
-                      ? 'scale-100 opacity-100'
-                      : 'scale-95 opacity-0'
-                  }`}
-                  role="menu"
-                  aria-orientation="vertical"
-                >
-                  <div className="p-1">
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg shadow-lg">
+                  <div className="p-2">
                     <Link
-                      className="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-100 transition-all duration-200 cursor-pointer"
                       to="/my-account"
+                      className="block px-4 py-2 text-sm text-black hover:bg-black/10 rounded-lg"
                       onClick={() => {
                         setIsProfileDropdownOpen(false);
                         setIsSidebarOpen(false);
                       }}
                     >
-                      My account
+                      View Profile
                     </Link>
                     <Link
-                      className="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-100 transition-all duration-200 cursor-pointer"
                       to="/settings"
+                      className="block px-4 py-2 text-sm  text-black hover:bg-black/10 rounded-lg"
                       onClick={() => {
                         setIsProfileDropdownOpen(false);
                         setIsSidebarOpen(false);
@@ -709,14 +252,12 @@ const Navbar = () => {
                     >
                       Settings
                     </Link>
-                    {/* <Link className="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-100 transition-all duration-200 cursor-pointer" to="/billing" onClick={() => { setIsProfileDropdownOpen(false); setIsSidebarOpen(false); }}>
-                      Billing
-                    </Link> */}
+                    <hr className="my-2" />
                     <button
-                      className="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-red-500 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-100 transition-all duration-200 cursor-pointer"
                       onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-black/10 rounded-lg"
                     >
-                      Sign out
+                      Sign Out
                     </button>
                   </div>
                 </div>

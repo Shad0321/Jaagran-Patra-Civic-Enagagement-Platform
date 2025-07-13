@@ -14,6 +14,7 @@ import {
   getAssignedIssues,
   getMyIssues,
   updateIssueProgress,
+  getNearbyIssues,
 } from '../controllers/issueController';
 import { body, param, query } from 'express-validator';
 import { handleValidationErrors } from '../middleware/validation';
@@ -29,6 +30,49 @@ const router = Router();
  * @access  Private
  */
 router.get('/stats', authenticate, getIssueStats);
+
+/**
+ * @route   GET /api/issues/nearby
+ * @desc    Get nearby issues (public route)
+ * @access  Public
+ */
+router.get(
+  '/nearby',
+  [
+    query('latitude')
+      .notEmpty()
+      .isFloat()
+      .withMessage('Valid latitude is required'),
+    query('longitude')
+      .notEmpty()
+      .isFloat()
+      .withMessage('Valid longitude is required'),
+    query('radius')
+      .optional()
+      .isFloat()
+      .withMessage('Radius must be Float'),
+    query('status')
+      .optional()
+      .isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'])
+      .withMessage('Invalid status'),
+    query('priority')
+      .optional()
+      .isIn(['LOW', 'MEDIUM', 'HIGH', 'URGENT'])
+      .withMessage('Invalid priority'),
+    query('category').optional().isString().trim(),
+    query('search').optional().isString().trim(),
+    query('page')
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage('Page must be a positive integer'),
+    query('limit')
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage('Limit must be between 1 and 100'),
+    handleValidationErrors,
+  ],
+  getNearbyIssues
+);
 
 /**
  * @route   GET /api/issues/assigned-to-me
@@ -368,7 +412,7 @@ router.get(
 router.get(
   '/citizen/nearby-bodies',
   authenticate,
-  authorize(['CITIZEN']),
+  authorize(['CITIZEN', 'MLA', 'MEMBER']),
   [
     query('stateId').notEmpty().withMessage('State ID is required'),
     query('constituencyId').optional().isString(),
