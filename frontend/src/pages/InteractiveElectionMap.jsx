@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import { MapPin, TrendingUp, Users, Award, Info } from 'lucide-react';
+import { MapPin, TrendingUp, Users, Award, Info, BarChart3, PieChart, Activity, Filter, Search, ChevronRight, Home, ArrowLeft } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Cell,Pie } from 'recharts';
 import 'leaflet/dist/leaflet.css';
 
 // Import custom marker icons
@@ -67,46 +68,123 @@ const MapViewUpdater = ({ center, zoom }) => {
   return null;
 };
 
+// Colors for charts
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#84CC16'];
+
 // Component for election result comparison
 const ElectionResultCard = ({ year, data, isWinner = false }) => (
-  <div className={`p-3 rounded-lg border-2 ${isWinner ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
-    <div className="flex justify-between items-center mb-2">
-      <h4 className="font-semibold text-lg">{year}</h4>
-      {isWinner && <Award className="w-5 h-5 text-green-600" />}
+  <div className={`p-4 rounded-xl border-2 transition-all duration-300 ${isWinner ? 'border-primary bg-primary-light/20 shadow-lg' : 'border-gray-200 bg-white hover:shadow-md'}`}>
+    <div className="flex justify-between items-center mb-3">
+      <h4 className="font-semibold text-lg text-gray-800">{year}</h4>
+      {isWinner && <Award className="w-5 h-5 text-primary" />}
     </div>
-    <div className="space-y-2">
-      <div className={`p-2 rounded ${isWinner ? 'bg-green-100' : 'bg-gray-100'}`}>
-        <div className="font-medium text-green-700">Winner: {data.winner.candidate}</div>
-        <div className="text-sm text-gray-600">
+    <div className="space-y-3">
+      <div className={`p-3 rounded-lg ${isWinner ? 'bg-primary/10 border border-primary/20' : 'bg-gray-50'}`}>
+        <div className="font-medium text-primary">Winner: {data.winner.candidate}</div>
+        <div className="text-sm text-gray-600 mt-1">
           {data.winner.party} • {data.winner.votes.toLocaleString()} votes ({data.winner.percentage}%)
         </div>
       </div>
-      <div className="p-2 rounded bg-gray-100">
-        <div className="font-medium text-red-700">Runner-up: {data.runnerUp.candidate}</div>
-        <div className="text-sm text-gray-600">
+      <div className="p-3 rounded-lg bg-gray-50">
+        <div className="font-medium text-secondary">Runner-up: {data.runnerUp.candidate}</div>
+        <div className="text-sm text-gray-600 mt-1">
           {data.runnerUp.party} • {data.runnerUp.votes.toLocaleString()} votes ({data.runnerUp.percentage}%)
         </div>
       </div>
-      <div className="text-center text-sm font-medium text-blue-600">
+      <div className="text-center text-sm font-medium text-blue-600 bg-blue-50 py-2 rounded-lg">
         Margin: {data.margin.toLocaleString()} votes
       </div>
     </div>
   </div>
 );
 
+// Statistics Card Component
+const StatCard = ({ title, value, icon: Icon, color, change }) => (
+  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+        {change && (
+          <p className={`text-sm mt-1 ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {change > 0 ? '+' : ''}{change}% from last election
+          </p>
+        )}
+      </div>
+      <div className={`p-3 rounded-lg ${color}`}>
+        <Icon className="w-6 h-6 text-white" />
+      </div>
+    </div>
+  </div>
+);
+
+// Breadcrumb Component
+const Breadcrumb = ({ mapLevel, selectedState, selectedAssembly, selectedPollingBooth, onNavigate }) => {
+  const items = [
+    { label: 'India', level: 'india', active: mapLevel === 'india' },
+    ...(selectedState ? [{ label: selectedState.name, level: 'state', active: mapLevel === 'state' }] : []),
+    ...(selectedAssembly ? [{ label: selectedAssembly.name, level: 'assembly', active: mapLevel === 'assembly' }] : []),
+    ...(selectedPollingBooth ? [{ label: selectedPollingBooth.name, level: 'polling', active: mapLevel === 'polling' }] : [])
+  ];
+
+  return (
+    <div className="flex items-center space-x-2 text-sm">
+      <Home className="w-4 h-4 text-gray-400" />
+      {items.map((item, index) => (
+        <React.Fragment key={item.level}>
+          <button
+            onClick={() => onNavigate(item.level)}
+            className={`hover:text-primary transition-colors ${
+              item.active ? 'text-primary font-medium' : 'text-gray-500'
+            }`}
+          >
+            {item.label}
+          </button>
+          {index < items.length - 1 && <ChevronRight className="w-3 h-3 text-gray-400" />}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
 const InteractiveElectionMap = () => {
-  const [mapLevel, setMapLevel] = useState('india'); // 'india', 'state', 'assembly', 'polling'
+  const [mapLevel, setMapLevel] = useState('india');
   const [selectedState, setSelectedState] = useState(null);
   const [selectedAssembly, setSelectedAssembly] = useState(null);
   const [selectedPollingBooth, setSelectedPollingBooth] = useState(null);
   const [mapData, setMapData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]); // India center
+  const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]);
   const [mapZoom, setMapZoom] = useState(5);
   const [selectedYear, setSelectedYear] = useState('2024');
   const [boothDetails, setBoothDetails] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
 
-  // Fetch states for India map
+  // Sample data for charts (you would replace this with real data)
+  const generateChartData = () => {
+    if (!mapData.length) return [];
+    
+    // Generate party vote share data
+    const partyData = {};
+    mapData.forEach(item => {
+      if (item.electionData?.Party_Votes_Assembly_Aggregated) {
+        Object.entries(item.electionData.Party_Votes_Assembly_Aggregated).forEach(([party, votes]) => {
+          partyData[party] = (partyData[party] || 0) + votes;
+        });
+      }
+    });
+
+    return Object.entries(partyData).map(([party, votes]) => ({
+      name: party,
+      votes: votes,
+      percentage: ((votes / Object.values(partyData).reduce((a, b) => a + b, 0)) * 100).toFixed(1)
+    })).sort((a, b) => b.votes - a.votes).slice(0, 8);
+  };
+
+  const chartData = generateChartData();
+
+  // Fetch functions (keeping all original functionality)
   const fetchStates = async () => {
     setLoading(true);
     try {
@@ -122,7 +200,6 @@ const InteractiveElectionMap = () => {
     }
   };
 
-  // Fetch assemblies for selected state
   const fetchAssemblies = async (stateId) => {
     setLoading(true);
     try {
@@ -140,7 +217,6 @@ const InteractiveElectionMap = () => {
     }
   };
 
-  // Fetch polling booths for selected assembly
   const fetchPollingBooths = async (constituencyId) => {
     setLoading(true);
     try {
@@ -158,7 +234,6 @@ const InteractiveElectionMap = () => {
     }
   };
 
-  // Fetch detailed polling booth data
   const fetchPollingBoothDetails = async (constituencyId, boothName) => {
     setLoading(true);
     try {
@@ -176,12 +251,10 @@ const InteractiveElectionMap = () => {
     }
   };
 
-  // Initialize with states
   useEffect(() => {
     fetchStates();
   }, []);
 
-  // Handle state selection
   const handleStateClick = (state) => {
     setSelectedState(state);
     setMapLevel('state');
@@ -190,7 +263,6 @@ const InteractiveElectionMap = () => {
     fetchAssemblies(state.id);
   };
 
-  // Handle assembly selection
   const handleAssemblyClick = (assembly) => {
     setSelectedAssembly(assembly);
     setMapLevel('assembly');
@@ -199,7 +271,6 @@ const InteractiveElectionMap = () => {
     fetchPollingBooths(assembly.id);
   };
 
-  // Handle polling booth selection
   const handlePollingBoothClick = (booth) => {
     setSelectedPollingBooth(booth);
     setMapLevel('polling');
@@ -208,234 +279,471 @@ const InteractiveElectionMap = () => {
     fetchPollingBoothDetails(booth.constituencyId, booth.name);
   };
 
-  // Go back to previous level
+  const handleBreadcrumbNavigation = (level) => {
+    switch(level) {
+      case 'india':
+        setMapLevel('india');
+        setSelectedState(null);
+        setSelectedAssembly(null);
+        setSelectedPollingBooth(null);
+        setBoothDetails(null);
+        setMapCenter([20.5937, 78.9629]);
+        setMapZoom(5);
+        fetchStates();
+        break;
+      case 'state':
+        if (selectedState) {
+          setMapLevel('state');
+          setSelectedAssembly(null);
+          setSelectedPollingBooth(null);
+          setBoothDetails(null);
+          setMapCenter([selectedState.latitude, selectedState.longitude]);
+          setMapZoom(7);
+          fetchAssemblies(selectedState.id);
+        }
+        break;
+      case 'assembly':
+        if (selectedAssembly) {
+          setMapLevel('assembly');
+          setSelectedPollingBooth(null);
+          setBoothDetails(null);
+          setMapCenter([selectedAssembly.latitude, selectedAssembly.longitude]);
+          setMapZoom(10);
+          fetchPollingBooths(selectedAssembly.id);
+        }
+        break;
+    }
+  };
+
   const goBack = () => {
     if (mapLevel === 'polling') {
-      setMapLevel('assembly');
-      setSelectedPollingBooth(null);
-      setBoothDetails(null);
-      setMapCenter([selectedAssembly.latitude, selectedAssembly.longitude]);
-      setMapZoom(10);
-      fetchPollingBooths(selectedAssembly.id);
+      handleBreadcrumbNavigation('assembly');
     } else if (mapLevel === 'assembly') {
-      setMapLevel('state');
-      setSelectedAssembly(null);
-      setMapCenter([selectedState.latitude, selectedState.longitude]);
-      setMapZoom(7);
-      fetchAssemblies(selectedState.id);
+      handleBreadcrumbNavigation('state');
     } else if (mapLevel === 'state') {
-      setMapLevel('india');
-      setSelectedState(null);
-      setMapCenter([20.5937, 78.9629]);
-      setMapZoom(5);
-      fetchStates();
+      handleBreadcrumbNavigation('india');
     }
   };
 
-  // Get appropriate icon based on map level
   const getMarkerIcon = () => {
     switch (mapLevel) {
-      case 'india':
-        return stateIcon;
-      case 'state':
-        return assemblyIcon;
-      case 'assembly':
-        return pollingBoothIcon;
-      default:
-        return defaultIcon;
+      case 'india': return stateIcon;
+      case 'state': return assemblyIcon;
+      case 'assembly': return pollingBoothIcon;
+      default: return defaultIcon;
     }
   };
 
-  // Get marker click handler based on map level
   const getMarkerClickHandler = (item) => {
     switch (mapLevel) {
-      case 'india':
-        return () => handleStateClick(item);
-      case 'state':
-        return () => handleAssemblyClick(item);
-      case 'assembly':
-        return () => handlePollingBoothClick(item);
-      default:
-        return () => {};
+      case 'india': return () => handleStateClick(item);
+      case 'state': return () => handleAssemblyClick(item);
+      case 'assembly': return () => handlePollingBoothClick(item);
+      default: return () => {};
     }
   };
+
+  const filteredMapData = mapData.filter(item => 
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalVotes = mapData.reduce((sum, item) => 
+    sum + (item.electionData?.Total_Votes_Constituency || 0), 0
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      {/* Enhanced Header */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">Election Map</h1>
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <MapPin className="w-4 h-4" />
-                <span>
-                  {mapLevel === 'india' && 'India'}
-                  {mapLevel === 'state' && selectedState?.name}
-                  {mapLevel === 'assembly' && `${selectedState?.name} > ${selectedAssembly?.name}`}
-                  {mapLevel === 'polling' && `${selectedState?.name} > ${selectedAssembly?.name} > ${selectedPollingBooth?.name}`}
-                </span>
+          <div className="flex flex-col space-y-4 py-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-4">
+                <h1 className="text-xs sm:text-sm md:text-3xl font-bold text-gray-900">Election Analytics Dashboard</h1>
+                <div className="hidden md:block">
+                  <Breadcrumb
+                    mapLevel={mapLevel}
+                    selectedState={selectedState}
+                    selectedAssembly={selectedAssembly}
+                    selectedPollingBooth={selectedPollingBooth}
+                    onNavigate={handleBreadcrumbNavigation}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                >
+                  <option value="2024">2024</option>
+                  <option value="2022">2022</option>
+                </select>
+
+                {mapLevel !== 'india' && (
+                  <button
+                    onClick={goBack}
+                    className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Back</span>
+                  </button>
+                )}
               </div>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              {/* Year Selector */}
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="2024">2024</option>
-                <option value="2022">2022</option>
-              </select>
 
-              {/* Back Button */}
-              {mapLevel !== 'india' && (
-                <button
-                  onClick={goBack}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  ← Back
-                </button>
-              )}
+            {/* Search and Filter Bar */}
+            <div className="flex items-center space-x-4">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder={`Search ${mapLevel === 'india' ? 'states' : mapLevel === 'state' ? 'assemblies' : 'polling booths'}...`}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              {/* <div className="flex items-center space-x-2">
+                <Filter className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-600">Filters</span>
+              </div> */}
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            title="Total Locations"
+            value={mapData.length.toLocaleString()}
+            icon={MapPin}
+            color="bg-blue-500"
+          />
+          <StatCard
+            title="Total Votes"
+            value={totalVotes.toLocaleString()}
+            icon={Users}
+            color="bg-green-500"
+          />
+          <StatCard
+            title="Data Coverage"
+            value={`${Math.round((mapData.filter(item => item.electionData || item.electionResults).length / mapData.length) * 100)}%`}
+            icon={Activity}
+            color="bg-purple-500"
+          />
+          <StatCard
+            title="Year"
+            value={selectedYear}
+            icon={TrendingUp}
+            color="bg-orange-500"
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Map Container */}
+          {/* Enhanced Map Container */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-              <div className="h-96 lg:h-[600px]">
-                {loading ? (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                      <p className="mt-2 text-gray-600">Loading map data...</p>
-                    </div>
-                  </div>
-                ) : (
-                  <MapContainer
-                    center={mapCenter}
-                    zoom={mapZoom}
-                    style={{ height: '100%', width: '100%' }}
-                    className="z-0"
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              {/* Map Tabs */}
+              <div className="border-b border-gray-200 px-6 py-4">
+                <div className="flex space-x-6">
+                  <button
+                    onClick={() => setActiveTab('overview')}
+                    className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
+                      activeTab === 'overview' 
+                        ? 'border-primary text-primary' 
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
                   >
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                    <MapViewUpdater center={mapCenter} zoom={mapZoom} />
-                    
-                    {mapData.map((item, index) => (
-                      item.latitude && item.longitude && (
-                        <Marker
-                          key={index}
-                          position={[item.latitude, item.longitude]}
-                          icon={getMarkerIcon()}
-                          eventHandlers={{
-                            click: getMarkerClickHandler(item)
-                          }}
-                        >
-                          <Popup>
-                            <div className="p-2">
-                              <h3 className="font-semibold text-lg">{item.name}</h3>
-                              {item.electionData && (
-                                <div className="mt-2 space-y-1 text-sm">
-                                  <p><strong>Total Votes:</strong> {item.electionData.Total_Votes_Constituency?.toLocaleString()}</p>
-                                  <p><strong>NOTA Votes:</strong> {item.electionData.NOTA_Votes_Constituency?.toLocaleString()}</p>
-                                  {item.electionData.Party_Votes_Assembly_Aggregated && (
-                                    <div>
-                                      <strong>Party Votes:</strong>
-                                      <ul className="ml-2">
-                                        {Object.entries(item.electionData.Party_Votes_Assembly_Aggregated).map(([party, votes]) => (
-                                          <li key={party}>{party}: {votes.toLocaleString()}</li>
-                                        ))}
-                                      </ul>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                              {item.electionResults && (
-                                <div className="mt-2 space-y-1 text-sm">
-                                  <p><strong>Winner:</strong> {item.electionResults.winner.candidate} ({item.electionResults.winner.party})</p>
-                                  <p><strong>Votes:</strong> {item.electionResults.winner.votes.toLocaleString()} ({item.electionResults.winner.percentage}%)</p>
-                                  <p><strong>Margin:</strong> {item.electionResults.margin.toLocaleString()}</p>
-                                </div>
-                              )}
-                              <p className="mt-2 text-xs text-blue-600 cursor-pointer">Click to zoom in</p>
-                            </div>
-                          </Popup>
-                        </Marker>
-                      )
-                    ))}
-                  </MapContainer>
-                )}
+                    Map Overview
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('analytics')}
+                    className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
+                      activeTab === 'analytics' 
+                        ? 'border-primary text-primary' 
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Analytics
+                  </button>
+                </div>
               </div>
+
+              {activeTab === 'overview' && (
+                <div className="h-96 lg:h-[600px]">
+                  {loading ? (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                        <p className="mt-4 text-gray-600">Loading map data...</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <MapContainer
+                      center={mapCenter}
+                      zoom={mapZoom}
+                      style={{ height: '100%', width: '100%' }}
+                      className="z-0"
+                    >
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      />
+                      <MapViewUpdater center={mapCenter} zoom={mapZoom} />
+                      
+                      {filteredMapData.map((item, index) => (
+                        item.latitude && item.longitude && (
+                          <Marker
+                            key={index}
+                            position={[item.latitude, item.longitude]}
+                            icon={getMarkerIcon()}
+                            eventHandlers={{
+                              click: getMarkerClickHandler(item)
+                            }}
+                          >
+                            <Popup>
+                              <div className="p-3 min-w-64">
+                                <h3 className="font-semibold text-lg mb-2">{item.name}</h3>
+                                {item.electionData && (
+                                  <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                      <span className="font-medium">Total Votes:</span>
+                                      <span>{item.electionData.Total_Votes_Constituency?.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="font-medium">NOTA Votes:</span>
+                                      <span>{item.electionData.NOTA_Votes_Constituency?.toLocaleString()}</span>
+                                    </div>
+                                    {item.electionData.Party_Votes_Assembly_Aggregated && (
+                                      <div className="mt-3">
+                                        <span className="font-medium">Top Parties:</span>
+                                        <div className="mt-1 space-y-1">
+                                          {Object.entries(item.electionData.Party_Votes_Assembly_Aggregated)
+                                            .sort(([,a], [,b]) => b - a)
+                                            .slice(0, 3)
+                                            .map(([party, votes]) => (
+                                              <div key={party} className="flex justify-between text-xs">
+                                                <span className="truncate">{party}:</span>
+                                                <span className="ml-2">{votes.toLocaleString()}</span>
+                                              </div>
+                                            ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {item.electionResults && (
+                                  <div className="space-y-2 text-sm">
+                                    <div className="p-2 bg-green-50 rounded">
+                                      <div className="font-medium text-green-700">Winner: {item.electionResults.winner.candidate}</div>
+                                      <div className="text-green-600">
+                                        {item.electionResults.winner.party} • {item.electionResults.winner.votes.toLocaleString()} votes ({item.electionResults.winner.percentage}%)
+                                      </div>
+                                    </div>
+                                    <div className="text-center text-sm font-medium text-blue-600">
+                                      Margin: {item.electionResults.margin.toLocaleString()} votes
+                                    </div>
+                                  </div>
+                                )}
+                                <div className="mt-3 pt-2 border-t text-xs text-primary cursor-pointer font-medium">
+                                  Click to explore →
+                                </div>
+                              </div>
+                            </Popup>
+                          </Marker>
+                        )
+                      ))}
+                    </MapContainer>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'analytics' && (
+                <div className="p-6 h-96 lg:h-[600px] overflow-y-auto">
+                  <div className="space-y-6">
+                    {chartData.length > 0 && (
+                      <>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center">
+                            <BarChart3 className="w-5 h-5 mr-2" />
+                            Party Vote Share
+                          </h3>
+                          <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={chartData}>
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
+                              <YAxis />
+                              <Tooltip formatter={(value) => [value.toLocaleString(), 'Votes']} />
+                              <Bar dataKey="votes" fill="#3B82F6" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center">
+                            <PieChart className="w-5 h-5 mr-2" />
+                            Vote Distribution
+                          </h3>
+                          <ResponsiveContainer width="100%" height={300}>
+                            <RechartsPieChart>
+                              <Pie
+                                data={chartData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ name, percentage }) => `${name}: ${percentage}%`}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="votes"
+                              >
+                                {chartData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                              </Pie>
+                              <Tooltip formatter={(value) => [value.toLocaleString(), 'Votes']} />
+                            </RechartsPieChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </>
+                    )}
+
+                    {chartData.length === 0 && (
+                      <div className="text-center py-12">
+                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-500">No Analytics Data Available</h3>
+                        <p className="text-gray-400">Select a Assembly to view analytics</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Enhanced Sidebar */}
           <div className="space-y-6">
-            {/* Current Level Info */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
+            {/* Current Location Info */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <Info className="w-5 h-5 text-blue-600" />
-                <h3 className="font-semibold text-lg">Current View</h3>
+                <h3 className="font-semibold text-lg">Current Location</h3>
               </div>
-              <div className="space-y-2 text-sm">
-                <p><strong>Level:</strong> {mapLevel.charAt(0).toUpperCase() + mapLevel.slice(1)}</p>
-                <p><strong>Year:</strong> {selectedYear}</p>
-                <p><strong>Data Points:</strong> {mapData.length}</p>
-                {selectedState && <p><strong>State:</strong> {selectedState.name}</p>}
-                {selectedAssembly && <p><strong>Assembly:</strong> {selectedAssembly.name}</p>}
-                {selectedPollingBooth && <p><strong>Polling Booth:</strong> {selectedPollingBooth.name}</p>}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Level:</span>
+                  <span className="font-medium text-gray-900 capitalize">{mapLevel}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Year:</span>
+                  <span className="font-medium text-gray-900">{selectedYear}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Data Points:</span>
+                  <span className="font-medium text-gray-900">{mapData.length}</span>
+                </div>
+                {selectedState && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">State:</span>
+                    <span className="font-medium text-gray-900">{selectedState.name}</span>
+                  </div>
+                )}
+                {selectedAssembly && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">Assembly:</span>
+                    <span className="font-medium text-gray-900">{selectedAssembly.name}</span>
+                  </div>
+                )}
+                {selectedPollingBooth && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">Polling Booth:</span>
+                    <span className="font-medium text-gray-900">{selectedPollingBooth.name}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Statistics */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
+            {/* Quick Stats */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center space-x-2 mb-4">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-                <h3 className="font-semibold text-lg">Statistics</h3>
+                <Activity className="w-5 h-5 text-green-600" />
+                <h3 className="font-semibold text-lg">Quick Stats</h3>
               </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <div className="font-semibold text-blue-600">{mapData.length}</div>
-                  <div className="text-gray-600">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">{mapData.length}</div>
+                  <div className="text-sm text-gray-600">
                     {mapLevel === 'india' && 'States'}
                     {mapLevel === 'state' && 'Assemblies'}
                     {mapLevel === 'assembly' && 'Polling Booths'}
                     {mapLevel === 'polling' && 'Detail Views'}
                   </div>
                 </div>
-                <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <div className="font-semibold text-green-600">
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
                     {mapData.filter(item => item.electionData || item.electionResults).length}
                   </div>
-                  <div className="text-gray-600">With Data</div>
+                  <div className="text-sm text-gray-600">With Data</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {Math.round((mapData.filter(item => item.electionData || item.electionResults).length / mapData.length) * 100) || 0}%
+                  </div>
+                  <div className="text-sm text-gray-600">Coverage</div>
+                </div>
+                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600">
+                    {totalVotes > 0 ? (totalVotes / 1000000).toFixed(1) + 'M' : '0'}
+                  </div>
+                  <div className="text-sm text-gray-600">Total Votes</div>
                 </div>
               </div>
             </div>
 
+            {/* Top Performers */}
+            {chartData.length > 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-semibold text-lg">Top Performers</h3>
+                </div>
+                <div className="space-y-3">
+                  {chartData.slice(0, 5).map((party, index) => (
+                    <div key={party.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-3 h-3 rounded-full`} style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                        <span className="font-medium text-gray-900">{party.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold text-gray-900">{party.percentage}%</div>
+                        <div className="text-xs text-gray-500">{party.votes.toLocaleString()}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Polling Booth Details */}
             {boothDetails && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <div className="flex items-center space-x-2 mb-4">
                   <Users className="w-5 h-5 text-purple-600" />
-                  <h3 className="font-semibold text-lg">Election Results Comparison</h3>
+                  <h3 className="font-semibold text-lg">Election Comparison</h3>
                 </div>
                 <div className="space-y-4">
-                  <h4 className="font-medium">{boothDetails.booth.name}</h4>
-                  <p className="text-sm text-gray-600">
-                    {boothDetails.constituency.name}, {boothDetails.constituency.state.name}
-                  </p>
+                  <div className="text-center">
+                    <h4 className="font-medium text-gray-900">{boothDetails.booth.name}</h4>
+                    <p className="text-sm text-gray-600">
+                      {boothDetails.constituency.name}, {boothDetails.constituency.state.name}
+                    </p>
+                  </div>
                   
                   <div className="space-y-4">
-                    {Object.entries(boothDetails.booth.yearlyData).map(([year, data]) => (
+                    {Object.entries(boothDetails.booth.yearlyData).reverse().map(([year, data]) => (
                       <ElectionResultCard
                         key={year}
                         year={year}
@@ -448,22 +756,67 @@ const InteractiveElectionMap = () => {
               </div>
             )}
 
-            {/* Legend */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="font-semibold text-lg mb-4">Map Legend</h3>
+            {/* Interactive Legend */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="font-semibold text-lg mb-4">Interactive Legend</h3>
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm font-medium">States</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Click to explore</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                      <span className="text-sm font-medium">Assemblies</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Zoom in from states</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                      <span className="text-sm font-medium">Polling Booths</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Detailed view</span>
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t border-gray-200">
+                  <h4 className="font-medium text-sm mb-2">Navigation Tips</h4>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>• Click markers to drill down</li>
+                    <li>• Use breadcrumbs to navigate back</li>
+                    <li>• Search to find specific locations</li>
+                    <li>• Switch between map and analytics views</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Data Sources */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="font-semibold text-lg mb-4">Data Sources</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                  <span>States</span>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Election Commission of India</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                  <span>Assemblies/Constituencies</span>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Wikipedia</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
-                  <span>Polling Booths</span>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>Form 20 Data</span>
                 </div>
+                {/* <div className="pt-2 border-t border-gray-200">
+                  <p className="text-xs text-gray-500">
+                    Last updated: {new Date().toLocaleDateString()}
+                  </p>
+                </div> */}
               </div>
             </div>
           </div>
