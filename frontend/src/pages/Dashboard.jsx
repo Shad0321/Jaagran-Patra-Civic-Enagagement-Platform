@@ -35,7 +35,8 @@ const Dashboard = () => {
               Welcome, {user.name}!
             </h1>
             <p className="text-gray-600">
-              Your account role ({user.role}) doesn't have a specific dashboard configured.
+              Your account role ({user.role}) doesn't have a specific dashboard
+              configured.
             </p>
           </div>
         </div>

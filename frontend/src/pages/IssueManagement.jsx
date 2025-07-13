@@ -1,6 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Plus, Search, Filter, AlertCircle, Clock, CheckCircle, X, MapPin, Mic, MicOff, Camera, Upload, Volume2 } from 'lucide-react';
+import {
+  Plus,
+  Search,
+  Filter,
+  AlertCircle,
+  Clock,
+  CheckCircle,
+  X,
+  MapPin,
+  Mic,
+  MicOff,
+  Camera,
+  Upload,
+  Volume2,
+} from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import ProgressUpdateModal from '../components/ProgressUpdateModal';
@@ -8,7 +22,16 @@ import MediaDisplay from '../components/common/MediaDisplay';
 import UpdateMediaDisplay from '../components/common/UpdateMediaDisplay';
 
 // eslint-disable-next-line no-unused-vars
-const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, nearbyBodies, loadingBodies }) => {
+const IssueModal = ({
+  isOpen,
+  onClose,
+  title,
+  onSubmit,
+  formData,
+  setFormData,
+  nearbyBodies,
+  loadingBodies,
+}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
   const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -24,14 +47,18 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
     { value: 'EDUCATION', label: 'Education' },
     { value: 'POLLUTION', label: 'Pollution' },
     { value: 'SAFETY', label: 'Safety' },
-    { value: 'OTHER', label: 'Other' }
+    { value: 'OTHER', label: 'Other' },
   ];
 
   const priorityOptions = [
     { value: 'LOW', label: 'Low', color: 'bg-blue-100 text-blue-800' },
-    { value: 'MEDIUM', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+    {
+      value: 'MEDIUM',
+      label: 'Medium',
+      color: 'bg-yellow-100 text-yellow-800',
+    },
     { value: 'HIGH', label: 'High', color: 'bg-orange-100 text-orange-800' },
-    { value: 'URGENT', label: 'Urgent', color: 'bg-red-100 text-red-800' }
+    { value: 'URGENT', label: 'Urgent', color: 'bg-red-100 text-red-800' },
   ];
 
   const startRecording = async () => {
@@ -44,14 +71,14 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
       recorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
         setAudioBlob(blob);
-        setFormData(prev => ({ ...prev, voiceNote: blob }));
+        setFormData((prev) => ({ ...prev, voiceNote: blob }));
       };
 
       recorder.start();
       setMediaRecorder(recorder);
       setIsRecording(true);
     } catch (error) {
-        console.error('Error accessing microphone:', error);
+      console.error('Error accessing microphone:', error);
       toast.error('Could not access microphone');
     }
   };
@@ -59,22 +86,25 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
-      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      mediaRecorder.stream.getTracks().forEach((track) => track.stop());
       setIsRecording(false);
     }
   };
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    setSelectedImages(prev => [...prev, ...files]);
-    setFormData(prev => ({ ...prev, images: [...(prev.images || []), ...files] }));
+    setSelectedImages((prev) => [...prev, ...files]);
+    setFormData((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), ...files],
+    }));
   };
 
   const removeImage = (index) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
-    setFormData(prev => ({ 
-      ...prev, 
-      images: prev.images?.filter((_, i) => i !== index) || []
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images?.filter((_, i) => i !== index) || [],
     }));
   };
 
@@ -82,15 +112,15 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+            longitude: position.coords.longitude,
           }));
           toast.success('Location captured successfully');
         },
         (error) => {
-            console.error('Error getting location:', error);
+          console.error('Error getting location:', error);
           toast.error('Could not get location');
         }
       );
@@ -105,34 +135,47 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">{title}</h2>
-        
+
         <form onSubmit={onSubmit}>
           <div className="space-y-4">
             {/* Title and Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Issue Title *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Issue Title *
+                </label>
                 <input
                   type="text"
                   value={formData.title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, title: e.target.value }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Brief description of the issue"
                   required
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category *
+                </label>
                 <select
                   value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      category: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 >
                   <option value="">Select Category</option>
-                  {categoryOptions.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
+                  {categoryOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -141,14 +184,23 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
             {/* Priority and Assign to Body */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Priority
+                </label>
                 <select
                   value={formData.priority}
-                  onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      priority: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {priorityOptions.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
+                  {priorityOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -174,10 +226,17 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
             {/* Location */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Address
+                </label>
                 <textarea
                   value={formData.address}
-                  onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      address: e.target.value,
+                    }))
+                  }
                   rows="2"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter the location address"
@@ -185,7 +244,9 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Location
+                </label>
                 <button
                   type="button"
                   onClick={getCurrentLocation}
@@ -193,10 +254,9 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
                 >
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-2" />
-                    {formData.latitude && formData.longitude 
+                    {formData.latitude && formData.longitude
                       ? `${formData.latitude.toFixed(4)}, ${formData.longitude.toFixed(4)}`
-                      : 'Click to capture location'
-                    }
+                      : 'Click to capture location'}
                   </div>
                 </button>
               </div>
@@ -204,10 +264,17 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description *
+              </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 rows="4"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Provide detailed description of the issue"
@@ -217,27 +284,38 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
 
             {/* Audio Recording */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Voice Note</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Voice Note
+              </label>
               <div className="flex items-center space-x-3">
                 <button
                   type="button"
                   onClick={isRecording ? stopRecording : startRecording}
                   className={`flex items-center px-4 py-2 rounded-md ${
-                    isRecording 
-                      ? 'bg-red-100 text-red-700 hover:bg-red-200' 
+                    isRecording
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200'
                       : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                   }`}
                 >
-                  {isRecording ? <MicOff className="h-4 w-4 mr-2" /> : <Mic className="h-4 w-4 mr-2" />}
+                  {isRecording ? (
+                    <MicOff className="h-4 w-4 mr-2" />
+                  ) : (
+                    <Mic className="h-4 w-4 mr-2" />
+                  )}
                   {isRecording ? 'Stop Recording' : 'Start Recording'}
                 </button>
-                
+
                 {audioBlob && (
                   <div className="flex items-center space-x-2">
                     <Volume2 className="h-4 w-4 text-green-600" />
-                    <span className="text-sm text-green-600">Audio recorded</span>
+                    <span className="text-sm text-green-600">
+                      Audio recorded
+                    </span>
                     <audio controls className="h-8">
-                      <source src={URL.createObjectURL(audioBlob)} type="audio/webm" />
+                      <source
+                        src={URL.createObjectURL(audioBlob)}
+                        type="audio/webm"
+                      />
                     </audio>
                   </div>
                 )}
@@ -246,7 +324,9 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
 
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Images
+              </label>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <label className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md cursor-pointer hover:bg-gray-200">
@@ -262,7 +342,7 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
                   </label>
                   <span className="text-sm text-gray-500">Max 5 images</span>
                 </div>
-                
+
                 {selectedImages.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {selectedImages.map((image, index) => (
@@ -286,7 +366,7 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end space-x-3 mt-6">
             <button
               type="button"
@@ -308,35 +388,45 @@ const IssueModal = ({ isOpen, onClose, title, onSubmit, formData, setFormData, n
   );
 };
 
-const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, onAddComment, addingComment, user, onUpdateProgress }) => {
+const IssueDetailsModal = ({
+  isOpen,
+  onClose,
+  issue,
+  newComment,
+  setNewComment,
+  onAddComment,
+  addingComment,
+  user,
+  onUpdateProgress,
+}) => {
   if (!isOpen || !issue) return null;
 
   const getStatusColor = (status) => {
     const colors = {
-      'PENDING': 'bg-yellow-100 text-yellow-800',
-      'IN_PROGRESS': 'bg-blue-100 text-blue-800',
-      'RESOLVED': 'bg-green-100 text-green-800',
-      'REJECTED': 'bg-red-100 text-red-800'
+      PENDING: 'bg-yellow-100 text-yellow-800',
+      IN_PROGRESS: 'bg-blue-100 text-blue-800',
+      RESOLVED: 'bg-green-100 text-green-800',
+      REJECTED: 'bg-red-100 text-red-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      'LOW': 'bg-blue-100 text-blue-800',
-      'MEDIUM': 'bg-yellow-100 text-yellow-800',
-      'HIGH': 'bg-orange-100 text-orange-800',
-      'URGENT': 'bg-red-100 text-red-800'
+      LOW: 'bg-blue-100 text-blue-800',
+      MEDIUM: 'bg-yellow-100 text-yellow-800',
+      HIGH: 'bg-orange-100 text-orange-800',
+      URGENT: 'bg-red-100 text-red-800',
     };
     return colors[priority] || 'bg-gray-100 text-gray-800';
   };
 
   const getUpdateTypeColor = (updateType) => {
     const colors = {
-      'CITIZEN_COMMENT': 'bg-gray-100 text-gray-800',
-      'MEMBER_UPDATE': 'bg-blue-100 text-blue-800',
-      'STATUS_CHANGE': 'bg-green-100 text-green-800',
-      'ASSIGNMENT': 'bg-purple-100 text-purple-800'
+      CITIZEN_COMMENT: 'bg-gray-100 text-gray-800',
+      MEMBER_UPDATE: 'bg-blue-100 text-blue-800',
+      STATUS_CHANGE: 'bg-green-100 text-green-800',
+      ASSIGNMENT: 'bg-purple-100 text-purple-800',
     };
     return colors[updateType] || 'bg-gray-100 text-gray-800';
   };
@@ -346,12 +436,18 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
       <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{issue.title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {issue.title}
+            </h2>
             <div className="flex items-center space-x-3">
-              <span className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(issue.status)}`}>
+              <span
+                className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(issue.status)}`}
+              >
                 {issue.status}
               </span>
-              <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(issue.priority)}`}>
+              <span
+                className={`inline-flex px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(issue.priority)}`}
+              >
                 {issue.priority}
               </span>
               <span className="text-sm text-gray-500">{issue.category}</span>
@@ -370,16 +466,20 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
             <h3 className="text-lg font-semibold mb-3">Issue Details</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-600">Description</label>
+                <label className="block text-sm font-medium text-gray-600">
+                  Description
+                </label>
                 <p className="text-gray-900">{issue.description}</p>
               </div>
-              
+
               {/* Media Display */}
               <MediaDisplay issue={issue} className="my-4" />
-              
+
               {issue.address && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">Location</label>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Location
+                  </label>
                   <div className="flex items-center text-gray-900">
                     <MapPin className="h-4 w-4 mr-1" />
                     {issue.address}
@@ -387,16 +487,24 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
                 </div>
               )}
 
-              {(issue.latitude && issue.longitude) && (
+              {issue.latitude && issue.longitude && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">Coordinates</label>
-                  <p className="text-gray-900">{issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}</p>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Coordinates
+                  </label>
+                  <p className="text-gray-900">
+                    {issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}
+                  </p>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-600">Submitted</label>
-                <p className="text-gray-900">{new Date(issue.createdAt).toLocaleString()}</p>
+                <label className="block text-sm font-medium text-gray-600">
+                  Submitted
+                </label>
+                <p className="text-gray-900">
+                  {new Date(issue.createdAt).toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -406,10 +514,16 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
             <div className="space-y-3">
               {issue.assignedTo ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">Assigned to</label>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Assigned to
+                  </label>
                   <div className="bg-blue-50 p-3 rounded-md">
-                    <p className="font-medium text-blue-900">{issue.assignedTo.name}</p>
-                    <p className="text-sm text-blue-700">{issue.assignedTo.role}</p>
+                    <p className="font-medium text-blue-900">
+                      {issue.assignedTo.name}
+                    </p>
+                    <p className="text-sm text-blue-700">
+                      {issue.assignedTo.role}
+                    </p>
                     {issue.assignedTo.mlaProfile && (
                       <div className="mt-2 text-sm text-blue-600">
                         <p>Party: {issue.assignedTo.mlaProfile.partyName}</p>
@@ -420,21 +534,29 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">Status</label>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Status
+                  </label>
                   <p className="text-gray-500">Not assigned yet</p>
                 </div>
               )}
 
               {issue.constituency && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">Constituency</label>
-                  <p className="text-gray-900">{issue.constituency.name} ({issue.constituency.type})</p>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Constituency
+                  </label>
+                  <p className="text-gray-900">
+                    {issue.constituency.name} ({issue.constituency.type})
+                  </p>
                 </div>
               )}
 
               {issue.state && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">State</label>
+                  <label className="block text-sm font-medium text-gray-600">
+                    State
+                  </label>
                   <p className="text-gray-900">{issue.state.name}</p>
                 </div>
               )}
@@ -448,11 +570,18 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
           {issue.updates && issue.updates.length > 0 ? (
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {issue.updates.map((update, index) => (
-                <div key={index} className="border-l-4 border-blue-200 pl-4 py-2">
+                <div
+                  key={index}
+                  className="border-l-4 border-blue-200 pl-4 py-2"
+                >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-2">
-                      <span className="font-medium text-gray-900">{update.user.name}</span>
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getUpdateTypeColor(update.updateType)}`}>
+                      <span className="font-medium text-gray-900">
+                        {update.user.name}
+                      </span>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getUpdateTypeColor(update.updateType)}`}
+                      >
                         {update.updateType.replace('_', ' ')}
                       </span>
                     </div>
@@ -461,10 +590,10 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
                     </span>
                   </div>
                   <p className="text-gray-700">{update.message}</p>
-                  
+
                   {/* Update Media Display */}
                   <UpdateMediaDisplay update={update} className="mt-2" />
-                  
+
                   {update.progressPercentage && (
                     <div className="mt-2">
                       <div className="flex items-center justify-between text-sm">
@@ -472,8 +601,8 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
                         <span>{update.progressPercentage}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
                           style={{ width: `${update.progressPercentage}%` }}
                         ></div>
                       </div>
@@ -481,7 +610,8 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
                   )}
                   {update.nextSteps && (
                     <div className="mt-2 text-sm">
-                      <span className="font-medium">Next Steps:</span> {update.nextSteps}
+                      <span className="font-medium">Next Steps:</span>{' '}
+                      {update.nextSteps}
                     </div>
                   )}
                 </div>
@@ -495,9 +625,11 @@ const IssueDetailsModal = ({ isOpen, onClose, issue, newComment, setNewComment, 
         {/* Add Comment Section */}
         <div className="border-t pt-4">
           <h4 className="text-md font-semibold mb-3">
-            {user?.role === 'MLA' || user?.role === 'MEMBER' ? 'Update Progress' : 'Add Comment'}
+            {user?.role === 'MLA' || user?.role === 'MEMBER'
+              ? 'Update Progress'
+              : 'Add Comment'}
           </h4>
-          
+
           {user?.role === 'MLA' || user?.role === 'MEMBER' ? (
             <div className="text-center">
               <button
@@ -572,35 +704,59 @@ const IssueManagement = () => {
     constituencyId: '',
     bodyId: '',
     voiceNote: null,
-    images: []
+    images: [],
   });
 
   // Initialize constituency from user profile if available
   useEffect(() => {
     const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
     if (userProfile.constituencyId) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         constituencyId: userProfile.constituencyId,
-        stateId: userProfile.stateId || 'cmcyt0pwn0000gen8kkequkpi'
+        stateId: userProfile.stateId || 'cmcyt0pwn0000gen8kkequkpi',
       }));
     }
   }, []);
 
   const statusOptions = [
     { value: 'all', label: 'All Status' },
-    { value: 'PENDING', label: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-    { value: 'IN_PROGRESS', label: 'In Progress', color: 'bg-blue-100 text-blue-800', icon: AlertCircle },
-    { value: 'RESOLVED', label: 'Resolved', color: 'bg-green-100 text-green-800', icon: CheckCircle },
-    { value: 'REJECTED', label: 'Rejected', color: 'bg-red-100 text-red-800', icon: X }
+    {
+      value: 'PENDING',
+      label: 'Pending',
+      color: 'bg-yellow-100 text-yellow-800',
+      icon: Clock,
+    },
+    {
+      value: 'IN_PROGRESS',
+      label: 'In Progress',
+      color: 'bg-blue-100 text-blue-800',
+      icon: AlertCircle,
+    },
+    {
+      value: 'RESOLVED',
+      label: 'Resolved',
+      color: 'bg-green-100 text-green-800',
+      icon: CheckCircle,
+    },
+    {
+      value: 'REJECTED',
+      label: 'Rejected',
+      color: 'bg-red-100 text-red-800',
+      icon: X,
+    },
   ];
 
   const priorityOptions = [
     { value: 'all', label: 'All Priority' },
     { value: 'LOW', label: 'Low', color: 'bg-blue-100 text-blue-800' },
-    { value: 'MEDIUM', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+    {
+      value: 'MEDIUM',
+      label: 'Medium',
+      color: 'bg-yellow-100 text-yellow-800',
+    },
     { value: 'HIGH', label: 'High', color: 'bg-orange-100 text-orange-800' },
-    { value: 'URGENT', label: 'Urgent', color: 'bg-red-100 text-red-800' }
+    { value: 'URGENT', label: 'Urgent', color: 'bg-red-100 text-red-800' },
   ];
 
   const fetchIssues = useCallback(async () => {
@@ -614,7 +770,7 @@ const IssueManagement = () => {
       setLoading(true);
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: '10'
+        limit: '10',
       });
 
       if (searchTerm) params.append('search', searchTerm);
@@ -622,14 +778,19 @@ const IssueManagement = () => {
       if (filterPriority !== 'all') params.append('priority', filterPriority);
 
       let endpoint = '/issues/citizen/my-issues'; // Default for citizens
-      
+
       // Use different endpoints based on user role
       if (user?.role === 'MLA' || user?.role === 'MEMBER') {
         endpoint = '/issues/assigned-to-me';
       }
 
-      console.log('🔍 fetchIssues - User role:', user?.role, 'Endpoint:', endpoint);
-      
+      console.log(
+        '🔍 fetchIssues - User role:',
+        user?.role,
+        'Endpoint:',
+        endpoint
+      );
+
       const response = await api.get(`${endpoint}?${params}`);
       setIssues(response.data.data.issues || []);
       setTotalPages(response.data.data.pagination?.pages || 1);
@@ -651,13 +812,16 @@ const IssueManagement = () => {
     try {
       setLoadingBodies(true);
       console.log('🔍 fetchNearbyBodies - User role:', user?.role);
-      
+
       // Get user's location data from localStorage or API
-      const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const userProfile = JSON.parse(
+        localStorage.getItem('userProfile') || '{}'
+      );
       const stateId = userProfile.stateId || 'cmcyt0pwn0000gen8kkequkpi'; // Default to UK state
-      
+
       const params = new URLSearchParams({ stateId });
-      if (userProfile.constituencyId) params.append('constituencyId', userProfile.constituencyId);
+      if (userProfile.constituencyId)
+        params.append('constituencyId', userProfile.constituencyId);
 
       const response = await api.get(`/issues/citizen/nearby-bodies?${params}`);
       setNearbyBodies(response.data.data || []);
@@ -670,16 +834,21 @@ const IssueManagement = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log('🔍 IssueManagement useEffect - User role:', user?.role, 'User available:', !!user);
-    
+    console.log(
+      '🔍 IssueManagement useEffect - User role:',
+      user?.role,
+      'User available:',
+      !!user
+    );
+
     // Don't make API calls if user data is not loaded yet
     if (!user) {
       console.log('🔍 User not loaded yet, skipping API calls');
       return;
     }
-    
+
     fetchIssues();
-    
+
     // Only fetch nearby bodies for citizens who can report issues
     if (user?.role === 'CITIZEN') {
       console.log('🔍 Fetching nearby bodies for CITIZEN');
@@ -695,18 +864,18 @@ const IssueManagement = () => {
       // Debug: Check if token exists
       const token = localStorage.getItem('token');
       console.log('Token from localStorage:', token);
-      
+
       if (!token) {
         toast.error('You are not logged in. Please login first.');
         return;
       }
 
       const submitData = new FormData();
-      
+
       // Add text fields
-      Object.keys(formData).forEach(key => {
+      Object.keys(formData).forEach((key) => {
         if (key === 'images') {
-          formData.images?.forEach(image => {
+          formData.images?.forEach((image) => {
             submitData.append('images', image);
           });
         } else if (key === 'voiceNote' && formData.voiceNote) {
@@ -721,16 +890,19 @@ const IssueManagement = () => {
         submitData.append('stateId', 'cmcyt0pwn0000gen8kkequkpi'); // Default UK state
       }
 
-      console.log('Submitting issue with data:', Array.from(submitData.entries()));
+      console.log(
+        'Submitting issue with data:',
+        Array.from(submitData.entries())
+      );
 
       const response = await api.post('/issues/citizen', submitData);
-      
+
       // Show success message with assignment info if available
       let successMessage = 'Issue submitted successfully';
       if (response.data.issue?.assignedTo) {
         successMessage += ` and assigned to ${response.data.issue.assignedTo.name}`;
       }
-      
+
       toast.success(successMessage);
       setShowAddModal(false);
       resetForm();
@@ -754,12 +926,12 @@ const IssueManagement = () => {
       constituencyId: '',
       bodyId: '',
       voiceNote: null,
-      images: []
+      images: [],
     });
   };
 
   const getStatusIcon = (status) => {
-    const statusConfig = statusOptions.find(s => s.value === status);
+    const statusConfig = statusOptions.find((s) => s.value === status);
     if (statusConfig && statusConfig.icon) {
       const Icon = statusConfig.icon;
       return <Icon className="h-4 w-4" />;
@@ -768,19 +940,19 @@ const IssueManagement = () => {
   };
 
   const getStatusColor = (status) => {
-    const statusConfig = statusOptions.find(s => s.value === status);
+    const statusConfig = statusOptions.find((s) => s.value === status);
     return statusConfig?.color || 'bg-gray-100 text-gray-800';
   };
 
   const getPriorityColor = (priority) => {
-    const priorityConfig = priorityOptions.find(p => p.value === priority);
+    const priorityConfig = priorityOptions.find((p) => p.value === priority);
     return priorityConfig?.color || 'bg-gray-100 text-gray-800';
   };
 
   const handleViewDetails = async (issueId) => {
     try {
       let endpoint = `/issues/citizen/${issueId}/details`; // Default for citizens
-      
+
       // Use different endpoints based on user role
       if (user?.role === 'MLA' || user?.role === 'MEMBER') {
         endpoint = `/issues/${issueId}`; // Generic endpoint for MLAs and Members
@@ -805,9 +977,9 @@ const IssueManagement = () => {
     try {
       setAddingComment(true);
       await api.post(`/issues/citizen/${selectedIssue.id}/comment`, {
-        message: newComment.trim()
+        message: newComment.trim(),
       });
-      
+
       toast.success('Comment added successfully');
       setNewComment('');
       // Refresh issue details
@@ -895,7 +1067,7 @@ const IssueManagement = () => {
               />
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Filter className="h-4 w-4 text-gray-400" />
             <select
@@ -903,18 +1075,22 @@ const IssueManagement = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {statusOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
               ))}
             </select>
-            
+
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {priorityOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+              {priorityOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
               ))}
             </select>
           </div>
@@ -934,19 +1110,30 @@ const IssueManagement = () => {
           </div>
         ) : (
           issues.map((issue) => (
-            <div key={issue.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div
+              key={issue.id}
+              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+            >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{issue.title}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {issue.title}
+                  </h3>
                   <div className="flex items-center space-x-3 mb-2">
-                    <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(issue.status)}`}>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(issue.status)}`}
+                    >
                       {getStatusIcon(issue.status)}
                       <span className="ml-1">{issue.status}</span>
                     </span>
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(issue.priority)}`}>
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(issue.priority)}`}
+                    >
                       {issue.priority}
                     </span>
-                    <span className="text-xs text-gray-500">{issue.category}</span>
+                    <span className="text-xs text-gray-500">
+                      {issue.category}
+                    </span>
                   </div>
                 </div>
                 <div className="text-right">
@@ -960,26 +1147,31 @@ const IssueManagement = () => {
                   )}
                 </div>
               </div>
-              
+
               <p className="text-gray-700 mb-3">{issue.description}</p>
-              
+
               {/* Media Display */}
               <MediaDisplay issue={issue} className="mb-3" />
-              
+
               {issue.address && (
                 <div className="flex items-center text-sm text-gray-600 mb-2">
                   <MapPin className="h-4 w-4 mr-1" />
                   {issue.address}
                 </div>
               )}
-              
+
               {issue.updates && issue.updates.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Recent Updates</h4>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    Recent Updates
+                  </h4>
                   <div className="space-y-2">
                     {issue.updates.slice(0, 2).map((update, index) => (
                       <div key={index} className="text-sm text-gray-600">
-                        <span className="font-medium">{update.createdBy?.name}:</span> {update.message}
+                        <span className="font-medium">
+                          {update.createdBy?.name}:
+                        </span>{' '}
+                        {update.message}
                         <span className="text-xs text-gray-500 ml-2">
                           {new Date(update.createdAt).toLocaleDateString()}
                         </span>
@@ -989,7 +1181,7 @@ const IssueManagement = () => {
                   </div>
                 </div>
               )}
-              
+
               <div className="mt-4 flex justify-between items-center">
                 <div className="text-sm text-gray-500">
                   Created: {new Date(issue.createdAt).toLocaleDateString()}
@@ -1011,13 +1203,13 @@ const IssueManagement = () => {
         <div className="flex justify-center mt-6">
           <div className="flex space-x-2">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
               className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
             >
               Previous
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
@@ -1031,7 +1223,9 @@ const IssueManagement = () => {
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
               disabled={currentPage === totalPages}
               className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
             >
@@ -1045,7 +1239,10 @@ const IssueManagement = () => {
       {canReportIssue() && (
         <IssueModal
           isOpen={showAddModal}
-          onClose={() => { setShowAddModal(false); resetForm(); }}
+          onClose={() => {
+            setShowAddModal(false);
+            resetForm();
+          }}
           title="Report New Issue"
           onSubmit={handleAddIssue}
           formData={formData}
@@ -1058,7 +1255,11 @@ const IssueManagement = () => {
       {/* Issue Details Modal */}
       <IssueDetailsModal
         isOpen={showDetailsModal}
-        onClose={() => { setShowDetailsModal(false); setSelectedIssue(null); setNewComment(''); }}
+        onClose={() => {
+          setShowDetailsModal(false);
+          setSelectedIssue(null);
+          setNewComment('');
+        }}
         issue={selectedIssue}
         newComment={newComment}
         setNewComment={setNewComment}

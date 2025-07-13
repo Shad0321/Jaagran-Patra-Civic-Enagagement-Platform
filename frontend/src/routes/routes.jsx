@@ -82,7 +82,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path:"notifications",
+        path: 'notifications',
         element: (
           <LanguageGuard>
             <ProtectedRoute>
@@ -92,7 +92,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path:"nearby-issues",
+        path: 'nearby-issues',
         element: (
           <LanguageGuard>
             <ProtectedRoute>
@@ -102,7 +102,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path:"election-map",
+        path: 'election-map',
         element: (
           <LanguageGuard>
             <ProtectedRoute>
@@ -110,7 +110,7 @@ const router = createBrowserRouter([
             </ProtectedRoute>
           </LanguageGuard>
         ),
-      }
+      },
       //   { path: "*", element: <NotFound /> },
     ],
   },

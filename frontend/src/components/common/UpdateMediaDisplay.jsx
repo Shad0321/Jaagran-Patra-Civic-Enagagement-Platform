@@ -9,7 +9,11 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
   // Parse images from the update
-  const images = update.imageUrls ? (typeof update.imageUrls === 'string' ? JSON.parse(update.imageUrls) : update.imageUrls) : [];
+  const images = update.imageUrls
+    ? typeof update.imageUrls === 'string'
+      ? JSON.parse(update.imageUrls)
+      : update.imageUrls
+    : [];
   const audioUrl = update.audioUrl;
 
   const handleImageClick = (imageUrl) => {
@@ -55,7 +59,9 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
         <div>
           <div className="flex items-center space-x-2 mb-2">
             <Image className="h-3 w-3 text-gray-500" />
-            <span className="text-xs text-gray-500">Images ({images.length})</span>
+            <span className="text-xs text-gray-500">
+              Images ({images.length})
+            </span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
             {images.map((imageUrl, index) => (
@@ -94,8 +100,8 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
             <button
               onClick={handleAudioToggle}
               className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
-                audioPlaying 
-                  ? 'bg-red-500 hover:bg-red-600 text-white' 
+                audioPlaying
+                  ? 'bg-red-500 hover:bg-red-600 text-white'
                   : 'bg-blue-500 hover:bg-blue-600 text-white'
               }`}
             >

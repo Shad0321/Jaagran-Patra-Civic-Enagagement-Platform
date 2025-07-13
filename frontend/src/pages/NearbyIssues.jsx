@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MapPin, Filter, Search, Clock, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import {
+  MapPin,
+  Filter,
+  Search,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+} from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const NearbyIssues = () => {
@@ -8,34 +16,34 @@ const NearbyIssues = () => {
   const [error, setError] = useState('');
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
-  
+
   // Filters for UI (immediate updates)
   const [filters, setFilters] = useState({
     radius: 5,
     status: '',
     priority: '',
     category: '',
-    search: ''
+    search: '',
   });
-  
+
   // Debounced filters for API calls
   const [debouncedFilters, setDebouncedFilters] = useState({
     radius: 5,
     status: '',
     priority: '',
     category: '',
-    search: ''
+    search: '',
   });
-  
+
   // Debounce timer ref
   const debounceTimerRef = useRef(null);
-  
+
   // Pagination
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
     total: 0,
-    totalPages: 0
+    totalPages: 0,
   });
 
   // Debounce effect for filters
@@ -44,13 +52,13 @@ const NearbyIssues = () => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
-    
+
     // Set new timer
     debounceTimerRef.current = setTimeout(() => {
       setDebouncedFilters(filters);
-      setPagination(prev => ({ ...prev, page: 1 })); // Reset to first page
+      setPagination((prev) => ({ ...prev, page: 1 })); // Reset to first page
     }, 1000);
-    
+
     // Cleanup function
     return () => {
       if (debounceTimerRef.current) {
@@ -71,7 +79,7 @@ const NearbyIssues = () => {
       (position) => {
         setLocation({
           latitude: position.coords.latitude,
-          longitude: position.coords.longitude
+          longitude: position.coords.longitude,
         });
       },
       (error) => {
@@ -93,7 +101,7 @@ const NearbyIssues = () => {
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 300000 // 5 minutes
+        maximumAge: 300000, // 5 minutes
       }
     );
   }, []);
@@ -113,25 +121,31 @@ const NearbyIssues = () => {
         page: pagination.page.toString(),
         limit: pagination.limit.toString(),
         ...(debouncedFilters.status && { status: debouncedFilters.status }),
-        ...(debouncedFilters.priority && { priority: debouncedFilters.priority }),
-        ...(debouncedFilters.category && { category: debouncedFilters.category }),
-        ...(debouncedFilters.search && { search: debouncedFilters.search })
+        ...(debouncedFilters.priority && {
+          priority: debouncedFilters.priority,
+        }),
+        ...(debouncedFilters.category && {
+          category: debouncedFilters.category,
+        }),
+        ...(debouncedFilters.search && { search: debouncedFilters.search }),
       });
 
-      const response = await fetch(`http://localhost:3001/issues/nearby?${queryParams}`);
-      
+      const response = await fetch(
+        `http://localhost:3001/issues/nearby?${queryParams}`
+      );
+
       if (!response.ok) {
         throw new Error('Failed to fetch nearby issues');
       }
 
       const result = await response.json();
-      
+
       if (result.success && result.data) {
         setIssues(result.data.issues || []);
-        setPagination(prev => ({
+        setPagination((prev) => ({
           ...prev,
           total: result.data.pagination?.total || 0,
-          totalPages: result.data.pagination?.pages || 0
+          totalPages: result.data.pagination?.pages || 0,
         }));
       } else {
         throw new Error('Invalid response format');
@@ -157,12 +171,12 @@ const NearbyIssues = () => {
 
   // Handle filter changes
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   // Handle pagination
   const handlePageChange = (newPage) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
+    setPagination((prev) => ({ ...prev, page: newPage }));
   };
 
   // Get status color and icon
@@ -171,7 +185,7 @@ const NearbyIssues = () => {
       PENDING: { color: 'text-yellow-600 bg-yellow-100', icon: Clock },
       IN_PROGRESS: { color: 'text-blue-600 bg-blue-100', icon: AlertCircle },
       RESOLVED: { color: 'text-green-600 bg-green-100', icon: CheckCircle },
-      REJECTED: { color: 'text-red-600 bg-red-100', icon: XCircle }
+      REJECTED: { color: 'text-red-600 bg-red-100', icon: XCircle },
     };
     return statusConfig[status] || statusConfig.PENDING;
   };
@@ -182,7 +196,7 @@ const NearbyIssues = () => {
       LOW: 'text-gray-600',
       MEDIUM: 'text-yellow-600',
       HIGH: 'text-orange-600',
-      URGENT: 'text-red-600'
+      URGENT: 'text-red-600',
     };
     return priorityColors[priority] || priorityColors.MEDIUM;
   };
@@ -192,7 +206,9 @@ const NearbyIssues = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <MapPin className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">Location Access Required</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            Location Access Required
+          </h3>
           <p className="mt-1 text-sm text-gray-500">{locationError}</p>
           <div className="mt-6">
             <button
@@ -245,13 +261,13 @@ const NearbyIssues = () => {
             <div className="flex items-center">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
               <span className="text-sm text-blue-700">
-                Updating search results in {' '}
+                Updating search results in{' '}
                 <span className="font-medium">1 second</span>...
               </span>
             </div>
           </div>
         )}
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Search */}
           <div className="lg:col-span-2">
@@ -281,7 +297,9 @@ const NearbyIssues = () => {
               max="50"
               step="0.1"
               value={filters.radius}
-              onChange={(e) => handleFilterChange('radius', parseFloat(e.target.value) || 5)}
+              onChange={(e) =>
+                handleFilterChange('radius', parseFloat(e.target.value) || 5)
+              }
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -333,7 +351,9 @@ const NearbyIssues = () => {
       ) : error ? (
         <div className="text-center py-12">
           <AlertCircle className="mx-auto h-12 w-12 text-red-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">Error loading issues</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            Error loading issues
+          </h3>
           <p className="mt-1 text-sm text-gray-500">{error}</p>
           <button
             onClick={fetchNearbyIssues}
@@ -345,9 +365,12 @@ const NearbyIssues = () => {
       ) : issues.length === 0 ? (
         <div className="text-center py-12">
           <MapPin className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No issues found</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            No issues found
+          </h3>
           <p className="mt-1 text-sm text-gray-500">
-            No issues found within {filters.radius}km of your location with the current filters.
+            No issues found within {filters.radius}km of your location with the
+            current filters.
           </p>
         </div>
       ) : (
@@ -356,14 +379,15 @@ const NearbyIssues = () => {
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-medium text-gray-900">
-                {pagination.total} issue{pagination.total !== 1 ? 's' : ''} found
+                {pagination.total} issue{pagination.total !== 1 ? 's' : ''}{' '}
+                found
               </h3>
             </div>
             <div className="divide-y divide-gray-200">
               {issues.map((issue) => {
                 const statusDisplay = getStatusDisplay(issue.status);
                 const StatusIcon = statusDisplay.icon;
-                
+
                 return (
                   <div key={issue.id} className="p-6 hover:bg-gray-50">
                     <div className="flex items-start justify-between">
@@ -372,19 +396,23 @@ const NearbyIssues = () => {
                           <h4 className="text-lg font-medium text-gray-900">
                             {issue.title}
                           </h4>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusDisplay.color}`}>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusDisplay.color}`}
+                          >
                             <StatusIcon className="mr-1 h-3 w-3" />
                             {issue.status.replace('_', ' ')}
                           </span>
-                          <span className={`text-sm font-medium ${getPriorityColor(issue.priority)}`}>
+                          <span
+                            className={`text-sm font-medium ${getPriorityColor(issue.priority)}`}
+                          >
                             {issue.priority}
                           </span>
                         </div>
-                        
+
                         <p className="text-gray-600 mb-3 line-clamp-2">
                           {issue.description}
                         </p>
-                        
+
                         <div className="flex items-center space-x-4 text-sm text-gray-500">
                           <span className="flex items-center">
                             <MapPin className="mr-1 h-4 w-4" />
@@ -395,20 +423,20 @@ const NearbyIssues = () => {
                               📍 {issue.address}
                             </span>
                           )}
+                          <span>Category: {issue.category}</span>
                           <span>
-                            Category: {issue.category}
-                          </span>
-                          <span>
-                            {formatDistanceToNow(new Date(issue.createdAt), { addSuffix: true })}
+                            {formatDistanceToNow(new Date(issue.createdAt), {
+                              addSuffix: true,
+                            })}
                           </span>
                         </div>
-                        
+
                         {issue.reportedBy && (
                           <div className="mt-2 text-sm text-gray-500">
                             Reported by: {issue.reportedBy.name}
                           </div>
                         )}
-                        
+
                         {issue.assignedTo && (
                           <div className="mt-1 text-sm text-gray-500">
                             Assigned to: {issue.assignedTo.name}
@@ -426,9 +454,9 @@ const NearbyIssues = () => {
           {pagination.totalPages > 1 && (
             <div className="mt-6 flex items-center justify-between">
               <div className="text-sm text-gray-700">
-                Showing {((pagination.page - 1) * pagination.limit) + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
-                {pagination.total} results
+                Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
+                {Math.min(pagination.page * pagination.limit, pagination.total)}{' '}
+                of {pagination.total} results
               </div>
               <div className="flex space-x-2">
                 <button

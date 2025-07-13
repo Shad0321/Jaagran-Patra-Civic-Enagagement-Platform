@@ -9,7 +9,11 @@ const MediaDisplay = ({ issue, className = '' }) => {
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
   // Parse images from the issue
-  const images = issue.images ? (typeof issue.images === 'string' ? JSON.parse(issue.images) : issue.images) : [];
+  const images = issue.images
+    ? typeof issue.images === 'string'
+      ? JSON.parse(issue.images)
+      : issue.images
+    : [];
   const voiceNote = issue.voiceNote;
 
   const handleImageClick = (imageUrl) => {
@@ -94,8 +98,8 @@ const MediaDisplay = ({ issue, className = '' }) => {
             <button
               onClick={handleAudioToggle}
               className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                audioPlaying 
-                  ? 'bg-red-500 hover:bg-red-600 text-white' 
+                audioPlaying
+                  ? 'bg-red-500 hover:bg-red-600 text-white'
                   : 'bg-blue-500 hover:bg-blue-600 text-white'
               }`}
             >
@@ -106,16 +110,17 @@ const MediaDisplay = ({ issue, className = '' }) => {
               )}
             </button>
             <div className="flex-1">
-              <div className="text-sm text-gray-700">Voice Note</div>            <audio
-              ref={setAudioRef}
-              src={`${API_BASE_URL}${voiceNote}`}
-              onEnded={handleAudioEnded}
-              onError={handleAudioError}
-              preload="metadata"
-              crossOrigin="anonymous"
-              className="w-full h-6 mt-1"
-              controls
-            />
+              <div className="text-sm text-gray-700">Voice Note</div>{' '}
+              <audio
+                ref={setAudioRef}
+                src={`${API_BASE_URL}${voiceNote}`}
+                onEnded={handleAudioEnded}
+                onError={handleAudioError}
+                preload="metadata"
+                crossOrigin="anonymous"
+                className="w-full h-6 mt-1"
+                controls
+              />
             </div>
           </div>
         </div>

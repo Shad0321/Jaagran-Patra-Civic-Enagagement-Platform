@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { X, Clock, AlertCircle, CheckCircle, Upload, Calendar, TrendingUp, Clock as ClockIcon } from 'lucide-react';
+import {
+  X,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  Upload,
+  Calendar,
+  TrendingUp,
+  Clock as ClockIcon,
+} from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
@@ -11,7 +20,7 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
     progressPercentage: '',
     hoursWorked: '',
     nextSteps: '',
-    attachments: []
+    attachments: [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,24 +30,41 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
       setFormData({
         status: issue.status === 'PENDING' ? 'IN_PROGRESS' : issue.status,
         progressUpdate: '',
-        estimatedCompletion: issue.expectedResolutionDate ? new Date(issue.expectedResolutionDate).toISOString().split('T')[0] : '',
+        estimatedCompletion: issue.expectedResolutionDate
+          ? new Date(issue.expectedResolutionDate).toISOString().split('T')[0]
+          : '',
         progressPercentage: '',
         hoursWorked: '',
         nextSteps: '',
-        attachments: []
+        attachments: [],
       });
     }
   }, [issue]);
 
   const statusOptions = [
-    { value: 'PENDING', label: 'Pending', icon: Clock, color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'IN_PROGRESS', label: 'In Progress', icon: AlertCircle, color: 'bg-blue-100 text-blue-800' },
-    { value: 'RESOLVED', label: 'Resolved', icon: CheckCircle, color: 'bg-green-100 text-green-800' }
+    {
+      value: 'PENDING',
+      label: 'Pending',
+      icon: Clock,
+      color: 'bg-yellow-100 text-yellow-800',
+    },
+    {
+      value: 'IN_PROGRESS',
+      label: 'In Progress',
+      icon: AlertCircle,
+      color: 'bg-blue-100 text-blue-800',
+    },
+    {
+      value: 'RESOLVED',
+      label: 'Resolved',
+      icon: CheckCircle,
+      color: 'bg-green-100 text-green-800',
+    },
   ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.progressUpdate.trim()) {
       toast.error('Progress update is required');
       return;
@@ -48,16 +74,20 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
     try {
       const updateData = {
         ...formData,
-        progressPercentage: formData.progressPercentage ? parseInt(formData.progressPercentage) : undefined,
-        hoursWorked: formData.hoursWorked ? parseFloat(formData.hoursWorked) : undefined,
+        progressPercentage: formData.progressPercentage
+          ? parseInt(formData.progressPercentage)
+          : undefined,
+        hoursWorked: formData.hoursWorked
+          ? parseFloat(formData.hoursWorked)
+          : undefined,
       };
 
       await api.put(`/issues/${issue.id}/update-progress`, updateData);
-      
+
       toast.success('Issue progress updated successfully');
       onUpdate && onUpdate();
       onClose();
-      
+
       // Reset form
       setFormData({
         status: 'IN_PROGRESS',
@@ -66,11 +96,13 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
         progressPercentage: '',
         hoursWorked: '',
         nextSteps: '',
-        attachments: []
+        attachments: [],
       });
     } catch (error) {
       console.error('Error updating issue progress:', error);
-      toast.error(error.response?.data?.error || 'Failed to update issue progress');
+      toast.error(
+        error.response?.data?.error || 'Failed to update issue progress'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -78,16 +110,16 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      attachments: [...prev.attachments, ...files]
+      attachments: [...prev.attachments, ...files],
     }));
   };
 
   const removeAttachment = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      attachments: prev.attachments.filter((_, i) => i !== index)
+      attachments: prev.attachments.filter((_, i) => i !== index),
     }));
   };
 
@@ -97,7 +129,9 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Update Issue Progress</h2>
+          <h2 className="text-xl font-bold text-gray-900">
+            Update Issue Progress
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
@@ -113,7 +147,9 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
           <div className="flex items-center space-x-4 text-sm text-gray-500">
             <span>Category: {issue.category}</span>
             <span>Priority: {issue.priority}</span>
-            <span>Reported: {new Date(issue.createdAt).toLocaleDateString()}</span>
+            <span>
+              Reported: {new Date(issue.createdAt).toLocaleDateString()}
+            </span>
           </div>
         </div>
 
@@ -126,11 +162,13 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, status: e.target.value }))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
-                {statusOptions.map(option => (
+                {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -148,7 +186,12 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
                   min="0"
                   max="100"
                   value={formData.progressPercentage}
-                  onChange={(e) => setFormData(prev => ({ ...prev, progressPercentage: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      progressPercentage: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="0-100"
                 />
@@ -164,7 +207,12 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
             </label>
             <textarea
               value={formData.progressUpdate}
-              onChange={(e) => setFormData(prev => ({ ...prev, progressUpdate: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  progressUpdate: e.target.value,
+                }))
+              }
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Describe the progress made on this issue..."
@@ -184,7 +232,12 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
                   min="0"
                   step="0.5"
                   value={formData.hoursWorked}
-                  onChange={(e) => setFormData(prev => ({ ...prev, hoursWorked: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      hoursWorked: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="0.0"
                 />
@@ -200,7 +253,12 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
                 <input
                   type="date"
                   value={formData.estimatedCompletion}
-                  onChange={(e) => setFormData(prev => ({ ...prev, estimatedCompletion: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      estimatedCompletion: e.target.value,
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <Calendar className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
@@ -215,7 +273,9 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
             </label>
             <textarea
               value={formData.nextSteps}
-              onChange={(e) => setFormData(prev => ({ ...prev, nextSteps: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, nextSteps: e.target.value }))
+              }
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Describe the next steps for this issue..."
@@ -243,11 +303,14 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
                 {formData.attachments.length} file(s) selected
               </span>
             </div>
-            
+
             {formData.attachments.length > 0 && (
               <div className="mt-3 space-y-2">
                 {formData.attachments.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
+                  >
                     <span className="text-sm text-gray-700">{file.name}</span>
                     <button
                       type="button"

@@ -41,7 +41,9 @@ const api = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Request failed' }));
       throw { response: { data: error, status: response.status } };
     }
 
@@ -51,7 +53,7 @@ const api = {
   post: async (endpoint, data, config = {}) => {
     const token = localStorage.getItem('token');
     const isFormData = data instanceof FormData;
-    
+
     // Don't set Content-Type for FormData - let browser set it with boundary
     const headers = {
       ...(token && { Authorization: `Bearer ${token}` }),
@@ -64,7 +66,14 @@ const api = {
       delete headers['Content-Type'];
     }
 
-    console.log('API POST request:', endpoint, 'Headers:', headers, 'Token:', token);
+    console.log(
+      'API POST request:',
+      endpoint,
+      'Headers:',
+      headers,
+      'Token:',
+      token
+    );
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
@@ -74,7 +83,9 @@ const api = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Request failed' }));
       throw { response: { data: error, status: response.status } };
     }
 
@@ -84,7 +95,7 @@ const api = {
   put: async (endpoint, data, config = {}) => {
     const token = localStorage.getItem('token');
     const isFormData = data instanceof FormData;
-    
+
     const headers = {
       ...(token && { Authorization: `Bearer ${token}` }),
       ...(!isFormData && { 'Content-Type': 'application/json' }),
@@ -99,7 +110,9 @@ const api = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Request failed' }));
       throw { response: { data: error, status: response.status } };
     }
 
@@ -121,7 +134,9 @@ const api = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Request failed' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Request failed' }));
       throw { response: { data: error, status: response.status } };
     }
 
