@@ -6,6 +6,7 @@ import issueRoutes from './issues';
 import adminRoutes from './admin';
 import notificationRoutes from './notifications';
 import mapRoutes from './map';
+import newsRoutes from './news';
 
 const router = Router();
 
@@ -23,6 +24,9 @@ router.use('/notifications', notificationRoutes);
 
 // Map routes
 router.use('/map', mapRoutes);
+
+// News routes (public)
+router.use('/news', newsRoutes);
 
 // Health check endpoint
 router.get('/health', (req: Request, res: Response) => {

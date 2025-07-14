@@ -17,7 +17,7 @@ const App = () => {
   }, [dispatch, isAuthenticated, user]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-light text-dark">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
       <hr />
       <Outlet /> {/* Nested routes render here */}

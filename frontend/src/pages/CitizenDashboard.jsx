@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import LatestNews from '../components/LatestNews';
 
 const CitizenDashboard = () => {
   const { user } = useSelector((state) => state.user);
@@ -271,6 +272,15 @@ const CitizenDashboard = () => {
         </div>
 
         <div className="space-y-6">
+          {/* Latest News Widget */}
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <LatestNews 
+              userState={user?.state?.name || 'all'} 
+              limit={4} 
+              showFull={false} 
+            />
+          </div>
+
           {/* Quick Actions */}
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">

@@ -18,7 +18,7 @@ const AnalyticsReports = () => {
       totalSessions: 0,
       averageResolutionTime: 0
     },
-    issuesByCategory: [],
+    newsByCategory: [],
     issuesByStatus: [],
     issuesByMonth: [],
     mlaPerformance: [],
@@ -51,9 +51,9 @@ const AnalyticsReports = () => {
           resolvedIssues,
           pendingIssues,
           totalSessions: 0,
-          averageResolutionTime: 0
+          averageResolutionTime: apiData.responseTimeMetrics?.average || 0
         },
-        issuesByCategory: (apiData.newsStats || []).map(item => ({
+        newsByCategory: (apiData.newsStats || []).map(item => ({
           category: item.category || 'Unknown',
           count: item._count?._all || 0
         })),
@@ -61,15 +61,16 @@ const AnalyticsReports = () => {
           name: item.status || 'Unknown',
           count: item._count?._all || 0
         })),
-        issuesByMonth: [], // No month data in current API
-        mlaPerformance: [], // No MLA performance data in current API
+        issuesByMonth: apiData.issuesByMonth || [],
+        mlaPerformance: apiData.mlaPerformance || [],
         userGrowth: (apiData.userGrowth || []).map(item => ({
           month: item.role || 'Unknown',
           users: item._count?._all || 0
         })),
         responseTimeMetrics: {
-          fastest: 0,
-          slowest: 0
+          fastest: apiData.responseTimeMetrics?.fastest || 0,
+          slowest: apiData.responseTimeMetrics?.slowest || 0,
+          average: apiData.responseTimeMetrics?.average || 0
         }
       });
     } catch (error) {
@@ -87,7 +88,7 @@ const AnalyticsReports = () => {
           totalSessions: 0,
           averageResolutionTime: 0
         },
-        issuesByCategory: [],
+        newsByCategory: [],
         issuesByStatus: [],
         issuesByMonth: [],
         mlaPerformance: [],
@@ -220,9 +221,9 @@ const AnalyticsReports = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Issues by Category */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Issues by Category</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">News by Category</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={analytics.issuesByCategory || []}>
+            <BarChart data={analytics.newsByCategory || []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="category" />
               <YAxis />
@@ -315,30 +316,44 @@ const AnalyticsReports = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {(analytics.mlaPerformance || []).map((mla, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{mla.name || 'N/A'}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.constituency || 'N/A'}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.totalIssues || 0}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.resolvedIssues || 0}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {mla.totalIssues ? Math.round((mla.resolvedIssues / mla.totalIssues) * 100) : 0}%
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{mla.avgResponseTime || 0} hrs</div>
+              {(analytics.mlaPerformance || []).length > 0 ? (
+                analytics.mlaPerformance.map((mla, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{mla.name || 'N/A'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{mla.constituency || 'N/A'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{mla.totalIssues || 0}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{mla.resolvedIssues || 0}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        parseFloat(mla.resolutionRate) >= 80 
+                          ? 'bg-green-100 text-green-800'
+                          : parseFloat(mla.resolutionRate) >= 60
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {mla.resolutionRate || '0%'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{mla.avgResponseTime || 0} hrs</div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
+                    No MLA performance data available for the selected time period
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

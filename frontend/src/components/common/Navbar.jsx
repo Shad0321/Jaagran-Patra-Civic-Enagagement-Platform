@@ -135,7 +135,7 @@ const Navbar = () => {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <header className="p-4 border-b border-gray-700">
+          <header className="p-4 border-b border-light">
             <div className="flex items-center justify-between">
               <Link
                 className="flex flex-col leading-7 font-semibold text-xl text-dark focus:outline-none focus:opacity-80 transition-opacity duration-200 cursor-pointer"

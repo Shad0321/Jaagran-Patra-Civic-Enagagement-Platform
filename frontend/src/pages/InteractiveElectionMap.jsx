@@ -28,6 +28,7 @@ import {
   Cell,
   Pie,
 } from 'recharts';
+import LatestNews from '../components/LatestNews';
 import 'leaflet/dist/leaflet.css';
 
 // Import custom marker icons
@@ -149,7 +150,7 @@ const ElectionResultCard = ({ year, data, isWinner = false }) => (
 );
 
 // Statistics Card Component
-const StatCard = ({ title, value, icon: Icon, color, change }) => (
+const StatCard = ({ title, value, icon: IconComponent, color, change }) => (
   <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
     <div className="flex items-center justify-between">
       <div>
@@ -165,7 +166,7 @@ const StatCard = ({ title, value, icon: Icon, color, change }) => (
         )}
       </div>
       <div className={`p-3 rounded-lg ${color}`}>
-        <Icon className="w-6 h-6 text-white" />
+        <IconComponent className="w-6 h-6 text-white" />
       </div>
     </div>
   </div>
@@ -245,14 +246,16 @@ const InteractiveElectionMap = () => {
   const [boothDetails, setBoothDetails] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+  const [allStatesData, setAllStatesData] = useState([]); // Store all states for reference
 
   // Sample data for charts (you would replace this with real data)
   const generateChartData = () => {
-    if (!mapData.length) return [];
+    const dataSource = mapLevel === 'india' ? allStatesData : mapData;
+    if (!dataSource.length) return [];
 
     // Generate party vote share data
     const partyData = {};
-    mapData.forEach((item) => {
+    dataSource.forEach((item) => {
       if (item.electionData?.Party_Votes_Assembly_Aggregated) {
         Object.entries(
           item.electionData.Party_Votes_Assembly_Aggregated
@@ -286,7 +289,8 @@ const InteractiveElectionMap = () => {
       );
       const data = await response.json();
       if (data.success) {
-        setMapData(data.data);
+        setAllStatesData(data.data); // Store all states
+        setMapData(data.data); // Show all states initially
       }
     } catch (error) {
       console.error('Error fetching states:', error);
@@ -355,6 +359,11 @@ const InteractiveElectionMap = () => {
     setMapLevel('state');
     setMapCenter([state.latitude || 20.5937, state.longitude || 78.9629]);
     setMapZoom(7);
+    
+    // Hide other states - show only the selected state on map
+    setMapData([state]);
+    
+    // Fetch assemblies for the selected state
     fetchAssemblies(state.id);
   };
 
@@ -384,7 +393,8 @@ const InteractiveElectionMap = () => {
         setBoothDetails(null);
         setMapCenter([20.5937, 78.9629]);
         setMapZoom(5);
-        fetchStates();
+        // Restore all states when going back to India level
+        setMapData(allStatesData);
         break;
       case 'state':
         if (selectedState) {
@@ -394,6 +404,8 @@ const InteractiveElectionMap = () => {
           setBoothDetails(null);
           setMapCenter([selectedState.latitude, selectedState.longitude]);
           setMapZoom(7);
+          // Show only the selected state
+          setMapData([selectedState]);
           fetchAssemblies(selectedState.id);
         }
         break;
@@ -450,7 +462,16 @@ const InteractiveElectionMap = () => {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalVotes = mapData.reduce(
+  // Get appropriate data source for statistics based on current level
+  const getStatsData = () => {
+    if (mapLevel === 'india') {
+      return allStatesData; // Use all states for India-level stats
+    }
+    return mapData; // Use current map data for other levels
+  };
+
+  const statsData = getStatsData();
+  const totalVotes = statsData.reduce(
     (sum, item) => sum + (item.electionData?.Total_Votes_Constituency || 0),
     0
   );
@@ -458,7 +479,7 @@ const InteractiveElectionMap = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Enhanced Header */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col space-y-4 py-4">
             <div className="flex justify-between items-center">
@@ -537,7 +558,7 @@ const InteractiveElectionMap = () => {
           />
           <StatCard
             title="Data Coverage"
-            value={`${Math.round((mapData.filter((item) => item.electionData || item.electionResults).length / mapData.length) * 100)}%`}
+            value={`${Math.round((statsData.filter((item) => item.electionData || item.electionResults).length / Math.max(statsData.length, 1)) * 100)}%`}
             icon={Activity}
             color="bg-purple-500"
           />
@@ -555,27 +576,53 @@ const InteractiveElectionMap = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               {/* Map Tabs */}
               <div className="border-b border-gray-200 px-6 py-4">
-                <div className="flex space-x-6">
-                  <button
-                    onClick={() => setActiveTab('overview')}
-                    className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === 'overview'
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    Map Overview
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('analytics')}
-                    className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === 'analytics'
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    Analytics
-                  </button>
+                <div className="flex justify-between items-center">
+                  <div className="flex space-x-6">
+                    <button
+                      onClick={() => setActiveTab('overview')}
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
+                        activeTab === 'overview'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      Map Overview
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('analytics')}
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
+                        activeTab === 'analytics'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      Analytics
+                    </button>
+                  </div>
+                  
+                  {/* View Mode Indicator */}
+                  <div className="flex items-center space-x-2 text-xs text-gray-600">
+                    {mapLevel === 'india' && (
+                      <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                        Showing all {allStatesData.length} states
+                      </span>
+                    )}
+                    {mapLevel === 'state' && selectedState && (
+                      <span className="px-2 py-1 bg-green-50 text-green-700 rounded-full">
+                        Focused on {selectedState.name}
+                      </span>
+                    )}
+                    {mapLevel === 'assembly' && selectedAssembly && (
+                      <span className="px-2 py-1 bg-orange-50 text-orange-700 rounded-full">
+                        Assembly: {selectedAssembly.name}
+                      </span>
+                    )}
+                    {mapLevel === 'polling' && selectedPollingBooth && (
+                      <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full">
+                        Booth: {selectedPollingBooth.name}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -608,7 +655,7 @@ const InteractiveElectionMap = () => {
                           item.latitude &&
                           item.longitude && (
                             <Marker
-                              key={index}
+                              key={`${mapLevel}-${item.id || index}`} // Better key to handle level changes
                               position={[item.latitude, item.longitude]}
                               icon={getMarkerIcon()}
                               eventHandlers={{
@@ -617,8 +664,13 @@ const InteractiveElectionMap = () => {
                             >
                               <Popup>
                                 <div className="p-3 min-w-64">
-                                  <h3 className="font-semibold text-lg mb-2">
+                                  <h3 className="font-semibold text-lg mb-2 flex items-center">
                                     {item.name}
+                                    {mapLevel === 'state' && selectedState && selectedState.id === item.id && (
+                                      <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                        Selected
+                                      </span>
+                                    )}
                                   </h3>
                                   {item.electionData && (
                                     <div className="space-y-2 text-sm">
@@ -697,9 +749,6 @@ const InteractiveElectionMap = () => {
                                       </div>
                                     </div>
                                   )}
-                                  <div className="mt-3 pt-2 border-t text-xs text-primary cursor-pointer font-medium">
-                                    Click to explore →
-                                  </div>
                                 </div>
                               </Popup>
                             </Marker>
@@ -1020,6 +1069,15 @@ const InteractiveElectionMap = () => {
                   </ul>
                 </div>
               </div>
+            </div>
+
+            {/* Latest News Widget */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <LatestNews 
+                userState={selectedState?.name || 'all'} 
+                limit={3} 
+                showFull={false} 
+              />
             </div>
 
             {/* Data Sources */}

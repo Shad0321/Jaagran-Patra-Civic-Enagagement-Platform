@@ -15,6 +15,8 @@ import IssueManagement from '../pages/IssueManagement.jsx';
 import NotificationsPage from '../pages/Notifications.jsx';
 import NearbyIssues from '../pages/NearbyIssues.jsx';
 import InteractiveElectionMap from '../pages/InteractiveElectionMap.jsx';
+import NewsPage from '../pages/NewsPage.jsx';
+import NewsDetail from '../pages/NewsDetail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -107,6 +109,26 @@ const router = createBrowserRouter([
           <LanguageGuard>
             <ProtectedRoute>
               <InteractiveElectionMap />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path: 'news',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute>
+              <NewsPage />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path: 'news/:id',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute>
+              <NewsDetail />
             </ProtectedRoute>
           </LanguageGuard>
         ),

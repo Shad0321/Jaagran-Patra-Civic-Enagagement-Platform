@@ -1192,10 +1192,26 @@ export const createNews = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { title, content, category, stateId, tags, isActive } = req.body;
+    const { 
+      title, 
+      content, 
+      summary,
+      category, 
+      stateId, 
+      isNational,
+      tags, 
+      isActive,
+      isPinned,
+      featuredImage,
+      attachments,
+      slug: providedSlug,
+      metaTitle,
+      metaDescription,
+      publishedAt
+    } = req.body;
 
-    // Generate slug from title
-    const slug = title
+    // Generate slug from title if not provided
+    const slug = providedSlug || title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
@@ -1203,12 +1219,20 @@ export const createNews = async (
     const news = await prisma.news.create({
       data: {
         title,
-        content,
+        content, // This will store the rich HTML content
+        summary,
         category,
         stateId: stateId || null,
+        isNational: isNational || false,
         tags: tags || [],
         isActive: isActive !== undefined ? isActive : true,
+        isPinned: isPinned || false,
+        featuredImage,
+        attachments: attachments || null,
         slug,
+        metaTitle,
+        metaDescription,
+        publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
         authorId: req.user!.id,
       },
       include: {
@@ -1230,25 +1254,64 @@ export const updateNews = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { title, content, category, stateId, tags, isActive } = req.body;
+    const { 
+      title, 
+      content, 
+      summary,
+      category, 
+      stateId, 
+      isNational,
+      tags, 
+      isActive,
+      isPinned,
+      featuredImage,
+      attachments,
+      slug: providedSlug,
+      metaTitle,
+      metaDescription,
+      publishedAt
+    } = req.body;
+
+    // Generate slug from title if not provided and title changed
+    const updateData: any = {
+      content, // Store rich HTML content
+      summary,
+      category,
+      stateId: stateId || null,
+      isNational: isNational || false,
+      tags: tags || [],
+      isActive,
+      isPinned: isPinned || false,
+      featuredImage,
+      attachments: attachments || null,
+      metaTitle,
+      metaDescription,
+    };
+
+    // Only update title and slug if title is provided
+    if (title) {
+      updateData.title = title;
+      updateData.slug = providedSlug || title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    // Only update publishedAt if provided
+    if (publishedAt) {
+      updateData.publishedAt = new Date(publishedAt);
+    }
 
     const news = await prisma.news.update({
       where: { id },
-      data: {
-        title,
-        content,
-        category,
-        stateId: stateId || null,
-        tags: tags || [],
-        isActive,
-      },
+      data: updateData,
       include: {
         author: { select: { name: true, email: true } },
         state: { select: { name: true } },
       },
     });
 
-    res.json({ success: true, data: news });
+    res.status(200).json({ success: true, data: news });
   } catch (error) {
     console.error('Update news error:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -1305,7 +1368,7 @@ export const getAnalytics = async (
         break;
     }
 
-    const [userGrowth, issueStats, newsStats, resolvedIssuesCount] =
+    const [userGrowth, issueStats, newsStats, resolvedIssuesCount, mlaPerformance, responseTimeMetrics, issuesByMonth] =
       await Promise.all([
         prisma.user.groupBy({
           by: ['role'],
@@ -1328,7 +1391,118 @@ export const getAnalytics = async (
             createdAt: dateFilter,
           },
         }),
+        // MLA Performance Analytics
+        prisma.user.findMany({
+          where: {
+            role: UserRole.MLA,
+            createdAt: dateFilter,
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            constituency: {
+              select: {
+                name: true
+              }
+            },
+            assignedIssues: {
+              where: { createdAt: dateFilter },
+              select: {
+                id: true,
+                status: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+          },
+        }),
+        // Response Time Metrics
+        prisma.issue.findMany({
+          where: {
+            status: 'RESOLVED',
+            createdAt: dateFilter,
+          },
+          select: {
+            createdAt: true,
+            updatedAt: true,
+          },
+        }),
+        // Issues by Month
+        prisma.issue.findMany({
+          where: { createdAt: dateFilter },
+          select: {
+            createdAt: true,
+          },
+        }),
       ]);
+
+    // Process MLA Performance data
+    const processedMlaPerformance = mlaPerformance.map(mla => {
+      const totalIssues = mla.assignedIssues.length;
+      const resolvedIssues = mla.assignedIssues.filter(issue => issue.status === 'RESOLVED').length;
+      const resolutionRate = totalIssues > 0 ? ((resolvedIssues / totalIssues) * 100).toFixed(1) : '0';
+      
+      // Calculate average response time for this MLA
+      const resolvedIssuesWithTime = mla.assignedIssues.filter(issue => 
+        issue.status === 'RESOLVED' && issue.updatedAt
+      );
+      
+      const avgResponseTime = resolvedIssuesWithTime.length > 0 
+        ? resolvedIssuesWithTime.reduce((sum, issue) => {
+            const responseTime = (new Date(issue.updatedAt!).getTime() - new Date(issue.createdAt).getTime()) / (1000 * 60 * 60); // hours
+            return sum + responseTime;
+          }, 0) / resolvedIssuesWithTime.length
+        : 0;
+
+      return {
+        name: mla.name,
+        constituency: mla.constituency?.name || 'Not assigned',
+        totalIssues,
+        resolvedIssues,
+        resolutionRate: `${resolutionRate}%`,
+        avgResponseTime: avgResponseTime.toFixed(1),
+      };
+    });
+
+    // Process Response Time Metrics
+    const responseTimes = responseTimeMetrics
+      .filter(issue => issue.updatedAt)
+      .map(issue => {
+        const responseTime = (new Date(issue.updatedAt!).getTime() - new Date(issue.createdAt).getTime()) / (1000 * 60 * 60); // hours
+        return responseTime;
+      });
+
+    const processedResponseTimeMetrics = {
+      fastest: responseTimes.length > 0 ? Math.min(...responseTimes).toFixed(1) : '0',
+      slowest: responseTimes.length > 0 ? Math.max(...responseTimes).toFixed(1) : '0',
+      average: responseTimes.length > 0 ? (responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length).toFixed(1) : '0',
+    };
+
+    // Process Issues by Month
+    const processedIssuesByMonth = () => {
+      const monthCounts: { [key: string]: number } = {};
+      
+      issuesByMonth.forEach(issue => {
+        const date = new Date(issue.createdAt);
+        const monthKey = date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short' 
+        });
+        monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+      });
+
+      // Convert to array format expected by frontend and sort chronologically
+      const entries = Object.entries(monthCounts).map(([month, count]) => ({
+        month,
+        count,
+        sortKey: new Date(month + ' 1').getTime() // Add day for proper date parsing
+      }));
+
+      return entries
+        .sort((a, b) => a.sortKey - b.sortKey)
+        .map(({ month, count }) => ({ month, count }));
+    };
 
     res.json({
       success: true,
@@ -1337,6 +1511,9 @@ export const getAnalytics = async (
         issueStats,
         newsStats,
         resolvedIssuesCount,
+        mlaPerformance: processedMlaPerformance,
+        responseTimeMetrics: processedResponseTimeMetrics,
+        issuesByMonth: processedIssuesByMonth(),
       },
     });
   } catch (error) {
