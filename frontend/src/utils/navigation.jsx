@@ -77,15 +77,22 @@ export const getNavigationItems = (userRole) => {
       {
         id: 'members',
         label: 'Manage Members',
-        path: '/members',
+        path: '/member-management',
         icon: 'users',
         roles: ['MLA'],
       },
       {
         id: 'constituency',
         label: 'Constituency',
-        path: '/constituency',
+        path: '/body-management',
         icon: 'map',
+        roles: ['MLA'],
+      },
+      {
+        id: 'issue-assignment',
+        label: 'Issue Assignment',
+        path: '/issue-assignment',
+        icon: 'user-check',
         roles: ['MLA'],
       },
       {
@@ -382,6 +389,24 @@ export const getIcon = (iconName) => {
         <circle cx="12" cy="12" r="10" />
         <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
         <path d="M2 12h20" />
+      </svg>
+    ),
+    'user-check': (
+      <svg
+        className="size-4"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <polyline points="16 11 18 13 22 9" />
       </svg>
     ),
   };

@@ -105,13 +105,18 @@ export const addMember = async (
     // Get the current user's details for validation
     const currentUser = await prisma.user.findUnique({
       where: { id: currentUserId },
-      include: { mlaProfile: true },
+      include: { 
+        mlaProfile: true,
+        constituency: { select: { id: true, name: true } },
+      },
     });
 
     if (!currentUser) {
       res.status(404).json({ error: 'Current user not found' });
       return;
     }
+
+    let finalBodyId = bodyId;
 
     // If bodyId is provided, validate it exists
     if (bodyId) {
@@ -121,6 +126,48 @@ export const addMember = async (
       if (!body) {
         res.status(400).json({ error: 'Invalid body ID' });
         return;
+      }
+    } else {
+      // If no bodyId provided, create a default body for certain body types
+      const defaultBodyTypes = ['SHAKTI_KENDRA', 'PANNA_PRAMUKH', 'LOCAL_BODY', 'POLLING_BOOTH', 'WARD', 'BLOCK', 'MANDAL', 'TEHSIL', 'GRAM_PANCHAYAT', 'MUNICIPALITY', 'CORPORATION'];
+      
+      if (defaultBodyTypes.includes(bodyType)) {
+        // Check if a default body of this type already exists for this location
+        const existingBody = await prisma.body.findFirst({
+          where: {
+            type: bodyType,
+            stateId: stateId || currentUser.stateId,
+            districtId: districtId || currentUser.districtId,
+            constituencyId: constituencyId || currentUser.constituencyId,
+            name: {
+              contains: bodyType.replace(/_/g, ' '),
+              mode: 'insensitive',
+            },
+          },
+        });
+
+        if (existingBody) {
+          finalBodyId = existingBody.id;
+        } else {
+          // Create a default body
+          const bodyName = `${bodyType.replace(/_/g, ' ')} - ${currentUser.constituency?.name || 'Default'}`;
+          const bodyCode = `${bodyType.substring(0, 3)}-${Date.now()}`;
+          
+          const newBody = await prisma.body.create({
+            data: {
+              name: bodyName,
+              code: bodyCode,
+              type: bodyType,
+              description: `Default ${bodyType.replace(/_/g, ' ')} body`,
+              stateId: stateId || currentUser.stateId,
+              districtId: districtId || currentUser.districtId,
+              constituencyId: constituencyId || currentUser.constituencyId,
+              isActive: true,
+            },
+          });
+          
+          finalBodyId = newBody.id;
+        }
       }
     }
 
@@ -138,7 +185,7 @@ export const addMember = async (
         stateId: stateId || currentUser.stateId,
         districtId: districtId || currentUser.districtId,
         constituencyId: constituencyId || currentUser.constituencyId,
-        bodyId: bodyId || null,
+        bodyId: finalBodyId || null,
         mlaId: currentUserRole === 'MLA' ? currentUserId : null,
         isVerified: true, // Admin/MLA created users are pre-verified
         emailVerificationToken,
@@ -807,5 +854,366 @@ export const getAllUsers = async (
   } catch (error) {
     console.error('Get all users error:', error);
     res.status(500).json({ error: 'Failed to get users', details: error });
+  }
+};
+
+// Update Member
+export const updateMember = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id: memberId } = req.params;
+    const {
+      bodyType,
+      bodyId,
+      designation,
+      description,
+      canReceiveIssues,
+      canUpdateIssues,
+      canCreateSessions,
+      isActive,
+    } = req.body;
+
+    // Check if member exists
+    const member = await prisma.user.findUnique({
+      where: { id: memberId },
+      include: { memberProfile: true },
+    });
+
+    if (!member) {
+      res.status(404).json({ error: 'Member not found' });
+      return;
+    }
+
+    if (member.role !== 'MEMBER') {
+      res.status(400).json({ error: 'User is not a member' });
+      return;
+    }
+
+    // Update member profile
+    const updatedMember = await prisma.user.update({
+      where: { id: memberId },
+      data: {
+        bodyId: bodyId || undefined,
+        isActive: isActive !== undefined ? isActive : undefined,
+        memberProfile: {
+          update: {
+            bodyType: bodyType || undefined,
+            designation: designation || undefined,
+            description: description || undefined,
+            canReceiveIssues: canReceiveIssues !== undefined ? canReceiveIssues : undefined,
+            canUpdateIssues: canUpdateIssues !== undefined ? canUpdateIssues : undefined,
+            canCreateSessions: canCreateSessions !== undefined ? canCreateSessions : undefined,
+          },
+        },
+      },
+      include: {
+        memberProfile: true,
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+        body: { select: { id: true, name: true, type: true } },
+        mla: { select: { id: true, name: true, email: true } },
+      },
+    });
+
+    res.json({
+      message: 'Member updated successfully',
+      member: {
+        id: updatedMember.id,
+        email: updatedMember.email,
+        name: updatedMember.name,
+        role: updatedMember.role,
+        isActive: updatedMember.isActive,
+        bodyType: updatedMember.memberProfile?.bodyType,
+        designation: updatedMember.memberProfile?.designation,
+        body: updatedMember.body,
+        mla: updatedMember.mla,
+      },
+    });
+  } catch (error) {
+    console.error('Update member error:', error);
+    res.status(500).json({ error: 'Failed to update member', details: error });
+  }
+};
+
+// Delete Member
+export const deleteMember = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id: memberId } = req.params;
+    const currentUserId = req.user!.id;
+    const currentUserRole = req.user!.role;
+
+    // Check if member exists
+    const member = await prisma.user.findUnique({
+      where: { id: memberId },
+      include: {
+        assignedIssues: {
+          where: {
+            status: {
+              in: ['PENDING', 'IN_PROGRESS'],
+            },
+          },
+        },
+        memberProfile: true,
+      },
+    });
+
+    if (!member) {
+      res.status(404).json({ error: 'Member not found' });
+      return;
+    }
+
+    if (member.role !== 'MEMBER') {
+      res.status(400).json({ error: 'User is not a member' });
+      return;
+    }
+
+    // Check if member has active issues
+    if (member.assignedIssues.length > 0) {
+      res.status(400).json({ 
+        error: 'Cannot delete member with active issues. Please resolve or reassign them first.',
+        activeIssues: member.assignedIssues.length 
+      });
+      return;
+    }
+
+    // Check authorization - MLA can only delete their own members
+    if (currentUserRole === 'MLA' && member.mlaId !== currentUserId) {
+      res.status(403).json({ error: 'Unauthorized to delete this member' });
+      return;
+    }
+
+    // Delete the member (cascade will handle memberProfile)
+    await prisma.user.delete({
+      where: { id: memberId },
+    });
+
+    res.json({
+      message: 'Member deleted successfully',
+    });
+  } catch (error) {
+    console.error('Delete member error:', error);
+    res.status(500).json({ error: 'Failed to delete member', details: error });
+  }
+};
+
+// Create Body
+export const createBody = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const {
+      name,
+      code,
+      type,
+      description,
+      address,
+      latitude,
+      longitude,
+      headName,
+      contactEmail,
+      contactPhone,
+      stateId,
+      districtId,
+      constituencyId,
+      parentBodyId,
+    } = req.body;
+
+    const currentUserId = req.user!.id;
+
+    // Get the current user's details for validation
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      include: { mlaProfile: true },
+    });
+
+    if (!currentUser) {
+      res.status(404).json({ error: 'Current user not found' });
+      return;
+    }
+
+    // Validate required fields
+    if (!name || !code || !type) {
+      res.status(400).json({ error: 'Name, code, and type are required' });
+      return;
+    }
+
+    // Validate body type
+    const validBodyTypes = Object.values(BodyType);
+    if (!validBodyTypes.includes(type)) {
+      res.status(400).json({ error: 'Invalid body type' });
+      return;
+    }
+
+    // Check if body with same code already exists in the same location
+    const existingBody = await prisma.body.findFirst({
+      where: {
+        code,
+        type,
+        stateId: stateId || currentUser.stateId,
+        districtId: districtId || currentUser.districtId,
+        constituencyId: constituencyId || currentUser.constituencyId,
+      },
+    });
+
+    if (existingBody) {
+      res.status(409).json({ error: 'Body with this code already exists in this location' });
+      return;
+    }
+
+    // Create the body
+    const body = await prisma.body.create({
+      data: {
+        name,
+        code,
+        type,
+        description,
+        address,
+        latitude: latitude ? parseFloat(latitude) : null,
+        longitude: longitude ? parseFloat(longitude) : null,
+        headName,
+        contactEmail,
+        contactPhone,
+        stateId: stateId || currentUser.stateId,
+        districtId: districtId || currentUser.districtId,
+        constituencyId: constituencyId || currentUser.constituencyId,
+        parentBodyId: parentBodyId || null,
+        isActive: true,
+      },
+      include: {
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+        parentBody: { select: { id: true, name: true, type: true } },
+      },
+    });
+
+    res.status(201).json({
+      message: 'Body created successfully',
+      body,
+    });
+  } catch (error) {
+    console.error('Create body error:', error);
+    res.status(500).json({ error: 'Failed to create body', details: error });
+  }
+};
+
+// Update Body
+export const updateBody = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id: bodyId } = req.params;
+    const {
+      name,
+      description,
+      address,
+      latitude,
+      longitude,
+      headName,
+      contactEmail,
+      contactPhone,
+      isActive,
+    } = req.body;
+
+    // Check if body exists
+    const body = await prisma.body.findUnique({
+      where: { id: bodyId },
+    });
+
+    if (!body) {
+      res.status(404).json({ error: 'Body not found' });
+      return;
+    }
+
+    // Update the body
+    const updatedBody = await prisma.body.update({
+      where: { id: bodyId },
+      data: {
+        name: name || undefined,
+        description: description || undefined,
+        address: address || undefined,
+        latitude: latitude ? parseFloat(latitude) : undefined,
+        longitude: longitude ? parseFloat(longitude) : undefined,
+        headName: headName || undefined,
+        contactEmail: contactEmail || undefined,
+        contactPhone: contactPhone || undefined,
+        isActive: isActive !== undefined ? isActive : undefined,
+      },
+      include: {
+        state: { select: { id: true, name: true } },
+        district: { select: { id: true, name: true } },
+        constituency: { select: { id: true, name: true } },
+        parentBody: { select: { id: true, name: true, type: true } },
+      },
+    });
+
+    res.json({
+      message: 'Body updated successfully',
+      body: updatedBody,
+    });
+  } catch (error) {
+    console.error('Update body error:', error);
+    res.status(500).json({ error: 'Failed to update body', details: error });
+  }
+};
+
+// Delete Body
+export const deleteBody = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id: bodyId } = req.params;
+
+    // Check if body exists
+    const body = await prisma.body.findUnique({
+      where: { id: bodyId },
+      include: {
+        users: true,
+        childBodies: true,
+      },
+    });
+
+    if (!body) {
+      res.status(404).json({ error: 'Body not found' });
+      return;
+    }
+
+    // Check if body has associated users or child bodies
+    if (body.users.length > 0) {
+      res.status(400).json({ 
+        error: 'Cannot delete body with associated members. Please reassign them first.',
+        associatedUsers: body.users.length 
+      });
+      return;
+    }
+
+    if (body.childBodies.length > 0) {
+      res.status(400).json({ 
+        error: 'Cannot delete body with child bodies. Please delete or reassign them first.',
+        childBodies: body.childBodies.length 
+      });
+      return;
+    }
+
+    // Delete the body
+    await prisma.body.delete({
+      where: { id: bodyId },
+    });
+
+    res.json({
+      message: 'Body deleted successfully',
+    });
+  } catch (error) {
+    console.error('Delete body error:', error);
+    res.status(500).json({ error: 'Failed to delete body', details: error });
   }
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   Users,
   AlertCircle,
@@ -12,10 +13,14 @@ import {
   BarChart3,
   UserCheck,
   X,
+  Settings,
+  Plus,
+  Building,
 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import ProgressUpdateModal from '../components/ProgressUpdateModal';
+import IssueAssignmentModal from '../components/IssueAssignmentModal';
 import MediaDisplay from '../components/common/MediaDisplay';
 import UpdateMediaDisplay from '../components/common/UpdateMediaDisplay';
 
@@ -33,6 +38,7 @@ const MLADashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showAssignmentModal, setShowAssignmentModal] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -84,6 +90,16 @@ const MLADashboard = () => {
   const openUpdateModal = (issue) => {
     setSelectedIssue(issue);
     setShowUpdateModal(true);
+  };
+
+  const openAssignmentModal = (issue) => {
+    setSelectedIssue(issue);
+    setShowAssignmentModal(true);
+  };
+
+  const handleAssignmentSuccess = () => {
+    fetchDashboardData();
+    setShowAssignmentModal(false);
   };
 
   const getStatusIcon = (status) => {
@@ -236,6 +252,101 @@ const MLADashboard = () => {
         </div>
       </div>
 
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <Link
+          to="/member-management"
+          className="bg-white rounded-lg shadow-sm border p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Member Management
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Add and manage members under your constituency
+              </p>
+              <div className="flex items-center space-x-2 text-blue-600">
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-medium">Manage Members</span>
+              </div>
+            </div>
+            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Users className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/body-management"
+          className="bg-white rounded-lg shadow-sm border p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Body Management
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Create and manage political bodies and organizations
+              </p>
+              <div className="flex items-center space-x-2 text-purple-600">
+                <Building className="h-4 w-4" />
+                <span className="text-sm font-medium">Manage Bodies</span>
+              </div>
+            </div>
+            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Building className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/issue-assignment"
+          className="bg-white rounded-lg shadow-sm border p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Issue Assignment
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Assign issues to your team members for resolution
+              </p>
+              <div className="flex items-center space-x-2 text-green-600">
+                <UserCheck className="h-4 w-4" />
+                <span className="text-sm font-medium">Assign Issues</span>
+              </div>
+            </div>
+            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <UserCheck className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/settings"
+          className="bg-white rounded-lg shadow-sm border p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Settings
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Configure your profile and preferences
+              </p>
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Settings className="h-4 w-4" />
+                <span className="text-sm font-medium">Manage Settings</span>
+              </div>
+            </div>
+            <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
+              <Settings className="h-6 w-6 text-gray-600" />
+            </div>
+          </div>
+        </Link>
+      </div>
+
       {/* Assigned Issues */}
       <div className="bg-white rounded-lg shadow-sm border">
         <div className="p-6 border-b border-gray-200">
@@ -284,6 +395,12 @@ const MLADashboard = () => {
                         <div>
                           Reported by: {issue.reportedBy?.name || 'Unknown'}
                         </div>
+                        {issue.assignedTo && (
+                          <div className="flex items-center text-blue-600">
+                            <UserCheck className="h-3 w-3 mr-1" />
+                            Assigned to: {issue.assignedTo.name}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -301,11 +418,26 @@ const MLADashboard = () => {
                           {issue.status.replace('_', ' ')}
                         </span>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => openAssignmentModal(issue)}
+                          className="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 transition-colors"
+                          title="Assign to Member"
+                        >
+                          Assign
+                        </button>
+                        <button
+                          onClick={() => openUpdateModal(issue)}
+                          className="px-3 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Update
+                        </button>
+                      </div>
                       <button
-                        onClick={() => openUpdateModal(issue)}
-                        className="px-3 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition-colors"
+                        onClick={() => openAssignmentModal(issue)}
+                        className="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 transition-colors"
                       >
-                        Update
+                        Assign
                       </button>
                     </div>
                   </div>
@@ -356,12 +488,101 @@ const MLADashboard = () => {
         </div>
       </div>
 
+      {/* Member Management Section */}
+      <div className="bg-white rounded-lg shadow-sm border mt-8">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Member Management
+            </h2>
+            <Link
+              to="/member-management"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              View All
+            </Link>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="flex flex-col space-y-4">
+            <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Members
+                </p>
+                <p className="text-xl font-bold text-gray-900">
+                  {stats.totalMembers}
+                </p>
+              </div>
+              <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <UserCheck className="h-5 w-5 text-purple-600" />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Active Members
+                </p>
+                <p className="text-xl font-bold text-gray-900">
+                  {(stats?.totalMembers - stats?.inactiveMembers) || 0}
+                </p>
+              </div>
+              <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Inactive Members
+                </p>
+                <p className="text-xl font-bold text-gray-900">
+                  {stats.inactiveMembers || 0}
+                </p>
+              </div>
+              <div className="h-10 w-10 bg-red-100 rounded-full flex items-center justify-center">
+                <X className="h-5 w-5 text-red-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <Link
+              to="/member-management"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Member
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Progress Update Modal */}
       <ProgressUpdateModal
         isOpen={showUpdateModal}
         onClose={() => setShowUpdateModal(false)}
         issue={selectedIssue}
         onUpdate={handleUpdateIssue}
+      />
+
+      {/* Issue Assignment Modal */}
+      <IssueAssignmentModal
+        isOpen={showAssignmentModal}
+        onClose={() => setShowAssignmentModal(false)}
+        issue={selectedIssue}
+        onSuccess={handleAssignmentSuccess}
+      />
+
+      {/* Issue Assignment Modal */}
+      <IssueAssignmentModal
+        isOpen={showAssignmentModal}
+        onClose={() => setShowAssignmentModal(false)}
+        issue={selectedIssue}
+        onAssign={handleAssignmentSuccess}
       />
     </div>
   );

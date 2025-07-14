@@ -78,7 +78,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
                     e.target.alt = 'Image not found';
                   }}
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 group-hover:bg-opacity-20 transition-opacity flex items-center justify-center">
                   <ZoomIn className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </div>

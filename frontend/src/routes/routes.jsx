@@ -17,6 +17,9 @@ import NearbyIssues from '../pages/NearbyIssues.jsx';
 import InteractiveElectionMap from '../pages/InteractiveElectionMap.jsx';
 import NewsPage from '../pages/NewsPage.jsx';
 import NewsDetail from '../pages/NewsDetail.jsx';
+import MemberManagement from '../pages/MemberManagement.jsx';
+import BodyManagement from '../pages/BodyManagement.jsx';
+import IssueAssignmentManagement from '../pages/IssueAssignmentManagement.jsx';
 
 const router = createBrowserRouter([
   {
@@ -129,6 +132,36 @@ const router = createBrowserRouter([
           <LanguageGuard>
             <ProtectedRoute>
               <NewsDetail />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path: 'member-management',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute requiredRole="MLA">
+              <MemberManagement />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path: 'body-management',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute requiredRole="MLA">
+              <BodyManagement />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path: 'issue-assignment',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute requiredRole="MLA">
+              <IssueAssignmentManagement />
             </ProtectedRoute>
           </LanguageGuard>
         ),

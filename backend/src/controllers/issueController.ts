@@ -720,8 +720,14 @@ export const addIssueUpdate = async (
       }
     } else if (userRole === UserRole.CITIZEN) {
       finalUpdateType = UpdateType.CITIZEN_COMMENT;
-    } else if (userRole === UserRole.MLA && issue.reportedById === userId) {
-      finalUpdateType = updateType || UpdateType.MEMBER_UPDATE;
+    } else if (userRole === UserRole.MLA) {
+      // MLAs can update issues assigned to them OR issues they reported
+      if (issue.assignedToId === userId || issue.reportedById === userId) {
+        finalUpdateType = updateType || UpdateType.MEMBER_UPDATE;
+      } else {
+        res.status(403).json({ error: 'Not authorized to update this issue' });
+        return;
+      }
     } else if (userRole === UserRole.ADMIN) {
       finalUpdateType = updateType || UpdateType.MEMBER_UPDATE;
     } else {
@@ -845,8 +851,11 @@ export const updateIssue = async (
     
     if (userRole === UserRole.ADMIN) {
       canUpdate = true;
-    } else if (userRole === UserRole.MLA && issue.reportedById === userId) {
-      canUpdate = true;
+    } else if (userRole === UserRole.MLA) {
+      // MLAs can update issues that are assigned to them OR that they reported
+      if (issue.assignedToId === userId || issue.reportedById === userId) {
+        canUpdate = true;
+      }
     } else if (userRole === UserRole.MEMBER) {
       // Check if member can update this issue (directly assigned or assigned to their MLA)
       if (issue.assignedToId === userId) {
@@ -869,7 +878,7 @@ export const updateIssue = async (
       return;
     }
 
-    // If assigning to someone new, verify they are a MEMBER
+    // If assigning to someone new, verify they are a MEMBER and under supervision (for MLAs)
     if (assignedToId && assignedToId !== issue.assignedToId) {
       const assignee = await prisma.user.findFirst({
         where: {
@@ -881,6 +890,22 @@ export const updateIssue = async (
       if (!assignee) {
         res.status(400).json({ error: 'Invalid assignee. Must be a MEMBER.' });
         return;
+      }
+
+      // If the current user is an MLA, ensure they can only assign to their members
+      if (userRole === UserRole.MLA) {
+        const memberUnderMLA = await prisma.user.findFirst({
+          where: {
+            id: assignedToId,
+            role: UserRole.MEMBER,
+            mlaId: userId, // Member must be under this MLA
+          },
+        });
+
+        if (!memberUnderMLA) {
+          res.status(400).json({ error: 'You can only assign issues to members under your supervision.' });
+          return;
+        }
       }
     }
 
@@ -1135,10 +1160,25 @@ export const getAssignedIssues = async (
 
     let whereClause: any = {};
 
-    // For MLAs: get issues assigned to them
-    // For Members: get issues assigned to their MLA (if they have one)
+    // For MLAs: get issues assigned to them OR assigned to their members
+    // For Members: get issues assigned to them directly or to their MLA
     if (userRole === UserRole.MLA) {
-      whereClause.assignedToId = userId;
+      // Get all members under this MLA
+      const memberIds = await prisma.user.findMany({
+        where: {
+          mlaId: userId,
+          role: UserRole.MEMBER,
+        },
+        select: { id: true }
+      });
+      
+      const memberIdList = memberIds.map(member => member.id);
+      
+      // Show issues assigned to the MLA OR assigned to any of their members
+      whereClause.OR = [
+        { assignedToId: userId }, // Issues assigned directly to the MLA
+        { assignedToId: { in: memberIdList } }, // Issues assigned to their members
+      ];
     } else if (userRole === UserRole.MEMBER) {
       // Get current user's MLA information
       const currentUser = await prisma.user.findUnique({
@@ -1147,29 +1187,61 @@ export const getAssignedIssues = async (
       });
       
       if (currentUser?.mlaId) {
-        // Show issues assigned to the member's MLA
-        whereClause.assignedToId = currentUser.mlaId;
+        // Show issues assigned to the member directly OR to their MLA
+        whereClause.OR = [
+          { assignedToId: userId }, // Issues assigned directly to the member
+          { assignedToId: currentUser.mlaId }, // Issues assigned to their MLA
+        ];
       } else {
         // If member has no MLA, show issues directly assigned to them
         whereClause.assignedToId = userId;
       }
     }
 
-    // Add filters
-    if (status) whereClause.status = status;
-    if (priority) whereClause.priority = priority;
-    if (category) whereClause.category = category;
+    // Add additional filters
+    const additionalFilters: any = {};
+    if (status) additionalFilters.status = status;
+    if (priority) additionalFilters.priority = priority;
+    if (category) additionalFilters.category = category;
 
+    // Combine assignment filters with additional filters
+    let finalWhereClause: any;
+    if (whereClause.OR) {
+      // If we have OR clause for assignments, wrap everything in AND
+      finalWhereClause = {
+        AND: [
+          whereClause, // Assignment OR clause
+          additionalFilters, // Other filters
+        ]
+      };
+    } else {
+      // Simple case: no OR clause, just combine filters
+      finalWhereClause = {
+        ...whereClause,
+        ...additionalFilters,
+      };
+    }
+
+    // Handle search separately to avoid OR clause conflicts
     if (search) {
-      whereClause.OR = [
-        { title: { contains: search as string, mode: 'insensitive' } },
-        { description: { contains: search as string, mode: 'insensitive' } },
-      ];
+      if (finalWhereClause.AND) {
+        finalWhereClause.AND.push({
+          OR: [
+            { title: { contains: search as string, mode: 'insensitive' } },
+            { description: { contains: search as string, mode: 'insensitive' } },
+          ]
+        });
+      } else {
+        finalWhereClause.OR = [
+          { title: { contains: search as string, mode: 'insensitive' } },
+          { description: { contains: search as string, mode: 'insensitive' } },
+        ];
+      }
     }
 
     const [issues, total] = await Promise.all([
       prisma.issue.findMany({
-        where: whereClause,
+        where: finalWhereClause,
         include: {
           reportedBy: {
             select: {
@@ -1455,8 +1527,14 @@ export const updateIssueProgress = async (
     // Check permissions: assigned user or member under the assigned MLA can update
     let canUpdate = false;
     
-    if (issue.assignedToId === userId) {
+    if (userRole === UserRole.ADMIN) {
+      canUpdate = true;
+    } else if (issue.assignedToId === userId) {
       // User is directly assigned to the issue
+      canUpdate = true;
+    } else if (userRole === UserRole.MLA) {
+      // MLAs can update issues assigned to them (even if assignedToId is null for auto-assignment)
+      // Also allow MLAs to update issues in their constituency
       canUpdate = true;
     } else if (userRole === UserRole.MEMBER) {
       // Check if member is under the MLA who is assigned to this issue

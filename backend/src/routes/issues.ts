@@ -776,4 +776,98 @@ router.put(
   updateIssueProgress
 );
 
+/**
+ * @route   POST /issues/citizen/:id/nearby-comment
+ * @desc    Add a comment to a nearby issue (CITIZEN only)
+ * @access  Private (CITIZEN only)
+ */
+router.post(
+  '/citizen/:id/nearby-comment',
+  authenticate,
+  authorize(['CITIZEN']),
+  [
+    param('id').isString().notEmpty().withMessage('Issue ID is required'),
+    body('message').notEmpty().withMessage('Comment message is required'),
+  ],
+  handleValidationErrors,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { message } = req.body;
+      const userId = req.user!.id;
+
+      // Verify issue exists
+      const issue = await prisma.issue.findUnique({
+        where: { id },
+        include: { 
+          reportedBy: true,
+          state: true,
+          district: true,
+          constituency: true,
+        }
+      });
+
+      if (!issue) {
+        res.status(404).json({ error: 'Issue not found' });
+        return;
+      }
+
+      // Get the commenting user's details
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          state: true,
+          district: true,
+          constituency: true,
+        }
+      });
+
+      if (!user) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+
+      // Check if the user is from the same general area (same state/district)
+      if (user.stateId !== issue.stateId || user.districtId !== issue.districtId) {
+        res.status(403).json({ error: 'You can only comment on issues from your area' });
+        return;
+      }
+
+      // Don't allow commenting on own issues (they should use the regular comment endpoint)
+      if (issue.reportedById === userId) {
+        res.status(403).json({ error: 'Use the regular comment endpoint for your own issues' });
+        return;
+      }
+
+      const update = await prisma.issueUpdate.create({
+        data: {
+          issueId: id,
+          userId,
+          message,
+          updateType: 'CITIZEN_COMMENT',
+          mediaType: 'TEXT',
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              role: true,
+            },
+          },
+        },
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Comment added successfully',
+        update,
+      });
+    } catch (error) {
+      console.error('Error adding nearby comment:', error);
+      res.status(500).json({ error: 'Failed to add comment' });
+    }
+  }
+);
+
 export default router;

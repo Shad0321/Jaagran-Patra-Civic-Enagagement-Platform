@@ -211,6 +211,31 @@ router.post(
   authController.addMember
 );
 
+router.put(
+  '/members/:id',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  [
+    body('bodyType').optional().isString(),
+    body('bodyId').optional().isString(),
+    body('designation').optional().isString(),
+    body('description').optional().isString(),
+    body('canReceiveIssues').optional().isBoolean(),
+    body('canUpdateIssues').optional().isBoolean(),
+    body('canCreateSessions').optional().isBoolean(),
+    body('isActive').optional().isBoolean(),
+  ],
+  handleValidationErrors,
+  authController.updateMember
+);
+
+router.delete(
+  '/members/:id',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  authController.deleteMember
+);
+
 router.get(
   '/members',
   authenticate,
@@ -243,6 +268,57 @@ router.get(
   ],
   handleValidationErrors,
   authController.getBodies
+);
+
+// Body management routes
+router.post(
+  '/bodies',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  [
+    body('name').notEmpty().withMessage('Name is required'),
+    body('code').notEmpty().withMessage('Code is required'),
+    body('type').notEmpty().withMessage('Type is required'),
+    body('description').optional().isString(),
+    body('address').optional().isString(),
+    body('latitude').optional().isFloat(),
+    body('longitude').optional().isFloat(),
+    body('headName').optional().isString(),
+    body('contactEmail').optional().isEmail(),
+    body('contactPhone').optional().isMobilePhone('any'),
+    body('stateId').optional().isString(),
+    body('districtId').optional().isString(),
+    body('constituencyId').optional().isString(),
+    body('parentBodyId').optional().isString(),
+  ],
+  handleValidationErrors,
+  authController.createBody
+);
+
+router.put(
+  '/bodies/:id',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  [
+    body('name').optional().notEmpty().withMessage('Name cannot be empty'),
+    body('description').optional().isString(),
+    body('address').optional().isString(),
+    body('latitude').optional().isFloat(),
+    body('longitude').optional().isFloat(),
+    body('headName').optional().isString(),
+    body('contactEmail').optional().isEmail(),
+    body('contactPhone').optional().isMobilePhone('any'),
+    body('isActive').optional().isBoolean(),
+  ],
+  handleValidationErrors,
+  authController.updateBody
+);
+
+router.delete(
+  '/bodies/:id',
+  authenticate,
+  authorize(['MLA', 'ADMIN']),
+  authController.deleteBody
 );
 
 // Admin routes
