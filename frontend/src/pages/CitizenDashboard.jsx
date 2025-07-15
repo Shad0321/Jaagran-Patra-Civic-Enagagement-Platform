@@ -98,8 +98,8 @@ const CitizenDashboard = () => {
       try {
         // Use default location if user location not available
         const defaultLocation = {
-          latitude: user?.currentLatitude || 28.6139,
-          longitude: user?.currentLongitude || 77.2090,
+          latitude: Number(user?.currentLatitude) || 28.6139,
+          longitude: Number(user?.currentLongitude) || 77.2090,
         };
 
         const nearbyResponse = await api.get('/issues/nearby', {

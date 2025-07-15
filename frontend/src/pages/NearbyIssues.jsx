@@ -21,7 +21,7 @@ import toast from 'react-hot-toast';
 const NearbyIssues = () => {
   const { user } = useSelector((state) => state.user);
   const [issues, setIssues] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
@@ -93,10 +93,11 @@ const NearbyIssues = () => {
     setLocationError('');
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLocation({
+        const newLocation = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-        });
+        };
+        setLocation(newLocation);
       },
       (error) => {
         switch (error.code) {
@@ -124,7 +125,16 @@ const NearbyIssues = () => {
 
   // Fetch nearby issues
   const fetchNearbyIssues = useCallback(async () => {
-    if (!location) return;
+    // Don't make API call if location is not available
+    if (!location || 
+        !location.latitude || 
+        !location.longitude || 
+        typeof location.latitude !== 'number' || 
+        typeof location.longitude !== 'number' ||
+        isNaN(location.latitude) || 
+        isNaN(location.longitude)) {
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -146,12 +156,13 @@ const NearbyIssues = () => {
         ...(debouncedFilters.search && { search: debouncedFilters.search }),
       });
 
-      const response = await fetch(
-        `http://localhost:3001/issues/nearby?${queryParams}`
-      );
+      const fullUrl = `http://localhost:3001/issues/nearby?${queryParams}`;
+
+      const response = await fetch(fullUrl);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch nearby issues');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to fetch nearby issues');
       }
 
       const result = await response.json();
@@ -167,6 +178,7 @@ const NearbyIssues = () => {
         throw new Error('Invalid response format');
       }
     } catch (err) {
+      console.error('Error fetching nearby issues:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -180,7 +192,13 @@ const NearbyIssues = () => {
 
   // Fetch issues when location or debounced filters change
   useEffect(() => {
-    if (location) {
+    if (location && 
+        location.latitude && 
+        location.longitude && 
+        typeof location.latitude === 'number' && 
+        typeof location.longitude === 'number' &&
+        !isNaN(location.latitude) && 
+        !isNaN(location.longitude)) {
       fetchNearbyIssues();
     }
   }, [fetchNearbyIssues, location]);
@@ -457,7 +475,12 @@ const NearbyIssues = () => {
       </div>
 
       {/* Results */}
-      {loading ? (
+      {!location && !locationError ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-sm text-gray-500">Getting your location...</p>
+        </div>
+      ) : loading ? (
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-2 text-sm text-gray-500">Loading nearby issues...</p>
@@ -470,10 +493,16 @@ const NearbyIssues = () => {
           </h3>
           <p className="mt-1 text-sm text-gray-500">{error}</p>
           <button
-            onClick={fetchNearbyIssues}
+            onClick={() => {
+              if (location && location.latitude && location.longitude) {
+                fetchNearbyIssues();
+              } else {
+                getCurrentLocation();
+              }
+            }}
             className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
           >
-            Try Again
+            {location && location.latitude && location.longitude ? 'Try Again' : 'Get Location'}
           </button>
         </div>
       ) : issues.length === 0 ? (

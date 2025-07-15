@@ -34,10 +34,28 @@ const api = {
       ...config.headers,
     };
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    // Handle params like axios
+    let url = `${API_BASE_URL}${endpoint}`;
+    if (config.params) {
+      const searchParams = new URLSearchParams();
+      Object.keys(config.params).forEach(key => {
+        const value = config.params[key];
+        if (value !== undefined && value !== null) {
+          searchParams.append(key, value.toString());
+        }
+      });
+      url += `?${searchParams.toString()}`;
+    }
+
+    const response = await fetch(url, {
       method: 'GET',
       headers,
-      ...config,
+      // Remove params from config since we've handled it
+      ...(() => {
+        // eslint-disable-next-line no-unused-vars
+        const { params, ...restConfig } = config;
+        return restConfig;
+      })(),
     });
 
     if (!response.ok) {

@@ -836,14 +836,14 @@ router.post(
 
       // Check if the user is from the same general area (same state/district)
       // Allow commenting if they're from the same area OR if it's their own issue
-      const canComment = 
-        issue.reportedById === userId || // Own issue
-        (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
+      // const canComment = 
+      //   issue.reportedById === userId || // Own issue
+      //   (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
 
-      if (!canComment) {
-        res.status(403).json({ error: 'You can only comment on issues from your area' });
-        return;
-      }
+      // if (!canComment) {
+      //   res.status(403).json({ error: 'You can only comment on issues from your area' });
+      //   return;
+      // }
 
       const update = await prisma.issueUpdate.create({
         data: {
@@ -986,14 +986,14 @@ router.get(
 
       // Check if the user is from the same general area (same state/district)
       // Allow access if they're from the same area OR if it's their own issue
-      const canAccess = 
-        issue.reportedById === userId || // Own issue
-        (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
+      // const canAccess = 
+      //   issue.reportedById === userId || // Own issue
+      //   (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
 
-      if (!canAccess) {
-        res.status(403).json({ error: 'You can only view issues from your area' });
-        return;
-      }
+      // if (!canAccess) {
+      //   res.status(403).json({ error: 'You can only view issues from your area' });
+      //   return;
+      // }
 
       res.json({
         success: true,
