@@ -119,6 +119,33 @@ const api = {
     return { data: await response.json() };
   },
 
+  patch: async (endpoint, data, config = {}) => {
+    const token = localStorage.getItem('token');
+    const isFormData = data instanceof FormData;
+
+    const headers = {
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(!isFormData && { 'Content-Type': 'application/json' }),
+      ...config.headers,
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PATCH',
+      headers,
+      body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
+      ...config,
+    });
+
+    if (!response.ok) {
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Request failed' }));
+      throw { response: { data: error, status: response.status } };
+    }
+
+    return { data: await response.json() };
+  },
+
   delete: async (endpoint, config = {}) => {
     const token = localStorage.getItem('token');
     const headers = {

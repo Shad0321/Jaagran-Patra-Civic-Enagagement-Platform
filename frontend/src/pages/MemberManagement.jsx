@@ -72,20 +72,30 @@ const MemberManagement = () => {
 
     try {
       setLoading(true);
-      const response = await api.get('/auth/members', {
-        params: {
-          limit: 100,
-          bodyType: selectedBodyType || undefined,
-          search: searchTerm || undefined,
-        },
-      });
-      setMembers(response.data.members || []);
+      
+      // Fetch both members and MLA's own assigned issues
+      const [membersResponse, mlaIssuesResponse] = await Promise.all([
+        api.get('/auth/members', {
+          params: {
+            limit: 100,
+            bodyType: selectedBodyType || undefined,
+            search: searchTerm || undefined,
+          },
+        }),
+        api.get('/issues/assigned-to-me')
+      ]);
+
+      setMembers(membersResponse.data.members || []);
       
       // Calculate stats
-      const membersData = response.data.members || [];
+      const membersData = membersResponse.data.members || [];
       const activeMembers = membersData.filter(m => m.isActive).length;
       const uniqueBodies = new Set(membersData.map(m => m.body?.id).filter(Boolean)).size;
-      const totalIssues = membersData.reduce((sum, m) => sum + (m.assignedIssuesCount || 0), 0);
+      const memberIssues = membersData.reduce((sum, m) => sum + (m.assignedIssuesCount || 0), 0);
+      
+      // Add MLA's own assigned issues to the total count
+      const mlaIssues = mlaIssuesResponse.data.data?.issues?.length || 0;
+      const totalIssues = memberIssues + mlaIssues;
       
       setStats({
         totalMembers: membersData.length,

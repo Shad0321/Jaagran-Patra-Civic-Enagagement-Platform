@@ -258,7 +258,14 @@ router.put(
       .optional()
       .isBoolean()
       .withMessage('isUrgent must be boolean'),
-    body('assignedToId').optional().isString(),
+    body('assignedToId')
+      .optional()
+      .custom((value) => {
+        if (value === null || value === undefined || typeof value === 'string') {
+          return true;
+        }
+        throw new Error('assignedToId must be a string or null');
+      }),
     body('status')
       .optional()
       .isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'])
@@ -778,13 +785,13 @@ router.put(
 
 /**
  * @route   POST /issues/citizen/:id/nearby-comment
- * @desc    Add a comment to a nearby issue (CITIZEN only)
- * @access  Private (CITIZEN only)
+ * @desc    Add a comment to a nearby issue (CITIZEN and MEMBER)
+ * @access  Private (CITIZEN and MEMBER)
  */
 router.post(
   '/citizen/:id/nearby-comment',
   authenticate,
-  authorize(['CITIZEN']),
+  authorize(['CITIZEN', 'MEMBER']),
   [
     param('id').isString().notEmpty().withMessage('Issue ID is required'),
     body('message').notEmpty().withMessage('Comment message is required'),
@@ -828,14 +835,13 @@ router.post(
       }
 
       // Check if the user is from the same general area (same state/district)
-      if (user.stateId !== issue.stateId || user.districtId !== issue.districtId) {
-        res.status(403).json({ error: 'You can only comment on issues from your area' });
-        return;
-      }
+      // Allow commenting if they're from the same area OR if it's their own issue
+      const canComment = 
+        issue.reportedById === userId || // Own issue
+        (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
 
-      // Don't allow commenting on own issues (they should use the regular comment endpoint)
-      if (issue.reportedById === userId) {
-        res.status(403).json({ error: 'Use the regular comment endpoint for your own issues' });
+      if (!canComment) {
+        res.status(403).json({ error: 'You can only comment on issues from your area' });
         return;
       }
 
@@ -866,6 +872,136 @@ router.post(
     } catch (error) {
       console.error('Error adding nearby comment:', error);
       res.status(500).json({ error: 'Failed to add comment' });
+    }
+  }
+);
+
+/**
+ * @route   GET /issues/nearby/:id/details
+ * @desc    Get detailed nearby issue information including updates (CITIZEN and MEMBER)
+ * @access  Private (CITIZEN and MEMBER)
+ */
+router.get(
+  '/nearby/:id/details',
+  authenticate,
+  authorize(['CITIZEN', 'MEMBER']),
+  [
+    param('id').isString().notEmpty().withMessage('Issue ID is required'),
+  ],
+  handleValidationErrors,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const userId = req.user!.id;
+
+      const issue = await prisma.issue.findUnique({
+        where: { id },
+        include: {
+          reportedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
+          },
+          assignedTo: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+              mlaProfile: {
+                select: {
+                  partyName: true,
+                  position: true,
+                  contactEmail: true,
+                  contactPhone: true,
+                },
+              },
+            },
+          },
+          state: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          district: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          constituency: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+            },
+          },
+          body: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+            },
+          },
+          updates: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  role: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+          },
+        },
+      });
+
+      if (!issue) {
+        res.status(404).json({ error: 'Issue not found' });
+        return;
+      }
+
+      // Get the requesting user's details
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          state: true,
+          district: true,
+          constituency: true,
+        }
+      });
+
+      if (!user) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+
+      // Check if the user is from the same general area (same state/district)
+      // Allow access if they're from the same area OR if it's their own issue
+      const canAccess = 
+        issue.reportedById === userId || // Own issue
+        (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
+
+      if (!canAccess) {
+        res.status(403).json({ error: 'You can only view issues from your area' });
+        return;
+      }
+
+      res.json({
+        success: true,
+        issue,
+      });
+    } catch (error) {
+      console.error('Error fetching nearby issue details:', error);
+      res.status(500).json({ error: 'Failed to fetch issue details' });
     }
   }
 );

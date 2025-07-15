@@ -70,15 +70,15 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
       setLoading(true);
       await api.put(`/issues/${issue.id}`, {
         assignedToId: null,
-        assignmentReason: 'Unassigned by MLA',
+        assignmentReason: 'Reassigned to MLA',
       });
       
-      toast.success('Issue unassigned successfully');
+      toast.success('Issue reassigned to MLA successfully');
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error unassigning issue:', error);
-      toast.error(error.response?.data?.error || 'Failed to unassign issue');
+      console.error('Error reassigning issue:', error);
+      toast.error(error.response?.data?.error || 'Failed to reassign issue');
     } finally {
       setLoading(false);
     }
@@ -307,7 +307,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                   disabled={loading}
                   className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  Unassign Issue
+                  Reassign to Me
                 </button>
               )}
             </div>

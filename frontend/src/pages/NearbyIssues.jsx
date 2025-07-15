@@ -7,15 +7,31 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
+  MessageSquare,
+  Send,
+  ChevronDown,
+  ChevronUp,
+  User,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useSelector } from 'react-redux';
+import api from '../utils/api';
+import toast from 'react-hot-toast';
 
 const NearbyIssues = () => {
+  const { user } = useSelector((state) => state.user);
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
+  
+  // Comment-related state
+  const [expandedIssues, setExpandedIssues] = useState(new Set());
+  const [issueComments, setIssueComments] = useState({});
+  const [newComments, setNewComments] = useState({});
+  const [commentingIssues, setCommentingIssues] = useState(new Set());
+  const [loadingComments, setLoadingComments] = useState(new Set());
 
   // Filters for UI (immediate updates)
   const [filters, setFilters] = useState({
@@ -177,6 +193,104 @@ const NearbyIssues = () => {
   // Handle pagination
   const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, page: newPage }));
+  };
+
+  // Comment-related functions
+  const toggleIssueComments = async (issueId) => {
+    const newExpanded = new Set(expandedIssues);
+    
+    if (expandedIssues.has(issueId)) {
+      newExpanded.delete(issueId);
+    } else {
+      newExpanded.add(issueId);
+      // Fetch comments if not already loaded
+      if (!issueComments[issueId]) {
+        await fetchIssueComments(issueId);
+      }
+    }
+    
+    setExpandedIssues(newExpanded);
+  };
+
+  const fetchIssueComments = async (issueId) => {
+    const newLoading = new Set(loadingComments);
+    newLoading.add(issueId);
+    setLoadingComments(newLoading);
+
+    try {
+      // Use the nearby issue details endpoint for better access control
+      const response = await api.get(`/issues/nearby/${issueId}/details`);
+      if (response.data.success) {
+        setIssueComments(prev => ({
+          ...prev,
+          [issueId]: response.data.issue.updates || []
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      toast.error('Failed to load comments');
+    } finally {
+      const newLoading = new Set(loadingComments);
+      newLoading.delete(issueId);
+      setLoadingComments(newLoading);
+    }
+  };
+
+  const handleCommentSubmit = async (issueId) => {
+    const commentText = newComments[issueId]?.trim();
+    if (!commentText) return;
+
+    const newCommenting = new Set(commentingIssues);
+    newCommenting.add(issueId);
+    setCommentingIssues(newCommenting);
+
+    try {
+      let response;
+      
+      // Use different endpoints based on user role
+      if (user.role === 'CITIZEN' || user.role === 'MEMBER') {
+        // For citizens and members, use the nearby comment endpoint
+        response = await api.post(`/issues/citizen/${issueId}/nearby-comment`, {
+          message: commentText
+        });
+      } else {
+        // For MLAs and other roles (ADMIN), use the regular comment endpoint
+        response = await api.post(`/issues/${issueId}/progress`, {
+          message: commentText,
+          updateType: 'MEMBER_UPDATE'
+        });
+      }
+      
+      if (response.data.success) {
+        // Add the new comment to the local state
+        setIssueComments(prev => ({
+          ...prev,
+          [issueId]: [response.data.update, ...(prev[issueId] || [])]
+        }));
+        
+        // Clear the comment input
+        setNewComments(prev => ({
+          ...prev,
+          [issueId]: ''
+        }));
+        
+        toast.success('Comment added successfully');
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast.error(error.response?.data?.error || 'Failed to add comment');
+    } finally {
+      const newCommenting = new Set(commentingIssues);
+      newCommenting.delete(issueId);
+      setCommentingIssues(newCommenting);
+    }
+  };
+
+  const handleCommentChange = (issueId, value) => {
+    setNewComments(prev => ({
+      ...prev,
+      [issueId]: value
+    }));
   };
 
   // Get status color and icon
@@ -429,6 +543,12 @@ const NearbyIssues = () => {
                               addSuffix: true,
                             })}
                           </span>
+                          {issueComments[issue.id] && issueComments[issue.id].length > 0 && (
+                            <span className="flex items-center">
+                              <MessageSquare className="mr-1 h-4 w-4" />
+                              {issueComments[issue.id].length} comment{issueComments[issue.id].length !== 1 ? 's' : ''}
+                            </span>
+                          )}
                         </div>
 
                         {issue.reportedBy && (
@@ -443,6 +563,159 @@ const NearbyIssues = () => {
                           </div>
                         )}
                       </div>
+                    </div>
+
+                    {/* Comments Section */}
+                    <div className="mt-4">
+                      <button
+                        onClick={() => toggleIssueComments(issue.id)}
+                        className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
+                      >
+                        <MessageSquare className="mr-1 h-4 w-4" />
+                        {expandedIssues.has(issue.id) ? (
+                          <>
+                            <ChevronUp className="mr-1 h-4 w-4" />
+                            Hide Comments
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="mr-1 h-4 w-4" />
+                            View Comments
+                            {issueComments[issue.id] && (
+                              <span className="ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                {issueComments[issue.id].length}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </button>
+
+                      {expandedIssues.has(issue.id) && (
+                        <div className="mt-3 bg-gray-50 rounded-lg p-4">
+                          {/* Comments List */}
+                          <div className="max-h-60 overflow-y-auto">
+                            {loadingComments.has(issue.id) ? (
+                              <div className="flex justify-center py-4">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                              </div>
+                            ) : issueComments[issue.id]?.length > 0 ? (
+                              <div className="space-y-3">
+                                {issueComments[issue.id].map((comment) => (
+                                  <div
+                                    key={comment.id}
+                                    className="bg-white rounded-lg p-3 border border-gray-200"
+                                  >
+                                    <div className="flex items-start">
+                                      <div className="flex-shrink-0 mr-3">
+                                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                          comment.user.role === 'CITIZEN' 
+                                            ? 'bg-blue-100' 
+                                            : comment.user.role === 'MLA' 
+                                            ? 'bg-purple-100' 
+                                            : comment.user.role === 'MEMBER'
+                                            ? 'bg-green-100'
+                                            : 'bg-gray-100'
+                                        }`}>
+                                          <User className={`h-5 w-5 ${
+                                            comment.user.role === 'CITIZEN' 
+                                              ? 'text-blue-600' 
+                                              : comment.user.role === 'MLA' 
+                                              ? 'text-purple-600' 
+                                              : comment.user.role === 'MEMBER'
+                                              ? 'text-green-600'
+                                              : 'text-gray-600'
+                                          }`} />
+                                        </div>
+                                      </div>
+                                      <div className="flex-1">
+                                        <div className="flex items-center justify-between">
+                                          <div className="text-sm font-medium text-gray-900">
+                                            {comment.user.name}
+                                            <span className={`ml-2 text-xs px-2 py-1 rounded-full font-normal ${
+                                              comment.user.role === 'CITIZEN' 
+                                                ? 'bg-blue-100 text-blue-800' 
+                                                : comment.user.role === 'MLA' 
+                                                ? 'bg-purple-100 text-purple-800' 
+                                                : comment.user.role === 'MEMBER'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-gray-100 text-gray-800'
+                                            }`}>
+                                              {comment.user.role}
+                                            </span>
+                                          </div>
+                                          <div className="text-xs text-gray-500">
+                                            {formatDistanceToNow(new Date(comment.createdAt), {
+                                              addSuffix: true,
+                                            })}
+                                          </div>
+                                        </div>
+                                        <div className="mt-1 text-sm text-gray-700">
+                                          {comment.message}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="text-center py-4 text-gray-500">
+                                <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                                <p className="text-sm">No comments yet</p>
+                                <p className="text-xs">Be the first to comment on this issue</p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* New Comment Input */}
+                          {user && (
+                            <div className="mt-4 border-t border-gray-200 pt-4">
+                              <textarea
+                                value={newComments[issue.id] || ''}
+                                onChange={(e) =>
+                                  handleCommentChange(issue.id, e.target.value)
+                                }
+                                placeholder="Share your thoughts about this issue..."
+                                rows="3"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 resize-none"
+                              ></textarea>
+                              <div className="flex justify-between items-center mt-3">
+                                <div className="text-xs text-gray-500">
+                                  Comments are visible to the public
+                                </div>
+                                <button
+                                  onClick={() => handleCommentSubmit(issue.id)}
+                                  disabled={!newComments[issue.id]?.trim() || commentingIssues.has(issue.id)}
+                                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {commentingIssues.has(issue.id) ? (
+                                    <>
+                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                      Posting...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Send className="mr-2 h-4 w-4" />
+                                      Post Comment
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {!user && (
+                            <div className="mt-4 text-center text-sm text-gray-500 border-t border-gray-200 pt-4">
+                              <p>Please sign in to comment on issues</p>
+                              <p className="mt-1 text-xs">
+                                <span className="text-blue-600 cursor-pointer hover:underline">
+                                  Sign in
+                                </span>{' '}
+                                to join the conversation
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

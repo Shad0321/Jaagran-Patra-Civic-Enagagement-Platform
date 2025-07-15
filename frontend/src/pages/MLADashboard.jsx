@@ -420,13 +420,6 @@ const MLADashboard = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => openAssignmentModal(issue)}
-                          className="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 transition-colors"
-                          title="Assign to Member"
-                        >
-                          Assign
-                        </button>
-                        <button
                           onClick={() => openUpdateModal(issue)}
                           className="px-3 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition-colors"
                         >

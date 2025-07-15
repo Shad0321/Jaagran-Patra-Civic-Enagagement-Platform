@@ -20,6 +20,7 @@ import NewsDetail from '../pages/NewsDetail.jsx';
 import MemberManagement from '../pages/MemberManagement.jsx';
 import BodyManagement from '../pages/BodyManagement.jsx';
 import IssueAssignmentManagement from '../pages/IssueAssignmentManagement.jsx';
+import AnalyticsReport from '../pages/AnalyticsReport.jsx';
 
 const router = createBrowserRouter([
   {
@@ -162,6 +163,16 @@ const router = createBrowserRouter([
           <LanguageGuard>
             <ProtectedRoute requiredRole="MLA">
               <IssueAssignmentManagement />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
+        path: 'analytics',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute requiredRole="MLA">
+              <AnalyticsReport />
             </ProtectedRoute>
           </LanguageGuard>
         ),

@@ -51,20 +51,6 @@ export const getNavigationItems = (userRole) => {
         icon: 'clipboard',
         roles: ['MEMBER'],
       },
-      {
-        id: 'citizens',
-        label: 'Citizens',
-        path: '/citizens',
-        icon: 'users',
-        roles: ['MEMBER'],
-      },
-      {
-        id: 'reports',
-        label: 'Reports',
-        path: '/reports',
-        icon: 'chart',
-        roles: ['MEMBER'],
-      },
     ],
     MLA: [
       {

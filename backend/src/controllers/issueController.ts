@@ -640,19 +640,19 @@ export const getIssueById = async (
       return;
     }
 
-    // Check access permissions
-    const hasAccess =
-      userRole === UserRole.ADMIN ||
-      issue.reportedById === userId ||
-      issue.assignedToId === userId ||
-      (userRole === UserRole.MLA &&
-        issue.reportedBy.role === UserRole.MEMBER &&
-        issue.reportedBy.mlaId === userId);
+    // // Check access permissions
+    // const hasAccess =
+    //   userRole === UserRole.ADMIN ||
+    //   issue.reportedById === userId ||
+    //   issue.assignedToId === userId ||
+    //   (userRole === UserRole.MLA &&
+    //     issue.reportedBy.role === UserRole.MEMBER &&
+    //     issue.reportedBy.mlaId === userId);
 
-    if (!hasAccess) {
-      res.status(403).json({ error: 'Access denied' });
-      return;
-    }
+    // if (!hasAccess) {
+    //   res.status(403).json({ error: 'Access denied' });
+    //   return;
+    // }
 
     res.json({ issue });
   } catch (error) {
@@ -823,11 +823,13 @@ export const updateIssue = async (
       category,
       priority,
       isUrgent,
-      assignedToId,
+      assignedToId: originalAssignedToId,
       status,
       expectedResolutionDate,
       resolutionNotes,
     } = req.body;
+
+    let assignedToId = originalAssignedToId;
 
     const userId = req.user!.id;
     const userRole = req.user!.role;
@@ -852,9 +854,32 @@ export const updateIssue = async (
     if (userRole === UserRole.ADMIN) {
       canUpdate = true;
     } else if (userRole === UserRole.MLA) {
-      // MLAs can update issues that are assigned to them OR that they reported
+      // MLAs can update issues that are:
+      // 1. Assigned to them directly
+      // 2. Reported by them
+      // 3. Assigned to their members
       if (issue.assignedToId === userId || issue.reportedById === userId) {
         canUpdate = true;
+      } else if (issue.assignedToId) {
+        // Check if the issue is assigned to one of their members
+        const assignedMember = await prisma.user.findUnique({
+          where: { id: issue.assignedToId },
+          select: { mlaId: true, role: true }
+        });
+        
+        if (assignedMember?.mlaId === userId && assignedMember?.role === UserRole.MEMBER) {
+          canUpdate = true;
+        }
+      } else {
+        // If issue is unassigned, MLA can update it if it's in their constituency
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { constituency: true }
+        });
+        
+        if (currentUser?.constituency === issue.constituencyId) {
+          canUpdate = true;
+        }
       }
     } else if (userRole === UserRole.MEMBER) {
       // Check if member can update this issue (directly assigned or assigned to their MLA)
@@ -878,33 +903,41 @@ export const updateIssue = async (
       return;
     }
 
-    // If assigning to someone new, verify they are a MEMBER and under supervision (for MLAs)
-    if (assignedToId && assignedToId !== issue.assignedToId) {
-      const assignee = await prisma.user.findFirst({
-        where: {
-          id: assignedToId,
-          role: UserRole.MEMBER,
-        },
-      });
-
-      if (!assignee) {
-        res.status(400).json({ error: 'Invalid assignee. Must be a MEMBER.' });
-        return;
-      }
-
-      // If the current user is an MLA, ensure they can only assign to their members
-      if (userRole === UserRole.MLA) {
-        const memberUnderMLA = await prisma.user.findFirst({
+    // Handle assignment logic
+    if (assignedToId !== undefined && assignedToId !== issue.assignedToId) {
+      if (assignedToId === null) {
+        // If unassigning and current user is MLA, reassign to MLA
+        if (userRole === UserRole.MLA) {
+          assignedToId = userId;
+        }
+      } else {
+        // If assigning to someone new, verify they are a MEMBER and under supervision (for MLAs)
+        const assignee = await prisma.user.findFirst({
           where: {
             id: assignedToId,
             role: UserRole.MEMBER,
-            mlaId: userId, // Member must be under this MLA
           },
         });
 
-        if (!memberUnderMLA) {
-          res.status(400).json({ error: 'You can only assign issues to members under your supervision.' });
+        if (!assignee) {
+          res.status(400).json({ error: 'Invalid assignee. Must be a MEMBER.' });
           return;
+        }
+
+        // If the current user is an MLA, ensure they can only assign to their members
+        if (userRole === UserRole.MLA) {
+          const memberUnderMLA = await prisma.user.findFirst({
+            where: {
+              id: assignedToId,
+              role: UserRole.MEMBER,
+              mlaId: userId, // Member must be under this MLA
+            },
+          });
+
+          if (!memberUnderMLA) {
+            res.status(400).json({ error: 'You can only assign issues to members under your supervision.' });
+            return;
+          }
         }
       }
     }
@@ -959,6 +992,40 @@ export const updateIssue = async (
           mediaType: MediaType.TEXT,
         },
       });
+
+      // Send assignment notification to the assignee
+      if (assignedToId && updatedIssue.assignedTo) {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { name: true }
+        });
+        
+        await createAssignmentNotification(
+          id,
+          updatedIssue.title,
+          assignedToId,
+          userId,
+          currentUser?.name || 'Admin'
+        );
+      }
+
+      // Send notification to the citizen who reported the issue
+      if (updatedIssue.reportedBy) {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { name: true }
+        });
+
+        await createIssueUpdateNotification(
+          id,
+          updatedIssue.title,
+          updatedIssue.reportedBy.id,
+          userId,
+          currentUser?.name || 'Admin',
+          `Your issue has been ${assignedToId ? 'assigned to' : 'unassigned from'} ${assigneeName}`,
+          updatedIssue.status
+        );
+      }
     }
 
     // Create update record for status changes
@@ -973,6 +1040,42 @@ export const updateIssue = async (
           mediaType: MediaType.TEXT,
         },
       });
+
+      // Send notification to the citizen who reported the issue
+      if (updatedIssue.reportedBy) {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { name: true }
+        });
+
+        await createIssueUpdateNotification(
+          id,
+          updatedIssue.title,
+          updatedIssue.reportedBy.id,
+          userId,
+          currentUser?.name || 'Admin',
+          `Status changed from ${issue.status} to ${status}`,
+          status
+        );
+      }
+
+      // If assigned to someone, also notify the assignee about status change
+      if (updatedIssue.assignedTo && updatedIssue.assignedTo.id !== userId) {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { name: true }
+        });
+
+        await createIssueUpdateNotification(
+          id,
+          updatedIssue.title,
+          updatedIssue.assignedTo.id,
+          userId,
+          currentUser?.name || 'Admin',
+          `Status changed from ${issue.status} to ${status}`,
+          status
+        );
+      }
     }
 
     res.json({
