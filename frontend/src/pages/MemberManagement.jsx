@@ -135,6 +135,10 @@ const MemberManagement = () => {
         return acc;
       }, {});
 
+      console.log('Members by body:', membersByBody);
+      console.log('All members:', allMembers);
+      console.log('All bodies:', allBodies);
+
       // Filter bodies to only include those that have members under this MLA
       const bodiesWithMembers = allBodies.filter(body => {
         const membersInBody = membersByBody[body.id] || [];

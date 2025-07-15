@@ -13,6 +13,7 @@ import {
 } from './middleware/security';
 import { generalLimiter } from './middleware/rateLimiting';
 import routes from './routes';
+import meetingReminderService from './services/meetingReminderService';
 
 // Load environment variables
 dotenv.config();
@@ -55,7 +56,12 @@ app.use('/uploads', (req, res, next) => {
 }, express.static(path.join(__dirname, '../uploads')));
 
 // Routes
-app.use('/', routes);
+app.use('/api', routes);
+
+// Start meeting reminder service
+if (process.env.NODE_ENV !== 'test') {
+  meetingReminderService.start();
+}
 
 // Error handling middleware (must be last)
 app.use(notFoundHandler);

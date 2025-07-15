@@ -33,11 +33,12 @@ DATABASE_URL="postgresql://username:password@localhost:5432/jagranpatra"
 JWT_SECRET="your-super-secret-jwt-key-here"
 JWT_EXPIRY_TIME="7d"
 
-# Email (EmailJS)
-EMAIL_SERVICE_ID="your-emailjs-service-id"
-EMAIL_TEMPLATE_ID="your-emailjs-template-id"
-EMAIL_USER_ID="your-emailjs-user-id"
-EMAIL_PRIVATE_KEY="your-emailjs-private-key"
+# Email (SMTP)
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your@email.com
+SMTP_PASS=yourpassword
+SMTP_FROM=Your Name <your@email.com>
 
 # Server
 PORT=5000

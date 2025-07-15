@@ -734,6 +734,37 @@ export const createMember = async (
       return;
     }
 
+    // Validate that mlaId is provided (required for proper hierarchy)
+    if (!mlaId) {
+      res
+        .status(400)
+        .json({
+          success: false,
+          error: 'MLA ID is required. Please select an MLA to associate this member with.',
+        });
+      return;
+    }
+
+    // Validate that the MLA exists
+    const mla = await prisma.user.findUnique({
+      where: { id: mlaId, role: UserRole.MLA },
+      include: {
+        mlaProfile: { include: { constituency: true } },
+        state: true,
+        constituency: true,
+      },
+    });
+
+    if (!mla) {
+      res
+        .status(404)
+        .json({
+          success: false,
+          error: 'Selected MLA not found or invalid',
+        });
+      return;
+    }
+
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: { 
@@ -749,31 +780,19 @@ export const createMember = async (
       return;
     }
 
-    // If mlaId is provided, get MLA's location data
-    let mlaLocationData = null;
-    if (mlaId) {
-      const mla = await prisma.user.findUnique({
-        where: { id: mlaId },
-        include: {
-          mlaProfile: { include: { constituency: true } },
-          state: true,
-          constituency: true,
-        },
-      });
-      if (mla) {
-        mlaLocationData = {
-          stateId: mla.stateId,
-          constituencyId: mla.constituencyId,
-        };
-      }
-    }
+    // Get MLA's location data for the member
+    const mlaLocationData = {
+      stateId: mla.stateId,
+      constituencyId: mla.constituencyId,
+    };
 
     // Use provided location data or fall back to MLA's location
-    const finalStateId = stateId || mlaLocationData?.stateId;
-    const finalConstituencyId =
-      constituencyId || mlaLocationData?.constituencyId;
+    const finalStateId = stateId || mlaLocationData.stateId;
+    const finalConstituencyId = constituencyId || mlaLocationData.constituencyId;
+    const finalDistrictId = mla.constituency?.districtId;
 
     // If bodyId is provided and not empty, verify it exists
+    let finalBodyId = null;
     if (bodyId && bodyId.trim() !== '') {
       const body = await prisma.body.findUnique({
         where: { id: bodyId },
@@ -781,6 +800,49 @@ export const createMember = async (
       if (!body) {
         res.status(404).json({ success: false, error: 'Local body not found' });
         return;
+      }
+      finalBodyId = bodyId;
+    } else if (bodyType) {
+      // If no bodyId provided but bodyType is specified, create or find a default body
+      const defaultBodyTypes = ['SHAKTI_KENDRA', 'PANNA_PRAMUKH', 'LOCAL_BODY', 'POLLING_BOOTH', 'WARD', 'BLOCK', 'MANDAL', 'TEHSIL', 'GRAM_PANCHAYAT', 'MUNICIPALITY', 'CORPORATION'];
+      
+      if (defaultBodyTypes.includes(bodyType)) {
+        // Check if a default body of this type already exists for this location
+        const existingBody = await prisma.body.findFirst({
+          where: {
+            type: bodyType,
+            stateId: finalStateId,
+            districtId: finalDistrictId, // Using proper district ID
+            constituencyId: finalConstituencyId,
+            name: {
+              contains: bodyType.replace(/_/g, ' '),
+              mode: 'insensitive',
+            },
+          },
+        });
+
+        if (existingBody) {
+          finalBodyId = existingBody.id;
+        } else {
+          // Create a default body
+          const bodyName = `${bodyType.replace(/_/g, ' ')} - ${mla.constituency?.name || 'Default'}`;
+          const bodyCode = `${bodyType.substring(0, 3)}-${Date.now()}`;
+          
+          const newBody = await prisma.body.create({
+            data: {
+              name: bodyName,
+              code: bodyCode,
+              type: bodyType,
+              description: description || `Default ${bodyType.replace(/_/g, ' ')} body`,
+              stateId: finalStateId,
+              districtId: finalDistrictId, // Using proper district ID
+              constituencyId: finalConstituencyId,
+              isActive: true,
+            },
+          });
+          
+          finalBodyId = newBody.id;
+        }
       }
     }
 
@@ -793,10 +855,10 @@ export const createMember = async (
       phone,
       name,
       role: UserRole.MEMBER,
-      mlaId: mlaId || null,
+      mlaId: mlaId, // Always set from validated MLA
       finalStateId,
       finalConstituencyId,
-      bodyId: (bodyId && bodyId.trim() !== '') ? bodyId : null,
+      bodyId: finalBodyId,
       currentAddress: address || null,
       isActive: isActive !== undefined ? isActive : true,
     });
@@ -809,10 +871,10 @@ export const createMember = async (
         name,
         password: hashedPassword,
         role: UserRole.MEMBER,
-        mlaId: mlaId || null,
+        mlaId: mlaId, // Always set from validated MLA
         stateId: finalStateId || null,
         constituencyId: finalConstituencyId || null,
-        bodyId: (bodyId && bodyId.trim() !== '') ? bodyId : null,
+        bodyId: finalBodyId || null,
         currentAddress: address || null,
         isVerified: true, // Admin created users are pre-verified
         isActive: isActive !== undefined ? isActive : true,
@@ -829,7 +891,7 @@ export const createMember = async (
       },
     });
 
-    // Create or update local body if localBodyName is provided
+    // Create or update local body if localBodyName is provided (separate from default body)
     if (localBodyName && finalStateId && finalConstituencyId) {
       try {
         console.log('Creating/updating local body:', {
@@ -864,7 +926,7 @@ export const createMember = async (
 
         console.log('Local body created/updated:', localBody);
 
-        // Update user with the local body
+        // Update user with the local body (this will override the default body if both exist)
         await prisma.user.update({
           where: { id: user.id },
           data: { bodyId: localBody.id },
@@ -1332,6 +1394,30 @@ export const deleteNews = async (
     res.json({ success: true, message: 'News deleted successfully' });
   } catch (error) {
     console.error('Delete news error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
+
+export const toggleNews = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    const news = await prisma.news.update({
+      where: { id },
+      data: { isActive },
+    });
+
+    res.json({ 
+      success: true, 
+      message: `News ${isActive ? 'activated' : 'deactivated'} successfully`,
+      data: news 
+    });
+  } catch (error) {
+    console.error('Toggle news error:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };

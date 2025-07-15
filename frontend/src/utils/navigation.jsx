@@ -68,6 +68,13 @@ export const getNavigationItems = (userRole) => {
         roles: ['MLA'],
       },
       {
+        id: 'meetings',
+        label: 'Meeting Management',
+        path: '/meeting-management',
+        icon: 'video',
+        roles: ['MLA'],
+      },
+      {
         id: 'constituency',
         label: 'Constituency',
         path: '/body-management',
@@ -393,6 +400,23 @@ export const getIcon = (iconName) => {
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <polyline points="16 11 18 13 22 9" />
+      </svg>
+    ),
+    video: (
+      <svg
+        className="size-4"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M23 7l-7 5 7 5V7z" />
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
       </svg>
     ),
   };

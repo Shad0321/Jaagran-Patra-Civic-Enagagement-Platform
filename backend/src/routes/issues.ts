@@ -884,7 +884,7 @@ router.post(
 router.get(
   '/nearby/:id/details',
   authenticate,
-  authorize(['CITIZEN', 'MEMBER']),
+  authorize(['CITIZEN', 'MEMBER','MLA']),
   [
     param('id').isString().notEmpty().withMessage('Issue ID is required'),
   ],

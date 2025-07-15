@@ -63,7 +63,7 @@ const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFo
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Associated MLA</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Associated MLA *</label>
                 <select
                   value={formData.mlaId}
                   onChange={(e) => {
@@ -72,8 +72,9 @@ const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFo
                     onMLAChange(mlaId);
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
                 >
-                  <option value="">Select MLA</option>
+                  <option value="">Select MLA *</option>
                   {mlas.map(mla => (
                     <option key={mla.id} value={mla.id}>
                       {mla.name} - {mla?.constituency || 'No Constituency'}
@@ -424,6 +425,12 @@ const MemberManagement = () => {
   const handleAddMember = async (e) => {
     e.preventDefault();
     try {
+      // Validate required fields
+      if (!formData.name || !formData.email || !formData.mlaId) {
+        toast.error('Please fill in all required fields including MLA selection');
+        return;
+      }
+
       // Prepare form data
       const submitData = { ...formData };
       

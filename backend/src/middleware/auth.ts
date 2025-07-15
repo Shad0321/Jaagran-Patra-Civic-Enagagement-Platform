@@ -52,7 +52,7 @@ export const authorize = (roles: string[]) => {
     res: Response,
     next: NextFunction
   ): void => {
-    console.log(req.user);
+    // console.log(req.user);
     
     if(req.user && req.user.role === 'ADMIN') {
       return next();

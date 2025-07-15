@@ -1,25 +1,40 @@
-import emailjs from '@emailjs/nodejs';
 
-const SERVICE_ID = process.env.EMAILJS_SERVICE_ID || '';
-const TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID || '';
-const USER_ID = process.env.EMAILJS_USER_ID || '';
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 export async function sendVerificationEmail(email: string, token: string) {
-  const templateParams = {
-    to_email: email,
-    verification_token: token,
-  };
-  await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, {
-    publicKey: USER_ID,
+  const subject = 'Verify your email';
+  const frontendBaseUrl = process.env.FRONTEND_BASE_URL || 'http://localhost:5173';
+  const verifyUrl = `${frontendBaseUrl}/verify-email?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+  const text = `Your verification token is: ${token}\nOr click the link to verify: ${verifyUrl}`;
+  const html = `<p>Your verification token is: <b>${token}</b></p><p>Or <a href="${verifyUrl}">click here to verify your email</a>.</p>`;
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: email,
+    subject,
+    text,
+    html,
   });
 }
 
 export async function sendResetPasswordEmail(email: string, token: string) {
-  const templateParams = {
-    to_email: email,
-    reset_token: token,
-  };
-  await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, {
-    publicKey: USER_ID,
+  const subject = 'Reset your password';
+  const text = `Your password reset token is: ${token}`;
+  const html = `<p>Your password reset token is: <b>${token}</b></p>`;
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: email,
+    subject,
+    text,
+    html,
   });
 }

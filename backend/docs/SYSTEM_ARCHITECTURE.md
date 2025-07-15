@@ -397,7 +397,7 @@ Issue (1) ────── Updates (N)
 
 #### External Services
 
-- **Email service** (EmailJS/SMTP)
+- **Email service** (SMTP via nodemailer)
 - **SMS service** (for notifications)
 - **File storage** (AWS S3/Cloudinary)
 - **Maps service** (Google Maps/OpenStreetMap)

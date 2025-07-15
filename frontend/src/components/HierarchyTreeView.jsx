@@ -122,9 +122,9 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900">{body.name}</h4>
-                        <p className="text-sm text-gray-600">
+                        {/* <p className="text-sm text-gray-600">
                           {body.type.replace(/_/g, ' ')} - {body.code}
-                        </p>
+                        </p> */}
                         {body.description && (
                           <p className="text-xs text-gray-500 mt-1">
                             {body.description}

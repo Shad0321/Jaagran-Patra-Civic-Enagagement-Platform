@@ -156,7 +156,7 @@ const NearbyIssues = () => {
         ...(debouncedFilters.search && { search: debouncedFilters.search }),
       });
 
-      const fullUrl = `http://localhost:3001/issues/nearby?${queryParams}`;
+      const fullUrl = import.meta.env.VITE_API_URL + `/issues/nearby?${queryParams}`;
 
       const response = await fetch(fullUrl);
 

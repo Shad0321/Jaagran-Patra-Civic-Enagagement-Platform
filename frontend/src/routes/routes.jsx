@@ -18,9 +18,11 @@ import InteractiveElectionMap from '../pages/InteractiveElectionMap.jsx';
 import NewsPage from '../pages/NewsPage.jsx';
 import NewsDetail from '../pages/NewsDetail.jsx';
 import MemberManagement from '../pages/MemberManagement.jsx';
+import MeetingManagement from '../pages/MeetingManagement.jsx';
 import BodyManagement from '../pages/BodyManagement.jsx';
 import IssueAssignmentManagement from '../pages/IssueAssignmentManagement.jsx';
 import AnalyticsReport from '../pages/AnalyticsReport.jsx';
+import VerifyEmail from '../pages/VerifyEmail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -148,6 +150,16 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: 'meeting-management',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute requiredRole="MLA">
+              <MeetingManagement />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
+      {
         path: 'body-management',
         element: (
           <LanguageGuard>
@@ -177,6 +189,7 @@ const router = createBrowserRouter([
           </LanguageGuard>
         ),
       },
+      { path: 'verify-email', element: <VerifyEmail /> },
       //   { path: "*", element: <NotFound /> },
     ],
   },

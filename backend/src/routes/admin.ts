@@ -36,6 +36,7 @@ import {
   createNews,
   updateNews,
   deleteNews,
+  toggleNews,
 
   // Analytics
   getAnalytics,
@@ -93,6 +94,7 @@ router.put('/issues/:id/status', updateIssueStatus);
 router.get('/news', getAllNews);
 router.post('/news', createNews);
 router.put('/news/:id', updateNews);
+router.patch('/news/:id/toggle', toggleNews);
 router.delete('/news/:id', deleteNews);
 
 // Analytics Routes

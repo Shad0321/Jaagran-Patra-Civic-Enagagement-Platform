@@ -8,6 +8,7 @@ import notificationRoutes from './notifications';
 import mapRoutes from './map';
 import newsRoutes from './news';
 import analyticsRoutes from './analytics';
+import meetingRoutes from './meetings';
 
 const router = Router();
 
@@ -31,6 +32,9 @@ router.use('/news', newsRoutes);
 
 // Analytics routes
 router.use('/analytics', analyticsRoutes);
+
+// Meeting routes
+router.use('/meetings', meetingRoutes);
 
 // Health check endpoint
 router.get('/health', (req: Request, res: Response) => {

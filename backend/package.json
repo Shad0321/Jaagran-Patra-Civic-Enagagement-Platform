@@ -1,5 +1,5 @@
 {
-  "name": "node-express-prisma-boilerplate",
+  "name": "Jaagran-patra",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -11,7 +11,9 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "test:zoom": "ts-node ./src/tests/zoomIntegration.test.ts",
+    "test:zoom:simple": "ts-node ./src/tests/zoomIntegration.simple.test.ts"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",
@@ -20,7 +22,7 @@
     "@types/hpp": "^0.2.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.0.10",
+    "@types/node": "^24.0.14",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "prisma": "^6.0.0",
@@ -28,9 +30,12 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@emailjs/nodejs": "^5.0.2",
+    "@googlemaps/google-maps-services-js": "^3.4.2",
     "@prisma/client": "^6.11.1",
     "@types/multer": "^2.0.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/nodemailer": "^6.4.17",
+    "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "compression": "^1.8.0",
     "cors": "^2.8.5",
@@ -43,7 +48,9 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^2.0.1",
+    "node-cron": "^4.2.1",
     "node-fetch": "^3.3.2",
+    "nodemailer": "^7.0.5",
     "xss": "^1.0.15"
   }
 }

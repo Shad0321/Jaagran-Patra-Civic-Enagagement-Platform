@@ -13,6 +13,7 @@ import {
   createAssignmentNotification, 
   createIssueUpdateNotification 
 } from './notificationController';
+// import { geocodeAddress } from '../utils/geocoding';
 
 const prisma = new PrismaClient();
 
@@ -59,13 +60,14 @@ export const createIssue = async (
       isUrgent = false,
       assignedToId,
       address,
-      latitude,
-      longitude,
       stateId,
       districtId,
       constituencyId,
       bodyId,
     } = req.body;
+
+    // Make latitude and longitude mutable
+    let { latitude, longitude } = req.body;
 
     const userId = req.user!.id;
     const userRole = req.user!.role;
@@ -94,14 +96,129 @@ export const createIssue = async (
     }
 
     // Validate required fields
-    if (!title || !description || !category || !stateId) {
+    if (!title || !description || !category) {
       res
         .status(400)
         .json({
           error:
-            'Missing required fields: title, description, category, stateId',
+            'Missing required fields: title, description, category',
         });
       return;
+    }
+
+    // Validate stateId exists in database
+    let validatedStateId = stateId;
+    if (stateId) {
+      const stateExists = await prisma.state.findUnique({
+        where: { id: stateId },
+      });
+      
+      if (!stateExists) {
+        console.warn('Invalid stateId provided:', stateId);
+        // Try to find the correct state if we have address information
+        if (address) {
+          console.log('Attempting to geocode address for state detection:', address);
+          // const geocodeResult = await geocodeAddress(address);
+          
+          // if (geocodeResult && geocodeResult.addressComponents.state) {
+          //   const stateName = geocodeResult.addressComponents.state;
+          //   console.log('Geocoded state:', stateName);
+          //   
+          //   // Try to find a matching state in the database
+          //   const matchingState = await prisma.state.findFirst({
+          //     where: {
+          //       OR: [
+          //         { name: { contains: stateName, mode: 'insensitive' } },
+          //         { code: { contains: stateName, mode: 'insensitive' } },
+          //       ],
+          //     },
+          //   });
+          //   
+          //   if (matchingState) {
+          //     console.log('Found matching state in database:', matchingState.name);
+          //     validatedStateId = matchingState.id;
+          //     
+          //     // Update coordinates if not provided
+          //     if (!latitude || !longitude) {
+          //       latitude = geocodeResult.latitude.toString();
+          //       longitude = geocodeResult.longitude.toString();
+          //       console.log('Updated coordinates from geocoding:', latitude, longitude);
+          //     }
+          //   } else {
+          //     console.warn('No matching state found in database for:', stateName);
+          //   }
+          // }
+        }
+        
+        // If we still don't have a valid state, use the first available state as fallback
+        if (!validatedStateId || stateId === validatedStateId) {
+          console.log('Using fallback state logic');
+          const fallbackState = await prisma.state.findFirst({
+            orderBy: { name: 'asc' },
+          });
+          
+          if (fallbackState) {
+            validatedStateId = fallbackState.id;
+            console.log('Using fallback state:', fallbackState.name);
+          } else {
+            res.status(400).json({
+              error: 'No valid state found. Please ensure location data is configured.',
+            });
+            return;
+          }
+        }
+      }
+    } else {
+      // No stateId provided, try to geocode from address
+      if (address) {
+        console.log('No stateId provided, attempting to geocode address:', address);
+        // const geocodeResult = await geocodeAddress(address);
+        
+        // if (geocodeResult && geocodeResult.addressComponents.state) {
+        //   const stateName = geocodeResult.addressComponents.state;
+        //   console.log('Geocoded state:', stateName);
+        //   
+        //   // Try to find a matching state in the database
+        //   const matchingState = await prisma.state.findFirst({
+        //     where: {
+        //       OR: [
+        //         { name: { contains: stateName, mode: 'insensitive' } },
+        //         { code: { contains: stateName, mode: 'insensitive' } },
+        //       ],
+        //     },
+        //   });
+        //   
+        //   if (matchingState) {
+        //     console.log('Found matching state in database:', matchingState.name);
+        //     validatedStateId = matchingState.id;
+        //     
+        //     // Update coordinates if not provided
+        //     if (!latitude || !longitude) {
+        //       latitude = geocodeResult.latitude.toString();
+        //       longitude = geocodeResult.longitude.toString();
+        //       console.log('Updated coordinates from geocoding:', latitude, longitude);
+        //     }
+        //   }
+        // }
+      }
+      
+      // If we still don't have a valid state, use the first available state as fallback
+      if (!validatedStateId) {
+        console.log('Using fallback state logic');
+        const fallbackState = await prisma.state.findFirst({
+          orderBy: { name: 'asc' },
+        });
+        
+        if (fallbackState) {
+          validatedStateId = fallbackState.id;
+          console.log('Using fallback state:', fallbackState.name);
+        } else {
+          res.status(400).json({
+            error: 'No valid state found. Please ensure location data is configured.',
+          });
+          return;
+        }
+      }
     }
 
     // Handle assignment logic based on user role
@@ -154,14 +271,14 @@ export const createIssue = async (
       console.log('📍 Coordinates:', latitude, longitude);
       
       // Debug: Log MLA information for this state
-      await logMLAInfo(stateId);
+      await logMLAInfo(validatedStateId);
       
       // If constituency is not provided, try to find nearest constituency based on coordinates
       if (!constituencyId && latitude && longitude) {
         console.log('🔍 Searching for nearest constituency...');
         const constituencies = await prisma.constituency.findMany({
           where: {
-            stateId: stateId,
+            stateId: validatedStateId,
             latitude: { not: null },
             longitude: { not: null },
           },
@@ -251,7 +368,7 @@ export const createIssue = async (
         address,
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
-        stateId,
+        stateId: validatedStateId,
         districtId,
         constituencyId: autoAssignedConstituencyId || constituencyId,
         bodyId,
@@ -357,12 +474,12 @@ export const createIssue = async (
       console.log('⚠️ No assignment made - issue remains unassigned');
       
       // If no MLA found, try to find any MLA in the same state as fallback
-      if (userRole === UserRole.CITIZEN && !finalAssignedToId && stateId) {
+      if (userRole === UserRole.CITIZEN && !finalAssignedToId && validatedStateId) {
         console.log('🔄 Attempting fallback assignment to any MLA in state...');
         const fallbackMla = await prisma.user.findFirst({
           where: {
             role: UserRole.MLA,
-            stateId: stateId,
+            stateId: validatedStateId,
             isActive: true,
           },
           include: {

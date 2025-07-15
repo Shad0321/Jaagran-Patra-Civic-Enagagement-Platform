@@ -475,6 +475,13 @@ model Session {
   agenda          String?
   summary         String?
   
+  // Zoom integration fields
+  zoomMeetingId   String?
+  zoomMeetingData Json?
+  isOpenToAll     Boolean @default(false)
+  isRecurring     Boolean @default(false)
+  recurrenceData  Json?
+  
   hostId          String
   
   host            User @relation("HostedBy", fields: [hostId], references: [id])
@@ -486,6 +493,9 @@ model Session {
   @@index([hostId])
   @@index([scheduledAt])
   @@index([status])
+  @@index([zoomMeetingId])
+  @@index([isOpenToAll])
+  @@index([isRecurring])
   @@map("sessions")
 }
 
@@ -660,4 +670,16 @@ model SystemConfig {
   
   @@index([key])
   @@map("system_config")
+}
+
+model MeetingReminder {
+  id          String @id @default(cuid())
+  reminderKey String @unique
+  sentAt      DateTime
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([reminderKey])
+  @@index([sentAt])
+  @@map("meeting_reminders")
 }
