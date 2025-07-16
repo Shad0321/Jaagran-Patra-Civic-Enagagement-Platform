@@ -7,11 +7,21 @@ import {
   clearError,
 } from '../redux/slices/userSlice';
 import { Check, User, Lock, Globe, Save } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const Settings = () => {
   const dispatch = useDispatch();
   const { selectedLanguage } = useSelector((state) => state.language);
   const { user, loading, error } = useSelector((state) => state.user);
+
+  // Show backend error as toast
+  useEffect(() => {
+    if (error) {
+      console.log('API Error:', error);
+      
+      toast.error(error);
+    }
+  }, [error]);
 
   const [currentLanguage, setCurrentLanguage] = useState(selectedLanguage);
   const [activeTab, setActiveTab] = useState('profile');
@@ -274,7 +284,8 @@ const Settings = () => {
                   Change Password
                 </h3>
 
-                {(error || passwordError) && (
+                {/* Backend error is now shown as toast, not inline */}
+                {passwordError && (
                   <div className="mb-6 rounded-md bg-red-50 p-4">
                     <div className="flex">
                       <div className="flex-shrink-0">
@@ -292,7 +303,7 @@ const Settings = () => {
                       </div>
                       <div className="ml-3">
                         <h3 className="text-sm font-medium text-red-800">
-                          {error || passwordError}
+                          {passwordError}
                         </h3>
                       </div>
                       <div className="ml-auto pl-3">

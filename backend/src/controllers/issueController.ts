@@ -1529,26 +1529,6 @@ export const getAssignedIssues = async (
       prisma.issue.count({ where: whereClause }),
     ]);
 
-    if (issues.length === 0) {
-      // Let's check what issues exist for debugging
-      const allIssuesForDebugging = await prisma.issue.findMany({
-        select: {
-          id: true,
-          title: true,
-          assignedToId: true,
-          assignedTo: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            }
-          }
-        },
-        take: 5
-      });
-      console.log('🔍 Sample issues in DB:', allIssuesForDebugging);
-    }
-
     // Map updates to progressUpdates for frontend compatibility
     const issuesWithProgressUpdates = issues.map(issue => ({
       ...issue,

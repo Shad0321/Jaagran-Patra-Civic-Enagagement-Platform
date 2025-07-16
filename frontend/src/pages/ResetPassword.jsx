@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPassword, clearError } from '../redux/slices/userSlice';
@@ -69,6 +70,7 @@ const ResetPassword = () => {
       ).unwrap();
       setIsSuccess(true);
     } catch (error) {
+      toast.error(error?.message || 'Reset password failed');
       console.error('Reset password failed:', error);
     }
   };
@@ -77,6 +79,13 @@ const ResetPassword = () => {
     dispatch(clearError());
     setValidationError('');
   };
+
+  // Show backend error as toast
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   if (isSuccess) {
     return (
@@ -144,7 +153,8 @@ const ResetPassword = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {(error || validationError) && (
+            {/* Backend error is now shown as toast, not inline */}
+            {validationError && (
               <div className="rounded-md bg-red-50 p-4">
                 <div className="flex">
                   <div className="flex-shrink-0">
@@ -162,7 +172,7 @@ const ResetPassword = () => {
                   </div>
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-red-800">
-                      {error || validationError}
+                      {validationError}
                     </h3>
                   </div>
                   <div className="ml-auto pl-3">

@@ -18,6 +18,9 @@ export const apiRequest = async (endpoint, options = {}) => {
 
   if (!response.ok) {
     const error = await response.json();
+    if(error.error) {
+      throw new Error(error.error);
+    }
     throw new Error(error.message || 'API request failed');
   }
 

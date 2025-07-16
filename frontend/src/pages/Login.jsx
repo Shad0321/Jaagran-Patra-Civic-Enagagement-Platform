@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, clearError } from '../redux/slices/userSlice';
@@ -22,6 +23,13 @@ const Login = () => {
       navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
+
+  // Show backend error as toast
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   useEffect(() => {
     // Clear error when component mounts
@@ -98,11 +106,7 @@ const Login = () => {
         <div className="w-full max-w-[90vw] h-px bg-dark"></div>
         <p className="mt-4 text-dark font-semibold">Speed is True Progress</p>
 
-        {error && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
-            {error}
-          </div>
-        )}
+        {/* Backend error is now shown as toast, not inline */}
 
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4 mt-8">
