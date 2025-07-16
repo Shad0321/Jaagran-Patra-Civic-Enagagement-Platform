@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { sendVerificationEmail, sendResetPasswordEmail } from '../utils/email';
+import { uploadBufferToCloudinary } from '../utils/cloudinary';
 
 const prisma = new PrismaClient();
 const JWT_SECRET: string = process.env.JWT_SECRET || 'your_jwt_secret';
@@ -25,7 +26,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       where: { OR: [{ email }, { phone }] },
     });
     if (existingUser) {
-      res.status(409).json({ error: 'User already exists' });
+      res
+        .status(409)
+        .json({ error: 'User already exists with this email or phone number' });
       return;
     }
 
@@ -105,7 +108,7 @@ export const addMember = async (
     // Get the current user's details for validation
     const currentUser = await prisma.user.findUnique({
       where: { id: currentUserId },
-      include: { 
+      include: {
         mlaProfile: true,
         constituency: { select: { id: true, name: true } },
       },
@@ -129,8 +132,20 @@ export const addMember = async (
       }
     } else {
       // If no bodyId provided, create a default body for certain body types
-      const defaultBodyTypes = ['SHAKTI_KENDRA', 'PANNA_PRAMUKH', 'LOCAL_BODY', 'POLLING_BOOTH', 'WARD', 'BLOCK', 'MANDAL', 'TEHSIL', 'GRAM_PANCHAYAT', 'MUNICIPALITY', 'CORPORATION'];
-      
+      const defaultBodyTypes = [
+        'SHAKTI_KENDRA',
+        'PANNA_PRAMUKH',
+        'LOCAL_BODY',
+        'POLLING_BOOTH',
+        'WARD',
+        'BLOCK',
+        'MANDAL',
+        'TEHSIL',
+        'GRAM_PANCHAYAT',
+        'MUNICIPALITY',
+        'CORPORATION',
+      ];
+
       if (defaultBodyTypes.includes(bodyType)) {
         // Check if a default body of this type already exists for this location
         const existingBody = await prisma.body.findFirst({
@@ -152,7 +167,7 @@ export const addMember = async (
           // Create a default body
           const bodyName = `${bodyType.replace(/_/g, ' ')} - ${currentUser.constituency?.name || 'Default'}`;
           const bodyCode = `${bodyType.substring(0, 3)}-${Date.now()}`;
-          
+
           const newBody = await prisma.body.create({
             data: {
               name: bodyName,
@@ -165,7 +180,7 @@ export const addMember = async (
               isActive: true,
             },
           });
-          
+
           finalBodyId = newBody.id;
         }
       }
@@ -246,8 +261,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      res.status(401).json({ error: 'Invalid credentials' });
+    if (!user) {
+      res
+        .status(401)
+        .json({ error: 'User not Registered, Please Register First' });
+      return;
+    }
+
+    if (!(await bcrypt.compare(password, user.password))) {
+      res.status(401).json({ error: 'Invalid Password' });
       return;
     }
 
@@ -362,60 +384,65 @@ export const updateProfile = async (
 ): Promise<void> => {
   try {
     const userId = req.user!.id;
-    const {
-      name,
-      phone,
-      avatar,
-      currentLatitude,
-      currentLongitude,
-      currentAddress,
-    } = req.body;
+    const { name, phone } = req.body; // Avatar is no longer in the body
+
+    const currentUser = await prisma.user.findUnique({ where: { id: userId } });
+    if (!currentUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // --- ⚙️ Handle Avatar Upload ---
+    let avatarUrl = currentUser.avatar; // Keep existing avatar by default
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+    if (files && files.avatar && files.avatar.length > 0) {
+      const avatarFile = files.avatar[0];
+      try {
+        const result = await uploadBufferToCloudinary(
+          avatarFile.buffer,
+          'avatars',
+          'image'
+        );
+        interface CloudinaryUploadResult {
+          secure_url: string;
+        }
+        avatarUrl = (result as CloudinaryUploadResult).secure_url;
+      } catch (uploadError) {
+        res.status(500).json({ error: 'Failed to upload avatar' });
+        return;
+      }
+    }
+    console.log('Avatar URL:', avatarUrl);
 
     const updateData: any = {};
     if (name) updateData.name = name;
     if (phone) updateData.phone = phone;
-    if (avatar) updateData.avatar = avatar;
-    if (currentLatitude)
-      updateData.currentLatitude = parseFloat(currentLatitude);
-    if (currentLongitude)
-      updateData.currentLongitude = parseFloat(currentLongitude);
-    if (currentAddress) updateData.currentAddress = currentAddress;
-
-    if (currentLatitude || currentLongitude || currentAddress) {
-      updateData.lastLocationUpdate = new Date();
-    }
+    updateData.avatar = avatarUrl; // Set the new or existing avatar URL
 
     const user = await prisma.user.update({
       where: { id: userId },
       data: updateData,
-      include: {
-        mlaProfile: true,
-        memberProfile: true,
-        state: { select: { id: true, name: true } },
-        district: { select: { id: true, name: true } },
-        constituency: { select: { id: true, name: true } },
-        body: { select: { id: true, name: true, type: true } },
-      },
+      // ... include relations as needed
     });
+
+    // Return a clean user object
+    const userToReturn = {
+      id: user.id,
+      email: user.email,
+      phone: user.phone,
+      name: user.name,
+      role: user.role,
+      avatar: user.avatar,
+    };
 
     res.json({
       message: 'Profile updated successfully',
-      user: {
-        id: user.id,
-        email: user.email,
-        phone: user.phone,
-        name: user.name,
-        role: user.role,
-        avatar: user.avatar,
-        currentLatitude: user.currentLatitude,
-        currentLongitude: user.currentLongitude,
-        currentAddress: user.currentAddress,
-        profile: user.role === 'MLA' ? user.mlaProfile : user.memberProfile,
-      },
+      user: userToReturn,
     });
   } catch (error) {
     console.error('Update profile error:', error);
-    res.status(500).json({ error: 'Failed to update profile', details: error });
+    res.status(500).json({ error: 'Failed to update profile' });
   }
 };
 
@@ -748,7 +775,7 @@ export const verifyPhone = async (
 export const requireRole =
   (roles: UserRole[]) => (req: any, res: Response, next: NextFunction) => {
     const user = req.user;
-    if(user && user.role === 'ADMIN') {
+    if (user && user.role === 'ADMIN') {
       return next();
     }
     if (!user || !roles.includes(user.role)) {
@@ -902,9 +929,12 @@ export const updateMember = async (
             bodyType: bodyType || undefined,
             designation: designation || undefined,
             description: description || undefined,
-            canReceiveIssues: canReceiveIssues !== undefined ? canReceiveIssues : undefined,
-            canUpdateIssues: canUpdateIssues !== undefined ? canUpdateIssues : undefined,
-            canCreateSessions: canCreateSessions !== undefined ? canCreateSessions : undefined,
+            canReceiveIssues:
+              canReceiveIssues !== undefined ? canReceiveIssues : undefined,
+            canUpdateIssues:
+              canUpdateIssues !== undefined ? canUpdateIssues : undefined,
+            canCreateSessions:
+              canCreateSessions !== undefined ? canCreateSessions : undefined,
           },
         },
       },
@@ -975,9 +1005,10 @@ export const deleteMember = async (
 
     // Check if member has active issues
     if (member.assignedIssues.length > 0) {
-      res.status(400).json({ 
-        error: 'Cannot delete member with active issues. Please resolve or reassign them first.',
-        activeIssues: member.assignedIssues.length 
+      res.status(400).json({
+        error:
+          'Cannot delete member with active issues. Please resolve or reassign them first.',
+        activeIssues: member.assignedIssues.length,
       });
       return;
     }
@@ -1063,7 +1094,9 @@ export const createBody = async (
     });
 
     if (existingBody) {
-      res.status(409).json({ error: 'Body with this code already exists in this location' });
+      res
+        .status(409)
+        .json({ error: 'Body with this code already exists in this location' });
       return;
     }
 
@@ -1189,17 +1222,19 @@ export const deleteBody = async (
 
     // Check if body has associated users or child bodies
     if (body.users.length > 0) {
-      res.status(400).json({ 
-        error: 'Cannot delete body with associated members. Please reassign them first.',
-        associatedUsers: body.users.length 
+      res.status(400).json({
+        error:
+          'Cannot delete body with associated members. Please reassign them first.',
+        associatedUsers: body.users.length,
       });
       return;
     }
 
     if (body.childBodies.length > 0) {
-      res.status(400).json({ 
-        error: 'Cannot delete body with child bodies. Please delete or reassign them first.',
-        childBodies: body.childBodies.length 
+      res.status(400).json({
+        error:
+          'Cannot delete body with child bodies. Please delete or reassign them first.',
+        childBodies: body.childBodies.length,
       });
       return;
     }

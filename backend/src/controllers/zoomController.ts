@@ -18,7 +18,10 @@ export class ZoomController {
   /**
    * Create an instant meeting
    */
-  static async createInstantMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async createInstantMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { topic, agenda } = req.body;
       const userId = req.user?.id;
@@ -31,7 +34,7 @@ export class ZoomController {
       // Verify user is MLA
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        include: { mlaProfile: true }
+        include: { mlaProfile: true },
       });
 
       if (!user || user.role !== 'MLA') {
@@ -80,14 +83,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error creating instant meeting:', error);
-      res.status(500).json({ error: error.message || 'Failed to create instant meeting' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to create instant meeting' });
     }
   }
 
   /**
    * Create a scheduled meeting
    */
-  static async createScheduledMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async createScheduledMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const {
         topic,
@@ -110,10 +118,10 @@ export class ZoomController {
       // Verify user is MLA
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        include: { 
+        include: {
           mlaProfile: true,
-          members: true // Get MLA's members
-        }
+          members: true, // Get MLA's members
+        },
       });
 
       if (!user || user.role !== 'MLA') {
@@ -130,10 +138,10 @@ export class ZoomController {
 
       // Prepare invitees list
       let allInvitees = [...invitees];
-      
+
       // If open to all, add all members of the MLA
       if (isOpenToAll) {
-        const memberEmails = user.members.map(member => member.email);
+        const memberEmails = user.members.map((member) => member.email);
         allInvitees = [...allInvitees, ...memberEmails];
       }
 
@@ -179,7 +187,7 @@ export class ZoomController {
       // Find users by email and create participant records
       for (const email of allInvitees) {
         const invitedUser = await prisma.user.findUnique({
-          where: { email }
+          where: { email },
         });
 
         if (invitedUser) {
@@ -212,14 +220,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error creating scheduled meeting:', error);
-      res.status(500).json({ error: error.message || 'Failed to create scheduled meeting' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to create scheduled meeting' });
     }
   }
 
   /**
    * Create a recurring meeting
    */
-  static async createRecurringMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async createRecurringMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const {
         topic,
@@ -246,10 +259,10 @@ export class ZoomController {
       // Verify user is MLA
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        include: { 
+        include: {
           mlaProfile: true,
-          members: true
-        }
+          members: true,
+        },
       });
 
       if (!user || user.role !== 'MLA') {
@@ -266,9 +279,9 @@ export class ZoomController {
 
       // Prepare invitees list
       let allInvitees = [...invitees];
-      
+
       if (isOpenToAll) {
-        const memberEmails = user.members.map(member => member.email);
+        const memberEmails = user.members.map((member) => member.email);
         allInvitees = [...allInvitees, ...memberEmails];
       }
 
@@ -317,7 +330,7 @@ export class ZoomController {
       // Add participants to session
       for (const email of allInvitees) {
         const invitedUser = await prisma.user.findUnique({
-          where: { email }
+          where: { email },
         });
 
         if (invitedUser) {
@@ -352,17 +365,22 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error creating recurring meeting:', error);
-      res.status(500).json({ error: error.message || 'Failed to create recurring meeting' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to create recurring meeting' });
     }
   }
 
   /**
    * Get all meetings for the authenticated user
    */
-  static async getUserMeetings(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async getUserMeetings(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       console.log(req);
-      
+
       const userId = req.user?.id;
       const { type = 'all', page = 1, limit = 10 } = req.query;
 
@@ -372,7 +390,7 @@ export class ZoomController {
       }
 
       const user = await prisma.user.findUnique({
-        where: { id: userId }
+        where: { id: userId },
       });
 
       if (!user) {
@@ -388,7 +406,7 @@ export class ZoomController {
       } else {
         // Other users can see meetings they're invited to
         whereClause.participants = {
-          some: { userId: userId }
+          some: { userId: userId },
         };
       }
 
@@ -399,7 +417,7 @@ export class ZoomController {
       } else if (type === 'past') {
         whereClause.OR = [
           { scheduledAt: { lt: new Date() } },
-          { status: 'COMPLETED' }
+          { status: 'COMPLETED' },
         ];
       } else if (type === 'ongoing') {
         whereClause.status = 'ONGOING';
@@ -414,7 +432,7 @@ export class ZoomController {
               name: true,
               email: true,
               mlaProfile: true,
-            }
+            },
           },
           participants: {
             include: {
@@ -424,10 +442,10 @@ export class ZoomController {
                   name: true,
                   email: true,
                   role: true,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         },
         orderBy: { scheduledAt: 'desc' },
         skip: (Number(page) - 1) * Number(limit),
@@ -452,14 +470,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error getting user meetings:', error);
-      res.status(500).json({ error: error.message || 'Failed to get meetings' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to get meetings' });
     }
   }
 
   /**
    * Get meeting details
    */
-  static async getMeetingDetails(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async getMeetingDetails(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const userId = req.user?.id;
@@ -478,7 +501,7 @@ export class ZoomController {
               name: true,
               email: true,
               mlaProfile: true,
-            }
+            },
           },
           participants: {
             include: {
@@ -488,11 +511,11 @@ export class ZoomController {
                   name: true,
                   email: true,
                   role: true,
-                }
-              }
-            }
-          }
-        }
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!session) {
@@ -501,8 +524,9 @@ export class ZoomController {
       }
 
       // Check if user has access to this meeting
-      const hasAccess = session.hostId === userId || 
-                       session.participants.some(p => p.userId === userId);
+      const hasAccess =
+        session.hostId === userId ||
+        session.participants.some((p) => p.userId === userId);
 
       if (!hasAccess) {
         res.status(403).json({ error: 'Access denied' });
@@ -528,14 +552,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error getting meeting details:', error);
-      res.status(500).json({ error: error.message || 'Failed to get meeting details' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to get meeting details' });
     }
   }
 
   /**
    * Update meeting
    */
-  static async updateMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async updateMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const userId = req.user?.id;
@@ -557,17 +586,23 @@ export class ZoomController {
 
       // Only host can update meeting
       if (session.hostId !== userId) {
-        res.status(403).json({ error: 'Only meeting host can update the meeting' });
+        res
+          .status(403)
+          .json({ error: 'Only meeting host can update the meeting' });
         return;
       }
 
       // Update Zoom meeting if needed
-      if (session.zoomMeetingId && (updateData.topic || updateData.agenda || updateData.startTime)) {
+      if (
+        session.zoomMeetingId &&
+        (updateData.topic || updateData.agenda || updateData.startTime)
+      ) {
         const zoomUpdateData: any = {};
-        
+
         if (updateData.topic) zoomUpdateData.topic = updateData.topic;
         if (updateData.agenda) zoomUpdateData.agenda = updateData.agenda;
-        if (updateData.startTime) zoomUpdateData.start_time = updateData.startTime;
+        if (updateData.startTime)
+          zoomUpdateData.start_time = updateData.startTime;
         if (updateData.duration) zoomUpdateData.duration = updateData.duration;
 
         await zoomService.updateMeeting(session.zoomMeetingId, zoomUpdateData);
@@ -579,7 +614,9 @@ export class ZoomController {
         data: {
           title: updateData.topic || session.title,
           description: updateData.agenda || session.description,
-          scheduledAt: updateData.startTime ? new Date(updateData.startTime) : session.scheduledAt,
+          scheduledAt: updateData.startTime
+            ? new Date(updateData.startTime)
+            : session.scheduledAt,
           duration: updateData.duration || session.duration,
           agenda: updateData.agenda || session.agenda,
         },
@@ -590,7 +627,7 @@ export class ZoomController {
               name: true,
               email: true,
               mlaProfile: true,
-            }
+            },
           },
           participants: {
             include: {
@@ -600,11 +637,11 @@ export class ZoomController {
                   name: true,
                   email: true,
                   role: true,
-                }
-              }
-            }
-          }
-        }
+                },
+              },
+            },
+          },
+        },
       });
 
       res.json({
@@ -613,14 +650,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error updating meeting:', error);
-      res.status(500).json({ error: error.message || 'Failed to update meeting' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to update meeting' });
     }
   }
 
   /**
    * Delete meeting
    */
-  static async deleteMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async deleteMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const userId = req.user?.id;
@@ -641,7 +683,9 @@ export class ZoomController {
 
       // Only host can delete meeting
       if (session.hostId !== userId) {
-        res.status(403).json({ error: 'Only meeting host can delete the meeting' });
+        res
+          .status(403)
+          .json({ error: 'Only meeting host can delete the meeting' });
         return;
       }
 
@@ -665,14 +709,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error deleting meeting:', error);
-      res.status(500).json({ error: error.message || 'Failed to delete meeting' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to delete meeting' });
     }
   }
 
   /**
    * Join meeting
    */
-  static async joinMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async joinMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const userId = req.user?.id;
@@ -686,7 +735,7 @@ export class ZoomController {
         where: { id: meetingId },
         include: {
           participants: true,
-        }
+        },
       });
 
       if (!session) {
@@ -695,9 +744,10 @@ export class ZoomController {
       }
 
       // Check if user has access to this meeting
-      const hasAccess = session.hostId === userId || 
-                       session.participants.some(p => p.userId === userId) ||
-                       session.isOpenToAll;
+      const hasAccess =
+        session.hostId === userId ||
+        session.participants.some((p) => p.userId === userId) ||
+        session.isOpenToAll;
 
       if (!hasAccess) {
         res.status(403).json({ error: 'Access denied' });
@@ -710,7 +760,7 @@ export class ZoomController {
           sessionId_userId: {
             sessionId: meetingId,
             userId: userId,
-          }
+          },
         },
         create: {
           sessionId: meetingId,
@@ -731,14 +781,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error joining meeting:', error);
-      res.status(500).json({ error: error.message || 'Failed to join meeting' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to join meeting' });
     }
   }
 
   /**
    * End meeting
    */
-  static async endMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async endMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const userId = req.user?.id;
@@ -759,7 +814,9 @@ export class ZoomController {
 
       // Only host can end meeting
       if (session.hostId !== userId) {
-        res.status(403).json({ error: 'Only meeting host can end the meeting' });
+        res
+          .status(403)
+          .json({ error: 'Only meeting host can end the meeting' });
         return;
       }
 
@@ -793,7 +850,10 @@ export class ZoomController {
   /**
    * Get meeting participants
    */
-  static async getMeetingParticipants(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async getMeetingParticipants(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const userId = req.user?.id;
@@ -814,11 +874,11 @@ export class ZoomController {
                   name: true,
                   email: true,
                   role: true,
-                }
-              }
-            }
-          }
-        }
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!session) {
@@ -827,8 +887,9 @@ export class ZoomController {
       }
 
       // Check if user has access to this meeting
-      const hasAccess = session.hostId === userId || 
-                       session.participants.some(p => p.userId === userId);
+      const hasAccess =
+        session.hostId === userId ||
+        session.participants.some((p) => p.userId === userId);
 
       if (!hasAccess) {
         res.status(403).json({ error: 'Access denied' });
@@ -839,7 +900,9 @@ export class ZoomController {
       let zoomParticipants = null;
       if (session.status === 'ONGOING' && session.zoomMeetingId) {
         try {
-          zoomParticipants = await zoomService.getMeetingParticipants(session.zoomMeetingId);
+          zoomParticipants = await zoomService.getMeetingParticipants(
+            session.zoomMeetingId
+          );
         } catch (error) {
           console.warn('Could not fetch Zoom participants:', error);
         }
@@ -854,14 +917,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error getting meeting participants:', error);
-      res.status(500).json({ error: error.message || 'Failed to get meeting participants' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to get meeting participants' });
     }
   }
 
   /**
    * Get meeting invitations
    */
-  static async getMeetingInvitations(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async getMeetingInvitations(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const userId = req.user?.id;
@@ -882,11 +950,11 @@ export class ZoomController {
                   name: true,
                   email: true,
                   role: true,
-                }
-              }
-            }
-          }
-        }
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!session) {
@@ -895,8 +963,9 @@ export class ZoomController {
       }
 
       // Check if user has access to this meeting (host or participant)
-      const hasAccess = session.hostId === userId || 
-                       session.participants.some(p => p.userId === userId);
+      const hasAccess =
+        session.hostId === userId ||
+        session.participants.some((p) => p.userId === userId);
 
       if (!hasAccess) {
         res.status(403).json({ error: 'Access denied' });
@@ -904,7 +973,7 @@ export class ZoomController {
       }
 
       // Return invitations with user details and invitation status
-      const invitations = session.participants.map(participant => ({
+      const invitations = session.participants.map((participant) => ({
         id: participant.id,
         userId: participant.userId,
         email: participant.user.email,
@@ -924,14 +993,19 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error getting meeting invitations:', error);
-      res.status(500).json({ error: error.message || 'Failed to get meeting invitations' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to get meeting invitations' });
     }
   }
 
   /**
    * Invite users to meeting
    */
-  static async inviteToMeeting(req: AuthenticatedRequest, res: Response): Promise<void> {
+  static async inviteToMeeting(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       const { meetingId } = req.params;
       const { invitees } = req.body;
@@ -950,9 +1024,9 @@ export class ZoomController {
               id: true,
               name: true,
               email: true,
-            }
-          }
-        }
+            },
+          },
+        },
       });
 
       if (!session) {
@@ -969,7 +1043,10 @@ export class ZoomController {
       // Send Zoom invitation (if available)
       if (session.zoomMeetingId) {
         try {
-          await zoomService.sendMeetingInvitation(session.zoomMeetingId, invitees);
+          await zoomService.sendMeetingInvitation(
+            session.zoomMeetingId,
+            invitees
+          );
         } catch (error) {
           console.warn('Could not send Zoom invitation:', error);
         }
@@ -981,7 +1058,7 @@ export class ZoomController {
 
       for (const email of invitees) {
         const invitedUser = await prisma.user.findUnique({
-          where: { email }
+          where: { email },
         });
 
         if (invitedUser) {
@@ -990,7 +1067,7 @@ export class ZoomController {
               sessionId_userId: {
                 sessionId: meetingId,
                 userId: invitedUser.id,
-              }
+              },
             },
             create: {
               sessionId: meetingId,
@@ -1007,9 +1084,9 @@ export class ZoomController {
                   name: true,
                   email: true,
                   role: true,
-                }
-              }
-            }
+                },
+              },
+            },
           });
 
           newParticipants.push(participant);
@@ -1022,7 +1099,9 @@ export class ZoomController {
             meetingDescription: session.description || undefined,
             startTime: session.scheduledAt.toISOString(),
             duration: session.duration,
-            joinUrl: session.meetingLink || `http://localhost:3000/meetings/${meetingId}`,
+            joinUrl:
+              session.meetingLink ||
+              `http://localhost:3000/meetings/${meetingId}`,
             meetingId: meetingId,
             hostName: session.host.name,
             hostEmail: session.host.email,
@@ -1051,7 +1130,9 @@ export class ZoomController {
       });
     } catch (error: any) {
       console.error('Error inviting to meeting:', error);
-      res.status(500).json({ error: error.message || 'Failed to invite users' });
+      res
+        .status(500)
+        .json({ error: error.message || 'Failed to invite users' });
     }
   }
 }

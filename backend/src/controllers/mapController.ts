@@ -35,10 +35,7 @@ interface AssemblyData {
 }
 
 // Get all states for India map
-export const getStates = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getStates = async (req: Request, res: Response): Promise<void> => {
   try {
     const states = await prisma.state.findMany({
       select: {
@@ -132,9 +129,10 @@ export const getAssembliesByState = async (
     }
 
     // Merge constituency data with election data
-    const assembliesWithElectionData = constituencies.map(constituency => {
+    const assembliesWithElectionData = constituencies.map((constituency) => {
       const electionInfo = electionData.find(
-        ed => ed.Constituency.toLowerCase() === constituency.name.toLowerCase()
+        (ed) =>
+          ed.Constituency.toLowerCase() === constituency.name.toLowerCase()
       );
 
       return {
@@ -200,67 +198,81 @@ export const getPollingBoothsByAssembly = async (
       return;
     }
 
-  // Load polling booth data from form20 folder
-  let pollingBoothsData: ElectionData[] = [];
-  try {
-    const pollingDataPath = path.join(
-      process.cwd(),
-      '..',
-      'form20',
-      constituency.state.code.toLowerCase(),
-      year as string,
-      'pooling.json'
-    );
+    // Load polling booth data from form20 folder
+    let pollingBoothsData: ElectionData[] = [];
+    try {
+      const pollingDataPath = path.join(
+        process.cwd(),
+        '..',
+        'form20',
+        constituency.state.code.toLowerCase(),
+        year as string,
+        'pooling.json'
+      );
 
-    if (fs.existsSync(pollingDataPath)) {
-      const fileContent = fs.readFileSync(pollingDataPath, 'utf8');
-      const allPollingData: ElectionData[] = JSON.parse(fileContent);
-      
-      console.log(`🔍 Looking for constituency: "${constituency.name}"`);
-      console.log(`📋 Available constituencies in JSON:`, allPollingData.map(pd => pd.Constituency));
-      
-      // Try multiple matching strategies
-      pollingBoothsData = allPollingData.filter(pd => {
-        const jsonConstituency = pd.Constituency.toLowerCase().trim();
-        const dbConstituency = constituency.name.toLowerCase().trim();
-        
-        // Direct match
-        if (jsonConstituency === dbConstituency) {
-          console.log(`✅ Direct match found: "${pd.Constituency}"`);
-          return true;
-        }
-        
-        // Remove special characters and try again
-        const normalizeStr = (str: string) => str
-          .toLowerCase()
-          .replace(/[^\w\s]/g, '')
-          .replace(/\s+/g, ' ')
-          .trim();
-        
-        if (normalizeStr(jsonConstituency) === normalizeStr(dbConstituency)) {
-          console.log(`✅ Normalized match found: "${pd.Constituency}"`);
-          return true;
-        }
-        
-        // Check if one contains the other
-        if (jsonConstituency.includes(dbConstituency) || dbConstituency.includes(jsonConstituency)) {
-          console.log(`✅ Partial match found: "${pd.Constituency}"`);
-          return true;
-        }
-        
-        return false;
-      });
-      
-      console.log(`📊 Found ${pollingBoothsData.length} matching constituencies`);
+      if (fs.existsSync(pollingDataPath)) {
+        const fileContent = fs.readFileSync(pollingDataPath, 'utf8');
+        const allPollingData: ElectionData[] = JSON.parse(fileContent);
+
+        console.log(`🔍 Looking for constituency: "${constituency.name}"`);
+        console.log(
+          `📋 Available constituencies in JSON:`,
+          allPollingData.map((pd) => pd.Constituency)
+        );
+
+        // Try multiple matching strategies
+        pollingBoothsData = allPollingData.filter((pd) => {
+          const jsonConstituency = pd.Constituency.toLowerCase().trim();
+          const dbConstituency = constituency.name.toLowerCase().trim();
+
+          // Direct match
+          if (jsonConstituency === dbConstituency) {
+            console.log(`✅ Direct match found: "${pd.Constituency}"`);
+            return true;
+          }
+
+          // Remove special characters and try again
+          const normalizeStr = (str: string) =>
+            str
+              .toLowerCase()
+              .replace(/[^\w\s]/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+          if (normalizeStr(jsonConstituency) === normalizeStr(dbConstituency)) {
+            console.log(`✅ Normalized match found: "${pd.Constituency}"`);
+            return true;
+          }
+
+          // Check if one contains the other
+          if (
+            jsonConstituency.includes(dbConstituency) ||
+            dbConstituency.includes(jsonConstituency)
+          ) {
+            console.log(`✅ Partial match found: "${pd.Constituency}"`);
+            return true;
+          }
+
+          return false;
+        });
+
+        console.log(
+          `📊 Found ${pollingBoothsData.length} matching constituencies`
+        );
+      }
+    } catch (error) {
+      console.log(
+        'Polling data not found for constituency:',
+        constituencyId,
+        'year:',
+        year
+      );
+      console.error('Error details:', error);
     }
-  } catch (error) {
-    console.log('Polling data not found for constituency:', constituencyId, 'year:', year);
-    console.error('Error details:', error);
-  }
 
     // Transform polling booth data
-    const pollingBooths = pollingBoothsData.flatMap(constituencyData =>
-      (constituencyData.Assembly_Segments || []).map(booth => ({
+    const pollingBooths = pollingBoothsData.flatMap((constituencyData) =>
+      (constituencyData.Assembly_Segments || []).map((booth) => ({
         id: `${constituencyId}-${booth.Name.replace(/\s+/g, '-').toLowerCase()}`,
         name: booth.Name,
         latitude: booth.Latitude,
@@ -321,15 +333,17 @@ export const getPollingBoothDetails = async (
     const { years = '2024,2022' } = req.query;
 
     if (!constituencyId || !boothName) {
-      res.status(400).json({ 
-        error: 'Constituency ID and booth name are required' 
+      res.status(400).json({
+        error: 'Constituency ID and booth name are required',
       });
       return;
     }
 
     // Decode the booth name properly
     boothName = decodeURIComponent(boothName);
-    console.log(`🔍 Searching for booth: "${boothName}" in constituency ID: ${constituencyId}`);
+    console.log(
+      `🔍 Searching for booth: "${boothName}" in constituency ID: ${constituencyId}`
+    );
 
     // Get constituency information
     const constituency = await prisma.constituency.findUnique({
@@ -352,7 +366,9 @@ export const getPollingBoothDetails = async (
       return;
     }
 
-    console.log(`📍 Found constituency: "${constituency.name}" in state: "${constituency.state.name}" (${constituency.state.code})`);
+    console.log(
+      `📍 Found constituency: "${constituency.name}" in state: "${constituency.state.name}" (${constituency.state.code})`
+    );
     console.log(`🔍 Searching for booth: "${boothName}"`);
 
     const yearsList = (years as string).split(',');
@@ -373,65 +389,87 @@ export const getPollingBoothDetails = async (
         if (fs.existsSync(pollingDataPath)) {
           const fileContent = fs.readFileSync(pollingDataPath, 'utf8');
           const allPollingData: ElectionData[] = JSON.parse(fileContent);
-          
-          console.log(`🔍 Looking for constituency: "${constituency.name}" in year ${year}`);
-          
+
+          console.log(
+            `🔍 Looking for constituency: "${constituency.name}" in year ${year}`
+          );
+
           // Find ALL constituencies that match our search criteria
-          const matchingConstituencies = allPollingData.filter(pd => {
+          const matchingConstituencies = allPollingData.filter((pd) => {
             const jsonConstituency = pd.Constituency.toLowerCase().trim();
             const dbConstituency = constituency.name.toLowerCase().trim();
-            
+
             // Direct match
             if (jsonConstituency === dbConstituency) return true;
-            
+
             // Remove special characters and try again
-            const normalizeStr = (str: string) => str
-              .toLowerCase()
-              .replace(/[^\w\s]/g, '')
-              .replace(/\s+/g, ' ')
-              .trim();
-            
-            if (normalizeStr(jsonConstituency) === normalizeStr(dbConstituency)) return true;
-            
-            // Check if one contains the other
-            if (jsonConstituency.includes(dbConstituency) || dbConstituency.includes(jsonConstituency)) return true;
-            
-            return false;
-          });
-
-          console.log(`📋 Found ${matchingConstituencies.length} matching constituencies`);
-          
-          // Collect all assembly segments from all matching constituencies
-          let allAssemblySegments: any[] = [];
-          matchingConstituencies.forEach(constData => {
-            if (constData.Assembly_Segments) {
-              console.log(`📋 Adding ${constData.Assembly_Segments.length} segments from "${constData.Constituency}"`);
-              allAssemblySegments = allAssemblySegments.concat(constData.Assembly_Segments);
-            }
-          });
-
-          if (allAssemblySegments.length > 0) {
-            console.log(`📋 Total assembly segments to search: ${allAssemblySegments.length}`);
-            
-            const boothData = allAssemblySegments.find(booth => {
-              const jsonBoothName = booth.Name.toLowerCase().trim();
-              const searchBoothName = boothName.toLowerCase().trim();
-              
-              // Direct match
-              if (jsonBoothName === searchBoothName) return true;
-              
-              // Remove special characters and try again
-              const normalizeStr = (str: string) => str
+            const normalizeStr = (str: string) =>
+              str
                 .toLowerCase()
                 .replace(/[^\w\s]/g, '')
                 .replace(/\s+/g, ' ')
                 .trim();
-              
-              if (normalizeStr(jsonBoothName) === normalizeStr(searchBoothName)) return true;
-              
+
+            if (normalizeStr(jsonConstituency) === normalizeStr(dbConstituency))
+              return true;
+
+            // Check if one contains the other
+            if (
+              jsonConstituency.includes(dbConstituency) ||
+              dbConstituency.includes(jsonConstituency)
+            )
+              return true;
+
+            return false;
+          });
+
+          console.log(
+            `📋 Found ${matchingConstituencies.length} matching constituencies`
+          );
+
+          // Collect all assembly segments from all matching constituencies
+          let allAssemblySegments: any[] = [];
+          matchingConstituencies.forEach((constData) => {
+            if (constData.Assembly_Segments) {
+              console.log(
+                `📋 Adding ${constData.Assembly_Segments.length} segments from "${constData.Constituency}"`
+              );
+              allAssemblySegments = allAssemblySegments.concat(
+                constData.Assembly_Segments
+              );
+            }
+          });
+
+          if (allAssemblySegments.length > 0) {
+            console.log(
+              `📋 Total assembly segments to search: ${allAssemblySegments.length}`
+            );
+
+            const boothData = allAssemblySegments.find((booth) => {
+              const jsonBoothName = booth.Name.toLowerCase().trim();
+              const searchBoothName = boothName.toLowerCase().trim();
+
+              // Direct match
+              if (jsonBoothName === searchBoothName) return true;
+
+              // Remove special characters and try again
+              const normalizeStr = (str: string) =>
+                str
+                  .toLowerCase()
+                  .replace(/[^\w\s]/g, '')
+                  .replace(/\s+/g, ' ')
+                  .trim();
+
+              if (normalizeStr(jsonBoothName) === normalizeStr(searchBoothName))
+                return true;
+
               // Check if one contains the other
-              if (jsonBoothName.includes(searchBoothName) || searchBoothName.includes(jsonBoothName)) return true;
-              
+              if (
+                jsonBoothName.includes(searchBoothName) ||
+                searchBoothName.includes(jsonBoothName)
+              )
+                return true;
+
               return false;
             });
 
@@ -458,10 +496,15 @@ export const getPollingBoothDetails = async (
               };
             } else {
               console.log(`❌ No booth found for: "${boothName}"`);
-              console.log(`📋 Available booths:`, allAssemblySegments.map(b => b.Name));
+              console.log(
+                `📋 Available booths:`,
+                allAssemblySegments.map((b) => b.Name)
+              );
             }
           } else {
-            console.log(`❌ No assembly segments found for constituency: "${constituency.name}"`);
+            console.log(
+              `❌ No assembly segments found for constituency: "${constituency.name}"`
+            );
           }
         }
       } catch (error) {
@@ -470,9 +513,9 @@ export const getPollingBoothDetails = async (
     }
 
     if (Object.keys(boothDetailsData).length === 0) {
-      res.status(404).json({ 
+      res.status(404).json({
         error: 'Polling booth data not found',
-        message: `No data found for booth "${boothName}" in constituency "${constituency.name}"` 
+        message: `No data found for booth "${boothName}" in constituency "${constituency.name}"`,
       });
       return;
     }
@@ -543,17 +586,19 @@ export const getElectionComparison = async (
         if (fs.existsSync(assemblyDataPath)) {
           const fileContent = fs.readFileSync(assemblyDataPath, 'utf8');
           const assemblyData: AssemblyData[] = JSON.parse(fileContent);
-          
+
           let filteredData = assemblyData;
-          
+
           // Filter by constituency if specified
           if (constituency) {
-            filteredData = assemblyData.filter(
-              ad => ad.Constituency.toLowerCase().includes((constituency as string).toLowerCase())
+            filteredData = assemblyData.filter((ad) =>
+              ad.Constituency.toLowerCase().includes(
+                (constituency as string).toLowerCase()
+              )
             );
           }
 
-          comparisonData[year] = filteredData.map(ad => ({
+          comparisonData[year] = filteredData.map((ad) => ({
             constituency: ad.Constituency,
             latitude: ad.Latitude,
             longitude: ad.Longitude,
@@ -598,15 +643,16 @@ export const getMapStatistics = async (
     const { stateId, year = '2024' } = req.query;
 
     // Get basic statistics from database
-    const [totalStates, totalConstituencies, totalDistricts] = await Promise.all([
-      prisma.state.count(),
-      stateId 
-        ? prisma.constituency.count({ where: { stateId: stateId as string } })
-        : prisma.constituency.count(),
-      stateId
-        ? prisma.district.count({ where: { stateId: stateId as string } })
-        : prisma.district.count(),
-    ]);
+    const [totalStates, totalConstituencies, totalDistricts] =
+      await Promise.all([
+        prisma.state.count(),
+        stateId
+          ? prisma.constituency.count({ where: { stateId: stateId as string } })
+          : prisma.constituency.count(),
+        stateId
+          ? prisma.district.count({ where: { stateId: stateId as string } })
+          : prisma.district.count(),
+      ]);
 
     let electionStats = null;
 
@@ -631,15 +677,23 @@ export const getMapStatistics = async (
             const fileContent = fs.readFileSync(assemblyDataPath, 'utf8');
             const assemblyData: AssemblyData[] = JSON.parse(fileContent);
 
-            const totalVotes = assemblyData.reduce((sum, ad) => sum + ad.Total_Votes_Constituency, 0);
-            const totalNotaVotes = assemblyData.reduce((sum, ad) => sum + ad.NOTA_Votes_Constituency, 0);
-            
+            const totalVotes = assemblyData.reduce(
+              (sum, ad) => sum + ad.Total_Votes_Constituency,
+              0
+            );
+            const totalNotaVotes = assemblyData.reduce(
+              (sum, ad) => sum + ad.NOTA_Votes_Constituency,
+              0
+            );
+
             // Calculate party-wise statistics
             const partyStats: Record<string, number> = {};
-            assemblyData.forEach(ad => {
-              Object.entries(ad.Party_Votes_Assembly_Aggregated).forEach(([party, votes]) => {
-                partyStats[party] = (partyStats[party] || 0) + votes;
-              });
+            assemblyData.forEach((ad) => {
+              Object.entries(ad.Party_Votes_Assembly_Aggregated).forEach(
+                ([party, votes]) => {
+                  partyStats[party] = (partyStats[party] || 0) + votes;
+                }
+              );
             });
 
             electionStats = {

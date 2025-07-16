@@ -4,14 +4,14 @@ import zoomService from '../services/zoomService';
 /**
  * Simplified test script to verify Zoom API integration
  * Run this with: npm run test:zoom:simple
- * 
+ *
  * IMPORTANT: Before running this test, ensure your Zoom Server-to-Server OAuth app
  * has the following scopes enabled:
  * - meeting:read:meeting
  * - meeting:write:meeting
  * - user:read:user
  * - user:read:user:admin
- * 
+ *
  * To configure your Zoom app:
  * 1. Go to https://marketplace.zoom.us/develop/create
  * 2. Create a Server-to-Server OAuth app
@@ -50,7 +50,9 @@ async function testZoomIntegration() {
 
     // Test 3: Get meeting details
     console.log('\n3. Testing getMeeting()...');
-    const meetingDetails = await zoomService.getMeeting(testMeeting.id.toString());
+    const meetingDetails = await zoomService.getMeeting(
+      testMeeting.id.toString()
+    );
     console.log('✅ Meeting details retrieved:', {
       id: meetingDetails.id,
       topic: meetingDetails.topic,
@@ -71,17 +73,27 @@ async function testZoomIntegration() {
     await zoomService.deleteMeeting(testMeeting.id.toString());
     console.log('✅ Meeting deleted successfully');
 
-    console.log('\n🎉 All tests passed! Zoom integration is working correctly.');
-    console.log('\nYour Zoom Server-to-Server OAuth app is properly configured.');
-    console.log('You can now use the Zoom meeting functionality in your application.');
-
+    console.log(
+      '\n🎉 All tests passed! Zoom integration is working correctly.'
+    );
+    console.log(
+      '\nYour Zoom Server-to-Server OAuth app is properly configured.'
+    );
+    console.log(
+      'You can now use the Zoom meeting functionality in your application.'
+    );
   } catch (error: any) {
     console.error('❌ Test failed:', error.message);
     console.error('Error details:', error);
-    
-    if (error.message.includes('Invalid access token') || error.message.includes('scopes')) {
+
+    if (
+      error.message.includes('Invalid access token') ||
+      error.message.includes('scopes')
+    ) {
       console.log('\n📋 SETUP REQUIRED:');
-      console.log('Your Zoom Server-to-Server OAuth app needs the following scopes:');
+      console.log(
+        'Your Zoom Server-to-Server OAuth app needs the following scopes:'
+      );
       console.log('• meeting:read:meeting');
       console.log('• meeting:write:meeting');
       console.log('• user:read:user');
@@ -94,7 +106,7 @@ async function testZoomIntegration() {
       console.log('5. Save the changes');
       console.log('6. Run this test again');
     }
-    
+
     process.exit(1);
   }
 }

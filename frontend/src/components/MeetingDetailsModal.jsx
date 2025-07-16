@@ -18,7 +18,7 @@ import {
   Repeat,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
   const [participants, setParticipants] = useState([]);
@@ -34,7 +34,7 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
     try {
       const response = await api.get(`/meetings/${meeting.id}/participants`);
       console.log('Participants fetched:', response.data.participants);
-      
+
       setParticipants(response.data.data.participants || []);
     } catch (error) {
       console.error('Error fetching participants:', error);
@@ -159,11 +159,13 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
         <div className="p-6 space-y-6">
           {/* Meeting Status */}
           <div className="flex items-center justify-between">
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium gap-2 ${getStatusColor(meeting.status)}`}>
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium gap-2 ${getStatusColor(meeting.status)}`}
+            >
               {getStatusIcon(meeting.status)}
               {meeting.status}
             </span>
-            
+
             {meeting.status === 'ONGOING' && (
               <div className="flex gap-2">
                 <button
@@ -183,7 +185,7 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 </button>
               </div>
             )}
-            
+
             {meeting.status === 'SCHEDULED' && (
               <button
                 onClick={handleJoinMeeting}
@@ -205,7 +207,9 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 <input
                   type="text"
                   value={editData.topic}
-                  onChange={(e) => setEditData(prev => ({ ...prev, topic: e.target.value }))}
+                  onChange={(e) =>
+                    setEditData((prev) => ({ ...prev, topic: e.target.value }))
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
@@ -217,7 +221,9 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 </label>
                 <textarea
                   value={editData.agenda}
-                  onChange={(e) => setEditData(prev => ({ ...prev, agenda: e.target.value }))}
+                  onChange={(e) =>
+                    setEditData((prev) => ({ ...prev, agenda: e.target.value }))
+                  }
                   rows="3"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -230,7 +236,12 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 <input
                   type="number"
                   value={editData.duration}
-                  onChange={(e) => setEditData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+                  onChange={(e) =>
+                    setEditData((prev) => ({
+                      ...prev,
+                      duration: parseInt(e.target.value),
+                    }))
+                  }
                   min="1"
                   max="1440"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -258,7 +269,9 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">{meeting.title}</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  {meeting.title}
+                </h3>
                 {meeting.status !== 'COMPLETED' && (
                   <button
                     onClick={() => setEditMode(true)}
@@ -277,24 +290,36 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <Calendar className="w-5 h-5 text-gray-600" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Date & Time</p>
-                    <p className="text-sm text-gray-600">{formatDateTime(meeting.scheduledAt)}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      Date & Time
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {formatDateTime(meeting.scheduledAt)}
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <Clock className="w-5 h-5 text-gray-600" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Duration</p>
-                    <p className="text-sm text-gray-600">{meeting.duration} minutes</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      Duration
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {meeting.duration} minutes
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <Users className="w-5 h-5 text-gray-600" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Participants</p>
-                    <p className="text-sm text-gray-600">{participants.length} invited</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      Participants
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {participants.length} invited
+                    </p>
                   </div>
                 </div>
 
@@ -317,7 +342,9 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                   <Repeat className="w-5 h-5 text-blue-600" />
                   <div>
-                    <p className="text-sm font-medium text-blue-900">Recurring Meeting</p>
+                    <p className="text-sm font-medium text-blue-900">
+                      Recurring Meeting
+                    </p>
                     <p className="text-sm text-blue-600">
                       This is a recurring meeting
                     </p>
@@ -330,7 +357,9 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
           {/* Meeting Links */}
           {meeting.meetingLink && (
             <div className="border-t pt-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-3">Meeting Links</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-3">
+                Meeting Links
+              </h4>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <input
@@ -378,11 +407,16 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
 
           {/* Participants */}
           <div className="border-t pt-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-3">Participants ({participants.length})</h4>
+            <h4 className="text-sm font-medium text-gray-900 mb-3">
+              Participants ({participants.length})
+            </h4>
             {participants.length > 0 ? (
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {participants.map((participant) => (
-                  <div key={participant.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg">
+                  <div
+                    key={participant.id}
+                    className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg"
+                  >
                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4 text-gray-600" />
                     </div>
@@ -390,13 +424,19 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                       <p className="text-sm font-medium text-gray-900">
                         {participant.user?.name || 'Unknown User'}
                       </p>
-                      <p className="text-xs text-gray-500">{participant.user?.email}</p>
+                      <p className="text-xs text-gray-500">
+                        {participant.user?.email}
+                      </p>
                     </div>
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      participant.status === 'JOINED' ? 'bg-green-100 text-green-800' :
-                      participant.status === 'INVITED' ? 'bg-blue-100 text-blue-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        participant.status === 'JOINED'
+                          ? 'bg-green-100 text-green-800'
+                          : participant.status === 'INVITED'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {participant.status}
                     </span>
                   </div>

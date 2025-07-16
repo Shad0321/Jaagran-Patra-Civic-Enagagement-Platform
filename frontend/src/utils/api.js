@@ -18,7 +18,7 @@ export const apiRequest = async (endpoint, options = {}) => {
 
   if (!response.ok) {
     const error = await response.json();
-    if(error.error) {
+    if (error.error) {
       throw new Error(error.error);
     }
     throw new Error(error.message || 'API request failed');
@@ -41,7 +41,7 @@ const api = {
     let url = `${API_BASE_URL}${endpoint}`;
     if (config.params) {
       const searchParams = new URLSearchParams();
-      Object.keys(config.params).forEach(key => {
+      Object.keys(config.params).forEach((key) => {
         const value = config.params[key];
         if (value !== undefined && value !== null) {
           searchParams.append(key, value.toString());
@@ -215,11 +215,7 @@ export const authAPI = {
 
   getProfile: () => apiRequest('/auth/profile'),
 
-  updateProfile: (userData) =>
-    apiRequest('/auth/profile', {
-      method: 'PUT',
-      body: JSON.stringify(userData),
-    }),
+  updateProfile: (userData) => api.put('/auth/profile', userData),
 
   changePassword: (passwordData) =>
     apiRequest('/auth/change-password', {

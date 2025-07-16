@@ -13,7 +13,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import AddBodyModal from '../components/AddBodyModal';
 import EditBodyModal from '../components/EditBodyModal';
 
@@ -66,17 +66,17 @@ const BodyManagement = () => {
       const membersData = membersResponse.data.members || [];
 
       // Add member count to each body
-      const bodiesWithMembers = bodiesData.map(body => ({
+      const bodiesWithMembers = bodiesData.map((body) => ({
         ...body,
-        memberCount: membersData.filter(m => m.body?.id === body.id).length,
+        memberCount: membersData.filter((m) => m.body?.id === body.id).length,
       }));
 
       setBodies(bodiesWithMembers);
-      
+
       // Calculate stats
-      const activeBodies = bodiesWithMembers.filter(b => b.isActive).length;
+      const activeBodies = bodiesWithMembers.filter((b) => b.isActive).length;
       const totalMembers = membersData.length;
-      
+
       setStats({
         totalBodies: bodiesWithMembers.length,
         activeBodies,
@@ -100,7 +100,11 @@ const BodyManagement = () => {
   };
 
   const handleDeleteBody = async (bodyId) => {
-    if (!window.confirm('Are you sure you want to delete this body? This will unassign all members from it.')) {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete this body? This will unassign all members from it.'
+      )
+    ) {
       return;
     }
 
@@ -114,15 +118,16 @@ const BodyManagement = () => {
     }
   };
 
-  const filteredBodies = bodies.filter(body => {
-    const matchesSearch = body.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         body.code.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredBodies = bodies.filter((body) => {
+    const matchesSearch =
+      body.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      body.code.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesBodyType = !selectedBodyType || body.type === selectedBodyType;
     return matchesSearch && matchesBodyType;
   });
 
   const getBodyTypeLabel = (type) => {
-    const bodyType = bodyTypes.find(bt => bt.value === type);
+    const bodyType = bodyTypes.find((bt) => bt.value === type);
     return bodyType ? bodyType.label : type.replace(/_/g, ' ');
   };
 
@@ -163,7 +168,9 @@ const BodyManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Bodies</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalBodies}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {stats.totalBodies}
+              </p>
             </div>
             <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <Building className="h-6 w-6 text-blue-600" />
@@ -175,7 +182,9 @@ const BodyManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Active Bodies</p>
-              <p className="text-2xl font-bold text-green-600">{stats.activeBodies}</p>
+              <p className="text-2xl font-bold text-green-600">
+                {stats.activeBodies}
+              </p>
             </div>
             <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
               <CheckCircle className="h-6 w-6 text-green-600" />
@@ -187,7 +196,9 @@ const BodyManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Members</p>
-              <p className="text-2xl font-bold text-purple-600">{stats.totalMembers}</p>
+              <p className="text-2xl font-bold text-purple-600">
+                {stats.totalMembers}
+              </p>
             </div>
             <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <Users className="h-6 w-6 text-purple-600" />
@@ -201,7 +212,7 @@ const BodyManagement = () => {
         <h2 className="text-lg font-semibold text-gray-900">
           Bodies ({filteredBodies.length})
         </h2>
-        
+
         <div className="flex space-x-4">
           {/* Search */}
           <div className="relative">
@@ -222,7 +233,7 @@ const BodyManagement = () => {
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Body Types</option>
-            {bodyTypes.map(type => (
+            {bodyTypes.map((type) => (
               <option key={type.value} value={type.value}>
                 {type.label}
               </option>
@@ -247,7 +258,9 @@ const BodyManagement = () => {
                         <Building className="h-5 w-5 text-purple-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">{body.name}</h3>
+                        <h3 className="font-medium text-gray-900">
+                          {body.name}
+                        </h3>
                         <p className="text-sm text-gray-600">{body.code}</p>
                       </div>
                     </div>
@@ -305,7 +318,9 @@ const BodyManagement = () => {
                   <div className="mt-3 pt-3 border-t border-gray-200">
                     <div className="flex justify-between text-xs text-gray-500">
                       <span>Members: {body.memberCount || 0}</span>
-                      <span>Status: {body.isActive ? 'Active' : 'Inactive'}</span>
+                      <span>
+                        Status: {body.isActive ? 'Active' : 'Inactive'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -316,10 +331,9 @@ const BodyManagement = () => {
               <Building className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p>No bodies found</p>
               <p className="text-sm">
-                {searchTerm || selectedBodyType 
+                {searchTerm || selectedBodyType
                   ? 'Try adjusting your search or filters'
-                  : 'Add your first body to get started'
-                }
+                  : 'Add your first body to get started'}
               </p>
             </div>
           )}

@@ -10,7 +10,7 @@ import {
   Clock as ClockIcon,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
   const [formData, setFormData] = useState({

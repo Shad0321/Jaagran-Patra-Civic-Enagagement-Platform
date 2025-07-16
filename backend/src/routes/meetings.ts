@@ -15,11 +15,19 @@ const createInstantMeetingValidation = [
 const createScheduledMeetingValidation = [
   body('topic').isString().trim().notEmpty().withMessage('Topic is required'),
   body('agenda').optional().isString().trim(),
-  body('startTime').isISO8601().toDate().withMessage('Valid start time is required'),
-  body('duration').isInt({ min: 1, max: 1440 }).withMessage('Duration must be between 1 and 1440 minutes'),
+  body('startTime')
+    .isISO8601()
+    .toDate()
+    .withMessage('Valid start time is required'),
+  body('duration')
+    .isInt({ min: 1, max: 1440 })
+    .withMessage('Duration must be between 1 and 1440 minutes'),
   body('timezone').optional().isString().trim(),
   body('invitees').optional().isArray(),
-  body('invitees.*').optional().isEmail().withMessage('Invalid email in invitees'),
+  body('invitees.*')
+    .optional()
+    .isEmail()
+    .withMessage('Invalid email in invitees'),
   body('isOpenToAll').optional().isBoolean(),
   body('settings').optional().isObject(),
 ];
@@ -27,40 +35,97 @@ const createScheduledMeetingValidation = [
 const createRecurringMeetingValidation = [
   body('topic').isString().trim().notEmpty().withMessage('Topic is required'),
   body('agenda').optional().isString().trim(),
-  body('startTime').isISO8601().toDate().withMessage('Valid start time is required'),
-  body('duration').isInt({ min: 1, max: 1440 }).withMessage('Duration must be between 1 and 1440 minutes'),
-  body('recurrenceType').isInt({ min: 1, max: 3 }).withMessage('Recurrence type must be 1 (Daily), 2 (Weekly), or 3 (Monthly)'),
-  body('repeatInterval').isInt({ min: 1 }).withMessage('Repeat interval must be at least 1'),
-  body('endTimes').optional().isInt({ min: 1 }).withMessage('End times must be at least 1'),
-  body('endDateTime').optional().isISO8601().toDate().withMessage('Valid end date time is required'),
+  body('startTime')
+    .isISO8601()
+    .toDate()
+    .withMessage('Valid start time is required'),
+  body('duration')
+    .isInt({ min: 1, max: 1440 })
+    .withMessage('Duration must be between 1 and 1440 minutes'),
+  body('recurrenceType')
+    .isInt({ min: 1, max: 3 })
+    .withMessage(
+      'Recurrence type must be 1 (Daily), 2 (Weekly), or 3 (Monthly)'
+    ),
+  body('repeatInterval')
+    .isInt({ min: 1 })
+    .withMessage('Repeat interval must be at least 1'),
+  body('endTimes')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('End times must be at least 1'),
+  body('endDateTime')
+    .optional()
+    .isISO8601()
+    .toDate()
+    .withMessage('Valid end date time is required'),
   body('timezone').optional().isString().trim(),
   body('invitees').optional().isArray(),
-  body('invitees.*').optional().isEmail().withMessage('Invalid email in invitees'),
+  body('invitees.*')
+    .optional()
+    .isEmail()
+    .withMessage('Invalid email in invitees'),
   body('isOpenToAll').optional().isBoolean(),
   body('settings').optional().isObject(),
 ];
 
 const meetingIdValidation = [
-  param('meetingId').isString().trim().notEmpty().withMessage('Meeting ID is required'),
+  param('meetingId')
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage('Meeting ID is required'),
 ];
 
 const getUserMeetingsValidation = [
-  query('type').optional().isIn(['all', 'upcoming', 'past', 'ongoing']).withMessage('Invalid meeting type'),
-  query('page').optional().isInt({ min: 1 }).withMessage('Page must be at least 1'),
-  query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
+  query('type')
+    .optional()
+    .isIn(['all', 'upcoming', 'past', 'ongoing'])
+    .withMessage('Invalid meeting type'),
+  query('page')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Page must be at least 1'),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage('Limit must be between 1 and 100'),
 ];
 
 const updateMeetingValidation = [
-  param('meetingId').isString().trim().notEmpty().withMessage('Meeting ID is required'),
-  body('topic').optional().isString().trim().notEmpty().withMessage('Topic cannot be empty'),
+  param('meetingId')
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage('Meeting ID is required'),
+  body('topic')
+    .optional()
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage('Topic cannot be empty'),
   body('agenda').optional().isString().trim(),
-  body('startTime').optional().isISO8601().toDate().withMessage('Valid start time is required'),
-  body('duration').optional().isInt({ min: 1, max: 1440 }).withMessage('Duration must be between 1 and 1440 minutes'),
+  body('startTime')
+    .optional()
+    .isISO8601()
+    .toDate()
+    .withMessage('Valid start time is required'),
+  body('duration')
+    .optional()
+    .isInt({ min: 1, max: 1440 })
+    .withMessage('Duration must be between 1 and 1440 minutes'),
 ];
 
 const inviteToMeetingValidation = [
-  param('meetingId').isString().trim().notEmpty().withMessage('Meeting ID is required'),
-  body('invitees').isArray().notEmpty().withMessage('Invitees list is required'),
+  param('meetingId')
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage('Meeting ID is required'),
+  body('invitees')
+    .isArray()
+    .notEmpty()
+    .withMessage('Invitees list is required'),
   body('invitees.*').isEmail().withMessage('Invalid email in invitees'),
 ];
 

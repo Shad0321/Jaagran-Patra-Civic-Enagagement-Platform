@@ -26,17 +26,20 @@ export const corsConfig = cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, curl requests, etc.)
     if (!origin) return callback(null, true);
-    
+
     // Check if the origin is in the allowed origins
     if (config.allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    
+
     // In development, allow localhost with any port
-    if (config.nodeEnv === 'development' && origin.match(/^http:\/\/localhost:\d+$/)) {
+    if (
+      config.nodeEnv === 'development' &&
+      origin.match(/^http:\/\/localhost:\d+$/)
+    ) {
       return callback(null, true);
     }
-    
+
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,

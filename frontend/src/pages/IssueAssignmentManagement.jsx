@@ -15,7 +15,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import IssueAssignmentModal from '../components/IssueAssignmentModal';
 
 const IssueAssignmentManagement = () => {
@@ -46,15 +46,18 @@ const IssueAssignmentManagement = () => {
       const response = await api.get('/issues/assigned-to-me');
       const issuesData = response.data.data.issues || [];
       setIssues(issuesData);
-      
+
       // Calculate stats
       const stats = {
         total: issuesData.length,
-        assigned: issuesData.filter(issue => issue.assignedTo).length,
-        unassigned: issuesData.filter(issue => !issue.assignedTo).length,
-        pending: issuesData.filter(issue => issue.status === 'PENDING').length,
-        inProgress: issuesData.filter(issue => issue.status === 'IN_PROGRESS').length,
-        resolved: issuesData.filter(issue => issue.status === 'RESOLVED').length,
+        assigned: issuesData.filter((issue) => issue.assignedTo).length,
+        unassigned: issuesData.filter((issue) => !issue.assignedTo).length,
+        pending: issuesData.filter((issue) => issue.status === 'PENDING')
+          .length,
+        inProgress: issuesData.filter((issue) => issue.status === 'IN_PROGRESS')
+          .length,
+        resolved: issuesData.filter((issue) => issue.status === 'RESOLVED')
+          .length,
       };
       setStats(stats);
     } catch (error) {
@@ -104,21 +107,24 @@ const IssueAssignmentManagement = () => {
     }
   };
 
-  const filteredIssues = issues.filter(issue => {
-    const matchesSearch = 
+  const filteredIssues = issues.filter((issue) => {
+    const matchesSearch =
       issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       issue.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       issue.ticketId.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = !statusFilter || issue.status === statusFilter;
-    const matchesPriority = !priorityFilter || issue.priority === priorityFilter;
-    
-    const matchesAssignment = 
-      !assignmentFilter || 
+    const matchesPriority =
+      !priorityFilter || issue.priority === priorityFilter;
+
+    const matchesAssignment =
+      !assignmentFilter ||
       (assignmentFilter === 'assigned' && issue.assignedTo) ||
       (assignmentFilter === 'unassigned' && !issue.assignedTo);
-    
-    return matchesSearch && matchesStatus && matchesPriority && matchesAssignment;
+
+    return (
+      matchesSearch && matchesStatus && matchesPriority && matchesAssignment
+    );
   });
 
   if (loading) {
@@ -145,7 +151,9 @@ const IssueAssignmentManagement = () => {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Issue Assignment Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Issue Assignment Management
+        </h1>
         <p className="text-gray-600 mt-1">
           Manage issue assignments to your team members
         </p>
@@ -166,7 +174,9 @@ const IssueAssignmentManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Assigned</p>
-              <p className="text-2xl font-bold text-green-600">{stats.assigned}</p>
+              <p className="text-2xl font-bold text-green-600">
+                {stats.assigned}
+              </p>
             </div>
             <UserPlus className="h-8 w-8 text-green-600" />
           </div>
@@ -175,7 +185,9 @@ const IssueAssignmentManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Unassigned</p>
-              <p className="text-2xl font-bold text-red-600">{stats.unassigned}</p>
+              <p className="text-2xl font-bold text-red-600">
+                {stats.unassigned}
+              </p>
             </div>
             <AlertCircle className="h-8 w-8 text-red-600" />
           </div>
@@ -184,7 +196,9 @@ const IssueAssignmentManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">In Progress</p>
-              <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {stats.inProgress}
+              </p>
             </div>
             <RotateCcw className="h-8 w-8 text-blue-600" />
           </div>
@@ -244,30 +258,41 @@ const IssueAssignmentManagement = () => {
             Issues ({filteredIssues.length})
           </h2>
         </div>
-        
+
         {filteredIssues.length > 0 ? (
           <div className="divide-y divide-gray-200">
             {filteredIssues.map((issue) => (
-              <div key={issue.id} className="p-6 hover:bg-gray-50 transition-colors">
+              <div
+                key={issue.id}
+                className="p-6 hover:bg-gray-50 transition-colors"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-medium text-gray-900">{issue.title}</h3>
-                      <span className="text-sm text-gray-500">#{issue.ticketId}</span>
+                      <h3 className="font-medium text-gray-900">
+                        {issue.title}
+                      </h3>
+                      <span className="text-sm text-gray-500">
+                        #{issue.ticketId}
+                      </span>
                       <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}
+                        >
                           {issue.status}
                         </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}
+                        >
                           {issue.priority}
                         </span>
                       </div>
                     </div>
-                    
+
                     <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                       {issue.description}
                     </p>
-                    
+
                     <div className="flex items-center space-x-6 text-sm text-gray-500">
                       <div className="flex items-center space-x-1">
                         <MapPin className="h-4 w-4" />
@@ -275,7 +300,9 @@ const IssueAssignmentManagement = () => {
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-4 w-4" />
-                        <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
+                        <span>
+                          {new Date(issue.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
                       {issue.assignedTo ? (
                         <div className="flex items-center space-x-1 text-green-600">
@@ -290,7 +317,7 @@ const IssueAssignmentManagement = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2 ml-4">
                     <button
                       onClick={() => openAssignmentModal(issue)}
@@ -311,7 +338,9 @@ const IssueAssignmentManagement = () => {
           <div className="text-center py-12">
             <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <p className="text-gray-500">No issues found</p>
-            <p className="text-sm text-gray-400">Try adjusting your search or filters</p>
+            <p className="text-sm text-gray-400">
+              Try adjusting your search or filters
+            </p>
           </div>
         )}
       </div>

@@ -133,20 +133,20 @@
   .rich-content h1 {
     font-size: 1.75rem;
   }
-  
+
   .rich-content h2 {
     font-size: 1.375rem;
   }
-  
+
   .rich-content h3 {
     font-size: 1.125rem;
   }
-  
+
   .rich-content ul,
   .rich-content ol {
     padding-left: 1.5rem;
   }
-  
+
   .rich-content blockquote {
     padding-left: 1rem;
     margin: 1rem 0;

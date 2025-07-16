@@ -23,6 +23,7 @@ import BodyManagement from '../pages/BodyManagement.jsx';
 import IssueAssignmentManagement from '../pages/IssueAssignmentManagement.jsx';
 import AnalyticsReport from '../pages/AnalyticsReport.jsx';
 import VerifyEmail from '../pages/VerifyEmail.jsx';
+import MLAProfiles from '../pages/MLAProfiles.jsx';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       { path: 'choose-language', element: <ChooseLanguage /> },
       { path: 'forgot-password', element: <ForgotPassword /> },
       { path: 'reset-password', element: <ResetPassword /> },
+      { path: 'reset-my-password', element: <ResetPassword /> },
       {
         path: 'login',
         element: (
@@ -190,6 +192,7 @@ const router = createBrowserRouter([
         ),
       },
       { path: 'verify-email', element: <VerifyEmail /> },
+      { path: 'mla-profiles', element: <MLAProfiles /> },
       //   { path: "*", element: <NotFound /> },
     ],
   },

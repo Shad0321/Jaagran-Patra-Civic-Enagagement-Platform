@@ -15,10 +15,12 @@ export interface GeocodingResult {
   };
 }
 
-export async function geocodeAddress(address: string): Promise<GeocodingResult | null> {
+export async function geocodeAddress(
+  address: string
+): Promise<GeocodingResult | null> {
   try {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    
+
     if (!apiKey) {
       console.warn('Google Maps API key not configured. Skipping geocoding.');
       return null;
@@ -45,7 +47,10 @@ export async function geocodeAddress(address: string): Promise<GeocodingResult |
 
       result.address_components.forEach((component) => {
         const types = component.types as string[];
-        if (types.includes('locality') || types.includes('administrative_area_level_2')) {
+        if (
+          types.includes('locality') ||
+          types.includes('administrative_area_level_2')
+        ) {
           addressComponents.city = component.long_name;
         } else if (types.includes('administrative_area_level_1')) {
           addressComponents.state = component.long_name;
@@ -71,12 +76,17 @@ export async function geocodeAddress(address: string): Promise<GeocodingResult |
   }
 }
 
-export async function reverseGeocode(latitude: number, longitude: number): Promise<GeocodingResult | null> {
+export async function reverseGeocode(
+  latitude: number,
+  longitude: number
+): Promise<GeocodingResult | null> {
   try {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    
+
     if (!apiKey) {
-      console.warn('Google Maps API key not configured. Skipping reverse geocoding.');
+      console.warn(
+        'Google Maps API key not configured. Skipping reverse geocoding.'
+      );
       return null;
     }
 
@@ -101,7 +111,10 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
 
       result.address_components.forEach((component) => {
         const types = component.types as string[];
-        if (types.includes('locality') || types.includes('administrative_area_level_2')) {
+        if (
+          types.includes('locality') ||
+          types.includes('administrative_area_level_2')
+        ) {
           addressComponents.city = component.long_name;
         } else if (types.includes('administrative_area_level_1')) {
           addressComponents.state = component.long_name;

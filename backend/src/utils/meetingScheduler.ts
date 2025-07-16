@@ -32,23 +32,35 @@ export class MeetingScheduler {
   /**
    * Validate meeting time
    */
-  static validateMeetingTime(startTime: Date, duration: number): { isValid: boolean; error?: string } {
+  static validateMeetingTime(
+    startTime: Date,
+    duration: number
+  ): { isValid: boolean; error?: string } {
     const now = new Date();
     const endTime = new Date(startTime.getTime() + duration * 60000);
 
     // Check if start time is in the past
     if (startTime <= now) {
-      return { isValid: false, error: 'Meeting start time must be in the future' };
+      return {
+        isValid: false,
+        error: 'Meeting start time must be in the future',
+      };
     }
 
     // Check if meeting is too long (max 8 hours)
     if (duration > 480) {
-      return { isValid: false, error: 'Meeting duration cannot exceed 8 hours' };
+      return {
+        isValid: false,
+        error: 'Meeting duration cannot exceed 8 hours',
+      };
     }
 
     // Check if meeting is too short (min 1 minute)
     if (duration < 1) {
-      return { isValid: false, error: 'Meeting duration must be at least 1 minute' };
+      return {
+        isValid: false,
+        error: 'Meeting duration must be at least 1 minute',
+      };
     }
 
     return { isValid: true };
@@ -109,7 +121,8 @@ export class MeetingScheduler {
 
     return {
       hasConflict: conflictingSessions.length > 0,
-      conflictingSessions: conflictingSessions.length > 0 ? conflictingSessions : undefined,
+      conflictingSessions:
+        conflictingSessions.length > 0 ? conflictingSessions : undefined,
     };
   }
 
@@ -139,7 +152,7 @@ export class MeetingScheduler {
           currentDate.setDate(currentDate.getDate() + recurrence.interval);
           break;
         case 'weekly':
-          currentDate.setDate(currentDate.getDate() + (7 * recurrence.interval));
+          currentDate.setDate(currentDate.getDate() + 7 * recurrence.interval);
           break;
         case 'monthly':
           currentDate.setMonth(currentDate.getMonth() + recurrence.interval);
@@ -197,9 +210,11 @@ export class MeetingScheduler {
   static calculateTimezoneOffset(timezone: string): number {
     const now = new Date();
     const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-    
+
     try {
-      const targetTime = new Date(utc.toLocaleString('en-US', { timeZone: timezone }));
+      const targetTime = new Date(
+        utc.toLocaleString('en-US', { timeZone: timezone })
+      );
       return (targetTime.getTime() - utc.getTime()) / (1000 * 60 * 60);
     } catch (error) {
       console.warn('Invalid timezone:', timezone);
@@ -228,8 +243,10 @@ export class MeetingScheduler {
    */
   static generateMeetingSummary(sessionData: any): string {
     const startTime = new Date(sessionData.scheduledAt);
-    const endTime = new Date(startTime.getTime() + sessionData.duration * 60000);
-    
+    const endTime = new Date(
+      startTime.getTime() + sessionData.duration * 60000
+    );
+
     const formatTime = (date: Date) => {
       return date.toLocaleString('en-US', {
         weekday: 'long',
@@ -246,19 +263,19 @@ export class MeetingScheduler {
     summary += `Host: ${sessionData.host.name} (${sessionData.host.email})\n`;
     summary += `Date & Time: ${formatTime(startTime)}\n`;
     summary += `Duration: ${this.formatDuration(sessionData.duration)}\n`;
-    
+
     if (sessionData.description) {
       summary += `Description: ${sessionData.description}\n`;
     }
-    
+
     if (sessionData.agenda) {
       summary += `Agenda: ${sessionData.agenda}\n`;
     }
-    
+
     if (sessionData.participants && sessionData.participants.length > 0) {
       summary += `Participants: ${sessionData.participants.length}\n`;
     }
-    
+
     if (sessionData.meetingLink) {
       summary += `Join URL: ${sessionData.meetingLink}\n`;
     }
@@ -388,12 +405,16 @@ export class MeetingScheduler {
     ];
 
     for (const interval of reminderIntervals) {
-      const reminderTime = new Date(meetingTime.getTime() - interval.minutes * 60000);
-      
+      const reminderTime = new Date(
+        meetingTime.getTime() - interval.minutes * 60000
+      );
+
       if (reminderTime > now) {
         // Here you would integrate with a job scheduler like Bull, Agenda, or node-cron
         // For now, we'll just log the reminder schedule
-        console.log(`Reminder scheduled for ${reminderTime.toISOString()} (${interval.label} before meeting)`);
+        console.log(
+          `Reminder scheduled for ${reminderTime.toISOString()} (${interval.label} before meeting)`
+        );
       }
     }
   }
@@ -401,9 +422,12 @@ export class MeetingScheduler {
   /**
    * Get meeting statistics
    */
-  static async getMeetingStatistics(hostId: string, dateRange?: { start: Date; end: Date }): Promise<any> {
+  static async getMeetingStatistics(
+    hostId: string,
+    dateRange?: { start: Date; end: Date }
+  ): Promise<any> {
     const whereClause: any = { hostId };
-    
+
     if (dateRange) {
       whereClause.scheduledAt = {
         gte: dateRange.start,
@@ -460,7 +484,8 @@ export class MeetingScheduler {
       upcomingMeetings,
       averageDuration: avgDuration._avg.duration || 0,
       totalParticipants,
-      completionRate: totalMeetings > 0 ? (completedMeetings / totalMeetings) * 100 : 0,
+      completionRate:
+        totalMeetings > 0 ? (completedMeetings / totalMeetings) * 100 : 0,
     };
   }
 }

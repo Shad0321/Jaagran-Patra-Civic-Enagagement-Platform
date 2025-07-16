@@ -3,11 +3,13 @@
 This document describes the Zoom meeting API endpoints that allow MLAs to create, manage, and conduct meetings with their members and other participants.
 
 ## Base URL
+
 ```
 /meetings
 ```
 
 ## Authentication
+
 All endpoints require authentication using JWT tokens. Only users with the `MLA` role can create meetings.
 
 ## Endpoints
@@ -19,6 +21,7 @@ All endpoints require authentication using JWT tokens. Only users with the `MLA`
 Creates an instant meeting that starts immediately.
 
 **Request Body:**
+
 ```json
 {
   "topic": "Emergency Community Meeting",
@@ -27,6 +30,7 @@ Creates an instant meeting that starts immediately.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -62,6 +66,7 @@ Creates an instant meeting that starts immediately.
 Creates a scheduled meeting for a future date and time.
 
 **Request Body:**
+
 ```json
 {
   "topic": "Monthly Community Review",
@@ -83,6 +88,7 @@ Creates a scheduled meeting for a future date and time.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -120,6 +126,7 @@ Creates a scheduled meeting for a future date and time.
 Creates a recurring meeting with a specified pattern.
 
 **Request Body:**
+
 ```json
 {
   "topic": "Weekly Status Update",
@@ -140,12 +147,14 @@ Creates a recurring meeting with a specified pattern.
 ```
 
 **Parameters:**
+
 - `recurrenceType`: 1 (Daily), 2 (Weekly), 3 (Monthly)
 - `repeatInterval`: How often to repeat (e.g., every 2 weeks)
 - `endTimes`: Number of occurrences (optional)
 - `endDateTime`: End date for recurrence (optional)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -191,11 +200,13 @@ Creates a recurring meeting with a specified pattern.
 Retrieves meetings for the authenticated user.
 
 **Query Parameters:**
+
 - `type`: `all`, `upcoming`, `past`, `ongoing` (default: `all`)
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 10)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -243,6 +254,7 @@ Retrieves meetings for the authenticated user.
 Retrieves detailed information about a specific meeting.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -291,6 +303,7 @@ Retrieves detailed information about a specific meeting.
 Updates an existing meeting. Only the host can update meetings.
 
 **Request Body:**
+
 ```json
 {
   "topic": "Updated Meeting Title",
@@ -301,6 +314,7 @@ Updates an existing meeting. Only the host can update meetings.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -321,6 +335,7 @@ Updates an existing meeting. Only the host can update meetings.
 Deletes a meeting. Only the host can delete meetings.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -335,6 +350,7 @@ Deletes a meeting. Only the host can delete meetings.
 Allows a user to join a meeting.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -352,6 +368,7 @@ Allows a user to join a meeting.
 Ends an ongoing meeting. Only the host can end meetings.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -366,6 +383,7 @@ Ends an ongoing meeting. Only the host can end meetings.
 Retrieves the list of participants for a meeting.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -403,6 +421,7 @@ Retrieves the list of participants for a meeting.
 Invites additional users to a meeting. Only the host can invite users.
 
 **Request Body:**
+
 ```json
 {
   "invitees": ["newuser1@example.com", "newuser2@example.com"]
@@ -410,6 +429,7 @@ Invites additional users to a meeting. Only the host can invite users.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,

@@ -79,11 +79,28 @@ export const getUserProfile = createAsyncThunk(
 // Async thunk for updating user profile
 export const updateUserProfile = createAsyncThunk(
   'user/updateProfile',
-  async (userData, { rejectWithValue }) => {
+  async ({ data, isFormData }, { rejectWithValue }) => {
     try {
-      const data = await authAPI.updateProfile(userData);
-      return data;
+      let response;
+      if (isFormData) {
+        // Use the api.put utility directly for FormData
+        response = await import('../../utils/api').then((mod) =>
+          mod.default.put('/auth/profile', data)
+        );
+      } else {
+        // Use the default authAPI.updateProfile for JSON
+        response = await import('../../utils/api').then((mod) =>
+          mod.authAPI.updateProfile(data)
+        );
+      }
+      return response.data || response;
     } catch (error) {
+      // Support both Error and {response: {data}} shape
+      if (error.response && error.response.data) {
+        return rejectWithValue(
+          error.response.data.message || 'Failed to update profile'
+        );
+      }
       return rejectWithValue(error.message || 'Failed to update profile');
     }
   }

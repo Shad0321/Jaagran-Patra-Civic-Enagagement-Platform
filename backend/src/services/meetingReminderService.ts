@@ -80,7 +80,7 @@ export class MeetingReminderService {
 
     for (const interval of reminderIntervals) {
       const reminderTime = new Date(now.getTime() + interval.minutes * 60000);
-      
+
       // Find meetings that start within the next interval (±2 minutes for tolerance)
       const upcomingMeetings = await prisma.session.findMany({
         where: {
@@ -116,19 +116,24 @@ export class MeetingReminderService {
           // Check if reminder was already sent for this interval
           const reminderKey = `${meeting.id}_${interval.minutes}`;
           const existingReminder = await this.checkReminderSent(reminderKey);
-          
+
           if (!existingReminder) {
             await MeetingScheduler.sendMeetingNotifications(
               meeting.id,
               'reminder'
             );
-            
+
             await this.markReminderSent(reminderKey);
-            
-            console.log(`✅ Sent ${interval.label} reminder for meeting: ${meeting.title}`);
+
+            console.log(
+              `✅ Sent ${interval.label} reminder for meeting: ${meeting.title}`
+            );
           }
         } catch (error) {
-          console.error(`❌ Error sending reminder for meeting ${meeting.id}:`, error);
+          console.error(
+            `❌ Error sending reminder for meeting ${meeting.id}:`,
+            error
+          );
         }
       }
     }
@@ -139,7 +144,7 @@ export class MeetingReminderService {
    */
   private async cleanupExpiredMeetings(): Promise<void> {
     const now = new Date();
-    
+
     try {
       // Update completed meetings
       const completedMeetings = await prisma.session.updateMany({
@@ -155,7 +160,9 @@ export class MeetingReminderService {
       });
 
       if (completedMeetings.count > 0) {
-        console.log(`✅ Updated ${completedMeetings.count} meetings to COMPLETED status`);
+        console.log(
+          `✅ Updated ${completedMeetings.count} meetings to COMPLETED status`
+        );
       }
 
       // Cancel scheduled meetings that are more than 1 hour past their start time
@@ -186,7 +193,6 @@ export class MeetingReminderService {
       });
 
       console.log('✅ Cleaned up old reminder records');
-
     } catch (error) {
       console.error('❌ Error in cleanup process:', error);
     }
@@ -231,7 +237,10 @@ export class MeetingReminderService {
       await MeetingScheduler.sendMeetingNotifications(sessionId, 'reminder');
       console.log(`✅ Sent immediate reminder for meeting: ${sessionId}`);
     } catch (error) {
-      console.error(`❌ Error sending immediate reminder for meeting ${sessionId}:`, error);
+      console.error(
+        `❌ Error sending immediate reminder for meeting ${sessionId}:`,
+        error
+      );
       throw error;
     }
   }

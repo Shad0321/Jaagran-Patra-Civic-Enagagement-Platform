@@ -26,11 +26,11 @@ export const createNotification = async (
         targetStateId,
         data,
         recipients: {
-          create: recipientIds.map(userId => ({
+          create: recipientIds.map((userId) => ({
             userId,
-            status: NotificationStatus.PENDING
-          }))
-        }
+            status: NotificationStatus.PENDING,
+          })),
+        },
       },
       include: {
         recipients: {
@@ -40,15 +40,17 @@ export const createNotification = async (
                 id: true,
                 name: true,
                 email: true,
-                role: true
-              }
-            }
-          }
-        }
-      }
+                role: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    console.log(`📬 Notification created: ${title} for ${recipientIds.length} recipients`);
+    console.log(
+      `📬 Notification created: ${title} for ${recipientIds.length} recipients`
+    );
     return notification;
   } catch (error) {
     console.error('Error creating notification:', error);
@@ -71,7 +73,7 @@ export const createAssignmentNotification = async (
     console.log(`  Assignee ID: ${assigneeId}`);
     console.log(`  Assigner ID: ${assignerId}`);
     console.log(`  Assigner Name: ${assignerName}`);
-    
+
     const result = await createNotification(
       'New Issue Assigned',
       `A new issue "${issueTitle}" has been assigned to you by ${assignerName}`,
@@ -82,7 +84,7 @@ export const createAssignmentNotification = async (
       undefined,
       { issueId, action: 'assigned' }
     );
-    
+
     console.log('✅ Assignment notification created successfully!');
     return result;
   } catch (error) {
@@ -142,7 +144,7 @@ export const getNotifications = async (
     const offset = (pageNum - 1) * limitNum;
 
     const whereClause: any = {
-      userId: userId
+      userId: userId,
     };
 
     if (unreadOnly === 'true') {
@@ -158,36 +160,36 @@ export const getNotifications = async (
               select: {
                 id: true,
                 name: true,
-                role: true
-              }
-            }
-          }
-        }
+                role: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         notification: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       },
       skip: offset,
-      take: limitNum
+      take: limitNum,
     });
 
     const totalCount = await prisma.notificationRecipient.count({
-      where: whereClause
+      where: whereClause,
     });
 
     const unreadCount = await prisma.notificationRecipient.count({
       where: {
         userId: userId,
-        readAt: null
-      }
+        readAt: null,
+      },
     });
 
     res.json({
       success: true,
       data: {
-        notifications: notifications.map(recipient => ({
+        notifications: notifications.map((recipient) => ({
           id: recipient.id,
           notificationId: recipient.notificationId,
           title: recipient.notification.title,
@@ -197,22 +199,22 @@ export const getNotifications = async (
           sentBy: recipient.notification.sentBy,
           status: recipient.status,
           readAt: recipient.readAt,
-          createdAt: recipient.notification.createdAt
+          createdAt: recipient.notification.createdAt,
         })),
         pagination: {
           page: pageNum,
           limit: limitNum,
           total: totalCount,
-          pages: Math.ceil(totalCount / limitNum)
+          pages: Math.ceil(totalCount / limitNum),
         },
-        unreadCount
-      }
+        unreadCount,
+      },
     });
   } catch (error) {
     console.error('Error fetching notifications:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch notifications'
+      error: 'Failed to fetch notifications',
     });
   }
 };
@@ -230,31 +232,31 @@ export const markAsRead = async (
       where: {
         notificationId,
         userId,
-        readAt: null
+        readAt: null,
       },
       data: {
         readAt: new Date(),
-        status: NotificationStatus.DELIVERED
-      }
+        status: NotificationStatus.DELIVERED,
+      },
     });
 
     if (updated.count === 0) {
       res.status(404).json({
         success: false,
-        error: 'Notification not found or already read'
+        error: 'Notification not found or already read',
       });
       return;
     }
 
     res.json({
       success: true,
-      message: 'Notification marked as read'
+      message: 'Notification marked as read',
     });
   } catch (error) {
     console.error('Error marking notification as read:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to mark notification as read'
+      error: 'Failed to mark notification as read',
     });
   }
 };
@@ -270,23 +272,23 @@ export const markAllAsRead = async (
     await prisma.notificationRecipient.updateMany({
       where: {
         userId,
-        readAt: null
+        readAt: null,
       },
       data: {
         readAt: new Date(),
-        status: NotificationStatus.DELIVERED
-      }
+        status: NotificationStatus.DELIVERED,
+      },
     });
 
     res.json({
       success: true,
-      message: 'All notifications marked as read'
+      message: 'All notifications marked as read',
     });
   } catch (error) {
     console.error('Error marking all notifications as read:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to mark all notifications as read'
+      error: 'Failed to mark all notifications as read',
     });
   }
 };
@@ -302,28 +304,28 @@ export const getNotificationCount = async (
     const unreadCount = await prisma.notificationRecipient.count({
       where: {
         userId,
-        readAt: null
-      }
+        readAt: null,
+      },
     });
 
     const totalCount = await prisma.notificationRecipient.count({
       where: {
-        userId
-      }
+        userId,
+      },
     });
 
     res.json({
       success: true,
       data: {
         unreadCount,
-        totalCount
-      }
+        totalCount,
+      },
     });
   } catch (error) {
     console.error('Error fetching notification count:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch notification count'
+      error: 'Failed to fetch notification count',
     });
   }
 };

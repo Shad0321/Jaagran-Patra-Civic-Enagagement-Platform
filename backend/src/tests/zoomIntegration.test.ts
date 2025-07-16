@@ -42,7 +42,7 @@ async function testZoomIntegration() {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(14, 0, 0, 0); // 2 PM tomorrow
-    
+
     const scheduledMeeting = await zoomService.createScheduledMeeting(
       currentUser.email,
       'Test Scheduled Meeting',
@@ -63,7 +63,9 @@ async function testZoomIntegration() {
 
     // Test 4: Get meeting details
     console.log('4. Testing getMeeting()...');
-    const meetingDetails = await zoomService.getMeeting(scheduledMeeting.id.toString());
+    const meetingDetails = await zoomService.getMeeting(
+      scheduledMeeting.id.toString()
+    );
     console.log('✅ Meeting details retrieved:', {
       id: meetingDetails.id,
       topic: meetingDetails.topic,
@@ -74,11 +76,15 @@ async function testZoomIntegration() {
 
     // Test 5: List meetings
     console.log('5. Testing listMeetings()...');
-    const meetings = await zoomService.listMeetings(currentUser.id, 'scheduled', 5);
+    const meetings = await zoomService.listMeetings(
+      currentUser.id,
+      'scheduled',
+      5
+    );
     console.log('✅ Meetings listed:', {
       total_records: meetings.total_records,
       meetings_count: meetings.meetings.length,
-      meetings: meetings.meetings.map(m => ({
+      meetings: meetings.meetings.map((m) => ({
         id: m.id,
         topic: m.topic,
         start_time: m.start_time,
@@ -108,8 +114,9 @@ async function testZoomIntegration() {
     console.log('✅ Instant meeting cleaned up');
     console.log('');
 
-    console.log('🎉 All tests passed! Zoom API integration is working correctly.');
-
+    console.log(
+      '🎉 All tests passed! Zoom API integration is working correctly.'
+    );
   } catch (error: any) {
     console.error('❌ Test failed:', error.message);
     console.error('Error details:', error.response?.data || error);

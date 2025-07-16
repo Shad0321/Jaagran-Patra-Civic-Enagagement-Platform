@@ -1,10 +1,132 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Users, Plus, Search, Edit, Trash2, Filter, MapPin, Phone, Mail, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Users, Plus, Search, Edit, Trash2, Filter, MapPin, Phone, Mail, RefreshCw, Camera, Upload, X } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
-const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData, partyOptions, states, constituencies, loadingStates, loadingConstituencies, onStateChange, onInitializeData }) => {
+const MLAModal = ({
+  isOpen,
+  onClose,
+  title,
+  onSubmit,
+  mla,
+  formData,
+  setFormData,
+  partyOptions,
+  states,
+  constituencies,
+  loadingStates,
+  loadingConstituencies,
+  onStateChange,
+  onInitializeData
+}) => {
+  console.log(mla);
+  
+  const [avatarPreview, setAvatarPreview] = useState(mla?.avatar || null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (mla && mla.avatar) {
+      setAvatarPreview(mla.avatar);
+    } else {
+      // Reset the preview if there's no mla or no avatar (e.g., for "Add MLA")
+      setAvatarPreview(null); 
+    }
+  }, [mla]);
+
   if (!isOpen) return null;
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Please select a valid image file (JPEG, PNG, or GIF)');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert('File size should be less than 5MB');
+        return;
+      }
+
+      setAvatarFile(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setFormData(prev => ({ ...prev, avatar: null }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsUploading(true);
+
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.stateId || !formData.constituencyId || !formData.party) {
+      toast.error('Please fill all required fields');
+      setIsUploading(false);
+      return;
+    }
+
+    try {
+      // Create FormData for file upload
+      const submitData = new FormData();
+
+      // Add all form fields - ensure required fields are included
+      submitData.append('name', formData.name);
+      submitData.append('email', formData.email);
+      submitData.append('stateId', formData.stateId);
+      submitData.append('constituencyId', formData.constituencyId);
+      submitData.append('party', formData.party);
+      submitData.append('isActive', formData.isActive);
+
+      // Add optional fields only if they have values
+      if (formData.phone) submitData.append('phone', formData.phone);
+      if (formData.position) submitData.append('position', formData.position);
+      if (formData.tenure) submitData.append('tenure', formData.tenure);
+      if (formData.address) submitData.append('address', formData.address);
+      if (formData.bio) submitData.append('bio', formData.bio);
+      if (formData.achievements) submitData.append('achievements', formData.achievements);
+
+      // Handle password based on option
+      if (formData.passwordOption === 'custom' && formData.password) {
+        submitData.append('password', formData.password);
+      }
+
+      // Add avatar file if selected
+      if (avatarFile) {
+        submitData.append('avatar', avatarFile);
+      }
+
+      // Call the onSubmit function with the FormData
+      await onSubmit(submitData);
+
+      // Reset avatar states after successful submission
+      setAvatarFile(null);
+      setAvatarPreview(null);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -19,9 +141,58 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
             <span>Load Assembly Data</span>
           </button>
         </div>
-        
-        <form onSubmit={onSubmit}>
+
+        <form onSubmit={handleSubmit}>
           <div className="space-y-4">
+            {/* Avatar Upload Section */}
+            <div className="border-b pb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-3">Profile Picture</label>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  {avatarPreview ? (
+                    <div className="relative">
+                      <img
+                        src={avatarPreview}
+                        alt="Avatar Preview"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-gray-300"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRemoveAvatar}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                      <Camera size={24} className="text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleAvatarChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center space-x-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                  >
+                    <Upload size={16} />
+                    <span>Upload Photo</span>
+                  </button>
+                  <p className="text-xs text-gray-500">
+                    JPG, PNG or GIF. Max size 5MB.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
@@ -33,7 +204,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
                 <input
@@ -80,8 +251,8 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                       name="passwordOption"
                       value="auto"
                       checked={formData.passwordOption === 'auto'}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
                         passwordOption: e.target.value,
                         password: ''
                       }))}
@@ -95,16 +266,16 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                       name="passwordOption"
                       value="custom"
                       checked={formData.passwordOption === 'custom'}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        passwordOption: e.target.value 
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        passwordOption: e.target.value
                       }))}
                       className="mr-2"
                     />
                     <span className="text-sm text-gray-700">Set custom password</span>
                   </label>
                 </div>
-                
+
                 {formData.passwordOption === 'custom' && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Custom Password</label>
@@ -120,7 +291,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 )}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">State *</label>
@@ -160,7 +331,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 </select>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Party *</label>
@@ -188,7 +359,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
               <textarea
@@ -198,7 +369,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
               <textarea
@@ -220,7 +391,7 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
                 placeholder="Key achievements and accomplishments..."
               />
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -231,20 +402,29 @@ const MLAModal = ({ isOpen, onClose, title, onSubmit, mla, formData, setFormData
               <label className="text-sm font-medium text-gray-700">Active</label>
             </div>
           </div>
-          
+
           <div className="flex justify-end space-x-3 mt-6">
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              disabled={isUploading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              disabled={isUploading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center space-x-2"
             >
-              {mla ? 'Update' : 'Add'} MLA
+              {isUploading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Uploading...</span>
+                </>
+              ) : (
+                <span>{mla ? 'Update' : 'Add'} MLA</span>
+              )}
             </button>
           </div>
         </form>
@@ -265,14 +445,14 @@ const PasswordDisplayModal = ({ isOpen, onClose, password, userType, userName })
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Account Created Successfully</h2>
-        
+
         <div className="space-y-4">
           <div>
             <p className="text-gray-700">
               {userType} <strong>{userName}</strong> has been created successfully.
             </p>
           </div>
-          
+
           <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
             <div className="flex items-start space-x-2">
               <div className="flex-shrink-0">
@@ -304,7 +484,7 @@ const PasswordDisplayModal = ({ isOpen, onClose, password, userType, userName })
             </div>
           </div>
         </div>
-        
+
         <div className="flex justify-end mt-6">
           <button
             onClick={onClose}
@@ -329,13 +509,13 @@ const MLAManagement = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMLA, setSelectedMLA] = useState(null);
   const [generatedPassword, setGeneratedPassword] = useState(null);
-  
+
   // Location data states
   const [states, setStates] = useState([]);
   const [constituencies, setConstituencies] = useState([]);
   const [loadingStates, setLoadingStates] = useState(false);
   const [loadingConstituencies, setLoadingConstituencies] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -426,55 +606,52 @@ const MLAManagement = () => {
     fetchStates();
   }, [fetchMLAs]);
 
-  const handleAddMLA = async (e) => {
-    e.preventDefault();
+  const handleAddMLA = async (formData) => {
     try {
-      // Prepare form data
-      const submitData = { ...formData };
-      
-      // Only include password if custom option is selected and password is provided
-      if (formData.passwordOption === 'custom' && formData.password) {
-        submitData.password = formData.password;
-      }
-      
-      // Remove password option fields from submit data
-      delete submitData.passwordOption;
-      if (formData.passwordOption === 'auto') {
-        delete submitData.password;
-      }
+      // No need to prepare data here since it's already in FormData format
+      const response = await api.post('/admin/mlas', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
 
-      const response = await api.post('/admin/mlas', submitData);
-      
       // Show success message
       if (response.data.data.password && response.data.data.isGenerated) {
         setGeneratedPassword({
           password: response.data.data.password,
-          userName: formData.name,
+          userName: formData.get('name'), // Get name from FormData
           userType: 'MLA'
         });
       } else {
         toast.success('MLA added successfully');
       }
-      
+
       setShowAddModal(false);
       resetForm();
       fetchMLAs();
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to add MLA');
+      const errorMessage = error.response?.data?.error || 'Failed to add MLA';
+      toast.error(errorMessage);
       console.error('Error adding MLA:', error);
     }
   };
 
-  const handleUpdateMLA = async (e) => {
-    e.preventDefault();
+  const handleUpdateMLA = async (submitData) => { // <-- Accepts FormData object
     try {
-      await api.put(`/admin/mlas/${selectedMLA.id}`, formData);
+      // Send the FormData object with the correct headers for file upload
+      await api.put(`/admin/mlas/${selectedMLA.id}`, submitData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
       toast.success('MLA updated successfully');
       setShowEditModal(false);
       resetForm();
       fetchMLAs();
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to update MLA');
+      const errorMessage = error.response?.data?.error || 'Failed to update MLA';
+      toast.error(errorMessage);
       console.error('Error updating MLA:', error);
     }
   };
@@ -600,7 +777,11 @@ const MLAManagement = () => {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-blue-600" />
+                    {
+                      mla.avatar
+                        ? <img src={mla.avatar} alt={mla.name} className="w-full h-full rounded-full object-cover" />
+                        :
+                        <Users className="h-6 w-6 text-blue-600" />}
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">{mla.name}</h3>
@@ -622,7 +803,7 @@ const MLAManagement = () => {
                   </button>
                 </div>
               </div>
-              
+
               <div className="space-y-2 mb-4">
                 <div className="flex items-center text-sm text-gray-600">
                   <MapPin className="h-4 w-4 mr-2" />
@@ -639,13 +820,12 @@ const MLAManagement = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="flex justify-between items-center">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  mla.isActive 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-                }`}>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${mla.isActive
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800'
+                  }`}>
                   {mla.isActive ? 'Active' : 'Inactive'}
                 </span>
                 <span className="text-xs text-gray-500">
@@ -672,11 +852,10 @@ const MLAManagement = () => {
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`px-3 py-2 text-sm font-medium rounded-md ${
-                  currentPage === page
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-                }`}
+                className={`px-3 py-2 text-sm font-medium rounded-md ${currentPage === page
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
+                  }`}
               >
                 {page}
               </button>

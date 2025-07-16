@@ -35,7 +35,10 @@ const VerifyEmail = () => {
     setError('');
     setSuccess('');
     try {
-      await api.post('/auth/verify-email', { email: submitEmail, token: submitToken });
+      await api.post('/auth/verify-email', {
+        email: submitEmail,
+        token: submitToken,
+      });
       setSuccess('Email verified successfully! You can now log in.');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
@@ -54,7 +57,7 @@ const VerifyEmail = () => {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-3 border rounded-md"
             required
           />
@@ -62,7 +65,7 @@ const VerifyEmail = () => {
             type="text"
             placeholder="Verification Token"
             value={token}
-            onChange={e => setToken(e.target.value)}
+            onChange={(e) => setToken(e.target.value)}
             className="w-full p-3 border rounded-md"
             required
           />

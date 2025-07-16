@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, clearError } from '../redux/slices/userSlice';
@@ -79,9 +79,11 @@ const Login = () => {
 
     try {
       await dispatch(loginUser(formData)).unwrap();
+      toast.success('Logged in successfully');
       // Navigation will be handled by the useEffect hook
     } catch (err) {
       // Error is handled by the Redux slice
+      toast.error(err.message);
       console.error('Login failed:', err);
     }
   };

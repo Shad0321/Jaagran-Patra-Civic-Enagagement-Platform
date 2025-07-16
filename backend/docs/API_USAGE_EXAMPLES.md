@@ -88,13 +88,10 @@ const response = await fetch('/auth/update-location', {
 
 ```javascript
 // GET /auth/subordinates?page=1&limit=10&type=DIRECT
-const response = await fetch(
-  '/auth/subordinates?page=1&limit=10&type=DIRECT',
-  {
-    method: 'GET',
-    headers: headers,
-  }
-);
+const response = await fetch('/auth/subordinates?page=1&limit=10&type=DIRECT', {
+  method: 'GET',
+  headers: headers,
+});
 
 const data = await response.json();
 console.log('Subordinates:', data.subordinates);
@@ -220,13 +217,10 @@ const activateResponse = await fetch('/auth/users/user_id_123/activate', {
 });
 
 // POST /auth/users/user_id_123/deactivate
-const deactivateResponse = await fetch(
-  '/auth/users/user_id_123/deactivate',
-  {
-    method: 'POST',
-    headers: headers,
-  }
-);
+const deactivateResponse = await fetch('/auth/users/user_id_123/deactivate', {
+  method: 'POST',
+  headers: headers,
+});
 ```
 
 ## Location Data Examples (Public Access)
@@ -253,9 +247,7 @@ console.log('Districts:', data.districts);
 
 ```javascript
 // GET /auth/locations/constituencies/district_id_456
-const response = await fetch(
-  '/auth/locations/constituencies/district_id_456'
-);
+const response = await fetch('/auth/locations/constituencies/district_id_456');
 const data = await response.json();
 console.log('Constituencies:', data.constituencies);
 ```

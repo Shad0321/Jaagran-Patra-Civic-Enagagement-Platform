@@ -42,6 +42,13 @@ export const getNavigationItems = (userRole) => {
         icon: 'newspaper',
         roles: ['CITIZEN'],
       },
+      {
+        id: 'mla-profiles',
+        label: 'MLA Profiles',
+        path: '/mla-profiles',
+        icon: 'users',
+        roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
+      },
     ],
     MEMBER: [
       {

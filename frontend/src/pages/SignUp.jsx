@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { signupUser, clearError } from '../redux/slices/userSlice';
@@ -69,6 +69,12 @@ const SignUp = () => {
       errors.email = 'Email is invalid';
     }
 
+    if (!formData.phone.trim()) {
+      errors.phone = 'Phone number is required';
+    } else if (!/^\+?[\d\s\-()]+$/.test(formData.phone)) {
+      errors.phone = 'Please enter a valid phone number';
+    }
+
     if (!formData.password) {
       errors.password = 'Password is required';
     } else if (formData.password.length < 6) {
@@ -102,7 +108,13 @@ const SignUp = () => {
     const { confirmPassword, ...submitData } = formData;
 
     try {
-      await dispatch(signupUser(submitData)).unwrap();
+      const result = await dispatch(signupUser(submitData)).unwrap();
+      // Show success toast with backend message if available
+      if (result && result.message) {
+        toast.success(result.message);
+      } else {
+        toast.success('Registration successful! Please verify your email.');
+      }
       // Navigation will be handled by the useEffect hook
     } catch (err) {
       // Error is handled by the Redux slice
@@ -178,7 +190,7 @@ const SignUp = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Phone Number (Optional)"
+                placeholder="Phone Number"
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors ${
                   validationErrors.phone ? 'border-red-400' : 'border-gray-300'
                 }`}

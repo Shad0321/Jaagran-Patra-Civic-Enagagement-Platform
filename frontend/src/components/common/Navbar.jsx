@@ -5,6 +5,7 @@ import { logoutUser } from '../../redux/slices/userSlice';
 import { clearLanguage } from '../../redux/slices/languageSlice';
 import NotificationDropdown from './NotificationDropdown';
 import { getNavigationItems, getIcon } from '../../utils/navigation.jsx';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
   const location = useLocation();
@@ -39,6 +40,7 @@ const Navbar = () => {
       setIsProfileDropdownOpen(false);
       setIsSidebarOpen(false);
       navigate('/login');
+      toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout failed:', error);
     }

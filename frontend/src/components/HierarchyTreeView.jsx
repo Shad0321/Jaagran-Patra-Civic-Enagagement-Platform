@@ -24,12 +24,12 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
 
   const toggleExpanded = (type, id = null) => {
     if (type === 'mla') {
-      setExpandedItems(prev => ({
+      setExpandedItems((prev) => ({
         ...prev,
         mla: !prev.mla,
       }));
     } else if (type === 'body') {
-      setExpandedItems(prev => ({
+      setExpandedItems((prev) => ({
         ...prev,
         bodies: {
           ...prev.bodies,
@@ -40,8 +40,10 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
   };
 
   const getStatusIcon = (member) => {
-    if (!member.isActive) return <AlertCircle className="h-4 w-4 text-red-500" />;
-    if (member.assignedIssuesCount > 0) return <Clock className="h-4 w-4 text-yellow-500" />;
+    if (!member.isActive)
+      return <AlertCircle className="h-4 w-4 text-red-500" />;
+    if (member.assignedIssuesCount > 0)
+      return <Clock className="h-4 w-4 text-yellow-500" />;
     return <CheckCircle className="h-4 w-4 text-green-500" />;
   };
 
@@ -121,7 +123,9 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                         <Building className="h-4 w-4 text-purple-600" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{body.name}</h4>
+                        <h4 className="font-medium text-gray-900">
+                          {body.name}
+                        </h4>
                         {/* <p className="text-sm text-gray-600">
                           {body.type.replace(/_/g, ' ')} - {body.code}
                         </p> */}
@@ -179,7 +183,9 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                                 </div>
                               </div>
                               <div className="text-right text-sm">
-                                <p className={`font-medium ${getMemberStatusColor(member)}`}>
+                                <p
+                                  className={`font-medium ${getMemberStatusColor(member)}`}
+                                >
                                   {member.isActive ? 'Active' : 'Inactive'}
                                 </p>
                                 <p className="text-xs text-gray-500">
@@ -224,7 +230,9 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                 <div className="text-center py-6 text-gray-500">
                   <Building className="h-10 w-10 mx-auto mb-3 text-gray-400" />
                   <p>No bodies found</p>
-                  <p className="text-sm">Bodies will appear here when created</p>
+                  <p className="text-sm">
+                    Bodies will appear here when created
+                  </p>
                 </div>
               )}
 
@@ -248,7 +256,9 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                           <p className="text-sm font-medium text-gray-900">
                             {member.name}
                           </p>
-                          <p className="text-xs text-gray-600">{member.email}</p>
+                          <p className="text-xs text-gray-600">
+                            {member.email}
+                          </p>
                         </div>
                         <div className="flex items-center space-x-1">
                           <button

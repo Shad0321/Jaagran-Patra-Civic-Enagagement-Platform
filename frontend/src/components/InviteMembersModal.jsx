@@ -16,7 +16,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
@@ -32,13 +32,14 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
     try {
       setLoading(true);
       const response = await api.get('/auth/members');
-      
+
       // Handle the response structure: response.data.members (direct) or response.data.data.members (nested)
-      const allMembers = response.data?.members || response.data?.data?.members || [];
-      
+      const allMembers =
+        response.data?.members || response.data?.data?.members || [];
+
       // Filter members to show only those under the current MLA's constituency
       const filteredMembers = Array.isArray(allMembers) ? allMembers : [];
-      
+
       setMembers(filteredMembers);
     } catch (error) {
       console.error('Error fetching members:', error);
@@ -64,20 +65,25 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
     fetchCurrentInvitations();
   }, [fetchMembers, fetchCurrentInvitations]);
 
-  const filteredMembers = Array.isArray(members) ? members.filter(member => 
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.email.toLowerCase().includes(searchTerm.toLowerCase())
-  ) : [];
+  const filteredMembers = Array.isArray(members)
+    ? members.filter(
+        (member) =>
+          member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          member.email.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const handleMemberSelect = (member) => {
-    const isAlreadyInvited = currentInvitations.some(inv => inv.userId === member.id);
+    const isAlreadyInvited = currentInvitations.some(
+      (inv) => inv.userId === member.id
+    );
     if (isAlreadyInvited) {
       toast.error('This member has already been invited');
       return;
     }
 
-    if (selectedMembers.find(m => m.id === member.id)) {
-      setSelectedMembers(selectedMembers.filter(m => m.id !== member.id));
+    if (selectedMembers.find((m) => m.id === member.id)) {
+      setSelectedMembers(selectedMembers.filter((m) => m.id !== member.id));
     } else {
       setSelectedMembers([...selectedMembers, member]);
     }
@@ -97,7 +103,9 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
       return;
     }
 
-    const isAlreadyInvited = currentInvitations.some(inv => inv.email === newEmail);
+    const isAlreadyInvited = currentInvitations.some(
+      (inv) => inv.email === newEmail
+    );
     if (isAlreadyInvited) {
       toast.error('This email has already been invited');
       return;
@@ -108,13 +116,15 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
   };
 
   const handleEmailRemove = (emailToRemove) => {
-    setEmailInvites(emailInvites.filter(email => email !== emailToRemove));
+    setEmailInvites(emailInvites.filter((email) => email !== emailToRemove));
   };
 
   const handleSendInvitations = async () => {
-    const selectedCount = Array.isArray(selectedMembers) ? selectedMembers.length : 0;
+    const selectedCount = Array.isArray(selectedMembers)
+      ? selectedMembers.length
+      : 0;
     const emailCount = Array.isArray(emailInvites) ? emailInvites.length : 0;
-    
+
     if (selectedCount === 0 && emailCount === 0) {
       toast.error('Please select at least one member or add an email');
       return;
@@ -122,18 +132,25 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
 
     try {
       setSendingInvitations(true);
-      
+
       // Combine member emails and custom emails into single invitees array
-      const memberEmails = Array.isArray(selectedMembers) ? selectedMembers.map(m => m.email) : [];
-      const customEmails = Array.isArray(emailInvites) ? emailInvites.filter(email => email.trim()) : [];
+      const memberEmails = Array.isArray(selectedMembers)
+        ? selectedMembers.map((m) => m.email)
+        : [];
+      const customEmails = Array.isArray(emailInvites)
+        ? emailInvites.filter((email) => email.trim())
+        : [];
       const allInvitees = [...memberEmails, ...customEmails];
-      
+
       const invitationData = {
         invitees: allInvitees,
       };
 
-      const response = await api.post(`/meetings/${meeting.id}/invite`, invitationData);
-      
+      const response = await api.post(
+        `/meetings/${meeting.id}/invite`,
+        invitationData
+      );
+
       const totalInvites = allInvitees.length;
       toast.success(`Invitations sent to ${totalInvites} recipients`);
       onInvitesSent(response.data);
@@ -153,28 +170,28 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
           icon: <Clock className="w-4 h-4" />,
           color: 'text-blue-600',
           bgColor: 'bg-blue-100',
-          label: 'Sent'
+          label: 'Sent',
         };
       case 'ACCEPTED':
         return {
           icon: <CheckCircle className="w-4 h-4" />,
           color: 'text-green-600',
           bgColor: 'bg-green-100',
-          label: 'Accepted'
+          label: 'Accepted',
         };
       case 'DECLINED':
         return {
           icon: <XCircle className="w-4 h-4" />,
           color: 'text-red-600',
           bgColor: 'bg-red-100',
-          label: 'Declined'
+          label: 'Declined',
         };
       default:
         return {
           icon: <Clock className="w-4 h-4" />,
           color: 'text-gray-600',
           bgColor: 'bg-gray-100',
-          label: 'Pending'
+          label: 'Pending',
         };
     }
   };
@@ -214,7 +231,10 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
                 {currentInvitations.map((invitation) => {
                   const status = getInvitationStatus(invitation);
                   return (
-                    <div key={invitation.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                    <div
+                      key={invitation.id}
+                      className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg"
+                    >
                       <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                         <User className="w-4 h-4 text-gray-600" />
                       </div>
@@ -226,7 +246,9 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
                           {invitation.user?.email || invitation.email}
                         </p>
                       </div>
-                      <span className={`inline-flex items-center px-2 py-1 text-xs rounded-full gap-1 ${status.bgColor} ${status.color}`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-1 text-xs rounded-full gap-1 ${status.bgColor} ${status.color}`}
+                      >
                         {status.icon}
                         {status.label}
                       </span>
@@ -239,7 +261,9 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
 
           {/* Search Members */}
           <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-3">Select Members</h4>
+            <h4 className="text-sm font-medium text-gray-900 mb-3">
+              Select Members
+            </h4>
             <div className="relative mb-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -258,30 +282,40 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
             ) : (
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {filteredMembers.map((member) => {
-                  const isSelected = selectedMembers.find(m => m.id === member.id);
-                  const isAlreadyInvited = currentInvitations.some(inv => inv.userId === member.id);
-                  
+                  const isSelected = selectedMembers.find(
+                    (m) => m.id === member.id
+                  );
+                  const isAlreadyInvited = currentInvitations.some(
+                    (inv) => inv.userId === member.id
+                  );
+
                   return (
                     <div
                       key={member.id}
-                      onClick={() => !isAlreadyInvited && handleMemberSelect(member)}
+                      onClick={() =>
+                        !isAlreadyInvited && handleMemberSelect(member)
+                      }
                       className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
-                        isAlreadyInvited 
+                        isAlreadyInvited
                           ? 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-50'
                           : isSelected
-                          ? 'bg-blue-50 border-blue-200 hover:bg-blue-100'
-                          : 'bg-white border-gray-200 hover:bg-gray-50'
+                            ? 'bg-blue-50 border-blue-200 hover:bg-blue-100'
+                            : 'bg-white border-gray-200 hover:bg-gray-50'
                       }`}
                     >
                       <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                         <User className="w-4 h-4 text-gray-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{member.name}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {member.name}
+                        </p>
                         <p className="text-xs text-gray-500">{member.email}</p>
                       </div>
                       {isAlreadyInvited ? (
-                        <span className="text-xs text-gray-500">Already invited</span>
+                        <span className="text-xs text-gray-500">
+                          Already invited
+                        </span>
                       ) : isSelected ? (
                         <Check className="w-4 h-4 text-blue-600" />
                       ) : (
@@ -296,7 +330,9 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
 
           {/* Email Invitations */}
           <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-3">Email Invitations</h4>
+            <h4 className="text-sm font-medium text-gray-900 mb-3">
+              Email Invitations
+            </h4>
             <div className="flex gap-2 mb-3">
               <input
                 type="email"
@@ -318,7 +354,10 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
             {emailInvites.length > 0 && (
               <div className="space-y-2 mb-4">
                 {emailInvites.map((email) => (
-                  <div key={email} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                  <div
+                    key={email}
+                    className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg"
+                  >
                     <Mail className="w-4 h-4 text-gray-600" />
                     <span className="flex-1 text-sm">{email}</span>
                     <button
@@ -372,7 +411,10 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
               </button>
               <button
                 onClick={handleSendInvitations}
-                disabled={sendingInvitations || (selectedMembers.length === 0 && emailInvites.length === 0)}
+                disabled={
+                  sendingInvitations ||
+                  (selectedMembers.length === 0 && emailInvites.length === 0)
+                }
                 className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
               >
                 {sendingInvitations ? (

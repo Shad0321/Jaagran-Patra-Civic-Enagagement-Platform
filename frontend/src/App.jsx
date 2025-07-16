@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
 import Navbar from './components/common/Navbar';
 import { getUserProfile } from './redux/slices/userSlice';
@@ -21,7 +22,7 @@ const App = () => {
       <Navbar />
       <hr />
       <Outlet /> {/* Nested routes render here */}
-      <Toaster position="top-right" />
+      <ToastContainer position="top-right" />
     </div>
   );
 };

@@ -52,8 +52,12 @@ import {
   getLocalBodies,
   initializeLocationData,
 } from '../controllers/adminController';
-
+import multer from 'multer';
+const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
+
+// Public MLA profiles route
+router.get('/public/mlas', getAllMLAs);
 
 // Apply authentication middleware to all admin routes
 router.use(authenticate);
@@ -73,9 +77,10 @@ router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
 
 // MLA Management Routes
+const mlaUpload = upload.fields([{ name: 'avatar', maxCount: 1 }]);
 router.get('/mlas', getAllMLAs);
-router.post('/mlas', createMLA);
-router.put('/mlas/:id', updateMLA);
+router.post('/mlas', mlaUpload, createMLA);
+router.put('/mlas/:id', mlaUpload, updateMLA);
 router.delete('/mlas/:id', deleteMLA);
 
 // Member Management Routes

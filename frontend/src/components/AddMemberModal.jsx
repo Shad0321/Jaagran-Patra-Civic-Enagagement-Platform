@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Users, Building, MapPin, Check } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -49,7 +49,12 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
     if (formData.bodyType) {
       fetchBodies();
     }
-  }, [formData.bodyType, formData.stateId, formData.districtId, formData.constituencyId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    formData.bodyType,
+    formData.stateId,
+    formData.districtId,
+    formData.constituencyId,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchBodies = async () => {
     try {
@@ -57,7 +62,8 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
       const params = {};
       if (formData.stateId) params.stateId = formData.stateId;
       if (formData.districtId) params.districtId = formData.districtId;
-      if (formData.constituencyId) params.constituencyId = formData.constituencyId;
+      if (formData.constituencyId)
+        params.constituencyId = formData.constituencyId;
       if (formData.bodyType) params.type = formData.bodyType;
 
       const response = await api.get('/auth/bodies', { params });
@@ -72,7 +78,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
@@ -80,8 +86,13 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.email || !formData.name || !formData.password || !formData.bodyType) {
+
+    if (
+      !formData.email ||
+      !formData.name ||
+      !formData.password ||
+      !formData.bodyType
+    ) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -136,8 +147,12 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
               <Users className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Add New Member</h2>
-              <p className="text-sm text-gray-600">Add a member to your organization</p>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Add New Member
+              </h2>
+              <p className="text-sm text-gray-600">
+                Add a member to your organization
+              </p>
             </div>
           </div>
           <button
@@ -152,7 +167,9 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Basic Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -217,7 +234,9 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Role & Body Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Role & Body Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Role & Body Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -231,7 +250,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   required
                 >
                   <option value="">Select body type</option>
-                  {bodyTypes.map(type => (
+                  {bodyTypes.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
                     </option>
@@ -251,14 +270,16 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   disabled={loadingBodies}
                 >
                   <option value="">Select body (optional)</option>
-                  {availableBodies.map(body => (
+                  {availableBodies.map((body) => (
                     <option key={body.id} value={body.id}>
                       {body.name} ({body.type.replace(/_/g, ' ')})
                     </option>
                   ))}
                 </select>
                 {loadingBodies && (
-                  <p className="text-xs text-gray-500 mt-1">Loading bodies...</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Loading bodies...
+                  </p>
                 )}
               </div>
 
@@ -294,7 +315,9 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Permissions */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Permissions</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Permissions
+            </h3>
             <div className="space-y-3">
               <div className="flex items-center">
                 <input

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Building, Check, MapPin, Phone, Mail, User } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -35,7 +35,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -43,7 +43,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.code || !formData.type) {
       toast.error('Please fill in all required fields');
       return;
@@ -95,8 +95,12 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
               <Building className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Add New Body</h2>
-              <p className="text-sm text-gray-600">Create a new political/administrative body</p>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Add New Body
+              </h2>
+              <p className="text-sm text-gray-600">
+                Create a new political/administrative body
+              </p>
             </div>
           </div>
           <button
@@ -111,7 +115,9 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Basic Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -155,7 +161,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
                   required
                 >
                   <option value="">Select body type</option>
-                  {bodyTypes.map(type => (
+                  {bodyTypes.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
                     </option>

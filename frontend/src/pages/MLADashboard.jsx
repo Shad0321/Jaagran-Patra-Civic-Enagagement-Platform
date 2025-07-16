@@ -18,7 +18,7 @@ import {
   Building,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import ProgressUpdateModal from '../components/ProgressUpdateModal';
 import IssueAssignmentModal from '../components/IssueAssignmentModal';
 import MediaDisplay from '../components/common/MediaDisplay';
@@ -519,7 +519,7 @@ const MLADashboard = () => {
                   Active Members
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {(stats?.totalMembers - stats?.inactiveMembers) || 0}
+                  {stats?.totalMembers - stats?.inactiveMembers || 0}
                 </p>
               </div>
               <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">

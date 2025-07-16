@@ -13,30 +13,33 @@ const NewsDetail = () => {
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-  const fetchSimilarNews = useCallback(async (currentNews) => {
-    try {
-      // Build query parameters for similar news
-      const params = new URLSearchParams({
-        limit: '4', // Get 4 similar articles
-        ...(currentNews.category && { category: currentNews.category }),
-        ...(currentNews.stateId && { state: currentNews.stateId })
-      });
+  const fetchSimilarNews = useCallback(
+    async (currentNews) => {
+      try {
+        // Build query parameters for similar news
+        const params = new URLSearchParams({
+          limit: '4', // Get 4 similar articles
+          ...(currentNews.category && { category: currentNews.category }),
+          ...(currentNews.stateId && { state: currentNews.stateId }),
+        });
 
-      const response = await fetch(`${apiUrl}/news?${params}`);
-      const result = await response.json();
+        const response = await fetch(`${apiUrl}/news?${params}`);
+        const result = await response.json();
 
-      if (result.success && result.data.news) {
-        // Filter out the current article and limit to 3 items
-        const filtered = result.data.news
-          .filter(item => item.id !== currentNews.id)
-          .slice(0, 3);
-        setSimilarNews(filtered);
+        if (result.success && result.data.news) {
+          // Filter out the current article and limit to 3 items
+          const filtered = result.data.news
+            .filter((item) => item.id !== currentNews.id)
+            .slice(0, 3);
+          setSimilarNews(filtered);
+        }
+      } catch (err) {
+        console.error('Error fetching similar news:', err);
+        // Don't show error for similar news, just leave it empty
       }
-    } catch (err) {
-      console.error('Error fetching similar news:', err);
-      // Don't show error for similar news, just leave it empty
-    }
-  }, [apiUrl]);
+    },
+    [apiUrl]
+  );
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
@@ -87,18 +90,18 @@ const NewsDetail = () => {
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
   const getCategoryColor = (category) => {
     const colors = {
-      'breaking': 'bg-red-100 text-red-800',
-      'politics': 'bg-blue-100 text-blue-800',
-      'governance': 'bg-green-100 text-green-800',
-      'development': 'bg-purple-100 text-purple-800',
-      'alerts': 'bg-yellow-100 text-yellow-800',
-      'general': 'bg-gray-100 text-gray-800'
+      breaking: 'bg-red-100 text-red-800',
+      politics: 'bg-blue-100 text-blue-800',
+      governance: 'bg-green-100 text-green-800',
+      development: 'bg-purple-100 text-purple-800',
+      alerts: 'bg-yellow-100 text-yellow-800',
+      general: 'bg-gray-100 text-gray-800',
     };
     return colors[category?.toLowerCase()] || colors.general;
   };
@@ -136,8 +139,13 @@ const NewsDetail = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Article Not Found</h2>
-          <p className="text-gray-600 mb-6">The news article you're looking for doesn't exist or has been removed.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Article Not Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            The news article you're looking for doesn't exist or has been
+            removed.
+          </p>
           <button
             onClick={() => navigate('/news')}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
@@ -166,10 +174,12 @@ const NewsDetail = () => {
           {/* Article Meta */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex flex-wrap items-center gap-4 mb-4">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(news.category)}`}>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(news.category)}`}
+              >
                 {news.category || 'General'}
               </span>
-              
+
               {news.isPinned && (
                 <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
                   📌 Pinned
@@ -189,8 +199,8 @@ const NewsDetail = () => {
 
             {news.featuredImage && (
               <div className="mb-6">
-                <img 
-                  src={news.featuredImage} 
+                <img
+                  src={news.featuredImage}
                   alt={news.title}
                   className="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg"
                   onError={(e) => {
@@ -237,7 +247,7 @@ const NewsDetail = () => {
 
           {/* Article Content */}
           <div className="p-6">
-            <div 
+            <div
               className="rich-content"
               dangerouslySetInnerHTML={{ __html: news.content }}
             />
@@ -245,7 +255,9 @@ const NewsDetail = () => {
             {/* Tags */}
             {news.tags && news.tags.length > 0 && (
               <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-500 mb-3">Tags:</h3>
+                <h3 className="text-sm font-medium text-gray-500 mb-3">
+                  Tags:
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {news.tags.map((tag, index) => (
                     <span
@@ -262,7 +274,9 @@ const NewsDetail = () => {
             {/* Attachments */}
             {news.attachments && news.attachments.length > 0 && (
               <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-500 mb-3">Attachments:</h3>
+                <h3 className="text-sm font-medium text-gray-500 mb-3">
+                  Attachments:
+                </h3>
                 <div className="space-y-2">
                   {news.attachments.map((attachment, index) => (
                     <a
@@ -285,7 +299,9 @@ const NewsDetail = () => {
         {/* Similar News Section */}
         {similarNews.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Similar News</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Similar News
+            </h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {similarNews.map((item) => (
                 <article
@@ -296,8 +312,8 @@ const NewsDetail = () => {
                   {/* Featured Image */}
                   {item.featuredImage && (
                     <div className="h-48 overflow-hidden">
-                      <img 
-                        src={item.featuredImage} 
+                      <img
+                        src={item.featuredImage}
                         alt={item.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
                         onError={(e) => {
@@ -306,16 +322,19 @@ const NewsDetail = () => {
                       />
                     </div>
                   )}
-                  
+
                   <div className="p-4">
                     {/* Category and Meta */}
                     <div className="flex items-center justify-between mb-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}
+                      >
                         {item.category || 'General'}
                       </span>
                       <div className="flex items-center text-xs text-gray-500">
                         <Calendar className="w-3 h-3 mr-1" />
-                        {formatDate(item.publishedAt).split(',')[0]} {/* Just the date */}
+                        {formatDate(item.publishedAt).split(',')[0]}{' '}
+                        {/* Just the date */}
                       </div>
                     </div>
 
@@ -346,7 +365,7 @@ const NewsDetail = () => {
                           </span>
                         )}
                       </div>
-                      
+
                       {item.viewCount > 0 && (
                         <div className="flex items-center">
                           <Eye className="w-3 h-3 mr-1" />

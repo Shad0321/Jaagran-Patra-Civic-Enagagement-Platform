@@ -170,9 +170,12 @@ class ZoomService {
       }
 
       // Encode client credentials in base64
-      const credentials = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
+      const credentials = Buffer.from(
+        `${this.clientId}:${this.clientSecret}`
+      ).toString('base64');
 
-      const response = await axios.post(this.tokenURL, 
+      const response = await axios.post(
+        this.tokenURL,
         new URLSearchParams({
           grant_type: 'account_credentials',
           account_id: this.accountId,
@@ -180,18 +183,21 @@ class ZoomService {
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Basic ${credentials}`,
+            Authorization: `Basic ${credentials}`,
           },
         }
       );
 
       const tokenData: ZoomAccessToken = response.data;
       this.accessToken = tokenData.access_token;
-      this.tokenExpiryTime = Date.now() + (tokenData.expires_in * 1000);
+      this.tokenExpiryTime = Date.now() + tokenData.expires_in * 1000;
 
       return this.accessToken;
     } catch (error: any) {
-      console.error('Error generating Zoom access token:', error.response?.data || error.message);
+      console.error(
+        'Error generating Zoom access token:',
+        error.response?.data || error.message
+      );
       throw new Error('Failed to generate Zoom access token');
     }
   }
@@ -211,7 +217,7 @@ class ZoomService {
         method,
         url: `${this.baseURL}${endpoint}`,
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         data,
@@ -219,8 +225,13 @@ class ZoomService {
 
       return response.data;
     } catch (error: any) {
-      console.error(`Error making Zoom API request to ${endpoint}:`, error.response?.data || error.message);
-      throw new Error(`Zoom API request failed: ${error.response?.data?.message || error.message}`);
+      console.error(
+        `Error making Zoom API request to ${endpoint}:`,
+        error.response?.data || error.message
+      );
+      throw new Error(
+        `Zoom API request failed: ${error.response?.data?.message || error.message}`
+      );
     }
   }
 
@@ -234,14 +245,25 @@ class ZoomService {
   /**
    * Create a new meeting
    */
-  async createMeeting(userId: string, meetingData: ZoomMeetingRequest): Promise<ZoomMeetingResponse> {
-    return this.makeRequest<ZoomMeetingResponse>('POST', `/users/${userId}/meetings`, meetingData);
+  async createMeeting(
+    userId: string,
+    meetingData: ZoomMeetingRequest
+  ): Promise<ZoomMeetingResponse> {
+    return this.makeRequest<ZoomMeetingResponse>(
+      'POST',
+      `/users/${userId}/meetings`,
+      meetingData
+    );
   }
 
   /**
    * Create instant meeting
    */
-  async createInstantMeeting(userId: string, topic: string, agenda?: string): Promise<ZoomMeetingResponse> {
+  async createInstantMeeting(
+    userId: string,
+    topic: string,
+    agenda?: string
+  ): Promise<ZoomMeetingResponse> {
     const meetingData: ZoomMeetingRequest = {
       topic,
       type: 1, // Instant meeting
@@ -296,7 +318,7 @@ class ZoomService {
         email_notification: true,
         registrants_email_notification: true,
         registrants_confirmation_email: true,
-        meeting_invitees: invitees?.map(email => ({ email })),
+        meeting_invitees: invitees?.map((email) => ({ email })),
         ...settings,
       },
     };
@@ -346,7 +368,7 @@ class ZoomService {
         email_notification: true,
         registrants_email_notification: true,
         registrants_confirmation_email: true,
-        meeting_invitees: invitees?.map(email => ({ email })),
+        meeting_invitees: invitees?.map((email) => ({ email })),
         ...settings,
       },
     };
@@ -358,13 +380,19 @@ class ZoomService {
    * Get meeting details
    */
   async getMeeting(meetingId: string): Promise<ZoomMeetingResponse> {
-    return this.makeRequest<ZoomMeetingResponse>('GET', `/meetings/${meetingId}`);
+    return this.makeRequest<ZoomMeetingResponse>(
+      'GET',
+      `/meetings/${meetingId}`
+    );
   }
 
   /**
    * Update meeting
    */
-  async updateMeeting(meetingId: string, meetingData: Partial<ZoomMeetingRequest>): Promise<void> {
+  async updateMeeting(
+    meetingId: string,
+    meetingData: Partial<ZoomMeetingRequest>
+  ): Promise<void> {
     await this.makeRequest('PATCH', `/meetings/${meetingId}`, meetingData);
   }
 
@@ -407,14 +435,23 @@ class ZoomService {
   /**
    * Add meeting registrant
    */
-  async addMeetingRegistrant(meetingId: string, email: string, firstName: string, lastName: string): Promise<any> {
+  async addMeetingRegistrant(
+    meetingId: string,
+    email: string,
+    firstName: string,
+    lastName: string
+  ): Promise<any> {
     const registrantData = {
       email,
       first_name: firstName,
       last_name: lastName,
     };
 
-    return this.makeRequest('POST', `/meetings/${meetingId}/registrants`, registrantData);
+    return this.makeRequest(
+      'POST',
+      `/meetings/${meetingId}/registrants`,
+      registrantData
+    );
   }
 
   /**
@@ -427,12 +464,19 @@ class ZoomService {
   /**
    * Send meeting invitation
    */
-  async sendMeetingInvitation(meetingId: string, invitees: string[]): Promise<any> {
+  async sendMeetingInvitation(
+    meetingId: string,
+    invitees: string[]
+  ): Promise<any> {
     const invitationData = {
-      meeting_invitees: invitees.map(email => ({ email }))
+      meeting_invitees: invitees.map((email) => ({ email })),
     };
 
-    return this.makeRequest('POST', `/meetings/${meetingId}/invitation`, invitationData);
+    return this.makeRequest(
+      'POST',
+      `/meetings/${meetingId}/invitation`,
+      invitationData
+    );
   }
 
   /**

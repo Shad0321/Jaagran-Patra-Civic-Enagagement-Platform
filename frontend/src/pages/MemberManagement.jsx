@@ -19,7 +19,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import AddMemberModal from '../components/AddMemberModal';
 import EditMemberModal from '../components/EditMemberModal';
 import HierarchyTreeView from '../components/HierarchyTreeView';
@@ -72,7 +72,7 @@ const MemberManagement = () => {
 
     try {
       setLoading(true);
-      
+
       // Fetch both members and MLA's own assigned issues
       const [membersResponse, mlaIssuesResponse] = await Promise.all([
         api.get('/auth/members', {
@@ -82,21 +82,26 @@ const MemberManagement = () => {
             search: searchTerm || undefined,
           },
         }),
-        api.get('/issues/assigned-to-me')
+        api.get('/issues/assigned-to-me'),
       ]);
 
       setMembers(membersResponse.data.members || []);
-      
+
       // Calculate stats
       const membersData = membersResponse.data.members || [];
-      const activeMembers = membersData.filter(m => m.isActive).length;
-      const uniqueBodies = new Set(membersData.map(m => m.body?.id).filter(Boolean)).size;
-      const memberIssues = membersData.reduce((sum, m) => sum + (m.assignedIssuesCount || 0), 0);
-      
+      const activeMembers = membersData.filter((m) => m.isActive).length;
+      const uniqueBodies = new Set(
+        membersData.map((m) => m.body?.id).filter(Boolean)
+      ).size;
+      const memberIssues = membersData.reduce(
+        (sum, m) => sum + (m.assignedIssuesCount || 0),
+        0
+      );
+
       // Add MLA's own assigned issues to the total count
       const mlaIssues = mlaIssuesResponse.data.data?.issues?.length || 0;
       const totalIssues = memberIssues + mlaIssues;
-      
+
       setStats({
         totalMembers: membersData.length,
         activeMembers,
@@ -140,7 +145,7 @@ const MemberManagement = () => {
       console.log('All bodies:', allBodies);
 
       // Filter bodies to only include those that have members under this MLA
-      const bodiesWithMembers = allBodies.filter(body => {
+      const bodiesWithMembers = allBodies.filter((body) => {
         const membersInBody = membersByBody[body.id] || [];
         return membersInBody.length > 0;
       });
@@ -154,7 +159,7 @@ const MemberManagement = () => {
           role: 'MLA',
           totalMembers: allMembers.length,
         },
-        bodies: bodiesWithMembers.map(body => ({
+        bodies: bodiesWithMembers.map((body) => ({
           ...body,
           members: membersByBody[body.id] || [],
           memberCount: (membersByBody[body.id] || []).length,
@@ -194,16 +199,20 @@ const MemberManagement = () => {
     }
   };
 
-  const filteredMembers = members.filter(member => {
-    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         member.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBodyType = !selectedBodyType || member.bodyType === selectedBodyType;
+  const filteredMembers = members.filter((member) => {
+    const matchesSearch =
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesBodyType =
+      !selectedBodyType || member.bodyType === selectedBodyType;
     return matchesSearch && matchesBodyType;
   });
 
   const getStatusIcon = (member) => {
-    if (!member.isActive) return <AlertCircle className="h-4 w-4 text-red-500" />;
-    if (member.assignedIssuesCount > 0) return <Clock className="h-4 w-4 text-yellow-500" />;
+    if (!member.isActive)
+      return <AlertCircle className="h-4 w-4 text-red-500" />;
+    if (member.assignedIssuesCount > 0)
+      return <Clock className="h-4 w-4 text-yellow-500" />;
     return <CheckCircle className="h-4 w-4 text-green-500" />;
   };
 
@@ -253,7 +262,9 @@ const MemberManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Members</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalMembers}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {stats.totalMembers}
+              </p>
             </div>
             <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <Users className="h-6 w-6 text-blue-600" />
@@ -264,8 +275,12 @@ const MemberManagement = () => {
         <div className="bg-white rounded-lg shadow-sm border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Active Members</p>
-              <p className="text-2xl font-bold text-green-600">{stats.activeMembers}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Active Members
+              </p>
+              <p className="text-2xl font-bold text-green-600">
+                {stats.activeMembers}
+              </p>
             </div>
             <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
               <UserCheck className="h-6 w-6 text-green-600" />
@@ -277,7 +292,9 @@ const MemberManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Bodies</p>
-              <p className="text-2xl font-bold text-purple-600">{stats.totalBodies}</p>
+              <p className="text-2xl font-bold text-purple-600">
+                {stats.totalBodies}
+              </p>
             </div>
             <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <Building className="h-6 w-6 text-purple-600" />
@@ -288,8 +305,12 @@ const MemberManagement = () => {
         <div className="bg-white rounded-lg shadow-sm border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Issues Assigned</p>
-              <p className="text-2xl font-bold text-orange-600">{stats.totalIssuesAssigned}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Issues Assigned
+              </p>
+              <p className="text-2xl font-bold text-orange-600">
+                {stats.totalIssuesAssigned}
+              </p>
             </div>
             <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
               <AlertCircle className="h-6 w-6 text-orange-600" />
@@ -344,7 +365,7 @@ const MemberManagement = () => {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Body Types</option>
-              {bodyTypes.map(type => (
+              {bodyTypes.map((type) => (
                 <option key={type} value={type}>
                   {type.replace(/_/g, ' ')}
                 </option>
@@ -356,8 +377,8 @@ const MemberManagement = () => {
 
       {/* Content */}
       {viewMode === 'hierarchy' ? (
-        <HierarchyTreeView 
-          data={hierarchyData} 
+        <HierarchyTreeView
+          data={hierarchyData}
           onEditMember={handleEditMember}
           onDeleteMember={handleDeleteMember}
         />
@@ -383,8 +404,12 @@ const MemberManagement = () => {
                           <Users className="h-5 w-5 text-gray-600" />
                         </div>
                         <div>
-                          <h3 className="font-medium text-gray-900">{member.name}</h3>
-                          <p className="text-sm text-gray-600">{member.designation || 'Member'}</p>
+                          <h3 className="font-medium text-gray-900">
+                            {member.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {member.designation || 'Member'}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -417,7 +442,10 @@ const MemberManagement = () => {
                       )}
                       <div className="flex items-center space-x-2">
                         <Building className="h-4 w-4" />
-                        <span>{member.bodyType?.replace(/_/g, ' ') || 'No Body Type'}</span>
+                        <span>
+                          {member.bodyType?.replace(/_/g, ' ') ||
+                            'No Body Type'}
+                        </span>
                       </div>
                       {member.body && (
                         <div className="flex items-center space-x-2">
@@ -441,10 +469,9 @@ const MemberManagement = () => {
                 <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                 <p>No members found</p>
                 <p className="text-sm">
-                  {searchTerm || selectedBodyType 
+                  {searchTerm || selectedBodyType
                     ? 'Try adjusting your search or filters'
-                    : 'Add your first member to get started'
-                  }
+                    : 'Add your first member to get started'}
                 </p>
               </div>
             )}

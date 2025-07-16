@@ -16,7 +16,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const NearbyIssues = () => {
   const { user } = useSelector((state) => state.user);
@@ -25,7 +25,7 @@ const NearbyIssues = () => {
   const [error, setError] = useState('');
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
-  
+
   // Comment-related state
   const [expandedIssues, setExpandedIssues] = useState(new Set());
   const [issueComments, setIssueComments] = useState({});
@@ -126,13 +126,15 @@ const NearbyIssues = () => {
   // Fetch nearby issues
   const fetchNearbyIssues = useCallback(async () => {
     // Don't make API call if location is not available
-    if (!location || 
-        !location.latitude || 
-        !location.longitude || 
-        typeof location.latitude !== 'number' || 
-        typeof location.longitude !== 'number' ||
-        isNaN(location.latitude) || 
-        isNaN(location.longitude)) {
+    if (
+      !location ||
+      !location.latitude ||
+      !location.longitude ||
+      typeof location.latitude !== 'number' ||
+      typeof location.longitude !== 'number' ||
+      isNaN(location.latitude) ||
+      isNaN(location.longitude)
+    ) {
       return;
     }
 
@@ -156,7 +158,8 @@ const NearbyIssues = () => {
         ...(debouncedFilters.search && { search: debouncedFilters.search }),
       });
 
-      const fullUrl = import.meta.env.VITE_API_URL + `/issues/nearby?${queryParams}`;
+      const fullUrl =
+        import.meta.env.VITE_API_URL + `/issues/nearby?${queryParams}`;
 
       const response = await fetch(fullUrl);
 
@@ -192,13 +195,15 @@ const NearbyIssues = () => {
 
   // Fetch issues when location or debounced filters change
   useEffect(() => {
-    if (location && 
-        location.latitude && 
-        location.longitude && 
-        typeof location.latitude === 'number' && 
-        typeof location.longitude === 'number' &&
-        !isNaN(location.latitude) && 
-        !isNaN(location.longitude)) {
+    if (
+      location &&
+      location.latitude &&
+      location.longitude &&
+      typeof location.latitude === 'number' &&
+      typeof location.longitude === 'number' &&
+      !isNaN(location.latitude) &&
+      !isNaN(location.longitude)
+    ) {
       fetchNearbyIssues();
     }
   }, [fetchNearbyIssues, location]);
@@ -216,7 +221,7 @@ const NearbyIssues = () => {
   // Comment-related functions
   const toggleIssueComments = async (issueId) => {
     const newExpanded = new Set(expandedIssues);
-    
+
     if (expandedIssues.has(issueId)) {
       newExpanded.delete(issueId);
     } else {
@@ -226,7 +231,7 @@ const NearbyIssues = () => {
         await fetchIssueComments(issueId);
       }
     }
-    
+
     setExpandedIssues(newExpanded);
   };
 
@@ -239,9 +244,9 @@ const NearbyIssues = () => {
       // Use the nearby issue details endpoint for better access control
       const response = await api.get(`/issues/nearby/${issueId}/details`);
       if (response.data.success) {
-        setIssueComments(prev => ({
+        setIssueComments((prev) => ({
           ...prev,
-          [issueId]: response.data.issue.updates || []
+          [issueId]: response.data.issue.updates || [],
         }));
       }
     } catch (error) {
@@ -264,34 +269,34 @@ const NearbyIssues = () => {
 
     try {
       let response;
-      
+
       // Use different endpoints based on user role
       if (user.role === 'CITIZEN' || user.role === 'MEMBER') {
         // For citizens and members, use the nearby comment endpoint
         response = await api.post(`/issues/citizen/${issueId}/nearby-comment`, {
-          message: commentText
+          message: commentText,
         });
       } else {
         // For MLAs and other roles (ADMIN), use the regular comment endpoint
         response = await api.post(`/issues/${issueId}/progress`, {
           message: commentText,
-          updateType: 'MEMBER_UPDATE'
+          updateType: 'MEMBER_UPDATE',
         });
       }
-      
+
       if (response.data.success) {
         // Add the new comment to the local state
-        setIssueComments(prev => ({
+        setIssueComments((prev) => ({
           ...prev,
-          [issueId]: [response.data.update, ...(prev[issueId] || [])]
+          [issueId]: [response.data.update, ...(prev[issueId] || [])],
         }));
-        
+
         // Clear the comment input
-        setNewComments(prev => ({
+        setNewComments((prev) => ({
           ...prev,
-          [issueId]: ''
+          [issueId]: '',
         }));
-        
+
         toast.success('Comment added successfully');
       }
     } catch (error) {
@@ -305,9 +310,9 @@ const NearbyIssues = () => {
   };
 
   const handleCommentChange = (issueId, value) => {
-    setNewComments(prev => ({
+    setNewComments((prev) => ({
       ...prev,
-      [issueId]: value
+      [issueId]: value,
     }));
   };
 
@@ -502,7 +507,9 @@ const NearbyIssues = () => {
             }}
             className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
           >
-            {location && location.latitude && location.longitude ? 'Try Again' : 'Get Location'}
+            {location && location.latitude && location.longitude
+              ? 'Try Again'
+              : 'Get Location'}
           </button>
         </div>
       ) : issues.length === 0 ? (
@@ -572,12 +579,16 @@ const NearbyIssues = () => {
                               addSuffix: true,
                             })}
                           </span>
-                          {issueComments[issue.id] && issueComments[issue.id].length > 0 && (
-                            <span className="flex items-center">
-                              <MessageSquare className="mr-1 h-4 w-4" />
-                              {issueComments[issue.id].length} comment{issueComments[issue.id].length !== 1 ? 's' : ''}
-                            </span>
-                          )}
+                          {issueComments[issue.id] &&
+                            issueComments[issue.id].length > 0 && (
+                              <span className="flex items-center">
+                                <MessageSquare className="mr-1 h-4 w-4" />
+                                {issueComments[issue.id].length} comment
+                                {issueComments[issue.id].length !== 1
+                                  ? 's'
+                                  : ''}
+                              </span>
+                            )}
                         </div>
 
                         {issue.reportedBy && (
@@ -636,46 +647,57 @@ const NearbyIssues = () => {
                                   >
                                     <div className="flex items-start">
                                       <div className="flex-shrink-0 mr-3">
-                                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                                          comment.user.role === 'CITIZEN' 
-                                            ? 'bg-blue-100' 
-                                            : comment.user.role === 'MLA' 
-                                            ? 'bg-purple-100' 
-                                            : comment.user.role === 'MEMBER'
-                                            ? 'bg-green-100'
-                                            : 'bg-gray-100'
-                                        }`}>
-                                          <User className={`h-5 w-5 ${
-                                            comment.user.role === 'CITIZEN' 
-                                              ? 'text-blue-600' 
-                                              : comment.user.role === 'MLA' 
-                                              ? 'text-purple-600' 
-                                              : comment.user.role === 'MEMBER'
-                                              ? 'text-green-600'
-                                              : 'text-gray-600'
-                                          }`} />
+                                        <div
+                                          className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                            comment.user.role === 'CITIZEN'
+                                              ? 'bg-blue-100'
+                                              : comment.user.role === 'MLA'
+                                                ? 'bg-purple-100'
+                                                : comment.user.role === 'MEMBER'
+                                                  ? 'bg-green-100'
+                                                  : 'bg-gray-100'
+                                          }`}
+                                        >
+                                          <User
+                                            className={`h-5 w-5 ${
+                                              comment.user.role === 'CITIZEN'
+                                                ? 'text-blue-600'
+                                                : comment.user.role === 'MLA'
+                                                  ? 'text-purple-600'
+                                                  : comment.user.role ===
+                                                      'MEMBER'
+                                                    ? 'text-green-600'
+                                                    : 'text-gray-600'
+                                            }`}
+                                          />
                                         </div>
                                       </div>
                                       <div className="flex-1">
                                         <div className="flex items-center justify-between">
                                           <div className="text-sm font-medium text-gray-900">
                                             {comment.user.name}
-                                            <span className={`ml-2 text-xs px-2 py-1 rounded-full font-normal ${
-                                              comment.user.role === 'CITIZEN' 
-                                                ? 'bg-blue-100 text-blue-800' 
-                                                : comment.user.role === 'MLA' 
-                                                ? 'bg-purple-100 text-purple-800' 
-                                                : comment.user.role === 'MEMBER'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-gray-100 text-gray-800'
-                                            }`}>
+                                            <span
+                                              className={`ml-2 text-xs px-2 py-1 rounded-full font-normal ${
+                                                comment.user.role === 'CITIZEN'
+                                                  ? 'bg-blue-100 text-blue-800'
+                                                  : comment.user.role === 'MLA'
+                                                    ? 'bg-purple-100 text-purple-800'
+                                                    : comment.user.role ===
+                                                        'MEMBER'
+                                                      ? 'bg-green-100 text-green-800'
+                                                      : 'bg-gray-100 text-gray-800'
+                                              }`}
+                                            >
                                               {comment.user.role}
                                             </span>
                                           </div>
                                           <div className="text-xs text-gray-500">
-                                            {formatDistanceToNow(new Date(comment.createdAt), {
-                                              addSuffix: true,
-                                            })}
+                                            {formatDistanceToNow(
+                                              new Date(comment.createdAt),
+                                              {
+                                                addSuffix: true,
+                                              }
+                                            )}
                                           </div>
                                         </div>
                                         <div className="mt-1 text-sm text-gray-700">
@@ -690,7 +712,9 @@ const NearbyIssues = () => {
                               <div className="text-center py-4 text-gray-500">
                                 <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-400" />
                                 <p className="text-sm">No comments yet</p>
-                                <p className="text-xs">Be the first to comment on this issue</p>
+                                <p className="text-xs">
+                                  Be the first to comment on this issue
+                                </p>
                               </div>
                             )}
                           </div>
@@ -713,7 +737,10 @@ const NearbyIssues = () => {
                                 </div>
                                 <button
                                   onClick={() => handleCommentSubmit(issue.id)}
-                                  disabled={!newComments[issue.id]?.trim() || commentingIssues.has(issue.id)}
+                                  disabled={
+                                    !newComments[issue.id]?.trim() ||
+                                    commentingIssues.has(issue.id)
+                                  }
                                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   {commentingIssues.has(issue.id) ? (
@@ -731,7 +758,7 @@ const NearbyIssues = () => {
                               </div>
                             </div>
                           )}
-                          
+
                           {!user && (
                             <div className="mt-4 text-center text-sm text-gray-500 border-t border-gray-200 pt-4">
                               <p>Please sign in to comment on issues</p>

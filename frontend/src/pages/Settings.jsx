@@ -7,7 +7,7 @@ import {
   clearError,
 } from '../redux/slices/userSlice';
 import { Check, User, Lock, Globe, Save } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -18,7 +18,6 @@ const Settings = () => {
   useEffect(() => {
     if (error) {
       console.log('API Error:', error);
-      
       toast.error(error);
     }
   }, [error]);
@@ -31,8 +30,10 @@ const Settings = () => {
   const [profileData, setProfileData] = useState({
     name: '',
     phone: '',
-    avatar: '',
+    avatar: '', // This will be the URL string
   });
+  const [avatarFile, setAvatarFile] = useState(null); // For file upload
+  const [avatarPreview, setAvatarPreview] = useState('');
 
   // Password form state
   const [passwordData, setPasswordData] = useState({
@@ -49,6 +50,8 @@ const Settings = () => {
         phone: user.phone || '',
         avatar: user.avatar || '',
       });
+      setAvatarPreview(user.avatar || '');
+      setAvatarFile(null);
     }
   }, [user]);
 
@@ -65,11 +68,26 @@ const Settings = () => {
   };
 
   const handleProfileChange = (e) => {
-    const { name, value } = e.target;
-    setProfileData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, type, files } = e.target;
+    if (name === 'avatar' && type === 'file') {
+      const file = files[0];
+      setAvatarFile(file);
+      console.log('Selected avatar file:', file);
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setAvatarPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setAvatarPreview(profileData.avatar || '');
+      }
+    } else {
+      setProfileData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handlePasswordChange = (e) => {
@@ -84,7 +102,25 @@ const Settings = () => {
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(updateUserProfile(profileData)).unwrap();
+      let payload,
+        isFormData = false;
+      console.log('Submitting profile update. avatarFile:', avatarFile);
+      if (avatarFile) {
+        payload = new FormData();
+        payload.append('name', profileData.name);
+        payload.append('phone', profileData.phone);
+        payload.append('avatar', avatarFile);
+        isFormData = true;
+        // Debug: log FormData content
+        for (let pair of payload.entries()) {
+          console.log('FormData:', pair[0], pair[1]);
+        }
+      } else {
+        payload = { ...profileData };
+        console.log('Payload (no avatar):', payload);
+      }
+      // Pass a flag to the thunk so it can set headers
+      await dispatch(updateUserProfile({ data: payload, isFormData })).unwrap();
       setSuccessMessage('Profile updated successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
@@ -250,17 +286,31 @@ const Settings = () => {
                       htmlFor="avatar"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Avatar URL
+                      Avatar
                     </label>
-                    <input
-                      type="url"
-                      id="avatar"
-                      name="avatar"
-                      value={profileData.avatar}
-                      onChange={handleProfileChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                      placeholder="Enter avatar image URL"
-                    />
+                    <div className="flex items-center gap-4 mt-1">
+                      <input
+                        type="file"
+                        id="avatar"
+                        name="avatar"
+                        accept="image/*"
+                        onChange={handleProfileChange}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
+                      />
+                      {avatarPreview && (
+                        <img
+                          src={avatarPreview}
+                          alt="Avatar Preview"
+                          className="w-12 h-12 rounded-full object-cover border"
+                        />
+                      )}
+                    </div>
+                    {/* Optionally show current avatar URL as fallback */}
+                    {!avatarPreview && profileData.avatar && (
+                      <div className="mt-2 text-xs text-gray-500 break-all">
+                        Current: {profileData.avatar}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-end">

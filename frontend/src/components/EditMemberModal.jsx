@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Users, Building, Check, Edit } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -77,7 +77,7 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
@@ -85,7 +85,7 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.bodyType) {
       toast.error('Please fill in all required fields');
       return;
@@ -93,7 +93,7 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
 
     try {
       setLoading(true);
-      
+
       // Update user basic info
       await api.put(`/auth/profile`, {
         name: formData.name,
@@ -134,8 +134,12 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
               <Edit className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Edit Member</h2>
-              <p className="text-sm text-gray-600">Update member information and permissions</p>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Edit Member
+              </h2>
+              <p className="text-sm text-gray-600">
+                Update member information and permissions
+              </p>
             </div>
           </div>
           <button
@@ -150,7 +154,9 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Basic Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -191,7 +197,9 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
                   disabled
                 />
-                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Email cannot be changed
+                </p>
               </div>
 
               <div>
@@ -201,13 +209,15 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
                 <select
                   name="isActive"
                   value={formData.isActive ? 'active' : 'inactive'}
-                  onChange={(e) => handleInputChange({
-                    target: {
-                      name: 'isActive',
-                      value: e.target.value === 'active',
-                      type: 'select'
-                    }
-                  })}
+                  onChange={(e) =>
+                    handleInputChange({
+                      target: {
+                        name: 'isActive',
+                        value: e.target.value === 'active',
+                        type: 'select',
+                      },
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="active">Active</option>
@@ -219,7 +229,9 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
 
           {/* Role & Body Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Role & Body Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Role & Body Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -233,7 +245,7 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
                   required
                 >
                   <option value="">Select body type</option>
-                  {bodyTypes.map(type => (
+                  {bodyTypes.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
                     </option>
@@ -253,14 +265,16 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
                   disabled={loadingBodies}
                 >
                   <option value="">Select body (optional)</option>
-                  {availableBodies.map(body => (
+                  {availableBodies.map((body) => (
                     <option key={body.id} value={body.id}>
                       {body.name} ({body.type.replace(/_/g, ' ')})
                     </option>
                   ))}
                 </select>
                 {loadingBodies && (
-                  <p className="text-xs text-gray-500 mt-1">Loading bodies...</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Loading bodies...
+                  </p>
                 )}
               </div>
 
@@ -296,7 +310,9 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
 
           {/* Permissions */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Permissions</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Permissions
+            </h3>
             <div className="space-y-3">
               <div className="flex items-center">
                 <input
@@ -341,7 +357,9 @@ const EditMemberModal = ({ isOpen, onClose, member, onSuccess }) => {
 
           {/* Statistics */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Statistics</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Statistics
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm text-gray-600">Total Issues</p>

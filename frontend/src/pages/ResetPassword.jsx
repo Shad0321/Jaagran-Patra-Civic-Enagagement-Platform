@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPassword, clearError } from '../redux/slices/userSlice';
@@ -70,7 +70,12 @@ const ResetPassword = () => {
       ).unwrap();
       setIsSuccess(true);
     } catch (error) {
-      toast.error(error?.message || 'Reset password failed');
+      toast.error(
+        error?.message ||
+          error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          'Reset password failed'
+      );
       console.error('Reset password failed:', error);
     }
   };

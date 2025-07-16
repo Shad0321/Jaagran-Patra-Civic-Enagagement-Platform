@@ -69,7 +69,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
                 onClick={() => handleImageClick(imageUrl)}
               >
                 <img
-                  src={`${API_BASE_URL}${imageUrl}`}
+                  src={`${imageUrl}`}
                   alt={`Issue attachment ${index + 1}`}
                   className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   crossOrigin="anonymous"
@@ -113,7 +113,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
               <div className="text-sm text-gray-700">Voice Note</div>{' '}
               <audio
                 ref={setAudioRef}
-                src={`${API_BASE_URL}${voiceNote}`}
+                src={`${voiceNote}`}
                 onEnded={handleAudioEnded}
                 onError={handleAudioError}
                 preload="metadata"

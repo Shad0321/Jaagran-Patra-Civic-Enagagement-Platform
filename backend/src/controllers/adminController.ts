@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from '../middleware/auth';
 import bcrypt from 'bcryptjs';
 import * as fs from 'fs';
 import * as path from 'path';
+import { uploadBufferToCloudinary } from '../utils/cloudinary';
 
 const prisma = new PrismaClient();
 
@@ -374,6 +375,7 @@ export const getAllMLAs = async (
       name: mla.name,
       email: mla.email,
       phone: mla.phone,
+      avatar: mla.avatar,
       isActive: mla.isActive,
       createdAt: mla.createdAt,
       stateId: mla.stateId,
@@ -431,13 +433,11 @@ export const createMLA = async (
 
     // Validate required fields
     if (!name || !email || !constituencyId || !party || !stateId) {
-      res
-        .status(400)
-        .json({
-          success: false,
-          error:
-            'Missing required fields: name, email, stateId, constituencyId, and party are required',
-        });
+      res.status(400).json({
+        success: false,
+        error:
+          'Missing required fields: name, email, stateId, constituencyId, and party are required',
+      });
       return;
     }
 
@@ -465,17 +465,45 @@ export const createMLA = async (
       where: { constituencyId },
     });
     if (existingMLA) {
-      res
-        .status(409)
-        .json({
-          success: false,
-          error: 'An MLA already exists for this constituency',
-        });
+      res.status(409).json({
+        success: false,
+        error: 'An MLA already exists for this constituency',
+      });
       return;
     }
 
+    interface CloudinaryUploadResult {
+      secure_url: string;
+      [key: string]: any;
+    }
+
+    // Handle avatar upload
+    let avatarUrl = null;
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    if (files && files.avatar && files.avatar.length > 0) {
+      const avatarFile = files.avatar[0];
+      try {
+        // Upload avatar to Cloudinary
+        const result = await uploadBufferToCloudinary(
+          avatarFile.buffer,
+          'mla/avatars',
+          'image'
+        );
+        avatarUrl = (result as CloudinaryUploadResult).secure_url;
+      } catch (uploadError) {
+        console.error('Avatar upload error:', uploadError);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to upload avatar image',
+        });
+        return;
+      }
+    }
+    console.log('Avatar URL:', avatarUrl);
+
     // Use provided password or generate a temporary password
-    const finalPassword = password || Math.random().toString(36).substring(2, 12);
+    const finalPassword =
+      password || Math.random().toString(36).substring(2, 12);
     const hashedPassword = await bcrypt.hash(finalPassword, 10);
 
     // Create user with MLA role
@@ -487,10 +515,11 @@ export const createMLA = async (
         password: hashedPassword,
         role: UserRole.MLA,
         isVerified: true, // Admin created users are pre-verified
-        isActive: isActive !== undefined ? isActive : true,
+        isActive: isActive === 'true',
         stateId,
         constituencyId,
         currentAddress: address || null,
+        avatar: avatarUrl, // Store the avatar URL
       },
     });
 
@@ -547,32 +576,74 @@ export const updateMLA = async (
       stateId,
       constituencyId,
       party,
-      position,
-      tenure,
       address,
       bio,
-      achievements,
       isActive,
+      position,
+      tenure,
+      achievements,
+      socialLinks,
     } = req.body;
 
-    // Update user
-    const user = await prisma.user.update({
+    // Check if MLA exists
+    const existingMLA = await prisma.user.findUnique({
+      where: { id },
+      include: { mlaProfile: true },
+    });
+
+    if (!existingMLA || existingMLA.role !== 'MLA') {
+      res.status(404).json({ success: false, error: 'MLA not found' });
+      return;
+    }
+
+    // Define the type for the Cloudinary result
+    interface CloudinaryUploadResult {
+      secure_url: string;
+      [key: string]: any;
+    }
+
+    // Handle avatar upload
+    let avatarUrl = existingMLA.avatar; // Keep existing avatar by default
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    if (files && files.avatar && files.avatar.length > 0) {
+      const avatarFile = files.avatar[0];
+      try {
+        // Upload new avatar to Cloudinary
+        const result = await uploadBufferToCloudinary(
+          avatarFile.buffer,
+          'mla/avatars',
+          'image'
+        );
+        avatarUrl = (result as CloudinaryUploadResult).secure_url;
+      } catch (uploadError) {
+        console.error('Avatar upload error:', uploadError);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to upload avatar image',
+        });
+        return;
+      }
+    }
+
+    // Update user data
+    const updatedUser = await prisma.user.update({
       where: { id },
       data: {
         name,
         email,
-        phone,
+        phone: phone || null,
         stateId,
         constituencyId,
-        currentAddress: address,
-        isActive,
+        currentAddress: address || null,
+        isActive: isActive === 'true',
+        avatar: avatarUrl, // Update avatar URL
       },
     });
 
     // Update MLA profile
-    await prisma.mlaProfile.upsert({
+    const updatedMlaProfile = await prisma.mlaProfile.update({
       where: { userId: id },
-      update: {
+      data: {
         constituencyId,
         partyName: party,
         position: position || null,
@@ -581,31 +652,24 @@ export const updateMLA = async (
         achievements: achievements || null,
         contactEmail: email,
         contactPhone: phone || null,
-      },
-      create: {
-        userId: id,
-        constituencyId,
-        partyName: party,
-        position: position || null,
-        tenure: tenure || null,
-        bio: bio || null,
-        achievements: achievements || null,
-        contactEmail: email,
-        contactPhone: phone || null,
+        socialLinks: socialLinks || null,
       },
     });
 
-    // Get updated user with profile
-    const updatedUser = await prisma.user.findUnique({
+    // Fetch the updated MLA with related data
+    const updatedMLA = await prisma.user.findUnique({
       where: { id },
       include: {
         mlaProfile: true,
-        state: { select: { name: true } },
-        constituency: { select: { name: true } },
+        state: { select: { name: true, code: true } },
+        constituency: { select: { name: true, type: true } },
       },
     });
 
-    res.json({ success: true, data: updatedUser });
+    res.status(200).json({
+      success: true,
+      data: updatedMLA,
+    });
   } catch (error) {
     console.error('Update MLA error:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -652,12 +716,12 @@ export const getAllMembers = async (
     const skip = (pageNum - 1) * limitNum;
 
     const where: any = { role: UserRole.MEMBER };
-    
+
     // Filter by MLA if mlaId is provided
     if (mlaId) {
       where.mlaId = mlaId as string;
     }
-    
+
     if (search) {
       where.OR = [
         { name: { contains: search as string, mode: 'insensitive' } },
@@ -725,23 +789,20 @@ export const createMember = async (
 
     // Validate required fields
     if (!name || !email) {
-      res
-        .status(400)
-        .json({
-          success: false,
-          error: 'Missing required fields: name and email are required',
-        });
+      res.status(400).json({
+        success: false,
+        error: 'Missing required fields: name and email are required',
+      });
       return;
     }
 
     // Validate that mlaId is provided (required for proper hierarchy)
     if (!mlaId) {
-      res
-        .status(400)
-        .json({
-          success: false,
-          error: 'MLA ID is required. Please select an MLA to associate this member with.',
-        });
+      res.status(400).json({
+        success: false,
+        error:
+          'MLA ID is required. Please select an MLA to associate this member with.',
+      });
       return;
     }
 
@@ -756,27 +817,34 @@ export const createMember = async (
     });
 
     if (!mla) {
-      res
-        .status(404)
-        .json({
-          success: false,
-          error: 'Selected MLA not found or invalid',
-        });
+      res.status(404).json({
+        success: false,
+        error: 'Selected MLA not found or invalid',
+      });
       return;
     }
 
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
-      where: { 
+      where: {
         OR: [
-          { email }, 
-          ...(phone && phone.trim() !== '' ? [{ phone: phone }] : [])
-        ] 
+          { email },
+          ...(phone && phone.trim() !== '' ? [{ phone: phone }] : []),
+        ],
       },
     });
     if (existingUser) {
-      console.log('User already exists:', { email, phone, existingUserId: existingUser.id });
-      res.status(409).json({ success: false, error: 'User with this email or phone already exists' });
+      console.log('User already exists:', {
+        email,
+        phone,
+        existingUserId: existingUser.id,
+      });
+      res
+        .status(409)
+        .json({
+          success: false,
+          error: 'User with this email or phone already exists',
+        });
       return;
     }
 
@@ -788,7 +856,8 @@ export const createMember = async (
 
     // Use provided location data or fall back to MLA's location
     const finalStateId = stateId || mlaLocationData.stateId;
-    const finalConstituencyId = constituencyId || mlaLocationData.constituencyId;
+    const finalConstituencyId =
+      constituencyId || mlaLocationData.constituencyId;
     const finalDistrictId = mla.constituency?.districtId;
 
     // If bodyId is provided and not empty, verify it exists
@@ -804,8 +873,20 @@ export const createMember = async (
       finalBodyId = bodyId;
     } else if (bodyType) {
       // If no bodyId provided but bodyType is specified, create or find a default body
-      const defaultBodyTypes = ['SHAKTI_KENDRA', 'PANNA_PRAMUKH', 'LOCAL_BODY', 'POLLING_BOOTH', 'WARD', 'BLOCK', 'MANDAL', 'TEHSIL', 'GRAM_PANCHAYAT', 'MUNICIPALITY', 'CORPORATION'];
-      
+      const defaultBodyTypes = [
+        'SHAKTI_KENDRA',
+        'PANNA_PRAMUKH',
+        'LOCAL_BODY',
+        'POLLING_BOOTH',
+        'WARD',
+        'BLOCK',
+        'MANDAL',
+        'TEHSIL',
+        'GRAM_PANCHAYAT',
+        'MUNICIPALITY',
+        'CORPORATION',
+      ];
+
       if (defaultBodyTypes.includes(bodyType)) {
         // Check if a default body of this type already exists for this location
         const existingBody = await prisma.body.findFirst({
@@ -827,27 +908,29 @@ export const createMember = async (
           // Create a default body
           const bodyName = `${bodyType.replace(/_/g, ' ')} - ${mla.constituency?.name || 'Default'}`;
           const bodyCode = `${bodyType.substring(0, 3)}-${Date.now()}`;
-          
+
           const newBody = await prisma.body.create({
             data: {
               name: bodyName,
               code: bodyCode,
               type: bodyType,
-              description: description || `Default ${bodyType.replace(/_/g, ' ')} body`,
+              description:
+                description || `Default ${bodyType.replace(/_/g, ' ')} body`,
               stateId: finalStateId,
               districtId: finalDistrictId, // Using proper district ID
               constituencyId: finalConstituencyId,
               isActive: true,
             },
           });
-          
+
           finalBodyId = newBody.id;
         }
       }
     }
 
     // Use provided password or generate a temporary password
-    const finalPassword = password || Math.random().toString(36).substring(2, 12);
+    const finalPassword =
+      password || Math.random().toString(36).substring(2, 12);
     const hashedPassword = await bcrypt.hash(finalPassword, 10);
 
     console.log('Creating member with data:', {
@@ -899,7 +982,7 @@ export const createMember = async (
           finalStateId,
           finalConstituencyId,
           bodyType,
-          code: localBodyName.replace(/\s+/g, '_').toUpperCase()
+          code: localBodyName.replace(/\s+/g, '_').toUpperCase(),
         });
 
         const localBody = await prisma.body.upsert({
@@ -940,7 +1023,7 @@ export const createMember = async (
       console.log('Cannot create local body - missing location data:', {
         localBodyName,
         finalStateId,
-        finalConstituencyId
+        finalConstituencyId,
       });
     }
 
@@ -1254,14 +1337,14 @@ export const createNews = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { 
-      title, 
-      content, 
+    const {
+      title,
+      content,
       summary,
-      category, 
-      stateId, 
+      category,
+      stateId,
       isNational,
-      tags, 
+      tags,
       isActive,
       isPinned,
       featuredImage,
@@ -1269,14 +1352,16 @@ export const createNews = async (
       slug: providedSlug,
       metaTitle,
       metaDescription,
-      publishedAt
+      publishedAt,
     } = req.body;
 
     // Generate slug from title if not provided
-    const slug = providedSlug || title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    const slug =
+      providedSlug ||
+      title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 
     const news = await prisma.news.create({
       data: {
@@ -1316,14 +1401,14 @@ export const updateNews = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { 
-      title, 
-      content, 
+    const {
+      title,
+      content,
       summary,
-      category, 
-      stateId, 
+      category,
+      stateId,
       isNational,
-      tags, 
+      tags,
       isActive,
       isPinned,
       featuredImage,
@@ -1331,7 +1416,7 @@ export const updateNews = async (
       slug: providedSlug,
       metaTitle,
       metaDescription,
-      publishedAt
+      publishedAt,
     } = req.body;
 
     // Generate slug from title if not provided and title changed
@@ -1353,10 +1438,12 @@ export const updateNews = async (
     // Only update title and slug if title is provided
     if (title) {
       updateData.title = title;
-      updateData.slug = providedSlug || title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+      updateData.slug =
+        providedSlug ||
+        title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
     }
 
     // Only update publishedAt if provided
@@ -1411,10 +1498,10 @@ export const toggleNews = async (
       data: { isActive },
     });
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: `News ${isActive ? 'activated' : 'deactivated'} successfully`,
-      data: news 
+      data: news,
     });
   } catch (error) {
     console.error('Toggle news error:', error);
@@ -1454,92 +1541,108 @@ export const getAnalytics = async (
         break;
     }
 
-    const [userGrowth, issueStats, newsStats, resolvedIssuesCount, mlaPerformance, responseTimeMetrics, issuesByMonth] =
-      await Promise.all([
-        prisma.user.groupBy({
-          by: ['role'],
-          _count: { _all: true },
-          where: { createdAt: dateFilter },
-        }),
-        prisma.issue.groupBy({
-          by: ['status'],
-          _count: { _all: true },
-          where: { createdAt: dateFilter },
-        }),
-        prisma.news.groupBy({
-          by: ['category'],
-          _count: { _all: true },
-          where: { createdAt: dateFilter },
-        }),
-        prisma.issue.count({
-          where: {
-            status: 'RESOLVED',
-            createdAt: dateFilter,
-          },
-        }),
-        // MLA Performance Analytics
-        prisma.user.findMany({
-          where: {
-            role: UserRole.MLA,
-            createdAt: dateFilter,
-          },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            constituency: {
-              select: {
-                name: true
-              }
-            },
-            assignedIssues: {
-              where: { createdAt: dateFilter },
-              select: {
-                id: true,
-                status: true,
-                createdAt: true,
-                updatedAt: true,
-              },
+    const [
+      userGrowth,
+      issueStats,
+      newsStats,
+      resolvedIssuesCount,
+      mlaPerformance,
+      responseTimeMetrics,
+      issuesByMonth,
+    ] = await Promise.all([
+      prisma.user.groupBy({
+        by: ['role'],
+        _count: { _all: true },
+        where: { createdAt: dateFilter },
+      }),
+      prisma.issue.groupBy({
+        by: ['status'],
+        _count: { _all: true },
+        where: { createdAt: dateFilter },
+      }),
+      prisma.news.groupBy({
+        by: ['category'],
+        _count: { _all: true },
+        where: { createdAt: dateFilter },
+      }),
+      prisma.issue.count({
+        where: {
+          status: 'RESOLVED',
+          createdAt: dateFilter,
+        },
+      }),
+      // MLA Performance Analytics
+      prisma.user.findMany({
+        where: {
+          role: UserRole.MLA,
+          createdAt: dateFilter,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          constituency: {
+            select: {
+              name: true,
             },
           },
-        }),
-        // Response Time Metrics
-        prisma.issue.findMany({
-          where: {
-            status: 'RESOLVED',
-            createdAt: dateFilter,
+          assignedIssues: {
+            where: { createdAt: dateFilter },
+            select: {
+              id: true,
+              status: true,
+              createdAt: true,
+              updatedAt: true,
+            },
           },
-          select: {
-            createdAt: true,
-            updatedAt: true,
-          },
-        }),
-        // Issues by Month
-        prisma.issue.findMany({
-          where: { createdAt: dateFilter },
-          select: {
-            createdAt: true,
-          },
-        }),
-      ]);
+        },
+      }),
+      // Response Time Metrics
+      prisma.issue.findMany({
+        where: {
+          status: 'RESOLVED',
+          createdAt: dateFilter,
+        },
+        select: {
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+      // Issues by Month
+      prisma.issue.findMany({
+        where: { createdAt: dateFilter },
+        select: {
+          createdAt: true,
+        },
+      }),
+    ]);
 
     // Process MLA Performance data
-    const processedMlaPerformance = mlaPerformance.map(mla => {
+    const processedMlaPerformance = mlaPerformance.map((mla) => {
       const totalIssues = mla.assignedIssues.length;
-      const resolvedIssues = mla.assignedIssues.filter(issue => issue.status === 'RESOLVED').length;
-      const resolutionRate = totalIssues > 0 ? ((resolvedIssues / totalIssues) * 100).toFixed(1) : '0';
-      
+      const resolvedIssues = mla.assignedIssues.filter(
+        (issue) => issue.status === 'RESOLVED'
+      ).length;
+      const resolutionRate =
+        totalIssues > 0
+          ? ((resolvedIssues / totalIssues) * 100).toFixed(1)
+          : '0';
+
       // Calculate average response time for this MLA
-      const resolvedIssuesWithTime = mla.assignedIssues.filter(issue => 
-        issue.status === 'RESOLVED' && issue.updatedAt
+      const resolvedIssuesWithTime = mla.assignedIssues.filter(
+        (issue) => issue.status === 'RESOLVED' && issue.updatedAt
       );
-      
-      const avgResponseTime = resolvedIssuesWithTime.length > 0 
-        ? resolvedIssuesWithTime.reduce((sum, issue) => {
-            const responseTime = (new Date(issue.updatedAt!).getTime() - new Date(issue.createdAt).getTime()) / (1000 * 60 * 60); // hours
-            return sum + responseTime;
-          }, 0) / resolvedIssuesWithTime.length
-        : 0;
+
+      const avgResponseTime =
+        resolvedIssuesWithTime.length > 0
+          ? resolvedIssuesWithTime.reduce((sum, issue) => {
+              const responseTime =
+                (new Date(issue.updatedAt!).getTime() -
+                  new Date(issue.createdAt).getTime()) /
+                (1000 * 60 * 60); // hours
+              return sum + responseTime;
+            }, 0) / resolvedIssuesWithTime.length
+          : 0;
 
       return {
         name: mla.name,
@@ -1553,27 +1656,38 @@ export const getAnalytics = async (
 
     // Process Response Time Metrics
     const responseTimes = responseTimeMetrics
-      .filter(issue => issue.updatedAt)
-      .map(issue => {
-        const responseTime = (new Date(issue.updatedAt!).getTime() - new Date(issue.createdAt).getTime()) / (1000 * 60 * 60); // hours
+      .filter((issue) => issue.updatedAt)
+      .map((issue) => {
+        const responseTime =
+          (new Date(issue.updatedAt!).getTime() -
+            new Date(issue.createdAt).getTime()) /
+          (1000 * 60 * 60); // hours
         return responseTime;
       });
 
     const processedResponseTimeMetrics = {
-      fastest: responseTimes.length > 0 ? Math.min(...responseTimes).toFixed(1) : '0',
-      slowest: responseTimes.length > 0 ? Math.max(...responseTimes).toFixed(1) : '0',
-      average: responseTimes.length > 0 ? (responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length).toFixed(1) : '0',
+      fastest:
+        responseTimes.length > 0 ? Math.min(...responseTimes).toFixed(1) : '0',
+      slowest:
+        responseTimes.length > 0 ? Math.max(...responseTimes).toFixed(1) : '0',
+      average:
+        responseTimes.length > 0
+          ? (
+              responseTimes.reduce((sum, time) => sum + time, 0) /
+              responseTimes.length
+            ).toFixed(1)
+          : '0',
     };
 
     // Process Issues by Month
     const processedIssuesByMonth = () => {
       const monthCounts: { [key: string]: number } = {};
-      
-      issuesByMonth.forEach(issue => {
+
+      issuesByMonth.forEach((issue) => {
         const date = new Date(issue.createdAt);
-        const monthKey = date.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'short' 
+        const monthKey = date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
         });
         monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
       });
@@ -1582,7 +1696,7 @@ export const getAnalytics = async (
       const entries = Object.entries(monthCounts).map(([month, count]) => ({
         month,
         count,
-        sortKey: new Date(month + ' 1').getTime() // Add day for proper date parsing
+        sortKey: new Date(month + ' 1').getTime(), // Add day for proper date parsing
       }));
 
       return entries
@@ -1977,10 +2091,10 @@ export const initializeLocationData = async (
     });
   } catch (error) {
     console.error('Initialize location data error:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error' // Include error details for debugging
+      details: error instanceof Error ? error.message : 'Unknown error', // Include error details for debugging
     });
   }
 };

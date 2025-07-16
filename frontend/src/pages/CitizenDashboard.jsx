@@ -10,7 +10,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import LatestNews from '../components/LatestNews';
 
 const CitizenDashboard = () => {
@@ -23,7 +23,10 @@ const CitizenDashboard = () => {
   });
   const [recentIssues, setRecentIssues] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [commentModal, setCommentModal] = useState({ isOpen: false, issueId: null });
+  const [commentModal, setCommentModal] = useState({
+    isOpen: false,
+    issueId: null,
+  });
   const [commentText, setCommentText] = useState('');
 
   useEffect(() => {
@@ -38,10 +41,10 @@ const CitizenDashboard = () => {
 
     try {
       // Find the issue to determine if it's the user's own issue or nearby
-      const issue = recentIssues.find(issue => issue.id === issueId);
+      const issue = recentIssues.find((issue) => issue.id === issueId);
       const isOwnIssue = issue?.reportedBy.id === user?.id;
 
-      const endpoint = isOwnIssue 
+      const endpoint = isOwnIssue
         ? `/issues/citizen/${issueId}/comment`
         : `/issues/citizen/${issueId}/nearby-comment`;
 
@@ -52,7 +55,7 @@ const CitizenDashboard = () => {
       toast.success('Comment added successfully');
       setCommentText('');
       setCommentModal({ isOpen: false, issueId: null });
-      
+
       // Refresh recent issues
       fetchDashboardData();
     } catch (error) {
@@ -88,8 +91,9 @@ const CitizenDashboard = () => {
         inProgressIssues: userIssues.filter(
           (issue) => issue.status === 'IN_PROGRESS'
         ).length,
-        resolvedIssues: userIssues.filter((issue) => issue.status === 'RESOLVED')
-          .length,
+        resolvedIssues: userIssues.filter(
+          (issue) => issue.status === 'RESOLVED'
+        ).length,
       };
 
       setStats(stats);
@@ -99,7 +103,7 @@ const CitizenDashboard = () => {
         // Use default location if user location not available
         const defaultLocation = {
           latitude: Number(user?.currentLatitude) || 28.6139,
-          longitude: Number(user?.currentLongitude) || 77.2090,
+          longitude: Number(user?.currentLongitude) || 77.209,
         };
 
         const nearbyResponse = await api.get('/issues/nearby', {
@@ -113,19 +117,23 @@ const CitizenDashboard = () => {
 
         if (nearbyResponse.data.success) {
           const nearbyIssues = nearbyResponse.data.data.issues || [];
-          
+
           // Combine user's issues with nearby issues, remove duplicates
           const allIssues = [...userIssues];
-          
+
           // Add nearby issues that are not already in user's issues
-          nearbyIssues.forEach(nearbyIssue => {
-            if (!allIssues.find(userIssue => userIssue.id === nearbyIssue.id)) {
+          nearbyIssues.forEach((nearbyIssue) => {
+            if (
+              !allIssues.find((userIssue) => userIssue.id === nearbyIssue.id)
+            ) {
               allIssues.push(nearbyIssue);
             }
           });
 
           // Sort by creation date (newest first) and take first 10
-          allIssues.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          allIssues.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
           setRecentIssues(allIssues.slice(0, 10));
         } else {
           // If nearby issues fail, just use user's issues
@@ -136,7 +144,6 @@ const CitizenDashboard = () => {
         // If nearby issues fail, just use user's issues
         setRecentIssues(userIssues.slice(0, 10));
       }
-
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       console.error('Error details:', error.response?.data);
@@ -382,10 +389,10 @@ const CitizenDashboard = () => {
         <div className="lg:col-span-2">
           {/* Latest News Widget */}
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <LatestNews 
-              userState={user?.state?.name || 'all'} 
-              limit={4} 
-              showFull={false} 
+            <LatestNews
+              userState={user?.state?.name || 'all'}
+              limit={4}
+              showFull={false}
             />
           </div>
         </div>
@@ -448,7 +455,9 @@ const CitizenDashboard = () => {
             />
             <div className="flex justify-end space-x-3 mt-4">
               <button
-                onClick={() => setCommentModal({ isOpen: false, issueId: null })}
+                onClick={() =>
+                  setCommentModal({ isOpen: false, issueId: null })
+                }
                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
               >
                 Cancel

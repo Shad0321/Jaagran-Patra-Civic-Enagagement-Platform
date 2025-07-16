@@ -9,10 +9,11 @@ import {
   NotificationStatus,
 } from '@prisma/client';
 import { AuthenticatedRequest } from '../middleware/auth';
-import { 
-  createAssignmentNotification, 
-  createIssueUpdateNotification 
+import {
+  createAssignmentNotification,
+  createIssueUpdateNotification,
 } from './notificationController';
+import cloudinary, { uploadBufferToCloudinary } from '../utils/cloudinary';
 // import { geocodeAddress } from '../utils/geocoding';
 
 const prisma = new PrismaClient();
@@ -38,8 +39,10 @@ const logMLAInfo = async (stateId: string) => {
     });
 
     console.log('📊 MLAs in state:', mlas.length);
-    mlas.forEach(mla => {
-      console.log(`👤 MLA: ${mla.name}, Constituency: ${mla.constituency?.name || 'Not assigned'} (ID: ${mla.constituencyId || 'None'})`);
+    mlas.forEach((mla) => {
+      console.log(
+        `👤 MLA: ${mla.name}, Constituency: ${mla.constituency?.name || 'Not assigned'} (ID: ${mla.constituencyId || 'None'})`
+      );
     });
   } catch (error) {
     console.error('Error fetching MLA info:', error);
@@ -80,29 +83,55 @@ export const createIssue = async (
     if (files) {
       // Handle voice note
       if (files.voiceNote && files.voiceNote.length > 0) {
-        voiceNoteUrl = `/uploads/audio/${files.voiceNote[0].filename}`;
+        // Upload to Cloudinary
+        const file = files.voiceNote[0];
+        try {
+          const result: any = await uploadBufferToCloudinary(
+            file.buffer,
+            'issues/audio',
+            'auto'
+          );
+          voiceNoteUrl = result.secure_url;
+        } catch (err) {
+          console.error('Cloudinary upload error (voiceNote):', err);
+          res
+            .status(500)
+            .json({ error: 'Failed to upload voice note to Cloudinary' });
+          return;
+        }
       }
 
       // Handle images
       if (files.images && files.images.length > 0) {
-        imageUrls = files.images.map(file => `/uploads/images/${file.filename}`);
+        try {
+          const uploadPromises = files.images.map((file) =>
+            uploadBufferToCloudinary(file.buffer, 'issues/images', 'image')
+          );
+          const results: any[] = await Promise.all(uploadPromises);
+          imageUrls = results.map((r) => r.secure_url);
+        } catch (err) {
+          console.error('Cloudinary upload error (images):', err);
+          res
+            .status(500)
+            .json({ error: 'Failed to upload images to Cloudinary' });
+          return;
+        }
       }
     }
 
     // Verify the user is an MLA or CITIZEN
     if (userRole !== UserRole.MLA && userRole !== UserRole.CITIZEN) {
-      res.status(403).json({ error: 'Only MLAs and Citizens can create issues' });
+      res
+        .status(403)
+        .json({ error: 'Only MLAs and Citizens can create issues' });
       return;
     }
 
     // Validate required fields
     if (!title || !description || !category) {
-      res
-        .status(400)
-        .json({
-          error:
-            'Missing required fields: title, description, category',
-        });
+      res.status(400).json({
+        error: 'Missing required fields: title, description, category',
+      });
       return;
     }
 
@@ -112,18 +141,21 @@ export const createIssue = async (
       const stateExists = await prisma.state.findUnique({
         where: { id: stateId },
       });
-      
+
       if (!stateExists) {
         console.warn('Invalid stateId provided:', stateId);
         // Try to find the correct state if we have address information
         if (address) {
-          console.log('Attempting to geocode address for state detection:', address);
+          console.log(
+            'Attempting to geocode address for state detection:',
+            address
+          );
           // const geocodeResult = await geocodeAddress(address);
-          
+
           // if (geocodeResult && geocodeResult.addressComponents.state) {
           //   const stateName = geocodeResult.addressComponents.state;
           //   console.log('Geocoded state:', stateName);
-          //   
+          //
           //   // Try to find a matching state in the database
           //   const matchingState = await prisma.state.findFirst({
           //     where: {
@@ -133,11 +165,11 @@ export const createIssue = async (
           //       ],
           //     },
           //   });
-          //   
+          //
           //   if (matchingState) {
           //     console.log('Found matching state in database:', matchingState.name);
           //     validatedStateId = matchingState.id;
-          //     
+          //
           //     // Update coordinates if not provided
           //     if (!latitude || !longitude) {
           //       latitude = geocodeResult.latitude.toString();
@@ -149,20 +181,21 @@ export const createIssue = async (
           //   }
           // }
         }
-        
+
         // If we still don't have a valid state, use the first available state as fallback
         if (!validatedStateId || stateId === validatedStateId) {
           console.log('Using fallback state logic');
           const fallbackState = await prisma.state.findFirst({
             orderBy: { name: 'asc' },
           });
-          
+
           if (fallbackState) {
             validatedStateId = fallbackState.id;
             console.log('Using fallback state:', fallbackState.name);
           } else {
             res.status(400).json({
-              error: 'No valid state found. Please ensure location data is configured.',
+              error:
+                'No valid state found. Please ensure location data is configured.',
             });
             return;
           }
@@ -171,13 +204,16 @@ export const createIssue = async (
     } else {
       // No stateId provided, try to geocode from address
       if (address) {
-        console.log('No stateId provided, attempting to geocode address:', address);
+        console.log(
+          'No stateId provided, attempting to geocode address:',
+          address
+        );
         // const geocodeResult = await geocodeAddress(address);
-        
+
         // if (geocodeResult && geocodeResult.addressComponents.state) {
         //   const stateName = geocodeResult.addressComponents.state;
         //   console.log('Geocoded state:', stateName);
-        //   
+        //
         //   // Try to find a matching state in the database
         //   const matchingState = await prisma.state.findFirst({
         //     where: {
@@ -187,11 +223,11 @@ export const createIssue = async (
         //       ],
         //     },
         //   });
-        //   
+        //
         //   if (matchingState) {
         //     console.log('Found matching state in database:', matchingState.name);
         //     validatedStateId = matchingState.id;
-        //     
+        //
         //     // Update coordinates if not provided
         //     if (!latitude || !longitude) {
         //       latitude = geocodeResult.latitude.toString();
@@ -201,20 +237,21 @@ export const createIssue = async (
         //   }
         // }
       }
-      
+
       // If we still don't have a valid state, use the first available state as fallback
       if (!validatedStateId) {
         console.log('Using fallback state logic');
         const fallbackState = await prisma.state.findFirst({
           orderBy: { name: 'asc' },
         });
-        
+
         if (fallbackState) {
           validatedStateId = fallbackState.id;
           console.log('Using fallback state:', fallbackState.name);
         } else {
           res.status(400).json({
-            error: 'No valid state found. Please ensure location data is configured.',
+            error:
+              'No valid state found. Please ensure location data is configured.',
           });
           return;
         }
@@ -234,11 +271,9 @@ export const createIssue = async (
         });
 
         if (!assignee) {
-          res
-            .status(400)
-            .json({
-              error: 'Invalid assignee. Must be a MEMBER under your supervision.',
-            });
+          res.status(400).json({
+            error: 'Invalid assignee. Must be a MEMBER under your supervision.',
+          });
           return;
         }
       } else if (userRole === UserRole.CITIZEN) {
@@ -251,11 +286,9 @@ export const createIssue = async (
         });
 
         if (!assignee) {
-          res
-            .status(400)
-            .json({
-              error: 'Invalid assignee. Must be a valid MEMBER or MLA.',
-            });
+          res.status(400).json({
+            error: 'Invalid assignee. Must be a valid MEMBER or MLA.',
+          });
           return;
         }
       }
@@ -264,15 +297,15 @@ export const createIssue = async (
     // For CITIZEN users, auto-assign to relevant MLA based on location and constituency
     let finalAssignedToId = assignedToId;
     let autoAssignedConstituencyId = constituencyId;
-    
+
     if (userRole === UserRole.CITIZEN && !assignedToId) {
       console.log('🔍 Auto-assignment logic triggered for CITIZEN');
       console.log('📍 Initial constituency ID:', constituencyId);
       console.log('📍 Coordinates:', latitude, longitude);
-      
+
       // Debug: Log MLA information for this state
       await logMLAInfo(validatedStateId);
-      
+
       // If constituency is not provided, try to find nearest constituency based on coordinates
       if (!constituencyId && latitude && longitude) {
         console.log('🔍 Searching for nearest constituency...');
@@ -290,7 +323,10 @@ export const createIssue = async (
           },
         });
 
-        console.log('🏛️ Found constituencies with coordinates:', constituencies.length);
+        console.log(
+          '🏛️ Found constituencies with coordinates:',
+          constituencies.length
+        );
 
         // Simple distance calculation to find nearest constituency
         let nearestConstituency = null;
@@ -304,14 +340,17 @@ export const createIssue = async (
             // Calculate distance using Haversine formula approximation
             const constLat = constituency.latitude;
             const constLng = constituency.longitude;
-            
-            const deltaLat = (constLat - userLat) * Math.PI / 180;
-            const deltaLng = (constLng - userLng) * Math.PI / 180;
-            
-            const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-                     Math.cos(userLat * Math.PI / 180) * Math.cos(constLat * Math.PI / 180) *
-                     Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
-            
+
+            const deltaLat = ((constLat - userLat) * Math.PI) / 180;
+            const deltaLng = ((constLng - userLng) * Math.PI) / 180;
+
+            const a =
+              Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+              Math.cos((userLat * Math.PI) / 180) *
+                Math.cos((constLat * Math.PI) / 180) *
+                Math.sin(deltaLng / 2) *
+                Math.sin(deltaLng / 2);
+
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             const distance = 6371 * c; // Earth's radius in kilometers
 
@@ -321,19 +360,27 @@ export const createIssue = async (
             }
           }
         }
-        
+
         if (nearestConstituency) {
           autoAssignedConstituencyId = nearestConstituency.id;
-          console.log('🎯 Found nearest constituency:', nearestConstituency.name, 'ID:', nearestConstituency.id);
+          console.log(
+            '🎯 Found nearest constituency:',
+            nearestConstituency.name,
+            'ID:',
+            nearestConstituency.id
+          );
         } else {
           console.log('❌ No nearest constituency found');
         }
       }
-      
+
       // Find the MLA for the constituency
       if (autoAssignedConstituencyId) {
-        console.log('🔍 Searching for MLA in constituency:', autoAssignedConstituencyId);
-        
+        console.log(
+          '🔍 Searching for MLA in constituency:',
+          autoAssignedConstituencyId
+        );
+
         const mla = await prisma.user.findFirst({
           where: {
             role: UserRole.MLA,
@@ -344,9 +391,12 @@ export const createIssue = async (
             mlaProfile: true,
           },
         });
-        
-        console.log('👤 MLA found:', mla ? `${mla.name} (ID: ${mla.id})` : 'None');
-        
+
+        console.log(
+          '👤 MLA found:',
+          mla ? `${mla.name} (ID: ${mla.id})` : 'None'
+        );
+
         if (mla) {
           finalAssignedToId = mla.id;
           console.log('✅ Issue will be assigned to MLA:', mla.name);
@@ -426,14 +476,14 @@ export const createIssue = async (
     if (finalAssignedToId) {
       const assignedUser = await prisma.user.findUnique({
         where: { id: finalAssignedToId },
-        select: { name: true, role: true }
+        select: { name: true, role: true },
       });
-      
+
       let assignmentMessage = `Issue assigned to ${assignedUser?.name || 'Unknown'}`;
       if (userRole === UserRole.CITIZEN && !assignedToId) {
         assignmentMessage = `Issue automatically assigned to MLA ${assignedUser?.name || 'Unknown'} based on your location`;
       }
-      
+
       await prisma.issueUpdate.create({
         data: {
           issueId: issue.id,
@@ -450,7 +500,7 @@ export const createIssue = async (
       try {
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { name: true }
+          select: { name: true },
         });
 
         console.log('🔔 About to create assignment notification...');
@@ -461,7 +511,9 @@ export const createIssue = async (
           userId,
           currentUser?.name || 'Unknown'
         );
-        console.log('✅ Assignment notification creation completed successfully');
+        console.log(
+          '✅ Assignment notification creation completed successfully'
+        );
       } catch (error) {
         console.error('❌ Failed to create assignment notification:', error);
         if (error instanceof Error) {
@@ -472,9 +524,13 @@ export const createIssue = async (
       }
     } else {
       console.log('⚠️ No assignment made - issue remains unassigned');
-      
+
       // If no MLA found, try to find any MLA in the same state as fallback
-      if (userRole === UserRole.CITIZEN && !finalAssignedToId && validatedStateId) {
+      if (
+        userRole === UserRole.CITIZEN &&
+        !finalAssignedToId &&
+        validatedStateId
+      ) {
         console.log('🔄 Attempting fallback assignment to any MLA in state...');
         const fallbackMla = await prisma.user.findFirst({
           where: {
@@ -486,14 +542,14 @@ export const createIssue = async (
             mlaProfile: true,
           },
         });
-        
+
         if (fallbackMla) {
           console.log('🎯 Fallback MLA found:', fallbackMla.name);
           await prisma.issue.update({
             where: { id: issue.id },
             data: { assignedToId: fallbackMla.id },
           });
-          
+
           await prisma.issueUpdate.create({
             data: {
               issueId: issue.id,
@@ -508,7 +564,7 @@ export const createIssue = async (
           try {
             const currentUser = await prisma.user.findUnique({
               where: { id: userId },
-              select: { name: true }
+              select: { name: true },
             });
 
             console.log('🔔 Creating notification for fallback assignment...');
@@ -519,9 +575,14 @@ export const createIssue = async (
               userId,
               currentUser?.name || 'Unknown'
             );
-            console.log('✅ Fallback assignment notification created successfully');
+            console.log(
+              '✅ Fallback assignment notification created successfully'
+            );
           } catch (error) {
-            console.error('❌ Failed to create fallback assignment notification:', error);
+            console.error(
+              '❌ Failed to create fallback assignment notification:',
+              error
+            );
             if (error instanceof Error) {
               console.error('Error details:', error.message);
               console.error('Stack trace:', error.stack);
@@ -562,7 +623,10 @@ export const getIssues = async (
     } = req.query;
 
     const pageNum = Math.max(1, parseInt(page as string) || 1);
-    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const limitNum = Math.max(
+      1,
+      Math.min(100, parseInt(limit as string) || 10)
+    );
     const skip = (pageNum - 1) * limitNum;
     const take = limitNum;
 
@@ -825,13 +889,15 @@ export const addIssueUpdate = async (
         // Check if member is under the MLA who is assigned to this issue
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { mlaId: true }
+          select: { mlaId: true },
         });
-        
+
         if (currentUser?.mlaId === issue.assignedToId) {
           finalUpdateType = UpdateType.MEMBER_UPDATE;
         } else {
-          res.status(403).json({ error: 'Not authorized to update this issue' });
+          res
+            .status(403)
+            .json({ error: 'Not authorized to update this issue' });
           return;
         }
       }
@@ -861,7 +927,10 @@ export const addIssueUpdate = async (
     }
 
     // Validate mediaType
-    if (mediaType && !Object.values(MediaType).includes(mediaType as MediaType)) {
+    if (
+      mediaType &&
+      !Object.values(MediaType).includes(mediaType as MediaType)
+    ) {
       res.status(400).json({ error: 'Invalid media type' });
       return;
     }
@@ -904,10 +973,15 @@ export const addIssueUpdate = async (
         where: { id },
         data: {
           status: status as IssueStatus,
-          ...(status === IssueStatus.RESOLVED && { actualResolutionDate: new Date() }),
+          ...(status === IssueStatus.RESOLVED && {
+            actualResolutionDate: new Date(),
+          }),
         },
       });
-    } else if (finalUpdateType === UpdateType.MEMBER_UPDATE && issue.status === IssueStatus.PENDING) {
+    } else if (
+      finalUpdateType === UpdateType.MEMBER_UPDATE &&
+      issue.status === IssueStatus.PENDING
+    ) {
       // Auto-set to IN_PROGRESS when member makes first update on pending issue
       await prisma.issue.update({
         where: { id },
@@ -967,7 +1041,7 @@ export const updateIssue = async (
 
     // Check permissions
     let canUpdate = false;
-    
+
     if (userRole === UserRole.ADMIN) {
       canUpdate = true;
     } else if (userRole === UserRole.MLA) {
@@ -981,19 +1055,22 @@ export const updateIssue = async (
         // Check if the issue is assigned to one of their members
         const assignedMember = await prisma.user.findUnique({
           where: { id: issue.assignedToId },
-          select: { mlaId: true, role: true }
+          select: { mlaId: true, role: true },
         });
-        
-        if (assignedMember?.mlaId === userId && assignedMember?.role === UserRole.MEMBER) {
+
+        if (
+          assignedMember?.mlaId === userId &&
+          assignedMember?.role === UserRole.MEMBER
+        ) {
           canUpdate = true;
         }
       } else {
         // If issue is unassigned, MLA can update it if it's in their constituency
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { constituency: true }
+          select: { constituency: true },
         });
-        
+
         if (currentUser?.constituency === issue.constituencyId) {
           canUpdate = true;
         }
@@ -1006,9 +1083,9 @@ export const updateIssue = async (
         // Check if member is under the MLA who is assigned to this issue
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { mlaId: true }
+          select: { mlaId: true },
         });
-        
+
         if (currentUser?.mlaId === issue.assignedToId) {
           canUpdate = true;
         }
@@ -1037,7 +1114,9 @@ export const updateIssue = async (
         });
 
         if (!assignee) {
-          res.status(400).json({ error: 'Invalid assignee. Must be a MEMBER.' });
+          res
+            .status(400)
+            .json({ error: 'Invalid assignee. Must be a MEMBER.' });
           return;
         }
 
@@ -1052,7 +1131,12 @@ export const updateIssue = async (
           });
 
           if (!memberUnderMLA) {
-            res.status(400).json({ error: 'You can only assign issues to members under your supervision.' });
+            res
+              .status(400)
+              .json({
+                error:
+                  'You can only assign issues to members under your supervision.',
+              });
             return;
           }
         }
@@ -1114,9 +1198,9 @@ export const updateIssue = async (
       if (assignedToId && updatedIssue.assignedTo) {
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { name: true }
+          select: { name: true },
         });
-        
+
         await createAssignmentNotification(
           id,
           updatedIssue.title,
@@ -1130,7 +1214,7 @@ export const updateIssue = async (
       if (updatedIssue.reportedBy) {
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { name: true }
+          select: { name: true },
         });
 
         await createIssueUpdateNotification(
@@ -1162,7 +1246,7 @@ export const updateIssue = async (
       if (updatedIssue.reportedBy) {
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { name: true }
+          select: { name: true },
         });
 
         await createIssueUpdateNotification(
@@ -1180,7 +1264,7 @@ export const updateIssue = async (
       if (updatedIssue.assignedTo && updatedIssue.assignedTo.id !== userId) {
         const currentUser = await prisma.user.findUnique({
           where: { id: userId },
-          select: { name: true }
+          select: { name: true },
         });
 
         await createIssueUpdateNotification(
@@ -1237,9 +1321,15 @@ export const getIssueStats = async (
       recentIssues,
     ] = await Promise.all([
       prisma.issue.count({ where: whereClause }),
-      prisma.issue.count({ where: { ...whereClause, status: IssueStatus.PENDING } }),
-      prisma.issue.count({ where: { ...whereClause, status: IssueStatus.IN_PROGRESS } }),
-      prisma.issue.count({ where: { ...whereClause, status: IssueStatus.RESOLVED } }),
+      prisma.issue.count({
+        where: { ...whereClause, status: IssueStatus.PENDING },
+      }),
+      prisma.issue.count({
+        where: { ...whereClause, status: IssueStatus.IN_PROGRESS },
+      }),
+      prisma.issue.count({
+        where: { ...whereClause, status: IssueStatus.RESOLVED },
+      }),
       prisma.issue.count({ where: { ...whereClause, isUrgent: true } }),
 
       // Group by priority
@@ -1369,12 +1459,20 @@ export const getAssignedIssues = async (
 
     // Only MLAs and Members can access assigned issues
     if (userRole !== UserRole.MLA && userRole !== UserRole.MEMBER) {
-      res.status(403).json({ error: 'Access denied. Only MLAs and Members can view assigned issues.' });
+      res
+        .status(403)
+        .json({
+          error:
+            'Access denied. Only MLAs and Members can view assigned issues.',
+        });
       return;
     }
 
     const pageNum = Math.max(1, parseInt(page as string) || 1);
-    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const limitNum = Math.max(
+      1,
+      Math.min(100, parseInt(limit as string) || 10)
+    );
     const skip = (pageNum - 1) * limitNum;
     const take = limitNum;
 
@@ -1389,11 +1487,11 @@ export const getAssignedIssues = async (
           mlaId: userId,
           role: UserRole.MEMBER,
         },
-        select: { id: true }
+        select: { id: true },
       });
-      
-      const memberIdList = memberIds.map(member => member.id);
-      
+
+      const memberIdList = memberIds.map((member) => member.id);
+
       // Show issues assigned to the MLA OR assigned to any of their members
       whereClause.OR = [
         { assignedToId: userId }, // Issues assigned directly to the MLA
@@ -1403,9 +1501,9 @@ export const getAssignedIssues = async (
       // Get current user's MLA information
       const currentUser = await prisma.user.findUnique({
         where: { id: userId },
-        select: { mlaId: true }
+        select: { mlaId: true },
       });
-      
+
       if (currentUser?.mlaId) {
         // Show issues assigned to the member directly OR to their MLA
         whereClause.OR = [
@@ -1432,7 +1530,7 @@ export const getAssignedIssues = async (
         AND: [
           whereClause, // Assignment OR clause
           additionalFilters, // Other filters
-        ]
+        ],
       };
     } else {
       // Simple case: no OR clause, just combine filters
@@ -1448,8 +1546,10 @@ export const getAssignedIssues = async (
         finalWhereClause.AND.push({
           OR: [
             { title: { contains: search as string, mode: 'insensitive' } },
-            { description: { contains: search as string, mode: 'insensitive' } },
-          ]
+            {
+              description: { contains: search as string, mode: 'insensitive' },
+            },
+          ],
         });
       } else {
         finalWhereClause.OR = [
@@ -1530,9 +1630,9 @@ export const getAssignedIssues = async (
     ]);
 
     // Map updates to progressUpdates for frontend compatibility
-    const issuesWithProgressUpdates = issues.map(issue => ({
+    const issuesWithProgressUpdates = issues.map((issue) => ({
       ...issue,
-      progressUpdates: issue.updates
+      progressUpdates: issue.updates,
     }));
 
     res.json({
@@ -1545,11 +1645,13 @@ export const getAssignedIssues = async (
           total,
           pages: Math.ceil(total / limitNum),
         },
-      }
+      },
     });
   } catch (error) {
     console.error('Get assigned issues error:', error);
-    res.status(500).json({ error: 'Failed to fetch assigned issues', details: error });
+    res
+      .status(500)
+      .json({ error: 'Failed to fetch assigned issues', details: error });
   }
 };
 
@@ -1572,12 +1674,19 @@ export const getMyIssues = async (
 
     // Only Citizens can access their own issues
     if (userRole !== UserRole.CITIZEN) {
-      res.status(403).json({ error: 'Access denied. Only Citizens can view their own issues.' });
+      res
+        .status(403)
+        .json({
+          error: 'Access denied. Only Citizens can view their own issues.',
+        });
       return;
     }
 
     const pageNum = Math.max(1, parseInt(page as string) || 1);
-    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const limitNum = Math.max(
+      1,
+      Math.min(100, parseInt(limit as string) || 10)
+    );
     const skip = (pageNum - 1) * limitNum;
     const take = limitNum;
 
@@ -1668,9 +1777,9 @@ export const getMyIssues = async (
     ]);
 
     // Map updates to progressUpdates for frontend compatibility
-    const issuesWithProgressUpdates = issues.map(issue => ({
+    const issuesWithProgressUpdates = issues.map((issue) => ({
       ...issue,
-      progressUpdates: issue.updates
+      progressUpdates: issue.updates,
     }));
 
     res.json({
@@ -1683,11 +1792,13 @@ export const getMyIssues = async (
           total,
           pages: Math.ceil(total / limitNum),
         },
-      }
+      },
     });
   } catch (error) {
     console.error('Get my issues error:', error);
-    res.status(500).json({ error: 'Failed to fetch your issues', details: error });
+    res
+      .status(500)
+      .json({ error: 'Failed to fetch your issues', details: error });
   }
 };
 
@@ -1698,14 +1809,14 @@ export const updateIssueProgress = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { 
-      status, 
-      progressUpdate, 
-      estimatedCompletion, 
-      progressPercentage, 
-      hoursWorked, 
+    const {
+      status,
+      progressUpdate,
+      estimatedCompletion,
+      progressPercentage,
+      hoursWorked,
       nextSteps,
-      attachments 
+      attachments,
     } = req.body;
     const userId = req.user!.id;
     const userRole = req.user!.role;
@@ -1726,7 +1837,7 @@ export const updateIssueProgress = async (
 
     // Check permissions: assigned user or member under the assigned MLA can update
     let canUpdate = false;
-    
+
     if (userRole === UserRole.ADMIN) {
       canUpdate = true;
     } else if (issue.assignedToId === userId) {
@@ -1740,16 +1851,20 @@ export const updateIssueProgress = async (
       // Check if member is under the MLA who is assigned to this issue
       const currentUser = await prisma.user.findUnique({
         where: { id: userId },
-        select: { mlaId: true }
+        select: { mlaId: true },
       });
-      
+
       if (currentUser?.mlaId === issue.assignedToId) {
         canUpdate = true;
       }
     }
-    
+
     if (!canUpdate) {
-      res.status(403).json({ error: 'You can only update issues assigned to you or your MLA' });
+      res
+        .status(403)
+        .json({
+          error: 'You can only update issues assigned to you or your MLA',
+        });
       return;
     }
 
@@ -1761,19 +1876,22 @@ export const updateIssueProgress = async (
 
     // Prepare update data for the issue
     const updateData: any = {};
-    
+
     // Auto-set status to IN_PROGRESS if it's currently PENDING and member is making first update
     if (!status && issue.status === IssueStatus.PENDING) {
       updateData.status = IssueStatus.IN_PROGRESS;
-    } else if (status && Object.values(IssueStatus).includes(status as IssueStatus)) {
+    } else if (
+      status &&
+      Object.values(IssueStatus).includes(status as IssueStatus)
+    ) {
       updateData.status = status;
     }
-    
+
     // Set resolution date if status is RESOLVED
     if (updateData.status === IssueStatus.RESOLVED) {
       updateData.actualResolutionDate = new Date();
     }
-    
+
     if (estimatedCompletion) {
       updateData.expectedResolutionDate = new Date(estimatedCompletion);
     }
@@ -1801,8 +1919,12 @@ export const updateIssueProgress = async (
     } else if (issue.status === IssueStatus.PENDING) {
       progressUpdateData.status = IssueStatus.IN_PROGRESS;
     }
-    
-    if (progressPercentage !== undefined && progressPercentage >= 0 && progressPercentage <= 100) {
+
+    if (
+      progressPercentage !== undefined &&
+      progressPercentage >= 0 &&
+      progressPercentage <= 100
+    ) {
       progressUpdateData.progressPercentage = parseInt(progressPercentage);
     }
     if (hoursWorked !== undefined && hoursWorked >= 0) {
@@ -1833,7 +1955,7 @@ export const updateIssueProgress = async (
       // Get the user details for the notification
       const currentUser = await prisma.user.findUnique({
         where: { id: userId },
-        select: { name: true }
+        select: { name: true },
       });
 
       if (currentUser && issue.reportedById !== userId) {
@@ -1862,7 +1984,9 @@ export const updateIssueProgress = async (
     });
   } catch (error) {
     console.error('Update issue progress error:', error);
-    res.status(500).json({ error: 'Failed to update issue progress', details: error });
+    res
+      .status(500)
+      .json({ error: 'Failed to update issue progress', details: error });
   }
 };
 
@@ -1887,7 +2011,7 @@ export const getNearbyIssues = async (
     // Validate required parameters
     if (!latitude || !longitude) {
       res.status(400).json({
-        error: 'Latitude and longitude are required'
+        error: 'Latitude and longitude are required',
       });
       return;
     }
@@ -1898,13 +2022,16 @@ export const getNearbyIssues = async (
 
     if (isNaN(lat) || isNaN(lng) || isNaN(radiusKm)) {
       res.status(400).json({
-        error: 'Invalid latitude, longitude, or radius values'
+        error: 'Invalid latitude, longitude, or radius values',
       });
       return;
     }
 
     const pageNum = Math.max(1, parseInt(page as string) || 1);
-    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string) || 10));
+    const limitNum = Math.max(
+      1,
+      Math.min(100, parseInt(limit as string) || 10)
+    );
     const skip = (pageNum - 1) * limitNum;
 
     // Build where conditions for Prisma
@@ -1925,7 +2052,7 @@ export const getNearbyIssues = async (
     if (search) {
       whereConditions.OR = [
         { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } }
+        { description: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -1980,29 +2107,31 @@ export const getNearbyIssues = async (
 
     // Calculate distance and filter by radius
     const nearbyIssues = allFilteredIssues
-      .map(issue => {
+      .map((issue) => {
         if (!issue.latitude || !issue.longitude) return null;
-        
+
         const issueLat = parseFloat(issue.latitude.toString());
         const issueLng = parseFloat(issue.longitude.toString());
-        
+
         // Haversine formula to calculate distance
         const R = 6371; // Earth's radius in km
-        const dLat = (issueLat - lat) * Math.PI / 180;
-        const dLng = (issueLng - lng) * Math.PI / 180;
-        const a = 
+        const dLat = ((issueLat - lat) * Math.PI) / 180;
+        const dLng = ((issueLng - lng) * Math.PI) / 180;
+        const a =
           Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat * Math.PI / 180) * Math.cos(issueLat * Math.PI / 180) *
-          Math.sin(dLng / 2) * Math.sin(dLng / 2);
+          Math.cos((lat * Math.PI) / 180) *
+            Math.cos((issueLat * Math.PI) / 180) *
+            Math.sin(dLng / 2) *
+            Math.sin(dLng / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         const distance = R * c;
 
         return {
           ...issue,
-          distance: parseFloat(distance.toFixed(2))
+          distance: parseFloat(distance.toFixed(2)),
         };
       })
-      .filter(issue => issue && issue.distance <= radiusKm)
+      .filter((issue) => issue && issue.distance <= radiusKm)
       .sort((a, b) => (a?.distance || 0) - (b?.distance || 0));
 
     // Apply pagination
@@ -2026,14 +2155,14 @@ export const getNearbyIssues = async (
           status,
           priority,
           category,
-          search
-        }
-      }
+          search,
+        },
+      },
     });
   } catch (error) {
     console.error('Error fetching nearby issues:', error);
     res.status(500).json({
-      error: 'Failed to fetch nearby issues'
+      error: 'Failed to fetch nearby issues',
     });
   }
 };

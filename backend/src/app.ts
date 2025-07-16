@@ -39,21 +39,31 @@ app.use(sanitizeInput);
 app.use(requestLogger);
 
 // Serve static files from uploads directory with proper CORS headers
-app.use('/uploads', (req, res, next) => {
-  // Set CORS headers for all requests to uploads
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Range');
-  res.header('Access-Control-Expose-Headers', 'Content-Range, Accept-Ranges, Content-Length');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-    return;
-  }
-  
-  next();
-}, express.static(path.join(__dirname, '../uploads')));
+app.use(
+  '/uploads',
+  (req, res, next) => {
+    // Set CORS headers for all requests to uploads
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Range'
+    );
+    res.header(
+      'Access-Control-Expose-Headers',
+      'Content-Range, Accept-Ranges, Content-Length'
+    );
+
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200);
+      return;
+    }
+
+    next();
+  },
+  express.static(path.join(__dirname, '../uploads'))
+);
 
 // Routes
 app.use('/api', routes);

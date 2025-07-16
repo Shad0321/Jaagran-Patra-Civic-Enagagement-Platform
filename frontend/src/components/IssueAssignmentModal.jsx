@@ -12,7 +12,7 @@ import {
   Filter,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
   const [members, setMembers] = useState([]);
@@ -53,7 +53,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
         assignedToId: selectedMember,
         assignmentReason: assignmentReason || `Assigned by MLA`,
       });
-      
+
       toast.success('Issue assigned successfully');
       onSuccess();
       onClose();
@@ -72,7 +72,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
         assignedToId: null,
         assignmentReason: 'Reassigned to MLA',
       });
-      
+
       toast.success('Issue reassigned to MLA successfully');
       onSuccess();
       onClose();
@@ -84,10 +84,12 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
     }
   };
 
-  const filteredMembers = members.filter(member => {
-    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         member.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBodyType = !filterBodyType || member.bodyType === filterBodyType;
+  const filteredMembers = members.filter((member) => {
+    const matchesSearch =
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesBodyType =
+      !filterBodyType || member.bodyType === filterBodyType;
     return matchesSearch && matchesBodyType;
   });
 
@@ -149,9 +151,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
               <h2 className="text-lg font-semibold text-gray-900">
                 Assign Issue to Member
               </h2>
-              <p className="text-sm text-gray-600">
-                Issue #{issue.ticketId}
-              </p>
+              <p className="text-sm text-gray-600">Issue #{issue.ticketId}</p>
             </div>
           </div>
           <button
@@ -169,12 +169,18 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h4 className="font-medium text-gray-900">{issue.title}</h4>
-                <p className="text-sm text-gray-600 mt-1">{issue.description}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {issue.description}
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}
+                  >
                     {issue.status}
                   </span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}
+                  >
                     {issue.priority}
                   </span>
                 </div>
@@ -200,7 +206,9 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
 
           {/* Search and Filter */}
           <div className="space-y-4">
-            <h3 className="font-medium text-gray-900">Select Member to Assign</h3>
+            <h3 className="font-medium text-gray-900">
+              Select Member to Assign
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -220,7 +228,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                   className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">All Body Types</option>
-                  {bodyTypes.map(type => (
+                  {bodyTypes.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
                     </option>
@@ -250,8 +258,12 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                           <User className="h-4 w-4 text-green-600" />
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-900">{member.name}</h4>
-                          <p className="text-sm text-gray-600">{member.email}</p>
+                          <h4 className="font-medium text-gray-900">
+                            {member.name}
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            {member.email}
+                          </p>
                           <div className="flex items-center space-x-2 mt-1">
                             <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
                               {member.bodyType?.replace(/_/g, ' ')}
@@ -265,7 +277,9 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-gray-600">{member.designation || 'Member'}</p>
+                        <p className="text-sm text-gray-600">
+                          {member.designation || 'Member'}
+                        </p>
                         <div className="flex items-center text-xs text-gray-500 mt-1">
                           <CheckCircle className="h-3 w-3 mr-1" />
                           {member.assignedIssuesCount || 0} issues
@@ -278,7 +292,9 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                 <div className="text-center py-8 text-gray-500">
                   <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                   <p>No members found</p>
-                  <p className="text-sm">Try adjusting your search or filters</p>
+                  <p className="text-sm">
+                    Try adjusting your search or filters
+                  </p>
                 </div>
               )}
             </div>

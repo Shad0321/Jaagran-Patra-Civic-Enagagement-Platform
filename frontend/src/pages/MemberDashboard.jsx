@@ -13,7 +13,7 @@ import {
   X,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import ProgressUpdateModal from '../components/ProgressUpdateModal';
 
 const MemberDashboard = () => {

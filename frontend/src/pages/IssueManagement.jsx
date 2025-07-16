@@ -16,7 +16,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import api from '../utils/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import ProgressUpdateModal from '../components/ProgressUpdateModal';
 import MediaDisplay from '../components/common/MediaDisplay';
 import UpdateMediaDisplay from '../components/common/UpdateMediaDisplay';
@@ -909,7 +909,9 @@ const IssueManagement = () => {
       fetchIssues();
     } catch (error) {
       console.error('Error submitting issue:', error);
-      toast.error(error.response?.data?.error || 'Failed to submit issue');
+      const backendMsg =
+        error.response?.data?.error || error.response?.data?.message;
+      toast.error(backendMsg || 'Failed to submit issue');
     }
   };
 

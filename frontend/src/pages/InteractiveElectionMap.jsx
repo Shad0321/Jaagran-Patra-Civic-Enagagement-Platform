@@ -359,10 +359,10 @@ const InteractiveElectionMap = () => {
     setMapLevel('state');
     setMapCenter([state.latitude || 20.5937, state.longitude || 78.9629]);
     setMapZoom(7);
-    
+
     // Hide other states - show only the selected state on map
     setMapData([state]);
-    
+
     // Fetch assemblies for the selected state
     fetchAssemblies(state.id);
   };
@@ -599,7 +599,7 @@ const InteractiveElectionMap = () => {
                       Analytics
                     </button>
                   </div>
-                  
+
                   {/* View Mode Indicator */}
                   <div className="flex items-center space-x-2 text-xs text-gray-600">
                     {mapLevel === 'india' && (
@@ -666,11 +666,13 @@ const InteractiveElectionMap = () => {
                                 <div className="p-3 min-w-64">
                                   <h3 className="font-semibold text-lg mb-2 flex items-center">
                                     {item.name}
-                                    {mapLevel === 'state' && selectedState && selectedState.id === item.id && (
-                                      <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                        Selected
-                                      </span>
-                                    )}
+                                    {mapLevel === 'state' &&
+                                      selectedState &&
+                                      selectedState.id === item.id && (
+                                        <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                          Selected
+                                        </span>
+                                      )}
                                   </h3>
                                   {item.electionData && (
                                     <div className="space-y-2 text-sm">
@@ -1073,10 +1075,10 @@ const InteractiveElectionMap = () => {
 
             {/* Latest News Widget */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <LatestNews 
-                userState={selectedState?.name || 'all'} 
-                limit={3} 
-                showFull={false} 
+              <LatestNews
+                userState={selectedState?.name || 'all'}
+                limit={3}
+                showFull={false}
               />
             </div>
 

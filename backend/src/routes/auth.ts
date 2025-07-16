@@ -4,6 +4,8 @@ import { authenticate, authorize } from '../middleware/auth';
 import { handleValidationErrors } from '../middleware/validation';
 import { body, query } from 'express-validator';
 import rateLimit from 'express-rate-limit';
+import multer from 'multer';
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
@@ -123,7 +125,7 @@ router.post(
 
 // Profile management routes
 router.get('/profile', authenticate, authController.getProfile);
-
+const mlaUpload = upload.fields([{ name: 'avatar', maxCount: 1 }]);
 router.put(
   '/profile',
   authenticate,
@@ -145,6 +147,7 @@ router.put(
     body('currentAddress').optional().isString(),
   ],
   handleValidationErrors,
+  mlaUpload,
   authController.updateProfile
 );
 

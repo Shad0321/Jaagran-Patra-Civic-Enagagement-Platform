@@ -4,7 +4,7 @@ import {
   getNotifications,
   markAsRead,
   markAllAsRead,
-  getNotificationCount
+  getNotificationCount,
 } from '../controllers/notificationController';
 
 const router = express.Router();

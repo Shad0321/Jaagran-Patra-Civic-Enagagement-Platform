@@ -14,8 +14,14 @@ const router = Router();
 // Public routes (accessible to all user roles)
 router.get('/states', getStates);
 router.get('/states/:stateId/assemblies', getAssembliesByState);
-router.get('/assemblies/:constituencyId/polling-booths', getPollingBoothsByAssembly);
-router.get('/assemblies/:constituencyId/polling-booths/:boothName', getPollingBoothDetails);
+router.get(
+  '/assemblies/:constituencyId/polling-booths',
+  getPollingBoothsByAssembly
+);
+router.get(
+  '/assemblies/:constituencyId/polling-booths/:boothName',
+  getPollingBoothDetails
+);
 router.get('/states/:stateId/election-comparison', getElectionComparison);
 router.get('/statistics', getMapStatistics);
 

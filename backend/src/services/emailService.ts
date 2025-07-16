@@ -70,7 +70,9 @@ class EmailService {
    */
   async sendMeetingInvitation(data: MeetingInvitationData): Promise<void> {
     const startDateTime = new Date(data.startTime);
-    const endDateTime = new Date(startDateTime.getTime() + data.duration * 60000);
+    const endDateTime = new Date(
+      startDateTime.getTime() + data.duration * 60000
+    );
 
     const formatDate = (date: Date) => {
       return date.toLocaleString('en-US', {
@@ -107,18 +109,26 @@ class EmailService {
             <strong style="color: #333;">Duration:</strong> ${data.duration} minutes
           </div>
           
-          ${data.password ? `
+          ${
+            data.password
+              ? `
             <div style="margin-bottom: 10px;">
               <strong style="color: #333;">Meeting Password:</strong> <code style="background-color: #e9ecef; padding: 2px 4px; border-radius: 3px;">${data.password}</code>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
           
-          ${data.agenda ? `
+          ${
+            data.agenda
+              ? `
             <div style="margin-bottom: 10px;">
               <strong style="color: #333;">Agenda:</strong>
               <p style="color: #666; margin-top: 5px; white-space: pre-wrap;">${data.agenda}</p>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         
         <div style="text-align: center; margin-bottom: 30px;">
@@ -200,12 +210,16 @@ class EmailService {
             <strong style="color: #333;">Starting:</strong> ${formatDate(startDateTime)}
           </div>
           
-          ${data.agenda ? `
+          ${
+            data.agenda
+              ? `
             <div style="margin-bottom: 10px;">
               <strong style="color: #333;">Agenda:</strong>
               <p style="color: #666; margin-top: 5px; white-space: pre-wrap;">${data.agenda}</p>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         
         <div style="text-align: center; margin-bottom: 30px;">
@@ -276,12 +290,16 @@ class EmailService {
             <strong style="color: #333;">Originally scheduled:</strong> ${formatDate(startDateTime)}
           </div>
           
-          ${data.reason ? `
+          ${
+            data.reason
+              ? `
             <div style="margin-bottom: 10px;">
               <strong style="color: #333;">Reason:</strong>
               <p style="color: #666; margin-top: 5px; white-space: pre-wrap;">${data.reason}</p>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         
         <div style="border-top: 1px solid #ddd; padding-top: 15px; color: #666; font-size: 12px;">
@@ -352,14 +370,18 @@ class EmailService {
             <strong style="color: #333;">New time:</strong> <span style="color: #28a745; font-weight: bold;">${formatDate(newStartDateTime)}</span>
           </div>
           
-          ${data.changes.length > 0 ? `
+          ${
+            data.changes.length > 0
+              ? `
             <div style="margin-bottom: 10px;">
               <strong style="color: #333;">Changes made:</strong>
               <ul style="color: #666; margin-top: 5px;">
-                ${data.changes.map(change => `<li>${change}</li>`).join('')}
+                ${data.changes.map((change) => `<li>${change}</li>`).join('')}
               </ul>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         
         <div style="text-align: center; margin-bottom: 30px;">
@@ -382,7 +404,7 @@ class EmailService {
       Previous time: ${formatDate(oldStartDateTime)}
       New time: ${formatDate(newStartDateTime)}
       
-      ${data.changes.length > 0 ? `Changes made:\n${data.changes.map(change => `- ${change}`).join('\n')}` : ''}
+      ${data.changes.length > 0 ? `Changes made:\n${data.changes.map((change) => `- ${change}`).join('\n')}` : ''}
       
       Join the meeting: ${data.joinUrl}
       
@@ -401,8 +423,12 @@ class EmailService {
   /**
    * Send bulk invitations
    */
-  async sendBulkInvitations(invitations: MeetingInvitationData[]): Promise<void> {
-    const promises = invitations.map(invitation => this.sendMeetingInvitation(invitation));
+  async sendBulkInvitations(
+    invitations: MeetingInvitationData[]
+  ): Promise<void> {
+    const promises = invitations.map((invitation) =>
+      this.sendMeetingInvitation(invitation)
+    );
     await Promise.all(promises);
   }
 
@@ -410,15 +436,21 @@ class EmailService {
    * Send bulk reminders
    */
   async sendBulkReminders(reminders: MeetingReminderData[]): Promise<void> {
-    const promises = reminders.map(reminder => this.sendMeetingReminder(reminder));
+    const promises = reminders.map((reminder) =>
+      this.sendMeetingReminder(reminder)
+    );
     await Promise.all(promises);
   }
 
   /**
    * Send bulk cancellations
    */
-  async sendBulkCancellations(cancellations: MeetingCancellationData[]): Promise<void> {
-    const promises = cancellations.map(cancellation => this.sendMeetingCancellation(cancellation));
+  async sendBulkCancellations(
+    cancellations: MeetingCancellationData[]
+  ): Promise<void> {
+    const promises = cancellations.map((cancellation) =>
+      this.sendMeetingCancellation(cancellation)
+    );
     await Promise.all(promises);
   }
 
@@ -426,15 +458,15 @@ class EmailService {
    * Send bulk updates
    */
   async sendBulkUpdates(updates: MeetingUpdateData[]): Promise<void> {
-    const promises = updates.map(update => this.sendMeetingUpdate(update));
+    const promises = updates.map((update) => this.sendMeetingUpdate(update));
     await Promise.all(promises);
   }
 }
 
 export default new EmailService();
-export { 
-  MeetingInvitationData, 
-  MeetingReminderData, 
-  MeetingCancellationData, 
-  MeetingUpdateData 
+export {
+  MeetingInvitationData,
+  MeetingReminderData,
+  MeetingCancellationData,
+  MeetingUpdateData,
 };

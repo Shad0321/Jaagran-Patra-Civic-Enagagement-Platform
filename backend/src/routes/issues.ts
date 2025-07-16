@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import { Response } from 'express';
-import { authenticate, authorize, AuthenticatedRequest } from '../middleware/auth';
+import {
+  authenticate,
+  authorize,
+  AuthenticatedRequest,
+} from '../middleware/auth';
 import { PrismaClient } from '@prisma/client';
 import { uploadIssueFiles, handleUploadError } from '../middleware/upload';
 import {
@@ -47,10 +51,7 @@ router.get(
       .notEmpty()
       .isFloat()
       .withMessage('Valid longitude is required'),
-    query('radius')
-      .optional()
-      .isFloat()
-      .withMessage('Radius must be Float'),
+    query('radius').optional().isFloat().withMessage('Radius must be Float'),
     query('status')
       .optional()
       .isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'])
@@ -91,12 +92,7 @@ router.get(
  * @desc    Get issues reported by the current user (Citizens)
  * @access  Private (CITIZEN)
  */
-router.get(
-  '/my-issues',
-  authenticate,
-  authorize(['CITIZEN']),
-  getMyIssues
-);
+router.get('/my-issues', authenticate, authorize(['CITIZEN']), getMyIssues);
 
 /**
  * @route   GET /issues/:id
@@ -261,7 +257,11 @@ router.put(
     body('assignedToId')
       .optional()
       .custom((value) => {
-        if (value === null || value === undefined || typeof value === 'string') {
+        if (
+          value === null ||
+          value === undefined ||
+          typeof value === 'string'
+        ) {
           return true;
         }
         throw new Error('assignedToId must be a string or null');
@@ -402,8 +402,13 @@ router.get(
   authorize(['CITIZEN']),
   [
     query('page').optional().isInt({ min: 1 }).withMessage('Page must be >= 1'),
-    query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be 1-100'),
-    query('status').optional().isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']),
+    query('limit')
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage('Limit must be 1-100'),
+    query('status')
+      .optional()
+      .isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']),
     query('priority').optional().isIn(['LOW', 'MEDIUM', 'HIGH', 'URGENT']),
     query('category').optional().isString(),
   ],
@@ -434,24 +439,26 @@ router.get(
       const bodies = await prisma.body.findMany({
         where: {
           stateId: stateId as string,
-          constituencyId: constituencyId ? (constituencyId as string) : undefined,
+          constituencyId: constituencyId
+            ? (constituencyId as string)
+            : undefined,
         },
         include: {
           constituency: {
-            select: { name: true, type: true }
+            select: { name: true, type: true },
           },
           state: {
-            select: { name: true }
-          }
+            select: { name: true },
+          },
         },
         orderBy: {
-          name: 'asc'
-        }
+          name: 'asc',
+        },
       });
 
       res.json({
         success: true,
-        data: bodies
+        data: bodies,
       });
     } catch (error) {
       console.error('Error fetching nearby bodies:', error);
@@ -483,7 +490,7 @@ router.post(
       // Verify issue exists and user is the reporter
       const issue = await prisma.issue.findUnique({
         where: { id },
-        include: { reportedBy: true }
+        include: { reportedBy: true },
       });
 
       if (!issue) {
@@ -492,7 +499,9 @@ router.post(
       }
 
       if (issue.reportedById !== userId) {
-        res.status(403).json({ error: 'You can only comment on your own issues' });
+        res
+          .status(403)
+          .json({ error: 'You can only comment on your own issues' });
         return;
       }
 
@@ -536,9 +545,7 @@ router.get(
   '/citizen/:id/details',
   authenticate,
   authorize(['CITIZEN']),
-  [
-    param('id').isString().notEmpty().withMessage('Issue ID is required'),
-  ],
+  [param('id').isString().notEmpty().withMessage('Issue ID is required')],
   handleValidationErrors,
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
@@ -649,7 +656,9 @@ router.post(
   [
     param('id').isString().notEmpty().withMessage('Issue ID is required'),
     body('message').notEmpty().withMessage('Progress message is required'),
-    body('status').optional().isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']),
+    body('status')
+      .optional()
+      .isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']),
     body('progressPercentage').optional().isInt({ min: 0, max: 100 }),
     body('hoursWorked').optional().isFloat({ min: 0 }),
     body('nextSteps').optional().isString(),
@@ -658,17 +667,18 @@ router.post(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const { message, status, progressPercentage, hoursWorked, nextSteps } = req.body;
+      const { message, status, progressPercentage, hoursWorked, nextSteps } =
+        req.body;
       const userId = req.user!.id;
       const userRole = req.user!.role;
 
       // Verify issue exists and user has permission to update
       const issue = await prisma.issue.findUnique({
         where: { id },
-        include: { 
+        include: {
           reportedBy: true,
           assignedTo: true,
-        }
+        },
       });
 
       if (!issue) {
@@ -677,12 +687,15 @@ router.post(
       }
 
       // Check permissions
-      const canUpdate = 
-        userRole === 'MLA' && (issue.reportedById === userId || issue.assignedToId === userId) ||
-        userRole === 'MEMBER' && issue.assignedToId === userId;
+      const canUpdate =
+        (userRole === 'MLA' &&
+          (issue.reportedById === userId || issue.assignedToId === userId)) ||
+        (userRole === 'MEMBER' && issue.assignedToId === userId);
 
       if (!canUpdate) {
-        res.status(403).json({ error: 'You are not authorized to update this issue' });
+        res
+          .status(403)
+          .json({ error: 'You are not authorized to update this issue' });
         return;
       }
 
@@ -696,7 +709,8 @@ router.post(
       };
 
       if (status) updateData.status = status;
-      if (progressPercentage !== undefined) updateData.progressPercentage = progressPercentage;
+      if (progressPercentage !== undefined)
+        updateData.progressPercentage = progressPercentage;
       if (hoursWorked !== undefined) updateData.hoursWorked = hoursWorked;
       if (nextSteps) updateData.nextSteps = nextSteps;
 
@@ -753,12 +767,7 @@ router.get(
  * @desc    Get issues reported by the current user (Citizens)
  * @access  Private (CITIZEN)
  */
-router.get(
-  '/my-issues',
-  authenticate,
-  authorize(['CITIZEN']),
-  getMyIssues
-);
+router.get('/my-issues', authenticate, authorize(['CITIZEN']), getMyIssues);
 
 /**
  * @route   PUT /issues/:id/update-progress
@@ -771,13 +780,34 @@ router.put(
   authorize(['MLA', 'MEMBER']),
   [
     param('id').isString().notEmpty().withMessage('Issue ID is required'),
-    body('progressUpdate').isString().notEmpty().withMessage('Progress update is required'),
-    body('status').optional().isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED']).withMessage('Invalid status'),
-    body('estimatedCompletion').optional().isISO8601().withMessage('Invalid date format'),
-    body('progressPercentage').optional().isInt({ min: 0, max: 100 }).withMessage('Progress percentage must be between 0 and 100'),
-    body('hoursWorked').optional().isFloat({ min: 0 }).withMessage('Hours worked must be positive'),
-    body('nextSteps').optional().isString().withMessage('Next steps must be a string'),
-    body('attachments').optional().isArray().withMessage('Attachments must be an array'),
+    body('progressUpdate')
+      .isString()
+      .notEmpty()
+      .withMessage('Progress update is required'),
+    body('status')
+      .optional()
+      .isIn(['PENDING', 'IN_PROGRESS', 'RESOLVED'])
+      .withMessage('Invalid status'),
+    body('estimatedCompletion')
+      .optional()
+      .isISO8601()
+      .withMessage('Invalid date format'),
+    body('progressPercentage')
+      .optional()
+      .isInt({ min: 0, max: 100 })
+      .withMessage('Progress percentage must be between 0 and 100'),
+    body('hoursWorked')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('Hours worked must be positive'),
+    body('nextSteps')
+      .optional()
+      .isString()
+      .withMessage('Next steps must be a string'),
+    body('attachments')
+      .optional()
+      .isArray()
+      .withMessage('Attachments must be an array'),
   ],
   handleValidationErrors,
   updateIssueProgress
@@ -806,12 +836,12 @@ router.post(
       // Verify issue exists
       const issue = await prisma.issue.findUnique({
         where: { id },
-        include: { 
+        include: {
           reportedBy: true,
           state: true,
           district: true,
           constituency: true,
-        }
+        },
       });
 
       if (!issue) {
@@ -826,7 +856,7 @@ router.post(
           state: true,
           district: true,
           constituency: true,
-        }
+        },
       });
 
       if (!user) {
@@ -836,7 +866,7 @@ router.post(
 
       // Check if the user is from the same general area (same state/district)
       // Allow commenting if they're from the same area OR if it's their own issue
-      // const canComment = 
+      // const canComment =
       //   issue.reportedById === userId || // Own issue
       //   (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
 
@@ -884,10 +914,8 @@ router.post(
 router.get(
   '/nearby/:id/details',
   authenticate,
-  authorize(['CITIZEN', 'MEMBER','MLA']),
-  [
-    param('id').isString().notEmpty().withMessage('Issue ID is required'),
-  ],
+  authorize(['CITIZEN', 'MEMBER', 'MLA']),
+  [param('id').isString().notEmpty().withMessage('Issue ID is required')],
   handleValidationErrors,
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
@@ -976,7 +1004,7 @@ router.get(
           state: true,
           district: true,
           constituency: true,
-        }
+        },
       });
 
       if (!user) {
@@ -986,7 +1014,7 @@ router.get(
 
       // Check if the user is from the same general area (same state/district)
       // Allow access if they're from the same area OR if it's their own issue
-      // const canAccess = 
+      // const canAccess =
       //   issue.reportedById === userId || // Own issue
       //   (user.stateId === issue.stateId && user.districtId === issue.districtId); // Same area
 
