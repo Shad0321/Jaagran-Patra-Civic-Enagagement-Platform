@@ -11,5 +11,8 @@
       "src": "/(.*)",
       "dest": "dist/index.js"
     }
-  ]
+  ],
+  "env": {
+    "PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING": "1"
+  }
 }
