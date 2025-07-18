@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import Loader from '../../../../frontend/src/components/common/Loader';
 
 // Error boundary component for ReactQuill
 class ReactQuillErrorBoundary extends React.Component {
@@ -86,9 +87,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", hei
   // Show loading state during SSR
   if (!isClient) {
     return (
-      <div className="border border-gray-300 rounded-md bg-gray-50 flex items-center justify-center" style={{ height: height }}>
-        <div className="text-gray-500">Loading editor...</div>
-      </div>
+      <Loader/>
     );
   }
 

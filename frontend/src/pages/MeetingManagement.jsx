@@ -27,6 +27,7 @@ import { toast } from 'react-toastify';
 import CreateMeetingModal from '../components/CreateMeetingModal';
 import MeetingDetailsModal from '../components/MeetingDetailsModal';
 import InviteMembersModal from '../components/InviteMembersModal';
+import Loader from '../components/common/Loader';
 
 const MeetingManagement = () => {
   const { user } = useSelector((state) => state.user);
@@ -183,9 +184,7 @@ const MeetingManagement = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <Loader/>
     );
   }
 

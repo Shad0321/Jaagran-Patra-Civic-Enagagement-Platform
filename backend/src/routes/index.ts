@@ -9,6 +9,7 @@ import mapRoutes from './map';
 import newsRoutes from './news';
 import analyticsRoutes from './analytics';
 import meetingRoutes from './meetings';
+import chatRoutes from './chat'; 
 
 const router = Router();
 
@@ -35,6 +36,9 @@ router.use('/analytics', analyticsRoutes);
 
 // Meeting routes
 router.use('/meetings', meetingRoutes);
+
+// Chat routes - Add this line
+router.use('/chat', chatRoutes);
 
 // Health check endpoint
 router.get('/health', (req: Request, res: Response) => {

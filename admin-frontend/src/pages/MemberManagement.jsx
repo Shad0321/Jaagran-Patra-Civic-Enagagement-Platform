@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Users, Plus, Search, Edit, Trash2, Filter, MapPin, Phone, Mail, Building } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../../frontend/src/components/common/Loader';
 
 // eslint-disable-next-line no-unused-vars
 const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFormData, mlas, bodyTypes, localBodies, onMLAChange, onBodyTypeChange }) => {
@@ -588,9 +589,7 @@ const MemberManagement = () => {
       {/* Members Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
+          <Loader/>
         ) : (members || []).length === 0 ? (
           <div className="col-span-full text-center py-12">
             <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />

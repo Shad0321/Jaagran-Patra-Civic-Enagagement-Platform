@@ -24,6 +24,7 @@ import IssueAssignmentManagement from '../pages/IssueAssignmentManagement.jsx';
 import AnalyticsReport from '../pages/AnalyticsReport.jsx';
 import VerifyEmail from '../pages/VerifyEmail.jsx';
 import MLAProfiles from '../pages/MLAProfiles.jsx';
+import ChatPage from '../pages/ChatPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -193,6 +194,16 @@ const router = createBrowserRouter([
       },
       { path: 'verify-email', element: <VerifyEmail /> },
       { path: 'mla-profiles', element: <MLAProfiles /> },
+      {
+        path: 'chat',
+        element: (
+          <LanguageGuard>
+            <ProtectedRoute requiredRole="MLA">
+              <ChatPage />
+            </ProtectedRoute>
+          </LanguageGuard>
+        ),
+      },
       //   { path: "*", element: <NotFound /> },
     ],
   },

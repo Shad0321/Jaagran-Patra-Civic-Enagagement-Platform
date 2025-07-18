@@ -18,6 +18,7 @@ const Navbar = () => {
 
   // Don't show navbar on login, signup, choose-language, forgot-password, and reset-password pages
   if (
+    location.pathname === '/' ||
     location.pathname === '/login' ||
     location.pathname === '/signup' ||
     location.pathname === '/choose-language' ||

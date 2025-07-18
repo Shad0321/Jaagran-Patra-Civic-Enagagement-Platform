@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Users, Building, MapPin, Check } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+import Loader from './common/Loader';
 
 const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -376,8 +377,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
             >
               {loading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>Adding...</span>
+                  <Loader/>
                 </>
               ) : (
                 <>

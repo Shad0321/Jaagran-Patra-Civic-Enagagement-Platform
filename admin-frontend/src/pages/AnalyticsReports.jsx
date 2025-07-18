@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { TrendingUp, Users, FileText, Clock, CheckCircle, Calendar, Download } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../../frontend/src/components/common/Loader';
 
 const AnalyticsReports = () => {
   const [loading, setLoading] = useState(true);
@@ -144,9 +145,7 @@ const AnalyticsReports = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <Loader/>
     );
   }
 

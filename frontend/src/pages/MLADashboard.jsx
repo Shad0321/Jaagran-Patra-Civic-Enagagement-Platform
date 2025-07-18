@@ -23,6 +23,7 @@ import ProgressUpdateModal from '../components/ProgressUpdateModal';
 import IssueAssignmentModal from '../components/IssueAssignmentModal';
 import MediaDisplay from '../components/common/MediaDisplay';
 import UpdateMediaDisplay from '../components/common/UpdateMediaDisplay';
+import Loader from '../components/common/Loader';
 
 const MLADashboard = () => {
   const { user } = useSelector((state) => state.user);
@@ -145,9 +146,7 @@ const MLADashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+        <Loader className={"w-screen h-screen"}/>
     );
   }
 

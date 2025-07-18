@@ -12,6 +12,7 @@ import {
   Clock,
   Tag,
 } from 'lucide-react';
+import Loader from './common/Loader';
 
 const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
   const navigate = useNavigate();
@@ -127,17 +128,6 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
     }
   }, [showFull, fetchCategories]);
 
-  const getCategoryColor = (category) => {
-    const colors = {
-      GENERAL: 'bg-blue-100 text-blue-800',
-      ANNOUNCEMENT: 'bg-green-100 text-green-800',
-      ALERT: 'bg-red-100 text-red-800',
-      UPDATE: 'bg-yellow-100 text-yellow-800',
-      EVENT: 'bg-purple-100 text-purple-800',
-    };
-    return colors[category] || 'bg-gray-100 text-gray-800';
-  };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -151,7 +141,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
 
   const NewsCard = React.memo(({ item, compact = false }) => (
     <div
-      className={`bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200 ${compact ? 'p-4' : 'p-6'}`}
+      className={`bg-white rounded-2xl border-2 border-primary/20 hover:shadow-lg transition-shadow duration-200 ${compact ? 'p-4' : 'p-6'}`}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-2">
@@ -160,34 +150,34 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
           )}
           {item.category && (
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}
+              className={`px-2 py-1 rounded-full text-xs font-semibold border border-primary/30 bg-primary/10 text-primary`}
             >
               {item.category}
             </span>
           )}
         </div>
-        <div className="flex items-center text-xs text-gray-500">
+        <div className="flex items-center text-xs text-primary">
           <Calendar className="w-3 h-3 mr-1" />
           {formatDate(item.publishedAt)}
         </div>
       </div>
 
       <h3
-        className={`font-semibold text-gray-900 mb-2 ${compact ? 'text-sm' : 'text-lg'} line-clamp-2`}
+        className={`font-bold text-primary mb-2 ${compact ? 'text-base' : 'text-xl'} line-clamp-2`}
       >
         {item.title}
       </h3>
 
       {item.summary && (
         <p
-          className={`text-gray-600 mb-3 ${compact ? 'text-xs' : 'text-sm'} line-clamp-2`}
+          className={`text-gray-700 mb-3 ${compact ? 'text-xs' : 'text-base'} line-clamp-2`}
         >
           {item.summary}
         </p>
       )}
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4 text-xs text-gray-500">
+        <div className="flex items-center space-x-4 text-xs text-primary">
           {item.state && (
             <div className="flex items-center">
               <MapPin className="w-3 h-3 mr-1" />
@@ -195,7 +185,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
             </div>
           )}
           {item.isNational && (
-            <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">
+            <span className="px-2 py-1 bg-primary/10 text-primary rounded-full font-semibold border border-primary/20">
               National
             </span>
           )}
@@ -207,10 +197,10 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
           )}
         </div>
 
-        {showFull && (
+        {(
           <button
             onClick={() => navigate(`/news/${item.id}`)}
-            className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="flex items-center text-primary hover:text-primary/80 text-sm font-semibold border border-primary/30 px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 transition-all cursor-pointer"
           >
             Read More
             <ExternalLink className="w-3 h-3 ml-1" />
@@ -222,14 +212,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
 
   if (loading && news.length === 0) {
     return (
-      <div
-        className={`${showFull ? 'min-h-96' : 'h-64'} flex items-center justify-center`}
-      >
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading news...</p>
-        </div>
-      </div>
+      <Loader/>
     );
   }
 
@@ -238,9 +221,9 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Newspaper className="w-5 h-5 text-blue-600" />
+          <Newspaper className="w-5 h-5 text-primary" />
           <h2
-            className={`font-bold text-gray-900 ${showFull ? 'text-2xl' : 'text-lg'}`}
+            className={`font-extrabold text-primary ${showFull ? 'text-2xl' : 'text-lg'}`}
           >
             {showFull ? 'Latest News & Updates' : 'Latest News'}
           </h2>
@@ -249,7 +232,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
         {!showFull && news.length > 0 && (
           <button
             onClick={() => navigate('/news')}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
+            className="text-primary hover:text-primary/80 text-sm font-semibold flex items-center border border-primary/30 px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 transition-all cursor-pointer"
           >
             View All
             <ExternalLink className="w-3 h-3 ml-1" />
@@ -269,26 +252,45 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
                   placeholder="Search news..."
                   value={searchTerm}
                   onChange={handleSearchChange}
-                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    isSearching ? 'bg-gray-50' : ''
-                  }`}
+                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none  focus:border-transparent ${isSearching ? 'bg-gray-50' : ''
+                    }`}
                 />
               </div>
             </div>
 
             <div className="sm:w-48">
-              <select
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="all">All Categories</option>
-                {categories.map((cat) => (
-                  <option key={cat.category} value={cat.category}>
-                    {cat.category} ({cat.count})
+              <div className="relative w-full">
+                <select
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                  className="w-full appearance-none px-4 py-3 bg-white border border-gray-300 rounded-xl shadow-sm text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                >
+                  <option value="all" className="bg-white text-gray-800">
+                    All Categories
                   </option>
-                ))}
-              </select>
+                  {categories.map((cat) => (
+                    <option
+                      key={cat.category}
+                      value={cat.category}
+                      className="text-gray-800 bg-primary/10"
+                    >
+                      {cat.category} ({cat.count})
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

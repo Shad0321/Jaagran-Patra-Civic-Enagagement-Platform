@@ -17,6 +17,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+import Loader from '../components/common/Loader';
 
 const NearbyIssues = () => {
   const { user } = useSelector((state) => state.user);
@@ -320,7 +321,7 @@ const NearbyIssues = () => {
   const getStatusDisplay = (status) => {
     const statusConfig = {
       PENDING: { color: 'text-yellow-600 bg-yellow-100', icon: Clock },
-      IN_PROGRESS: { color: 'text-blue-600 bg-blue-100', icon: AlertCircle },
+      IN_PROGRESS: { color: 'text-primary bg-primary/10', icon: AlertCircle },
       RESOLVED: { color: 'text-green-600 bg-green-100', icon: CheckCircle },
       REJECTED: { color: 'text-red-600 bg-red-100', icon: XCircle },
     };
@@ -350,7 +351,7 @@ const NearbyIssues = () => {
           <div className="mt-6">
             <button
               onClick={getCurrentLocation}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/70 cursor-pointer transition-all"
             >
               <MapPin className="mr-2 h-4 w-4" />
               Enable Location Access
@@ -365,7 +366,7 @@ const NearbyIssues = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-2 text-sm text-gray-500">Getting your location...</p>
         </div>
       </div>
@@ -373,17 +374,17 @@ const NearbyIssues = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <MapPin className="mr-3 h-8 w-8 text-blue-600" />
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary flex items-center flex-wrap gap-2">
+          <MapPin className="mr-2 sm:mr-3 h-7 w-7 sm:h-8 sm:w-8 text-primary" />
           Nearby Issues
         </h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-600 text-sm sm:text-base">
           Issues within {filters.radius}km of your current location
           {debouncedFilters.radius !== filters.radius && (
-            <span className="text-sm text-gray-400 ml-2">
+            <span className="text-xs sm:text-sm text-primary ml-2">
               (searching for {debouncedFilters.radius}km...)
             </span>
           )}
@@ -391,13 +392,13 @@ const NearbyIssues = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
+      <div className="bg-white shadow rounded-lg p-4 sm:p-6 mb-6 border border-gray-100">
         {/* Show debouncing indicator */}
         {JSON.stringify(filters) !== JSON.stringify(debouncedFilters) && (
           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
             <div className="flex items-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-              <span className="text-sm text-blue-700">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+              <span className="text-xs sm:text-sm text-primary/80">
                 Updating search results in{' '}
                 <span className="font-medium">1 second</span>...
               </span>
@@ -405,10 +406,10 @@ const NearbyIssues = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           {/* Search */}
-          <div className="lg:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="sm:col-span-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Search Issues
             </label>
             <div className="relative">
@@ -418,14 +419,14 @@ const NearbyIssues = () => {
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 placeholder="Search by title or description..."
-                className="pl-10 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                className="pl-10 w-full border border-gray-300 rounded-md px-3 py-2 text-xs sm:text-sm focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
 
           {/* Radius */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Radius (km)
             </label>
             <input
@@ -437,19 +438,19 @@ const NearbyIssues = () => {
               onChange={(e) =>
                 handleFilterChange('radius', parseFloat(e.target.value) || 5)
               }
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs sm:text-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Status
             </label>
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs sm:text-sm focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -461,13 +462,13 @@ const NearbyIssues = () => {
 
           {/* Priority */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Priority
             </label>
             <select
               value={filters.priority}
               onChange={(e) => handleFilterChange('priority', e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs sm:text-sm focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">All Priorities</option>
               <option value="LOW">Low</option>
@@ -482,14 +483,11 @@ const NearbyIssues = () => {
       {/* Results */}
       {!location && !locationError ? (
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-2 text-sm text-gray-500">Getting your location...</p>
         </div>
       ) : loading ? (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-sm text-gray-500">Loading nearby issues...</p>
-        </div>
+          <Loader/>
       ) : error ? (
         <div className="text-center py-12">
           <AlertCircle className="mx-auto h-12 w-12 text-red-400" />
@@ -505,7 +503,7 @@ const NearbyIssues = () => {
                 getCurrentLocation();
               }
             }}
-            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/80"
           >
             {location && location.latitude && location.longitude
               ? 'Try Again'
@@ -526,44 +524,44 @@ const NearbyIssues = () => {
       ) : (
         <>
           {/* Issues List */}
-          <div className="bg-white shadow rounded-lg overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-white shadow rounded-lg overflow-hidden border border-primary/20">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-primary/20">
+              <h3 className="text-base sm:text-lg font-medium text-primary">
                 {pagination.total} issue{pagination.total !== 1 ? 's' : ''}{' '}
                 found
               </h3>
             </div>
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-primary/10">
               {issues.map((issue) => {
                 const statusDisplay = getStatusDisplay(issue.status);
                 const StatusIcon = statusDisplay.icon;
 
                 return (
-                  <div key={issue.id} className="p-6 hover:bg-gray-50">
-                    <div className="flex items-start justify-between">
+                  <div key={issue.id} className="p-4 sm:p-6 hover:bg-primary/5">
+                    <div className="flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-0">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h4 className="text-lg font-medium text-gray-900">
+                        <div className="flex flex-wrap items-center space-x-2 sm:space-x-3 mb-2 gap-y-1">
+                          <h4 className="text-base sm:text-lg font-medium text-primary">
                             {issue.title}
                           </h4>
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusDisplay.color}`}
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusDisplay.color}`}
                           >
                             <StatusIcon className="mr-1 h-3 w-3" />
                             {issue.status.replace('_', ' ')}
                           </span>
                           <span
-                            className={`text-sm font-medium ${getPriorityColor(issue.priority)}`}
+                            className={`text-xs sm:text-sm font-medium ${getPriorityColor(issue.priority)}`}
                           >
                             {issue.priority}
                           </span>
                         </div>
 
-                        <p className="text-gray-600 mb-3 line-clamp-2">
+                        <p className="text-gray-600 mb-2 sm:mb-3 line-clamp-2 text-xs sm:text-base">
                           {issue.description}
                         </p>
 
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-500">
                           <span className="flex items-center">
                             <MapPin className="mr-1 h-4 w-4" />
                             {issue.distance}km away
@@ -592,13 +590,13 @@ const NearbyIssues = () => {
                         </div>
 
                         {issue.reportedBy && (
-                          <div className="mt-2 text-sm text-gray-500">
+                          <div className="mt-2 text-xs sm:text-sm text-gray-500">
                             Reported by: {issue.reportedBy.name}
                           </div>
                         )}
 
                         {issue.assignedTo && (
-                          <div className="mt-1 text-sm text-gray-500">
+                          <div className="mt-1 text-xs sm:text-sm text-gray-500">
                             Assigned to: {issue.assignedTo.name}
                           </div>
                         )}
@@ -609,10 +607,15 @@ const NearbyIssues = () => {
                     <div className="mt-4">
                       <button
                         onClick={() => toggleIssueComments(issue.id)}
-                        className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
+                        className="flex items-center text-sm font-medium text-primary hover:text-primary-dark"
+                        disabled={loadingComments.has(issue.id)}
                       >
                         <MessageSquare className="mr-1 h-4 w-4" />
-                        {expandedIssues.has(issue.id) ? (
+                        {loadingComments.has(issue.id) ? (
+                          <>
+                            <span>Loading...</span>
+                          </>
+                        ) : expandedIssues.has(issue.id) ? (
                           <>
                             <ChevronUp className="mr-1 h-4 w-4" />
                             Hide Comments
@@ -622,7 +625,7 @@ const NearbyIssues = () => {
                             <ChevronDown className="mr-1 h-4 w-4" />
                             View Comments
                             {issueComments[issue.id] && (
-                              <span className="ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              <span className="ml-1 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                                 {issueComments[issue.id].length}
                               </span>
                             )}
@@ -636,7 +639,7 @@ const NearbyIssues = () => {
                           <div className="max-h-60 overflow-y-auto">
                             {loadingComments.has(issue.id) ? (
                               <div className="flex justify-center py-4">
-                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                               </div>
                             ) : issueComments[issue.id]?.length > 0 ? (
                               <div className="space-y-3">
@@ -661,7 +664,7 @@ const NearbyIssues = () => {
                                           <User
                                             className={`h-5 w-5 ${
                                               comment.user.role === 'CITIZEN'
-                                                ? 'text-blue-600'
+                                                ? 'text-primary'
                                                 : comment.user.role === 'MLA'
                                                   ? 'text-purple-600'
                                                   : comment.user.role ===
@@ -741,7 +744,7 @@ const NearbyIssues = () => {
                                     !newComments[issue.id]?.trim() ||
                                     commentingIssues.has(issue.id)
                                   }
-                                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   {commentingIssues.has(issue.id) ? (
                                     <>
@@ -751,7 +754,9 @@ const NearbyIssues = () => {
                                   ) : (
                                     <>
                                       <Send className="mr-2 h-4 w-4" />
-                                      Post Comment
+                                      <span className='hidden sm:inline'>
+                                        Post Comment
+                                      </span>
                                     </>
                                   )}
                                 </button>
@@ -763,7 +768,7 @@ const NearbyIssues = () => {
                             <div className="mt-4 text-center text-sm text-gray-500 border-t border-gray-200 pt-4">
                               <p>Please sign in to comment on issues</p>
                               <p className="mt-1 text-xs">
-                                <span className="text-blue-600 cursor-pointer hover:underline">
+                                <span className="text-primary cursor-pointer hover:underline">
                                   Sign in
                                 </span>{' '}
                                 to join the conversation

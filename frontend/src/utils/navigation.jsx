@@ -24,6 +24,13 @@ export const getNavigationItems = (userRole) => {
       icon: 'map-pin',
       roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
     },
+    {
+      id: 'chats',
+      label: 'Chats',
+      path: '/chat',
+      icon: 'plus',
+      roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
+    },
   ];
 
   const roleBasedItems = {

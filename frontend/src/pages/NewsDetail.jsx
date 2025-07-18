@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, MapPin, Eye, Share2 } from 'lucide-react';
 import '../styles/rich-content.css';
+import Loader from '../components/common/Loader';
 
 const NewsDetail = () => {
   const { id } = useParams();
@@ -94,26 +95,9 @@ const NewsDetail = () => {
     });
   };
 
-  const getCategoryColor = (category) => {
-    const colors = {
-      breaking: 'bg-red-100 text-red-800',
-      politics: 'bg-blue-100 text-blue-800',
-      governance: 'bg-green-100 text-green-800',
-      development: 'bg-purple-100 text-purple-800',
-      alerts: 'bg-yellow-100 text-yellow-800',
-      general: 'bg-gray-100 text-gray-800',
-    };
-    return colors[category?.toLowerCase()] || colors.general;
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading article...</p>
-        </div>
-      </div>
+      <Loader/>
     );
   }
 
@@ -126,7 +110,7 @@ const NewsDetail = () => {
           </div>
           <button
             onClick={() => navigate('/news')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/80 transition-colors"
           >
             Back to News
           </button>
@@ -148,7 +132,7 @@ const NewsDetail = () => {
           </p>
           <button
             onClick={() => navigate('/news')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/80 transition-colors"
           >
             Back to News
           </button>
@@ -163,46 +147,46 @@ const NewsDetail = () => {
         {/* Back Button */}
         <button
           onClick={() => navigate('/news')}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6 transition-colors"
+          className="flex items-center gap-2 text-primary hover:text-primary-dark mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to News
         </button>
 
         {/* Article Header */}
-        <article className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <article className="bg-white rounded-xl shadow-lg overflow-hidden border border-primary/10">
           {/* Article Meta */}
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-6 border-b border-primary/10">
             <div className="flex flex-wrap items-center gap-4 mb-4">
               <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(news.category)}`}
+                className={`px-3 py-1 rounded-full text-sm font-semibold bg-primary/10 text-primary border border-primary/20`}
               >
                 {news.category || 'General'}
               </span>
 
               {news.isPinned && (
-                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold border border-yellow-200">
                   📌 Pinned
                 </span>
               )}
 
               {news.isNational && (
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold border border-green-200">
                   🌍 National
                 </span>
               )}
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-primary mb-4 leading-tight">
               {news.title}
             </h1>
 
             {news.featuredImage && (
-              <div className="mb-6">
+              <div className="mb-6 rounded-xl overflow-hidden shadow-lg border border-primary/10">
                 <img
                   src={news.featuredImage}
                   alt={news.title}
-                  className="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg"
+                  className="w-full h-64 md:h-80 object-cover hover:scale-105 transition-transform duration-200"
                   onError={(e) => {
                     e.target.style.display = 'none';
                   }}
@@ -211,13 +195,13 @@ const NewsDetail = () => {
             )}
 
             {news.summary && (
-              <p className="text-xl text-gray-600 mb-6 leading-relaxed">
+              <p className="text-xl text-primary/80 mb-6 leading-relaxed font-medium">
                 {news.summary}
               </p>
             )}
 
             {/* Meta Information */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-primary/70">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 <span>{formatDate(news.publishedAt)}</span>
@@ -237,7 +221,7 @@ const NewsDetail = () => {
 
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+                className="flex items-center gap-2 text-primary hover:text-primary-dark transition-colors font-semibold"
               >
                 <Share2 className="h-4 w-4" />
                 Share
@@ -248,21 +232,21 @@ const NewsDetail = () => {
           {/* Article Content */}
           <div className="p-6">
             <div
-              className="rich-content"
+              className="rich-content text-primary/90 text-base sm:text-lg leading-relaxed"
               dangerouslySetInnerHTML={{ __html: news.content }}
             />
 
             {/* Tags */}
             {news.tags && news.tags.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-500 mb-3">
+              <div className="mt-8 pt-6 border-t border-primary/10">
+                <h3 className="text-sm font-semibold text-primary mb-3">
                   Tags:
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {news.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm"
+                      className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20"
                     >
                       #{tag}
                     </span>
@@ -273,8 +257,8 @@ const NewsDetail = () => {
 
             {/* Attachments */}
             {news.attachments && news.attachments.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-500 mb-3">
+              <div className="mt-8 pt-6 border-t border-primary/10">
+                <h3 className="text-sm font-semibold text-primary mb-3">
                   Attachments:
                 </h3>
                 <div className="space-y-2">
@@ -284,7 +268,7 @@ const NewsDetail = () => {
                       href={attachment}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors text-sm"
+                      className="flex items-center gap-2 text-primary hover:text-primary-dark transition-colors text-sm font-medium"
                     >
                       <span className="w-4 h-4">📎</span>
                       Attachment {index + 1}
@@ -299,19 +283,19 @@ const NewsDetail = () => {
         {/* Similar News Section */}
         {similarNews.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl font-bold text-primary mb-6">
               Similar News
             </h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {similarNews.map((item) => (
                 <article
                   key={item.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                  className="bg-white rounded-xl shadow-md border border-primary/10 overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer flex flex-col h-full"
                   onClick={() => navigate(`/news/${item.id}`)}
                 >
                   {/* Featured Image */}
                   {item.featuredImage && (
-                    <div className="h-48 overflow-hidden">
+                    <div className="h-40 sm:h-48 overflow-hidden rounded-t-xl">
                       <img
                         src={item.featuredImage}
                         alt={item.title}
@@ -323,35 +307,34 @@ const NewsDetail = () => {
                     </div>
                   )}
 
-                  <div className="p-4">
+                  <div className="p-4 flex flex-col flex-1">
                     {/* Category and Meta */}
                     <div className="flex items-center justify-between mb-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}
+                        className={`px-2 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20`}
                       >
                         {item.category || 'General'}
                       </span>
-                      <div className="flex items-center text-xs text-gray-500">
+                      <div className="flex items-center text-xs text-primary/70">
                         <Calendar className="w-3 h-3 mr-1" />
-                        {formatDate(item.publishedAt).split(',')[0]}{' '}
-                        {/* Just the date */}
+                        {formatDate(item.publishedAt).split(',')[0]}
                       </div>
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm">
+                    <h3 className="font-semibold text-primary mb-2 line-clamp-2 text-sm">
                       {item.title}
                     </h3>
 
                     {/* Summary */}
                     {item.summary && (
-                      <p className="text-gray-600 text-xs line-clamp-2 mb-3">
+                      <p className="text-primary/80 text-xs line-clamp-2 mb-3">
                         {item.summary}
                       </p>
                     )}
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-xs text-primary/60 mt-auto">
                       <div className="flex items-center space-x-3">
                         {item.state && (
                           <div className="flex items-center">
@@ -360,7 +343,7 @@ const NewsDetail = () => {
                           </div>
                         )}
                         {item.isNational && (
-                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium border border-green-200">
                             National
                           </span>
                         )}

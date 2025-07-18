@@ -77,6 +77,17 @@ enum BodyType {
   OTHER
 }
 
+enum ChatGroupType {
+  PUBLIC_MLA_GROUP     // Anyone can join and message
+  PRIVATE_MLA_GROUP    // Only MLA and their associated members
+}
+
+enum MembershipStatus {
+  ACTIVE
+  REMOVED
+  LEFT
+}
+
 // Simplified User model
 model User {
   id          String   @id @default(cuid())
@@ -150,6 +161,12 @@ model User {
   
   // Device tracking for push notifications
   deviceTokens DeviceToken[]
+
+  ownedGroups     ChatGroup[]         @relation("GroupOwner")
+  groupMemberships ChatGroupMember[]  @relation("GroupMembership")
+  addedMembers    ChatGroupMember[]   @relation("MemberAddedBy")
+  groupMessages   ChatGroupMessage[]  @relation("GroupMessageSender")
+  messageReads    ChatMessageRead[]   @relation("MessageReader")
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -263,6 +280,7 @@ model State {
   issues      Issue[]
   news        News[]
   notifications Notification[]
+  chatGroups  ChatGroup[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -284,6 +302,7 @@ model District {
   bodies      Body[]
   users       User[]
   issues      Issue[]
+  chatGroups  ChatGroup[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -309,6 +328,7 @@ model Constituency {
   users       User[]
   mlaProfiles MlaProfile[]
   issues      Issue[]
+  chatGroups  ChatGroup[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -596,6 +616,113 @@ model NotificationRecipient {
   @@index([status])
   @@map("notification_recipients")
 }
+
+model ChatGroup {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  type        ChatGroupType
+  
+  // Group owner (MLA)
+  ownerId     String
+  owner       User         @relation("GroupOwner", fields: [ownerId], references: [id])
+  
+  // For location-based groups
+  stateId     String?
+  districtId  String?
+  constituencyId String?
+  
+  state       State?       @relation(fields: [stateId], references: [id])
+  district    District?    @relation(fields: [districtId], references: [id])
+  constituency Constituency? @relation(fields: [constituencyId], references: [id])
+  
+  isActive    Boolean      @default(true)
+  
+  // Relationships
+  members     ChatGroupMember[]
+  messages    ChatGroupMessage[]
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  @@index([ownerId])
+  @@index([type])
+  @@index([stateId])
+  @@index([constituencyId])
+  @@index([isActive])
+  @@map("chat_groups")
+}
+model ChatGroupMessage {
+  id          String    @id @default(cuid())
+  groupId     String
+  senderId    String
+  message     String
+  messageType String    @default("TEXT") // TEXT, IMAGE, AUDIO, FILE
+  
+  // File attachments
+  attachments Json?
+  
+  // Message status
+  isEdited    Boolean   @default(false)
+  editedAt    DateTime?
+  
+  group       ChatGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  sender      User      @relation("GroupMessageSender", fields: [senderId], references: [id])
+  
+  // Read receipts
+  readBy      ChatMessageRead[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([groupId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@map("chat_group_messages")
+}
+
+model ChatMessageRead {
+  id        String           @id @default(cuid())
+  messageId String
+  userId    String
+  readAt    DateTime         @default(now())
+  
+  message   ChatGroupMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User            @relation("MessageReader", fields: [userId], references: [id])
+  
+  @@unique([messageId, userId])
+  @@index([messageId])
+  @@index([userId])
+  @@map("chat_message_reads")
+}
+
+model ChatGroupMember {
+  id          String           @id @default(cuid())
+  groupId     String
+  userId      String
+  status      MembershipStatus @default(ACTIVE)
+  
+  // Who added this member (for tracking)
+  addedById   String?
+  addedBy     User?           @relation("MemberAddedBy", fields: [addedById], references: [id])
+  
+  // Permissions
+  canInvite   Boolean         @default(false)
+  canRemove   Boolean         @default(false)
+  
+  group       ChatGroup       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user        User            @relation("GroupMembership", fields: [userId], references: [id])
+  
+  joinedAt    DateTime        @default(now())
+  leftAt      DateTime?
+  
+  @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+  @@index([status])
+  @@map("chat_group_members")
+}
+
 
 model ChatMessage {
   id          String @id @default(cuid())

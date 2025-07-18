@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
+import Loader from '../../../../frontend/src/components/common/Loader';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -97,7 +98,7 @@ const LoginForm = () => {
             className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <Loader/>
             ) : (
               <>
                 <LogIn className="w-5 h-5 mr-2" />

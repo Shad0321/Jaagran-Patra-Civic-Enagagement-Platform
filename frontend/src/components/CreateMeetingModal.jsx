@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+import Loader from './common/Loader';
 
 const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
   const { user } = useSelector((state) => state.user);
@@ -647,7 +648,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <Loader/>
               ) : (
                 <Video className="w-4 h-4" />
               )}

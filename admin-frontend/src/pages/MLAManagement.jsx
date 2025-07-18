@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Users, Plus, Search, Edit, Trash2, Filter, MapPin, Phone, Mail, RefreshCw, Camera, Upload, X } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../../frontend/src/components/common/Loader';
 
 const MLAModal = ({
   isOpen,
@@ -763,9 +764,7 @@ const MLAManagement = () => {
       {/* MLAs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
+          <Loader/>
         ) : (mlas || []).length === 0 ? (
           <div className="col-span-full text-center py-12">
             <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />

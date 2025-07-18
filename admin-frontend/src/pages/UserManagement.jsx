@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, Plus, Search, Edit, Trash2, Filter, Download, Eye } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../../frontend/src/components/common/Loader';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -318,7 +319,7 @@ const UserManagement = () => {
               {loading ? (
                 <tr>
                   <td colSpan="5" className="px-6 py-4 text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                    <Loader className="mx-auto" />
                   </td>
                 </tr>
               ) : (users || []).length === 0 ? (

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+import Loader from './common/Loader';
 
 const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
@@ -276,9 +277,7 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              </div>
+              <Loader/>
             ) : (
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {filteredMembers.map((member) => {

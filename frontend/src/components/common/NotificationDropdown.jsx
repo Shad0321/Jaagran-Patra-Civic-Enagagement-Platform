@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Check, CheckCheck } from 'lucide-react';
 import api from '../../utils/api';
 import { formatDistanceToNow } from 'date-fns';
+import Loader from './Loader';
 
 const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -159,9 +160,7 @@ const NotificationDropdown = () => {
 
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="p-4 text-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-              </div>
+              <Loader/>
             ) : notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 No notifications yet

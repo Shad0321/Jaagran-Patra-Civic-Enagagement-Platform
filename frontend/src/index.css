@@ -16,9 +16,6 @@
   --primary-color: #00b074;
   --primary-dark: #ff9900;
   --primary-light: #8dff9e;
-  --secondary-color: #ed2d24;
-  --secondary-dark: #7c3aed;
-  --secondary-light: #a78bfa;
   --accent-color: #fffdf6;
   --success-color: #10b981;
   --warning-color: #f59e0b;
@@ -50,5 +47,5 @@
 }
 
 *::-webkit-scrollbar {
-  /* display:none */
+  display:none
 }

@@ -12,6 +12,7 @@ import {
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 import LatestNews from '../components/LatestNews';
+import Loader from '../components/common/Loader';
 
 const CitizenDashboard = () => {
   const { user } = useSelector((state) => state.user);
@@ -204,93 +205,63 @@ const CitizenDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Loader/>
     );
   }
 
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-2 pt-20 sm:p-4 md:px-20 mx-auto min-h-screen bg-gradient-to-br from-primary/10 via-white to-primary/5">
       {/* Welcome Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <div className="mb-8 text-center md:text-left">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-primary mb-2 drop-shadow-sm">
           Welcome back, {user?.name}!
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-base md:text-lg">
           Here's an overview of your reported issues and community updates.
         </p>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Issues</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {stats.totalIssues}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="h-6 w-6 text-blue-600" />
-            </div>
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6 flex flex-col items-center hover:shadow-xl transition-all">
+          <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
+            <AlertCircle className="h-7 w-7 text-primary" />
           </div>
+          <p className="text-sm font-medium text-gray-600">Total Issues</p>
+          <p className="text-2xl font-extrabold text-primary">{stats.totalIssues}</p>
         </div>
-
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600">
-                {stats.pendingIssues}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <Clock className="h-6 w-6 text-yellow-600" />
-            </div>
+        <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6 flex flex-col items-center hover:shadow-xl transition-all">
+          <div className="h-12 w-12 bg-yellow-100 rounded-full flex items-center justify-center mb-2">
+            <Clock className="h-7 w-7 text-yellow-600" />
           </div>
+          <p className="text-sm font-medium text-gray-600">Pending</p>
+          <p className="text-2xl font-extrabold text-yellow-600">{stats.pendingIssues}</p>
         </div>
-
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">In Progress</p>
-              <p className="text-2xl font-bold text-blue-600">
-                {stats.inProgressIssues}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="h-6 w-6 text-blue-600" />
-            </div>
+        <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6 flex flex-col items-center hover:shadow-xl transition-all">
+          <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+            <AlertCircle className="h-7 w-7 text-blue-600" />
           </div>
+          <p className="text-sm font-medium text-gray-600">In Progress</p>
+          <p className="text-2xl font-extrabold text-blue-600">{stats.inProgressIssues}</p>
         </div>
-
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Resolved</p>
-              <p className="text-2xl font-bold text-green-600">
-                {stats.resolvedIssues}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="h-6 w-6 text-green-600" />
-            </div>
+        <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6 flex flex-col items-center hover:shadow-xl transition-all">
+          <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
+            <CheckCircle className="h-7 w-7 text-green-600" />
           </div>
+          <p className="text-sm font-medium text-gray-600">Resolved</p>
+          <p className="text-2xl font-extrabold text-green-600">{stats.resolvedIssues}</p>
         </div>
       </div>
 
       {/* Recent Issues */}
       <div className="mb-8">
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Recent Issues & Community Updates
-            </h2>
+        <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+            <h2 className="text-lg md:text-xl font-bold text-primary">Recent Issues & Community Updates</h2>
             <a
               href="/issues"
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="text-primary hover:text-primary/80 text-sm font-semibold underline underline-offset-2"
             >
               View All
             </a>
@@ -301,28 +272,28 @@ const CitizenDashboard = () => {
               {recentIssues.map((issue) => (
                 <div
                   key={issue.id}
-                  className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                  className="border border-primary/10 rounded-xl p-4 bg-white hover:bg-primary/5 transition-all shadow-sm hover:shadow-md"
                 >
-                  <div className="flex justify-between items-start mb-2">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-2 gap-2">
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900 truncate">
+                      <h3 className="font-semibold text-gray-900 truncate">
                         {issue.title}
                       </h3>
                       {issue.reportedBy.id !== user?.id && (
                         <p className="text-xs text-gray-500 mt-1">
                           Reported by: {issue.reportedBy.name}
                           {issue.distance && (
-                            <span className="text-blue-600 ml-2">
+                            <span className="text-primary ml-2">
                               ({issue.distance} km away)
                             </span>
                           )}
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center space-x-2 ml-4">
+                    <div className="flex items-center space-x-2 ml-0 md:ml-4">
                       {getStatusIcon(issue.status)}
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(issue.status)}`}
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(issue.status)}`}
                       >
                         {issue.status.replace('_', ' ')}
                       </span>
@@ -333,7 +304,7 @@ const CitizenDashboard = () => {
                     {issue.description}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 gap-2">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
                         <MapPin className="h-3 w-3 mr-1" />
@@ -345,7 +316,7 @@ const CitizenDashboard = () => {
                       </div>
                     </div>
                     <span
-                      className={`px-2 py-1 rounded-full ${getPriorityColor(issue.priority)}`}
+                      className={`px-2 py-1 rounded-full font-semibold ${getPriorityColor(issue.priority)}`}
                     >
                       {issue.priority}
                     </span>
@@ -362,7 +333,7 @@ const CitizenDashboard = () => {
                   <div className="mt-3 flex justify-end">
                     <button
                       onClick={() => openCommentModal(issue.id)}
-                      className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 text-sm"
+                      className="flex items-center space-x-1 text-primary hover:text-primary/80 text-sm font-semibold"
                     >
                       <MessageSquare className="h-3 w-3" />
                       <span>Add Comment</span>
@@ -376,61 +347,59 @@ const CitizenDashboard = () => {
               <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p>No issues reported yet</p>
               <p className="text-sm">
-                Start by reporting your first issue to your local
-                representatives
+                Start by reporting your first issue to your local representatives
               </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+      {/* Quick Actions & News */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
         <div className="lg:col-span-2">
           {/* Latest News Widget */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <LatestNews
-              userState={user?.state?.name || 'all'}
-              limit={4}
-              showFull={false}
-            />
+          <div className="bg-gradient-to-br from-primary/10 to-white rounded-2xl shadow-lg border-2 border-primary/30 p-0 md:p-0 overflow-hidden">
+            <div className="p-6">
+              <LatestNews
+                userState={user?.state?.name || 'all'}
+                limit={4}
+                showFull={false}
+              />
+            </div>
           </div>
         </div>
 
         <div className="space-y-6">
           {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6">
+            <h2 className="text-lg font-bold text-primary mb-4">
               Quick Actions
             </h2>
             <div className="space-y-3">
               <a
                 href="/issues"
-                className="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                className="flex items-center p-3 bg-primary/10 rounded-xl hover:bg-primary/20 transition-all group"
               >
-                <Plus className="h-5 w-5 text-blue-600 mr-3" />
-                <span className="font-medium text-blue-900">
-                  Report New Issue
-                </span>
+                <Plus className="h-5 w-5 text-primary mr-3 group-hover:scale-110 transition-transform" />
+                <span className="font-semibold text-primary group-hover:underline">Report New Issue</span>
               </a>
               <a
                 href="/issues"
-                className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center p-3 bg-gray-50 rounded-xl hover:bg-primary/10 transition-all group"
               >
-                <MessageSquare className="h-5 w-5 text-gray-600 mr-3" />
-                <span className="font-medium text-gray-900">
-                  View My Issues
-                </span>
+                <MessageSquare className="h-5 w-5 text-primary mr-3 group-hover:scale-110 transition-transform" />
+                <span className="font-semibold text-primary group-hover:text-primary group-hover:underline">View My Issues</span>
               </a>
             </div>
           </div>
 
           {/* Tips */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-3">
+          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20 p-6">
+            <h3 className="text-lg font-bold text-primary mb-3">
               💡 Tips for Better Results
             </h3>
-            <ul className="space-y-2 text-sm text-blue-800">
+            <ul className="space-y-2 text-sm text-primary">
               <li>• Provide clear photos and descriptions</li>
               <li>• Include exact location details</li>
               <li>• Set appropriate priority levels</li>
@@ -451,7 +420,7 @@ const CitizenDashboard = () => {
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write your comment here..."
-              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
             />
             <div className="flex justify-end space-x-3 mt-4">
               <button
@@ -464,7 +433,7 @@ const CitizenDashboard = () => {
               </button>
               <button
                 onClick={() => handleCommentSubmit(commentModal.issueId)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 disabled:bg-primary/60 transition-all"
               >
                 Add Comment
               </button>

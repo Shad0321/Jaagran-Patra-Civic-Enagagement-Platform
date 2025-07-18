@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Search, Filter, Eye, Edit, Trash2, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import Loader from '../../../frontend/src/components/common/Loader';
 
 const IssueManagement = () => {
   const [issues, setIssues] = useState([]);
@@ -395,7 +396,7 @@ const IssueManagement = () => {
               {loading ? (
                 <tr>
                   <td colSpan="7" className="px-6 py-4 text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                    <Loader className="h-20"/>
                   </td>
                 </tr>
               ) : (issues || []).length === 0 ? (

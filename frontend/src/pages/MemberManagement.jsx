@@ -23,6 +23,7 @@ import { toast } from 'react-toastify';
 import AddMemberModal from '../components/AddMemberModal';
 import EditMemberModal from '../components/EditMemberModal';
 import HierarchyTreeView from '../components/HierarchyTreeView';
+import Loader from '../components/common/Loader';
 
 const MemberManagement = () => {
   const { user } = useSelector((state) => state.user);
@@ -227,9 +228,7 @@ const MemberManagement = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Loader/>
     );
   }
 

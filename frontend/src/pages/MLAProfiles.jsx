@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { User, Mail, Phone, MapPin, Award, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { partyLogos } from '../utils/constants';
+import Loader from '../components/common/Loader';
+
 
 const MLAProfiles = () => {
   const [mlas, setMlas] = useState([]);
@@ -55,22 +59,35 @@ const MLAProfiles = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center text-primary">
-          MLA Profiles
-        </h1>
-        <div className="flex justify-between items-center mb-4">
-          <div></div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="limit" className="text-sm text-gray-600">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100 py-12 px-4">
+      <div className='w-full h-96 -py-12 -px-6'>
+        <img src="https://www.shutterstock.com/image-photo/north-block-building-secretariat-central-600nw-1215992257.jpg" alt="Rashtrapati Bhawan with flag"
+          className='w-full h-full min-h-96 object-cover'
+        />
+      </div>
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center my-12">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 via-gray-700 to-slate-600 bg-clip-text text-transparent mb-4">
+            Legislative Assembly Members
+          </h1>
+          <p className="text-gray-600 text-lg">Meet your elected representatives</p>
+        </div>
+
+        {/* Controls */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-sm text-gray-500">
+            Showing {mlas.length} of {pagination.total} members
+          </div>
+          <div className="flex items-center gap-3">
+            <label htmlFor="limit" className="text-sm font-medium text-gray-700">
               Per page:
             </label>
             <select
               id="limit"
               value={limit}
               onChange={handleLimitChange}
-              className="border rounded px-2 py-1 text-sm"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-colors"
             >
               {[5, 10, 20, 50].map((val) => (
                 <option key={val} value={val}>
@@ -80,91 +97,177 @@ const MLAProfiles = () => {
             </select>
           </div>
         </div>
+
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
+          <Loader/>
         ) : mlas.length === 0 ? (
-          <div className="text-center text-gray-500">
-            No MLA profiles found.
+          <div className="text-center text-gray-500 py-16">
+            <Users className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <p className="text-lg">No MLA profiles found.</p>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Cards Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {mlas.map((mla) => (
                 <div
                   key={mla.id}
-                  className="bg-white rounded-lg shadow p-6 flex flex-col gap-2"
+                  className="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
                 >
-                  <div className="flex items-center gap-4 mb-2">
-                    <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary">
-                      {mla.name?.[0] || 'M'}
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-semibold text-dark">
-                        {mla.name}
-                      </h2>
-                      <div className="text-sm text-gray-500">
-                        {mla.position || 'MLA'}
+                  {/* Card Header with Gradient */}
+                  <div className="bg-gradient-to-r from-primary to-primary p-6 relative">
+                    <div className="absolute inset-0 bg-black/5"></div>
+                    <div className="relative flex items-center gap-4">
+                      <div className="relative">
+                        {mla.avatar ? (
+                          <img
+                            src={mla.avatar}
+                            alt={mla.name}
+                            className="h-20 w-20 rounded-full object-cover border-4 border-white shadow-lg"
+                          />
+                        ) : (
+                          <div className="h-20 w-20 rounded-full bg-white/20 border-4 border-white shadow-lg flex items-center justify-center">
+                            <User className="h-10 w-10 text-white" />
+                          </div>
+                        )}
+                        <div className="absolute bottom-0 right-0 bg-emerald-500 rounded-full p-1">
+                          <div className="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-white mb-1">
+                          {mla.name}
+                        </h2>
+                        <h6 className="text-sm font-bold text-white mb-1">
+                          {mla.party}
+                        </h6>
+                        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                          <Award className="h-4 w-4 text-white" />
+                          <span className="text-white font-medium text-sm">
+                            {mla.position || 'MLA'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="text-gray-700 font-medium">
-                    Party:{' '}
-                    <span className="font-normal">{mla.party || 'N/A'}</span>
-                  </div>
-                  <div className="text-gray-700 font-medium">
-                    Constituency:{' '}
-                    <span className="font-normal">
-                      {mla.constituency || 'N/A'}
-                    </span>
-                  </div>
-                  {mla.bio && (
-                    <div className="text-gray-600 mt-2">{mla.bio}</div>
-                  )}
-                  {mla.achievements && (
-                    <div className="text-gray-600 mt-1">
-                      <b>Achievements:</b> {mla.achievements}
+
+                  {/* Card Body */}
+                  <div className="p-6 space-y-4">
+                    {/* Party and Constituency */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-4">
+                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                          Political Party
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {getPartyLogo(mla.party) ? (
+                            <img
+                              src={getPartyLogo(mla.party)}
+                              alt={`${mla.party} logo`}
+                              className="h-8 w-8 object-contain rounded-md bg-white p-1 shadow-sm border"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="h-8 w-8 bg-gradient-to-br from-slate-200 to-gray-300 rounded-md flex items-center justify-center">
+                              <Users className="h-4 w-4 text-slate-600" />
+                            </div>
+                          )}
+                          <div className="text-slate-800 font-semibold">
+                            {mla.party || 'Independent'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-gradient-to-r from-stone-50 to-slate-50 rounded-xl p-4">
+                        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                          Constituency
+                        </div>
+                        <div className="text-slate-800 font-semibold">
+                          {mla.constituency || 'N/A'}
+                        </div>
+                      </div>
                     </div>
-                  )}
-                  <div className="mt-2 flex flex-col gap-1">
-                    {mla.email && (
-                      <div className="text-sm text-gray-500">
-                        Email: {mla.email}
+
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                      {/* Bio */}
+                    <CollapsibleText
+                      text={mla.bio}
+                      title="Biography"
+                      bgGradient="bg-gradient-to-r from-amber-50 to-orange-50"
+                      titleColor="text-amber-700"
+                      maxLength={150}
+                    />
+
+                    {/* Achievements */}
+                    <CollapsibleText
+                      text={mla.achievements}
+                      title="Key Achievements"
+                      bgGradient="bg-gradient-to-r from-emerald-50 to-teal-50"
+                      titleColor="text-emerald-700"
+                      maxLength={150}
+                    />
+                    </div>
+
+                    {/* Contact Information */}
+                    <div className="border-t border-gray-100 pt-4">
+                      <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-3">
+                        Contact Information
                       </div>
-                    )}
-                    {mla.phone && (
-                      <div className="text-sm text-gray-500">
-                        Phone: {mla.phone}
+                      <div className="space-y-2">
+                        {mla.email && (
+                          <div className="flex items-center gap-3 text-sm">
+                            <Mail className="h-4 w-4 text-slate-500" />
+                            <span className="text-slate-700">{mla.email}</span>
+                          </div>
+                        )}
+                        {mla.phone && (
+                          <div className="flex items-center gap-3 text-sm">
+                            <Phone className="h-4 w-4 text-slate-500" />
+                            <span className="text-slate-700">{mla.phone}</span>
+                          </div>
+                        )}
+                        {mla.address && (
+                          <div className="flex items-start gap-3 text-sm">
+                            <MapPin className="h-4 w-4 text-slate-500 mt-0.5" />
+                            <span className="text-slate-700">{mla.address}</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {mla.address && (
-                      <div className="text-sm text-gray-500">
-                        Address: {mla.address}
-                      </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
+
             {/* Pagination Controls */}
-            <div className="flex justify-center items-center gap-4 mt-8">
+            <div className="flex justify-center items-center gap-6 mt-12">
               <button
                 onClick={handlePrev}
                 disabled={page === 1}
-                className={`px-3 py-1 rounded border ${page === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-primary border-primary hover:bg-primary hover:text-white'}`}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200 ${page === 1
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white text-slate-700 border-2 border-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-700 shadow-md hover:shadow-lg'
+                  }`}
               >
-                Previous
+                ← Previous
               </button>
-              <span className="text-sm">
-                Page {pagination.page} of {pagination.pages}
-              </span>
+
+              <div className="bg-white rounded-full px-6 py-3 border-2 border-slate-300 shadow-md">
+                <span className="text-sm font-semibold text-slate-700">
+                  Page {pagination.page} of {pagination.pages}
+                </span>
+              </div>
+
               <button
                 onClick={handleNext}
                 disabled={page === pagination.pages}
-                className={`px-3 py-1 rounded border ${page === pagination.pages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-primary border-primary hover:bg-primary hover:text-white'}`}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200 ${page === pagination.pages
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white text-slate-700 border-2 border-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-700 shadow-md hover:shadow-lg'
+                  }`}
               >
-                Next
+                Next →
               </button>
             </div>
           </>
@@ -174,4 +277,49 @@ const MLAProfiles = () => {
   );
 };
 
+const getPartyLogo = (partyName) => {
+  if (!partyName) return null;
+  const normalizedParty = partyName.toUpperCase().trim();
+  return partyLogos[normalizedParty] || null;
+};
+
+const CollapsibleText = ({ text, title, bgGradient, titleColor, maxLength = 150 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (!text) return null;
+
+  const shouldTruncate = text.length > maxLength;
+  const displayText = shouldTruncate && !isExpanded ? text.slice(0, maxLength) + '...' : text;
+
+  return (
+    <div className={`${bgGradient} rounded-xl p-4`}>
+      <div className="flex items-center justify-between mb-2">
+        <div className={`text-xs font-semibold ${titleColor} uppercase tracking-wider`}>
+          {title}
+        </div>
+        {shouldTruncate && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-800 transition-colors"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="h-3 w-3" />
+                Show Less
+              </>
+            ) : (
+              <>
+                <ChevronDown className="h-3 w-3" />
+                Read More
+              </>
+            )}
+          </button>
+        )}
+      </div>
+      <p className="text-slate-700 text-sm leading-relaxed">
+        {displayText}
+      </p>
+    </div>
+  );
+};
 export default MLAProfiles;

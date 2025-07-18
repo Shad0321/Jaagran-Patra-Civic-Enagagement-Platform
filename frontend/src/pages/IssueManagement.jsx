@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import ProgressUpdateModal from '../components/ProgressUpdateModal';
 import MediaDisplay from '../components/common/MediaDisplay';
 import UpdateMediaDisplay from '../components/common/UpdateMediaDisplay';
+import Loader from '../components/common/Loader';
 
 // eslint-disable-next-line no-unused-vars
 const IssueModal = ({
@@ -29,8 +30,8 @@ const IssueModal = ({
   onSubmit,
   formData,
   setFormData,
-  nearbyBodies,
-  loadingBodies,
+  // nearbyBodies,
+  // loadingBodies,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
@@ -1037,16 +1038,16 @@ const IssueManagement = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
-          <p className="text-gray-600">{getPageDescription()}</p>
+    <div className="p-2 sm:p-4 md:p-6 max-w-7xl mx-auto w-full">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 truncate">{getPageTitle()}</h1>
+          <p className="text-gray-600 text-sm sm:text-base truncate">{getPageDescription()}</p>
         </div>
         {canReportIssue() && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark shadow transition-colors font-semibold w-full sm:w-auto justify-center"
           >
             <Plus className="h-4 w-4 mr-2" />
             Report Issue
@@ -1055,39 +1056,40 @@ const IssueManagement = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-        <div className="flex flex-wrap gap-4">
-          <div className="flex-1 min-w-64">
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow border border-primary/10 mb-6">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+          <div className="flex-1 min-w-0">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
               <input
                 type="text"
                 placeholder="Search issues..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-primary/5 min-w-0"
               />
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {statusOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <div className="flex items-center">
+              <Filter className="h-4 w-4 text-primary mr-2" />
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="px-3 py-2 border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-primary/5 w-full sm:w-auto"
+              >
+                {statusOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-primary/5 w-full sm:w-auto"
             >
               {priorityOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -1102,138 +1104,171 @@ const IssueManagement = () => {
       {/* Issues List */}
       <div className="space-y-4">
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
+          <Loader/>
         ) : issues.length === 0 ? (
           <div className="text-center py-12">
-            <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No issues found</p>
+            <AlertCircle className="h-12 w-12 text-primary mx-auto mb-4" />
+            <p className="text-primary/70">No issues found</p>
           </div>
         ) : (
           issues.map((issue) => (
             <div
-              key={issue.id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {issue.title}
-                  </h3>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(issue.status)}`}
-                    >
-                      {getStatusIcon(issue.status)}
-                      <span className="ml-1">{issue.status}</span>
-                    </span>
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(issue.priority)}`}
-                    >
-                      {issue.priority}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {issue.category}
-                    </span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">
-                    {new Date(issue.createdAt).toLocaleDateString()}
-                  </p>
-                  {issue.assignedTo && (
-                    <p className="text-sm text-blue-600">
-                      Assigned to: {issue.assignedTo.name}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <p className="text-gray-700 mb-3">{issue.description}</p>
-
-              {/* Media Display */}
-              <MediaDisplay issue={issue} className="mb-3" />
-
-              {issue.address && (
-                <div className="flex items-center text-sm text-gray-600 mb-2">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  {issue.address}
-                </div>
-              )}
-
-              {issue.updates && issue.updates.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">
-                    Recent Updates
-                  </h4>
-                  <div className="space-y-2">
-                    {issue.updates.slice(0, 2).map((update, index) => (
-                      <div key={index} className="text-sm text-gray-600">
-                        <span className="font-medium">
-                          {update.createdBy?.name}:
-                        </span>{' '}
-                        {update.message}
-                        <span className="text-xs text-gray-500 ml-2">
-                          {new Date(update.createdAt).toLocaleDateString()}
-                        </span>
-                        <UpdateMediaDisplay update={update} className="mt-1" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-4 flex justify-between items-center">
-                <div className="text-sm text-gray-500">
-                  Created: {new Date(issue.createdAt).toLocaleDateString()}
-                </div>
-                <button
-                  onClick={() => handleViewDetails(issue.id)}
-                  className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
-                >
-                  View Details
-                </button>
-              </div>
+  key={issue.id}
+  className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-primary/20 flex flex-col overflow-hidden backdrop-blur-sm"
+>
+  {/* Main Content Section - Image Left, Details Right */}
+  <div className="p-4 sm:p-6 pb-3 sm:pb-4">
+    <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+      {/* Media Display - Left Side */}
+      <div className="lg:w-1/3 flex-shrink-0">
+        <MediaDisplay issue={issue} className="rounded-lg overflow-hidden w-full h-48 sm:h-56 lg:h-full object-cover" />
+      </div>
+      
+      {/* Details - Right Side */}
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4 mb-4">
+          <div className="flex-1 min-w-0 w-full sm:w-auto">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 leading-tight group-hover:text-primary transition-colors duration-200">
+              {issue.title}
+            </h3>
+            
+            {/* Status and Priority Pills */}
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span
+                className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${getStatusColor(issue.status)} shadow-sm hover:shadow-md`}
+              >
+                {getStatusIcon(issue.status)}
+                <span className="ml-1.5">{issue.status}</span>
+              </span>
+              <span
+                className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${getPriorityColor(issue.priority)} shadow-sm hover:shadow-md`}
+              >
+                {issue.priority}
+              </span>
+              <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200">
+                {issue.category}
+              </span>
             </div>
+          </div>
+          
+          {/* Date and Assignment Info */}
+          <div className="sm:text-right min-w-[120px] flex flex-col sm:items-end gap-1">
+            <div className="inline-flex items-center px-2 py-1 bg-gray-50 rounded-md">
+              <p className="text-xs sm:text-sm text-gray-600 font-medium">
+                {new Date(issue.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+            {issue.assignedTo && (
+              <div className="inline-flex items-center px-2 py-1 bg-blue-50 rounded-md max-w-full">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-1.5"></div>
+                <p className="text-xs sm:text-sm text-blue-700 font-medium truncate">
+                  {issue.assignedTo.name}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Description */}
+        <p className="text-gray-700 text-sm sm:text-base leading-relaxed line-clamp-3 break-words mb-4">
+          {issue.description}
+        </p>
+
+        {/* Address */}
+        {issue.address && (
+          <div className="flex items-center text-sm text-gray-600 bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors duration-200">
+            <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+            <span className="truncate font-medium">{issue.address}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {/* Updates Section */}
+  {issue.updates && issue.updates.length > 0 && (
+    <div className="px-4 sm:px-6 pb-4">
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+          <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+          Recent Updates
+        </h4>
+        <div className="space-y-3">
+          {issue.updates.slice(0, 2).map((update, index) => (
+            <div key={index} className="bg-white rounded-lg p-3 shadow-sm">
+              <div className="text-sm text-gray-700 leading-relaxed break-words">
+                <span className="font-semibold text-primary">
+                  {update.createdBy?.name}:
+                </span>{' '}
+                {update.message}
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-gray-500 font-medium">
+                  {new Date(update.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <UpdateMediaDisplay update={update} className="mt-2 rounded-md overflow-hidden" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+
+  {/* Footer */}
+  <div className="mt-auto px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-100">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="text-xs sm:text-sm text-gray-500 font-medium">
+        Created: {new Date(issue.createdAt).toLocaleDateString()}
+      </div>
+      <button
+        onClick={() => handleViewDetails(issue.id)}
+        className="group/btn px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-200 font-semibold w-full sm:w-auto shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95"
+      >
+        <span className="flex items-center justify-center">
+          View Details
+          <svg className="w-4 h-4 ml-2 transition-transform duration-200 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
           ))
         )}
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-6">
-          <div className="flex space-x-2">
+        <div className="flex flex-wrap justify-center mt-6 gap-2 w-full">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-2 text-xs sm:text-sm font-medium text-primary bg-white border border-primary/20 rounded-md hover:bg-primary/10 disabled:opacity-50 w-full sm:w-auto"
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors w-full sm:w-auto ${
+                currentPage === page
+                  ? 'bg-primary text-white'
+                  : 'text-primary bg-white border border-primary/20 hover:bg-primary/10'
+              }`}
             >
-              Previous
+              {page}
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-2 text-sm font-medium rounded-md ${
-                  currentPage === page
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          ))}
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-2 text-xs sm:text-sm font-medium text-primary bg-white border border-primary/20 rounded-md hover:bg-primary/10 disabled:opacity-50 w-full sm:w-auto"
+          >
+            Next
+          </button>
         </div>
       )}
 

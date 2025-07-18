@@ -16,6 +16,7 @@ import api from '../utils/api';
 import { toast } from 'react-toastify';
 import AddBodyModal from '../components/AddBodyModal';
 import EditBodyModal from '../components/EditBodyModal';
+import Loader from '../components/common/Loader';
 
 const BodyManagement = () => {
   const [bodies, setBodies] = useState([]);
@@ -133,9 +134,7 @@ const BodyManagement = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Loader/>
     );
   }
 
