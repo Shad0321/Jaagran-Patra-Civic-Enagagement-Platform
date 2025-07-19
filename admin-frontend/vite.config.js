@@ -4,17 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: {
-    port: 5174
-  },
-  // 👇 Add this to avoid react/jsx-runtime resolution issues
-  resolve: {
-    alias: {
-      'react/jsx-runtime': 'react/jsx-runtime.js'
-    }
-  },
-  // Optional, but good to be explicit
-  esbuild: {
-    jsx: 'automatic',
+  optimizeDeps: {
+    include: ['react/jsx-runtime'],
   }
 })
