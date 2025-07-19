@@ -24,33 +24,21 @@ export const securityHeaders = helmet({
 // CORS configuration
 export const corsConfig = cors({
   origin: (origin, callback) => {
-    console.log('[CORS] Incoming origin:', origin);
-    console.log('[CORS] Allowed origins:', config.allowedOrigins);
-    // Allow requests with no origin (like mobile apps, curl requests, etc.)
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-
-    // Check if the origin is in the allowed origins
+    
     if (config.allowedOrigins.includes(origin)) {
-      console.log('[CORS] Origin allowed:', origin);
-      return callback(null, true);
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
     }
-
-    // In development, allow localhost with any port
-    if (
-      config.nodeEnv === 'development' &&
-      origin.match(/^http:\/\/localhost:\d+$/)
-    ) {
-      console.log('[CORS] Dev localhost allowed:', origin);
-      return callback(null, true);
-    }
-
-    console.warn('[CORS] Origin blocked:', origin);
-    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
 });
+
 
 // XSS sanitization middleware
 export const sanitizeInput = (
