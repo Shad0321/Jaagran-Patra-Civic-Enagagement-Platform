@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Users, Plus, Search, Edit, Trash2, Filter, MapPin, Phone, Mail, RefreshCw, Camera, Upload, X } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import Loader from '../../../frontend/src/components/common/Loader';
+import Loader from '../components/common/Loader';
 
 const MLAModal = ({
   isOpen,

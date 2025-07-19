@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, Plus, Search, Edit, Trash2, Filter, Download, Eye } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import Loader from '../../../frontend/src/components/common/Loader';
+import Loader from '../components/common/Loader';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);

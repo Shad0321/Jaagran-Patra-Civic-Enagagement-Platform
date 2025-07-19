@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Search, Filter, Eye, Edit, Trash2, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import Loader from '../../../frontend/src/components/common/Loader';
+import Loader from '../components/common/Loader';
 
 const IssueManagement = () => {
   const [issues, setIssues] = useState([]);

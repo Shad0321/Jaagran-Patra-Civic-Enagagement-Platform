@@ -30,7 +30,7 @@ const ChatbotManagement = () => <div className="p-6"><h1 className="text-2xl fon
 // Styles
 import './App.css';
 import './styles/components.css';
-import Loader from '../../frontend/src/components/common/Loader';
+import Loader from './components/common/Loader';
 
 const AppContent = () => {
   const { user, loading } = useAuth();

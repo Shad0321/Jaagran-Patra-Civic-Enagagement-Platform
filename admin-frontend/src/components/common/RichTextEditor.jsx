@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import Loader from '../../../../frontend/src/components/common/Loader';
+import Loader from '../../components/common/Loader';
 
 // Error boundary component for ReactQuill
 class ReactQuillErrorBoundary extends React.Component {

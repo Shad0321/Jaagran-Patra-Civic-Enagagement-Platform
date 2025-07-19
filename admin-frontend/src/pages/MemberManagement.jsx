@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Users, Plus, Search, Edit, Trash2, Filter, MapPin, Phone, Mail, Building } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import Loader from '../../../frontend/src/components/common/Loader';
+import Loader from '../components/common/Loader';
 
 // eslint-disable-next-line no-unused-vars
 const MemberModal = ({ isOpen, onClose, title, onSubmit, member, formData, setFormData, mlas, bodyTypes, localBodies, onMLAChange, onBodyTypeChange }) => {

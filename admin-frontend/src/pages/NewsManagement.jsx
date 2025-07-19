@@ -4,7 +4,7 @@ import api from '../utils/api';
 import toast from 'react-hot-toast';
 import RichTextEditor from '../components/common/RichTextEditor';
 import ModernRichTextEditor from '../components/common/ModernRichTextEditor';
-import Loader from '../../../frontend/src/components/common/Loader';
+import Loader from '../components/common/Loader';
 
 // Category options constant
 const CATEGORY_OPTIONS = [

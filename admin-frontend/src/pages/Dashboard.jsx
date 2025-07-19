@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
 import { Users, FileText, AlertCircle, Calendar, MessageSquare, TrendingUp } from 'lucide-react';
-import Loader from '../../../frontend/src/components/common/Loader';
+import Loader from '../components/common/Loader';
 
 const Dashboard = () => {
   const { user } = useAuth();

@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { TrendingUp, Users, FileText, Clock, CheckCircle, Calendar, Download } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import Loader from '../../../frontend/src/components/common/Loader';
+import Loader from '../components/common/Loader';
 
 const AnalyticsReports = () => {
   const [loading, setLoading] = useState(true);

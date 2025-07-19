@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
-import Loader from '../../../../frontend/src/components/common/Loader';
+import Loader from '../../components/common/Loader';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
