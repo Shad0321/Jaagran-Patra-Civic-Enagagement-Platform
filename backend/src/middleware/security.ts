@@ -24,11 +24,14 @@ export const securityHeaders = helmet({
 // CORS configuration
 export const corsConfig = cors({
   origin: (origin, callback) => {
+    console.log('[CORS] Incoming origin:', origin);
+    console.log('[CORS] Allowed origins:', config.allowedOrigins);
     // Allow requests with no origin (like mobile apps, curl requests, etc.)
     if (!origin) return callback(null, true);
 
     // Check if the origin is in the allowed origins
     if (config.allowedOrigins.includes(origin)) {
+      console.log('[CORS] Origin allowed:', origin);
       return callback(null, true);
     }
 
@@ -37,9 +40,11 @@ export const corsConfig = cors({
       config.nodeEnv === 'development' &&
       origin.match(/^http:\/\/localhost:\d+$/)
     ) {
+      console.log('[CORS] Dev localhost allowed:', origin);
       return callback(null, true);
     }
 
+    console.warn('[CORS] Origin blocked:', origin);
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,

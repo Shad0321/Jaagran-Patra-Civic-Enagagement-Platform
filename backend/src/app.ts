@@ -65,6 +65,9 @@ app.use(
   express.static(path.join(__dirname, '../uploads'))
 );
 
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
 // Routes
 app.use('/api', routes);
 
