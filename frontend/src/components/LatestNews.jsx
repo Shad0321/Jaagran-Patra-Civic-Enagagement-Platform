@@ -11,6 +11,7 @@ import {
   Search,
   Clock,
   Tag,
+  ChevronDown,
 } from 'lucide-react';
 import Loader from './common/Loader';
 
@@ -29,13 +30,12 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-  // Debounce search term with 100ms delay
+  // Debounce search term
   useEffect(() => {
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
 
-    // Set searching state if there's an active search
     if (searchTerm && searchTerm !== debouncedSearchTerm) {
       setIsSearching(true);
     }
@@ -43,7 +43,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
     searchTimeoutRef.current = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
       setIsSearching(false);
-    }, 100);
+    }, 300);
 
     return () => {
       if (searchTimeoutRef.current) {
@@ -78,15 +78,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
     } finally {
       setLoading(false);
     }
-  }, [
-    apiUrl,
-    page,
-    showFull,
-    limit,
-    userState,
-    selectedCategory,
-    debouncedSearchTerm,
-  ]);
+  }, [apiUrl, page, showFull, limit, userState, selectedCategory, debouncedSearchTerm]);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -102,12 +94,12 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
 
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
-    setPage(1); // Reset to first page when searching
+    setPage(1);
   }, []);
 
   const handleCategoryChange = useCallback((e) => {
     setSelectedCategory(e.target.value);
-    setPage(1); // Reset to first page when changing category
+    setPage(1);
   }, []);
 
   const handlePrevPage = useCallback(() => {
@@ -141,17 +133,16 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
 
   const NewsCard = React.memo(({ item, compact = false }) => (
     <div
-      className={`bg-white rounded-2xl border-2 border-primary/20 hover:shadow-lg transition-shadow duration-200 ${compact ? 'p-4' : 'p-6'}`}
+      className={`bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 hover:shadow-xl transition-all duration-300 hover:scale-[1.01] ${compact ? 'p-4' : 'p-6'}`}
+      onClick={() => navigate(`/news/${item.id}`)}
     >
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           {item.isPinned && (
             <Star className="w-4 h-4 text-yellow-500 fill-current" />
           )}
           {item.category && (
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-semibold border border-primary/30 bg-primary/10 text-primary`}
-            >
+            <span className={`px-2 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20`}>
               {item.category}
             </span>
           )}
@@ -162,22 +153,18 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
         </div>
       </div>
 
-      <h3
-        className={`font-bold text-primary mb-2 ${compact ? 'text-base' : 'text-xl'} line-clamp-2`}
-      >
+      <h3 className={`font-bold text-gray-900 mb-2 ${compact ? 'text-base' : 'text-xl'} line-clamp-2`}>
         {item.title}
       </h3>
 
       {item.summary && (
-        <p
-          className={`text-gray-700 mb-3 ${compact ? 'text-xs' : 'text-base'} line-clamp-2`}
-        >
+        <p className={`text-gray-600 mb-3 ${compact ? 'text-sm' : 'text-base'} line-clamp-2`}>
           {item.summary}
         </p>
       )}
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4 text-xs text-primary">
+        <div className="flex items-center gap-3 text-xs text-gray-500">
           {item.state && (
             <div className="flex items-center">
               <MapPin className="w-3 h-3 mr-1" />
@@ -197,54 +184,66 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
           )}
         </div>
 
-        {(
-          <button
-            onClick={() => navigate(`/news/${item.id}`)}
-            className="flex items-center text-primary hover:text-primary/80 text-sm font-semibold border border-primary/30 px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 transition-all cursor-pointer"
-          >
-            Read More
-            <ExternalLink className="w-3 h-3 ml-1" />
-          </button>
-        )}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/news/${item.id}`);
+          }}
+          className="flex items-center text-primary hover:text-primary/80 text-sm font-semibold border border-primary/30 px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 transition-all cursor-pointer"
+        >
+          Read More
+          <ExternalLink className="w-3 h-3 ml-1" />
+        </button>
       </div>
     </div>
   ));
 
   if (loading && news.length === 0) {
     return (
-      <Loader/>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-slate-50 to-primary/10 flex items-center justify-center">
+        <Loader />
+      </div>
     );
   }
 
   return (
-    <div className={`${showFull ? 'space-y-6' : 'space-y-4'}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Newspaper className="w-5 h-5 text-primary" />
-          <h2
-            className={`font-extrabold text-primary ${showFull ? 'text-2xl' : 'text-lg'}`}
-          >
-            {showFull ? 'Latest News & Updates' : 'Latest News'}
-          </h2>
-        </div>
-
-        {!showFull && news.length > 0 && (
-          <button
-            onClick={() => navigate('/news')}
-            className="text-primary hover:text-primary/80 text-sm font-semibold flex items-center border border-primary/30 px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 transition-all cursor-pointer"
-          >
-            View All
-            <ExternalLink className="w-3 h-3 ml-1" />
-          </button>
-        )}
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-slate-50 to-primary/10 relative overflow-hidden">
+      {/* Background Graphics */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-40 right-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-primary/8 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-40 right-10 w-56 h-56 bg-primary/5 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Filters - Only show in full mode */}
-      {showFull && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+      <div className="relative z-10 p-2 sm:p-6 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-primary/10 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+                <Newspaper className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                {showFull ? 'Latest News & Updates' : 'Latest News'}
+              </h1>
+            </div>
+            {!showFull && news.length > 0 && (
+              <button
+                onClick={() => navigate('/news')}
+                className="bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-2"
+              >
+                View All
+                <ExternalLink className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Filters - Only show in full mode */}
+        {showFull && (
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
@@ -252,103 +251,87 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
                   placeholder="Search news..."
                   value={searchTerm}
                   onChange={handleSearchChange}
-                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none  focus:border-transparent ${isSearching ? 'bg-gray-50' : ''
-                    }`}
+                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/30 outline-none ${isSearching ? 'bg-gray-50' : ''}`}
                 />
               </div>
-            </div>
 
-            <div className="sm:w-48">
-              <div className="relative w-full">
+              <div className="relative">
                 <select
                   value={selectedCategory}
                   onChange={handleCategoryChange}
-                  className="w-full appearance-none px-4 py-3 bg-white border border-gray-300 rounded-xl shadow-sm text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                  className="w-full pl-3 pr-8 py-2 bg-white/80 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 appearance-none"
                 >
-                  <option value="all" className="bg-white text-gray-800">
-                    All Categories
-                  </option>
+                  <option value="all">All Categories</option>
                   {categories.map((cat) => (
-                    <option
-                      key={cat.category}
-                      value={cat.category}
-                      className="text-gray-800 bg-primary/10"
-                    >
+                    <option key={cat.category} value={cat.category}>
                       {cat.category} ({cat.count})
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+                <ChevronDown className="h-4 w-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
-
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* News List */}
-      {news.length > 0 ? (
-        <div className={`space-y-${showFull ? '6' : '4'}`}>
-          {news.map((item) => (
-            <NewsCard key={item.id} item={item} compact={!showFull} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <Newspaper className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-500 mb-2">
-            No News Available
-          </h3>
-          <p className="text-gray-400">
-            {debouncedSearchTerm || selectedCategory !== 'all'
-              ? 'No news found matching your criteria'
-              : 'There are no news updates at the moment'}
-          </p>
-        </div>
-      )}
-
-      {/* Pagination - Only show in full mode */}
-      {showFull && pagination && pagination.total > 1 && (
-        <div className="flex items-center justify-between bg-white rounded-lg border border-gray-200 p-4">
-          <div className="text-sm text-gray-600">
-            Showing {(pagination.current - 1) * 10 + 1} to{' '}
-            {Math.min(pagination.current * 10, pagination.totalItems)} of{' '}
-            {pagination.totalItems} news
+        {/* News List */}
+        {news.length > 0 ? (
+          <div className={`grid gap-6 ${showFull ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+            {news.map((item) => (
+              <NewsCard key={item.id} item={item} compact={!showFull} />
+            ))}
           </div>
-
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={handlePrevPage}
-              disabled={!pagination.hasPrev}
-              className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-            >
-              Previous
-            </button>
-
-            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded text-sm font-medium">
-              {pagination.current}
-            </span>
-
-            <button
-              onClick={handleNextPage}
-              disabled={!pagination.hasNext}
-              className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-            >
-              Next
-            </button>
+        ) : (
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-8 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+              <Newspaper className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No News Available
+            </h3>
+            <p className="text-gray-500">
+              {debouncedSearchTerm || selectedCategory !== 'all'
+                ? 'No news found matching your criteria'
+                : 'There are no news updates at the moment'}
+            </p>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Pagination - Only show in full mode */}
+        {showFull && pagination && pagination.total > 1 && (
+          <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-sm text-gray-600">
+                Showing {(pagination.current - 1) * 10 + 1} to{' '}
+                {Math.min(pagination.current * 10, pagination.totalItems)} of{' '}
+                {pagination.totalItems} news
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={!pagination.hasPrev}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white/80 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+
+                <span className="px-4 py-2 text-sm text-gray-700">
+                  Page {pagination.current} of {pagination.total}
+                </span>
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={!pagination.hasNext}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white/80 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

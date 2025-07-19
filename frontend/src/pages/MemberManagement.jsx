@@ -141,10 +141,6 @@ const MemberManagement = () => {
         return acc;
       }, {});
 
-      console.log('Members by body:', membersByBody);
-      console.log('All members:', allMembers);
-      console.log('All bodies:', allBodies);
-
       // Filter bodies to only include those that have members under this MLA
       const bodiesWithMembers = allBodies.filter((body) => {
         const membersInBody = membersByBody[body.id] || [];
@@ -213,296 +209,327 @@ const MemberManagement = () => {
     if (!member.isActive)
       return <AlertCircle className="h-4 w-4 text-red-500" />;
     if (member.assignedIssuesCount > 0)
-      return <Clock className="h-4 w-4 text-yellow-500" />;
-    return <CheckCircle className="h-4 w-4 text-green-500" />;
+      return <Clock className="h-4 w-4 text-amber-500" />;
+    return <CheckCircle className="h-4 w-4 text-emerald-500" />;
   };
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">Loading user data...</span>
-      </div>
+      <Loader className={"w-screen h-screen flex items-center justify-center"} />
     );
   }
 
   if (loading) {
     return (
-      <Loader/>
+      <Loader className={"w-screen h-screen flex items-center justify-center"} />
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Member Management
-            </h1>
-            <p className="text-gray-600">
-              Manage members and view organizational hierarchy
-            </p>
-          </div>
-          <button
-            onClick={handleAddMember}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Add Member</span>
-          </button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-slate-50 to-primary/10 relative overflow-hidden">
+      {/* Background Graphics */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-40 right-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-primary/8 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-40 right-10 w-56 h-56 bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.05)_1px,transparent_0)] bg-[size:20px_20px]"></div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Members</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {stats.totalMembers}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">
-                Active Members
-              </p>
-              <p className="text-2xl font-bold text-green-600">
-                {stats.activeMembers}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <UserCheck className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Bodies</p>
-              <p className="text-2xl font-bold text-purple-600">
-                {stats.totalBodies}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Building className="h-6 w-6 text-purple-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">
-                Issues Assigned
-              </p>
-              <p className="text-2xl font-bold text-orange-600">
-                {stats.totalIssuesAssigned}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="h-6 w-6 text-orange-600" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* View Mode Toggle */}
-      <div className="mb-6 flex justify-between items-center">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setViewMode('list')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              viewMode === 'list'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            List View
-          </button>
-          <button
-            onClick={() => setViewMode('hierarchy')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              viewMode === 'hierarchy'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Hierarchy View
-          </button>
-        </div>
-
-        {viewMode === 'list' && (
-          <div className="flex space-x-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search members..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Body Type Filter */}
-            <select
-              value={selectedBodyType}
-              onChange={(e) => setSelectedBodyType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Body Types</option>
-              {bodyTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type.replace(/_/g, ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      {viewMode === 'hierarchy' ? (
-        <HierarchyTreeView
-          data={hierarchyData}
-          onEditMember={handleEditMember}
-          onDeleteMember={handleDeleteMember}
-        />
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Members ({filteredMembers.length})
-            </h2>
-          </div>
-
-          <div className="p-6">
-            {filteredMembers.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                          <Users className="h-5 w-5 text-gray-600" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-gray-900">
-                            {member.name}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {member.designation || 'Member'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(member)}
-                        <button
-                          onClick={() => handleEditMember(member)}
-                          className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteMember(member.id)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <div className="flex items-center space-x-2">
-                        <Mail className="h-4 w-4" />
-                        <span>{member.email}</span>
-                      </div>
-                      {member.phone && (
-                        <div className="flex items-center space-x-2">
-                          <Phone className="h-4 w-4" />
-                          <span>{member.phone}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center space-x-2">
-                        <Building className="h-4 w-4" />
-                        <span>
-                          {member.bodyType?.replace(/_/g, ' ') ||
-                            'No Body Type'}
-                        </span>
-                      </div>
-                      {member.body && (
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="h-4 w-4" />
-                          <span>{member.body.name}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>Issues: {member.assignedIssuesCount || 0}</span>
-                        <span>Resolved: {member.resolvedIssues || 0}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <p>No members found</p>
-                <p className="text-sm">
-                  {searchTerm || selectedBodyType
-                    ? 'Try adjusting your search or filters'
-                    : 'Add your first member to get started'}
+      <div className="relative z-10 p-2 sm:p-6 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-primary/10">
+            <div className="flex justify-between items-center flex-wrap space-y-2">
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
+                  Member Management
+                </h1>
+                <p className="text-gray-600">
+                  Manage members and view organizational hierarchy
                 </p>
               </div>
-            )}
+              <button
+                onClick={handleAddMember}
+                className="bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-2.5 rounded-lg hover:shadow-md transition-all duration-200 flex items-center space-x-2"
+              >
+                <Plus className="h-5 w-5" />
+                <span>Add Member</span>
+              </button>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* Modals */}
-      <AddMemberModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onSuccess={() => {
-          fetchMembers();
-          fetchHierarchyData();
-          setShowAddModal(false);
-        }}
-      />
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Members</p>
+                <p className="text-2xl font-bold text-primary">
+                  {stats.totalMembers}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+                <Users className="h-6 w-6 text-white" />
+              </div>
+            </div>
+          </div>
 
-      <EditMemberModal
-        isOpen={showEditModal}
-        onClose={() => {
-          setShowEditModal(false);
-          setSelectedMember(null);
-        }}
-        member={selectedMember}
-        onSuccess={() => {
-          fetchMembers();
-          fetchHierarchyData();
-          setShowEditModal(false);
-          setSelectedMember(null);
-        }}
-      />
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-emerald-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Active Members</p>
+                <p className="text-2xl font-bold text-emerald-600">
+                  {stats.activeMembers}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-lg flex items-center justify-center shadow-lg">
+                <UserCheck className="h-6 w-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Bodies</p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {stats.totalBodies}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-gradient-to-br from-purple-400 to-purple-500 rounded-lg flex items-center justify-center shadow-lg">
+                <Building className="h-6 w-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-amber-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Issues Assigned</p>
+                <p className="text-2xl font-bold text-amber-600">
+                  {stats.totalIssuesAssigned}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-gradient-to-br from-amber-400 to-amber-500 rounded-lg flex items-center justify-center shadow-lg">
+                <AlertCircle className="h-6 w-6 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* View Mode Toggle and Filters */}
+        <div className="mb-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-4">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'list'
+                      ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-md'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                >
+                  List View
+                </button>
+                <button
+                  onClick={() => setViewMode('hierarchy')}
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'hierarchy'
+                      ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-md'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                >
+                  Hierarchy View
+                </button>
+              </div>
+
+              {viewMode === 'list' && (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Search */}
+                  <div className="relative flex-1">
+                    <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search members..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-white/80 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30"
+                    />
+                  </div>
+
+                  {/* Body Type Filter */}
+                  <div className="relative flex-1">
+                    <select
+                      value={selectedBodyType}
+                      onChange={(e) => setSelectedBodyType(e.target.value)}
+                      className="w-full pl-3 pr-8 py-2 bg-white/80 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 appearance-none"
+                    >
+                      <option value="">All Body Types</option>
+                      {bodyTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type.replace(/_/g, ' ')}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="h-4 w-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        {viewMode === 'hierarchy' ? (
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6">
+            <HierarchyTreeView
+              data={hierarchyData}
+              onEditMember={handleEditMember}
+              onDeleteMember={handleDeleteMember}
+            />
+          </div>
+        ) : (
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 overflow-hidden">
+            <div className="p-6 border-b border-primary/10">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Members ({filteredMembers.length})
+              </h2>
+            </div>
+
+            <div className="p-6">
+              {filteredMembers.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredMembers.map((member) => (
+                    <div
+                      key={member.id}
+                      className="bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-xl p-5 hover:bg-white/80 transition-all duration-300 hover:shadow-md group"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="h-12 w-12 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center border border-primary/20">
+                            <Users className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                              {member.name}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {member.designation || 'Member'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(member)}
+                          <button
+                            onClick={() => handleEditMember(member)}
+                            className="p-1.5 text-gray-400 hover:text-primary transition-colors hover:bg-primary/10 rounded-lg"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteMember(member.id)}
+                            className="p-1.5 text-gray-400 hover:text-red-500 transition-colors hover:bg-red-500/10 rounded-lg"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-primary/70" />
+                          <span>{member.email}</span>
+                        </div>
+                        {member.phone && (
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-4 w-4 text-primary/70" />
+                            <span>{member.phone}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-primary/70" />
+                          <span>
+                            {member.bodyType?.replace(/_/g, ' ') || 'No Body Type'}
+                          </span>
+                        </div>
+                        {member.body && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-primary/70" />
+                            <span>{member.body.name}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-gray-200/50">
+                        <div className="flex justify-between text-xs">
+                          <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+                            Issues: {member.assignedIssuesCount || 0}
+                          </span>
+                          <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full">
+                            Resolved: {member.resolvedIssues || 0}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="max-w-md mx-auto bg-white/80 backdrop-blur-sm rounded-xl p-8 border border-gray-200/50 shadow-sm">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                      <Users className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">
+                      No members found
+                    </h3>
+                    <p className="text-gray-500 text-sm mb-4">
+                      {searchTerm || selectedBodyType
+                        ? 'Try adjusting your search or filters'
+                        : 'Add your first member to get started'}
+                    </p>
+                    <button
+                      onClick={handleAddMember}
+                      className="px-4 py-2 bg-gradient-to-r from-primary to-primary/80 text-white text-sm font-medium rounded-lg hover:shadow-md transition-all duration-200"
+                    >
+                      Add New Member
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Modals */}
+        <AddMemberModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSuccess={() => {
+            fetchMembers();
+            fetchHierarchyData();
+            setShowAddModal(false);
+          }}
+        />
+
+        <EditMemberModal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedMember(null);
+          }}
+          member={selectedMember}
+          onSuccess={() => {
+            fetchMembers();
+            fetchHierarchyData();
+            setShowEditModal(false);
+            setSelectedMember(null);
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { Image, Volume2, Play, Pause, X, ZoomIn } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Image, Volume2, Play, Pause, X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const UpdateMediaDisplay = ({ update, className = '' }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [audioPlaying, setAudioPlaying] = useState(false);
-  const [audioRef, setAudioRef] = useState(null);
+  const audioRef = useRef(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -16,20 +19,51 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
     : [];
   const audioUrl = update.audioUrl;
 
-  const handleImageClick = (imageUrl) => {
-    setSelectedImage(imageUrl);
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('durationchange', updateDuration);
+    audio.addEventListener('ended', handleAudioEnded);
+    audio.addEventListener('error', handleAudioError);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('durationchange', updateDuration);
+      audio.removeEventListener('ended', handleAudioEnded);
+      audio.removeEventListener('error', handleAudioError);
+    };
+  }, []);
+
+  const handleImageClick = (index) => {
+    setSelectedImageIndex(index);
   };
 
   const handleCloseImageModal = () => {
-    setSelectedImage(null);
+    setSelectedImageIndex(null);
+  };
+
+  const navigateImage = (direction) => {
+    setImageLoading(true);
+    setSelectedImageIndex(prev => {
+      if (direction === 'prev') {
+        return prev === 0 ? images.length - 1 : prev - 1;
+      } else {
+        return prev === images.length - 1 ? 0 : prev + 1;
+      }
+    });
   };
 
   const handleAudioToggle = () => {
-    if (audioRef) {
+    if (audioRef.current) {
       if (audioPlaying) {
-        audioRef.pause();
+        audioRef.current.pause();
       } else {
-        audioRef.play();
+        audioRef.current.play();
       }
       setAudioPlaying(!audioPlaying);
     }
@@ -37,15 +71,29 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
 
   const handleAudioEnded = () => {
     setAudioPlaying(false);
+    setCurrentTime(0);
   };
 
   const handleAudioError = (e) => {
     setAudioPlaying(false);
     console.error('Audio playback error:', e);
-    // Don't show error for network issues during audio loading
     if (e.target.error && e.target.error.code !== 2) {
       console.error('Audio error code:', e.target.error.code);
     }
+  };
+
+  const handleTimeChange = (e) => {
+    const newTime = parseFloat(e.target.value);
+    setCurrentTime(newTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   if (!images.length && !audioUrl) {
@@ -53,22 +101,22 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
   }
 
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className={`space-y-4 ${className}`}>
       {/* Images Section */}
       {images.length > 0 && (
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <Image className="h-3 w-3 text-gray-500" />
-            <span className="text-xs text-gray-500">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Image className="h-4 w-4 text-primary/80" />
+            <span className="text-sm font-semibold text-gray-700">
               Images ({images.length})
             </span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {images.map((imageUrl, index) => (
               <div
                 key={index}
-                className="relative group cursor-pointer rounded overflow-hidden bg-gray-100 aspect-square"
-                onClick={() => handleImageClick(imageUrl)}
+                className="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-100 aspect-square transition-all duration-200 hover:shadow-md"
+                onClick={() => handleImageClick(index)}
               >
                 <img
                   src={`${API_BASE_URL}${imageUrl}`}
@@ -79,9 +127,10 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                     e.target.src = '/placeholder-image.svg';
                     e.target.alt = 'Image not found';
                   }}
+                  onLoad={() => setImageLoading(false)}
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity flex items-center justify-center">
-                  <ZoomIn className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-opacity flex items-center justify-center">
+                  <ZoomIn className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </div>
             ))}
@@ -91,28 +140,51 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
 
       {/* Audio Section */}
       {audioUrl && (
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <Volume2 className="h-3 w-3 text-gray-500" />
-            <span className="text-xs text-gray-500">Audio Update</span>
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Volume2 className="h-4 w-4 text-primary/80" />
+            <span className="text-sm font-semibold text-gray-700">
+              Audio Update
+            </span>
           </div>
-          <div className="flex items-center space-x-2 p-2 bg-gray-50 rounded">
-            <button
-              onClick={handleAudioToggle}
-              className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
-                audioPlaying
-                  ? 'bg-red-500 hover:bg-red-600 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
-              }`}
-            >
-              {audioPlaying ? (
-                <Pause className="h-3 w-3" />
-              ) : (
-                <Play className="h-3 w-3 ml-0.5" />
-              )}
-            </button>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleAudioToggle}
+                className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 shadow ${
+                  audioPlaying
+                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    : 'bg-primary hover:bg-primary/90 text-white'
+                }`}
+              >
+                {audioPlaying ? (
+                  <Pause className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4 ml-0.5" />
+                )}
+              </button>
+              
+              <div className="flex-1">
+                <input
+                  type="range"
+                  min="0"
+                  max={duration || 0}
+                  value={currentTime}
+                  onChange={handleTimeChange}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  style={{
+                    backgroundSize: `${(currentTime / (duration || 1)) * 100}% 100%`
+                  }}
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
+            </div>
+            
             <audio
-              ref={setAudioRef}
+              ref={audioRef}
               src={`${API_BASE_URL}${audioUrl}`}
               onEnded={handleAudioEnded}
               onError={handleAudioError}
@@ -120,33 +192,66 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
               crossOrigin="anonymous"
               className="hidden"
             />
-            <div className="flex-1 text-xs text-gray-600">
-              Click to play audio update
-            </div>
           </div>
         </div>
       )}
 
       {/* Image Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-          <div className="relative max-w-4xl max-h-full">
+      {selectedImageIndex !== null && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="relative max-w-6xl w-full max-h-full flex flex-col">
+            {/* Close Button */}
             <button
               onClick={handleCloseImageModal}
-              className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+              className="absolute top-4 right-4 z-20 p-2 text-white hover:text-gray-300 rounded-full hover:bg-white/10 transition-colors"
             >
               <X className="h-8 w-8" />
             </button>
-            <img
-              src={`${API_BASE_URL}${selectedImage}`}
-              alt="Update attachment"
-              className="max-w-full max-h-full object-contain"
-              crossOrigin="anonymous"
-              onError={(e) => {
-                e.target.src = '/placeholder-image.svg';
-                e.target.alt = 'Image not found';
-              }}
-            />
+            
+            {/* Navigation Arrows */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={() => navigateImage('prev')}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 p-2 text-white hover:text-gray-300 rounded-full hover:bg-white/10 transition-colors"
+                >
+                  <ChevronLeft className="h-8 w-8" />
+                </button>
+                <button
+                  onClick={() => navigateImage('next')}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 p-2 text-white hover:text-gray-300 rounded-full hover:bg-white/10 transition-colors"
+                >
+                  <ChevronRight className="h-8 w-8" />
+                </button>
+              </>
+            )}
+            
+            {/* Image Counter */}
+            {images.length > 1 && (
+              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
+                {selectedImageIndex + 1} / {images.length}
+              </div>
+            )}
+            
+            {/* Main Image */}
+            <div className="flex-1 flex items-center justify-center">
+              {imageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+                </div>
+              )}
+              <img
+                src={`${API_BASE_URL}${images[selectedImageIndex]}`}
+                alt="Update attachment"
+                className={`max-w-full max-h-[80vh] object-contain ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                crossOrigin="anonymous"
+                onError={(e) => {
+                  e.target.src = '/placeholder-image.svg';
+                  e.target.alt = 'Image not found';
+                }}
+                onLoad={() => setImageLoading(false)}
+              />
+            </div>
           </div>
         </div>
       )}

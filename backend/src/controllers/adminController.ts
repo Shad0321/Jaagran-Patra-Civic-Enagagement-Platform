@@ -478,7 +478,7 @@ export const createMLA = async (
     }
 
     // Handle avatar upload
-    let avatarUrl = null;
+    let avatarUrl: string | null = null;
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     if (files && files.avatar && files.avatar.length > 0) {
       const avatarFile = files.avatar[0];
@@ -861,7 +861,7 @@ export const createMember = async (
     const finalDistrictId = mla.constituency?.districtId;
 
     // If bodyId is provided and not empty, verify it exists
-    let finalBodyId = null;
+    let finalBodyId: string | null = null;
     if (bodyId && bodyId.trim() !== '') {
       const body = await prisma.body.findUnique({
         where: { id: bodyId },
@@ -2053,7 +2053,7 @@ export const initializeLocationData = async (
     });
 
     // Create constituencies from assembly data
-    const constituencies = [];
+    const constituencies: any[] = [];
     for (const assembly of assemblyData) {
       const constituency = await prisma.constituency.upsert({
         where: {

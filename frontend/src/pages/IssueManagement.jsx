@@ -292,11 +292,10 @@ const IssueModal = ({
                 <button
                   type="button"
                   onClick={isRecording ? stopRecording : startRecording}
-                  className={`flex items-center px-4 py-2 rounded-md ${
-                    isRecording
+                  className={`flex items-center px-4 py-2 rounded-md ${isRecording
                       ? 'bg-red-100 text-red-700 hover:bg-red-200'
                       : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                  }`}
+                    }`}
                 >
                   {isRecording ? (
                     <MicOff className="h-4 w-4 mr-2" />
@@ -432,241 +431,302 @@ const IssueDetailsModal = ({
     return colors[updateType] || 'bg-gray-100 text-gray-800';
   };
 
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'PENDING': return <Clock className="h-4 w-4 mr-1" />;
+      case 'IN_PROGRESS': return <AlertCircle className="h-4 w-4 mr-1" />;
+      case 'RESOLVED': return <CheckCircle className="h-4 w-4 mr-1" />;
+      default: return <Clock className="h-4 w-4 mr-1" />;
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-start mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {issue.title}
-            </h2>
-            <div className="flex items-center space-x-3">
-              <span
-                className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(issue.status)}`}
-              >
-                {issue.status}
-              </span>
-              <span
-                className={`inline-flex px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(issue.priority)}`}
-              >
-                {issue.priority}
-              </span>
-              <span className="text-sm text-gray-500">{issue.category}</span>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-primary/10">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+              <AlertCircle className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 line-clamp-1">
+                {issue.title}
+              </h2>
+              <div className="flex items-center flex-wrap gap-2 mt-1">
+                <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getStatusColor(issue.status)}`}>
+                  {getStatusIcon(issue.status)}
+                  {issue.status}
+                </span>
+                <span className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${getPriorityColor(issue.priority)}`}>
+                  {issue.priority}
+                </span>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                  {issue.category}
+                </span>
+              </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
           >
-            <X className="h-6 w-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Issue Details</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Description
-                </label>
-                <p className="text-gray-900">{issue.description}</p>
-              </div>
+        <div className="p-6 space-y-6">
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Issue Details */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 bg-primary rounded-full"></span>
+                Issue Details
+              </h3>
 
-              {/* Media Display */}
-              <MediaDisplay issue={issue} className="my-4" />
-
-              {issue.address && (
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">
-                    Location
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    Description
                   </label>
-                  <div className="flex items-center text-gray-900">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {issue.address}
-                  </div>
-                </div>
-              )}
-
-              {issue.latitude && issue.longitude && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">
-                    Coordinates
-                  </label>
-                  <p className="text-gray-900">
-                    {issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}
+                  <p className="text-gray-900 bg-gray-50/80 rounded-lg p-3">
+                    {issue.description}
                   </p>
                 </div>
-              )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Submitted
-                </label>
-                <p className="text-gray-900">
-                  {new Date(issue.createdAt).toLocaleString()}
-                </p>
+                {/* Media Display */}
+                <MediaDisplay issue={issue} className="rounded-lg overflow-hidden" />
+
+                {issue.address && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Location
+                    </label>
+                    <div className="flex items-center bg-gray-50/80 rounded-lg p-3">
+                      <MapPin className="h-5 w-5 text-primary/80 mr-2" />
+                      <span className="text-gray-900">{issue.address}</span>
+                    </div>
+                  </div>
+                )}
+
+                {issue.latitude && issue.longitude && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Coordinates
+                    </label>
+                    <p className="text-gray-900 bg-gray-50/80 rounded-lg p-3">
+                      {issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    Submitted
+                  </label>
+                  <p className="text-gray-900 bg-gray-50/80 rounded-lg p-3">
+                    {new Date(issue.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Assignment Details */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 bg-primary rounded-full"></span>
+                Assignment Details
+              </h3>
+
+              <div className="space-y-4">
+                {issue.assignedTo ? (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Assigned to
+                    </label>
+                    <div className="bg-blue-50/80 rounded-lg p-4 border border-blue-100">
+                      <p className="font-medium text-blue-900">
+                        {issue.assignedTo.name}
+                      </p>
+                      <p className="text-sm text-blue-700 mt-1">
+                        {issue.assignedTo.role}
+                      </p>
+                      {issue.assignedTo.mlaProfile && (
+                        <div className="mt-3 space-y-1 text-sm text-blue-600">
+                          <p className="flex items-center">
+                            <span className="font-medium">Party:</span> {issue.assignedTo.mlaProfile.partyName}
+                          </p>
+                          <p className="flex items-center">
+                            <span className="font-medium">Position:</span> {issue.assignedTo.mlaProfile.position}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Status
+                    </label>
+                    <p className="text-gray-500 bg-gray-50/80 rounded-lg p-3">
+                      Not assigned yet
+                    </p>
+                  </div>
+                )}
+
+                {issue.constituency && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Constituency
+                    </label>
+                    <p className="text-gray-900 bg-gray-50/80 rounded-lg p-3">
+                      {issue.constituency.name} ({issue.constituency.type})
+                    </p>
+                  </div>
+                )}
+
+                {issue.state && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      State
+                    </label>
+                    <p className="text-gray-900 bg-gray-50/80 rounded-lg p-3">
+                      {issue.state.name}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Assignment Details</h3>
-            <div className="space-y-3">
-              {issue.assignedTo ? (
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">
-                    Assigned to
-                  </label>
-                  <div className="bg-blue-50 p-3 rounded-md">
-                    <p className="font-medium text-blue-900">
-                      {issue.assignedTo.name}
-                    </p>
-                    <p className="text-sm text-blue-700">
-                      {issue.assignedTo.role}
-                    </p>
-                    {issue.assignedTo.mlaProfile && (
-                      <div className="mt-2 text-sm text-blue-600">
-                        <p>Party: {issue.assignedTo.mlaProfile.partyName}</p>
-                        <p>Position: {issue.assignedTo.mlaProfile.position}</p>
+          {/* Updates Section */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-primary rounded-full"></span>
+              Updates & Comments
+            </h3>
+
+            {issue.updates && issue.updates.length > 0 ? (
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {issue.updates.map((update, index) => (
+                  <div
+                    key={index}
+                    className="bg-white/90 rounded-lg p-4 border border-primary/10 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-medium text-blue-800">
+                            {update.user.name.charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {update.user.name}
+                          </p>
+                          <span
+                            className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${getUpdateTypeColor(update.updateType)}`}
+                          >
+                            {update.updateType.replace('_', ' ')}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {new Date(update.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <p className="text-gray-700 mb-3">{update.message}</p>
+
+                    {/* Update Media Display */}
+                    <UpdateMediaDisplay update={update} className="rounded-lg overflow-hidden mb-3" />
+
+                    {update.progressPercentage && (
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between text-sm mb-1">
+                          <span className="font-medium">Progress</span>
+                          <span>{update.progressPercentage}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                            style={{ width: `${update.progressPercentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {update.nextSteps && (
+                      <div className="text-sm bg-gray-50/80 rounded-lg p-3">
+                        <span className="font-medium">Next Steps:</span>{' '}
+                        {update.nextSteps}
                       </div>
                     )}
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">
-                    Status
-                  </label>
-                  <p className="text-gray-500">Not assigned yet</p>
-                </div>
-              )}
-
-              {issue.constituency && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">
-                    Constituency
-                  </label>
-                  <p className="text-gray-900">
-                    {issue.constituency.name} ({issue.constituency.type})
-                  </p>
-                </div>
-              )}
-
-              {issue.state && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">
-                    State
-                  </label>
-                  <p className="text-gray-900">{issue.state.name}</p>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 bg-gray-50/80 rounded-lg">
+                <MessageSquare className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-500">No updates yet</p>
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* Updates Section */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Updates & Comments</h3>
-          {issue.updates && issue.updates.length > 0 ? (
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {issue.updates.map((update, index) => (
-                <div
-                  key={index}
-                  className="border-l-4 border-blue-200 pl-4 py-2"
+          {/* Add Comment/Update Section */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h4 className="text-md font-bold text-gray-900 mb-3">
+              {user?.role === 'MLA' || user?.role === 'MEMBER'
+                ? 'Update Progress'
+                : 'Add Comment'}
+            </h4>
+
+            {user?.role === 'MLA' || user?.role === 'MEMBER' ? (
+              <div className="text-center">
+                <button
+                  onClick={() => onUpdateProgress(issue)}
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-medium text-gray-900">
-                        {update.user.name}
-                      </span>
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getUpdateTypeColor(update.updateType)}`}
-                      >
-                        {update.updateType.replace('_', ' ')}
-                      </span>
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      {new Date(update.createdAt).toLocaleString()}
-                    </span>
-                  </div>
-                  <p className="text-gray-700">{update.message}</p>
-
-                  {/* Update Media Display */}
-                  <UpdateMediaDisplay update={update} className="mt-2" />
-
-                  {update.progressPercentage && (
-                    <div className="mt-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Progress</span>
-                        <span>{update.progressPercentage}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full"
-                          style={{ width: `${update.progressPercentage}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
-                  {update.nextSteps && (
-                    <div className="mt-2 text-sm">
-                      <span className="font-medium">Next Steps:</span>{' '}
-                      {update.nextSteps}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">No updates yet.</p>
-          )}
-        </div>
-
-        {/* Add Comment Section */}
-        <div className="border-t pt-4">
-          <h4 className="text-md font-semibold mb-3">
-            {user?.role === 'MLA' || user?.role === 'MEMBER'
-              ? 'Update Progress'
-              : 'Add Comment'}
-          </h4>
-
-          {user?.role === 'MLA' || user?.role === 'MEMBER' ? (
-            <div className="text-center">
-              <button
-                onClick={() => onUpdateProgress(issue)}
-                className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Update Issue Progress
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={onAddComment}>
-              <div className="flex space-x-3">
+                  Update Issue Progress
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={onAddComment} className="space-y-3">
                 <textarea
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   rows="3"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="Add your comment..."
                   disabled={addingComment}
                 />
-                <button
-                  type="submit"
-                  disabled={addingComment || !newComment.trim()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {addingComment ? 'Adding...' : 'Comment'}
-                </button>
-              </div>
-            </form>
-          )}
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={addingComment || !newComment.trim()}
+                    className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {addingComment ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Adding...
+                      </>
+                    ) : (
+                      'Post Comment'
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
 
-        <div className="flex justify-end mt-6">
+        {/* Footer */}
+        <div className="flex items-center justify-end p-6 border-t border-primary/10">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+            className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
           >
             Close
           </button>
@@ -1104,7 +1164,7 @@ const IssueManagement = () => {
       {/* Issues List */}
       <div className="space-y-4">
         {loading ? (
-          <Loader/>
+          <Loader />
         ) : issues.length === 0 ? (
           <div className="text-center py-12">
             <AlertCircle className="h-12 w-12 text-primary mx-auto mb-4" />
@@ -1113,128 +1173,128 @@ const IssueManagement = () => {
         ) : (
           issues.map((issue) => (
             <div
-  key={issue.id}
-  className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-primary/20 flex flex-col overflow-hidden backdrop-blur-sm"
->
-  {/* Main Content Section - Image Left, Details Right */}
-  <div className="p-4 sm:p-6 pb-3 sm:pb-4">
-    <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-      {/* Media Display - Left Side */}
-      <div className="lg:w-1/3 flex-shrink-0">
-        <MediaDisplay issue={issue} className="rounded-lg overflow-hidden w-full h-48 sm:h-56 lg:h-full object-cover" />
-      </div>
-      
-      {/* Details - Right Side */}
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4 mb-4">
-          <div className="flex-1 min-w-0 w-full sm:w-auto">
-            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 leading-tight group-hover:text-primary transition-colors duration-200">
-              {issue.title}
-            </h3>
-            
-            {/* Status and Priority Pills */}
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span
-                className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${getStatusColor(issue.status)} shadow-sm hover:shadow-md`}
-              >
-                {getStatusIcon(issue.status)}
-                <span className="ml-1.5">{issue.status}</span>
-              </span>
-              <span
-                className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${getPriorityColor(issue.priority)} shadow-sm hover:shadow-md`}
-              >
-                {issue.priority}
-              </span>
-              <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200">
-                {issue.category}
-              </span>
-            </div>
-          </div>
-          
-          {/* Date and Assignment Info */}
-          <div className="sm:text-right min-w-[120px] flex flex-col sm:items-end gap-1">
-            <div className="inline-flex items-center px-2 py-1 bg-gray-50 rounded-md">
-              <p className="text-xs sm:text-sm text-gray-600 font-medium">
-                {new Date(issue.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-            {issue.assignedTo && (
-              <div className="inline-flex items-center px-2 py-1 bg-blue-50 rounded-md max-w-full">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-1.5"></div>
-                <p className="text-xs sm:text-sm text-blue-700 font-medium truncate">
-                  {issue.assignedTo.name}
-                </p>
+              key={issue.id}
+              className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-primary/20 flex flex-col overflow-hidden backdrop-blur-sm"
+            >
+              {/* Main Content Section - Image Left, Details Right */}
+              <div className="p-4 sm:p-6 pb-3 sm:pb-4">
+                <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+                  {/* Media Display - Left Side */}
+                  <div className="lg:w-1/3 flex-shrink-0">
+                    <MediaDisplay issue={issue} className="rounded-lg overflow-hidden w-full min-h-48 sm:h-56 lg:h-full object-cover" />
+                  </div>
+
+                  {/* Details - Right Side */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4 mb-4">
+                      <div className="flex-1 min-w-0 w-full sm:w-auto">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 leading-tight group-hover:text-primary transition-colors duration-200">
+                          {issue.title}
+                        </h3>
+
+                        {/* Status and Priority Pills */}
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <span
+                            className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${getStatusColor(issue.status)} shadow-sm hover:shadow-md`}
+                          >
+                            {getStatusIcon(issue.status)}
+                            <span className="ml-1.5">{issue.status}</span>
+                          </span>
+                          <span
+                            className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${getPriorityColor(issue.priority)} shadow-sm hover:shadow-md`}
+                          >
+                            {issue.priority}
+                          </span>
+                          <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200">
+                            {issue.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Date and Assignment Info */}
+                      <div className="sm:text-right min-w-[120px] flex flex-col sm:items-end gap-1">
+                        <div className="inline-flex items-center px-2 py-1 bg-gray-50 rounded-md">
+                          <p className="text-xs sm:text-sm text-gray-600 font-medium">
+                            {new Date(issue.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        {issue.assignedTo && (
+                          <div className="inline-flex items-center px-2 py-1 bg-blue-50 rounded-md max-w-full">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-1.5"></div>
+                            <p className="text-xs sm:text-sm text-blue-700 font-medium truncate">
+                              {issue.assignedTo.name}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed line-clamp-3 break-words mb-4">
+                      {issue.description}
+                    </p>
+
+                    {/* Address */}
+                    {issue.address && (
+                      <div className="flex items-center text-sm text-gray-600 bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors duration-200">
+                        <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                        <span className="truncate font-medium">{issue.address}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* Description */}
-        <p className="text-gray-700 text-sm sm:text-base leading-relaxed line-clamp-3 break-words mb-4">
-          {issue.description}
-        </p>
+              {/* Updates Section */}
+              {issue.updates && issue.updates.length > 0 && (
+                <div className="px-4 sm:px-6 pb-4">
+                  <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                      <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                      Recent Updates
+                    </h4>
+                    <div className="space-y-3">
+                      {issue.updates.slice(0, 2).map((update, index) => (
+                        <div key={index} className="bg-white rounded-lg p-3 shadow-sm">
+                          <div className="text-sm text-gray-700 leading-relaxed break-words">
+                            <span className="font-semibold text-primary">
+                              {update.createdBy?.name}:
+                            </span>{' '}
+                            {update.message}
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-gray-500 font-medium">
+                              {new Date(update.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <UpdateMediaDisplay update={update} className="mt-2 rounded-md overflow-hidden" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-        {/* Address */}
-        {issue.address && (
-          <div className="flex items-center text-sm text-gray-600 bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors duration-200">
-            <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
-            <span className="truncate font-medium">{issue.address}</span>
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-
-  {/* Updates Section */}
-  {issue.updates && issue.updates.length > 0 && (
-    <div className="px-4 sm:px-6 pb-4">
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-          <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
-          Recent Updates
-        </h4>
-        <div className="space-y-3">
-          {issue.updates.slice(0, 2).map((update, index) => (
-            <div key={index} className="bg-white rounded-lg p-3 shadow-sm">
-              <div className="text-sm text-gray-700 leading-relaxed break-words">
-                <span className="font-semibold text-primary">
-                  {update.createdBy?.name}:
-                </span>{' '}
-                {update.message}
+              {/* Footer */}
+              <div className="mt-auto px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div className="text-xs sm:text-sm text-gray-500 font-medium">
+                    Created: {new Date(issue.createdAt).toLocaleDateString()}
+                  </div>
+                  <button
+                    onClick={() => handleViewDetails(issue.id)}
+                    className="group/btn px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-200 font-semibold w-full sm:w-auto shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95"
+                  >
+                    <span className="flex items-center justify-center">
+                      View Details
+                      <svg className="w-4 h-4 ml-2 transition-transform duration-200 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-xs text-gray-500 font-medium">
-                  {new Date(update.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              <UpdateMediaDisplay update={update} className="mt-2 rounded-md overflow-hidden" />
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )}
-
-  {/* Footer */}
-  <div className="mt-auto px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-100">
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-      <div className="text-xs sm:text-sm text-gray-500 font-medium">
-        Created: {new Date(issue.createdAt).toLocaleDateString()}
-      </div>
-      <button
-        onClick={() => handleViewDetails(issue.id)}
-        className="group/btn px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-200 font-semibold w-full sm:w-auto shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95"
-      >
-        <span className="flex items-center justify-center">
-          View Details
-          <svg className="w-4 h-4 ml-2 transition-transform duration-200 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </span>
-      </button>
-    </div>
-  </div>
-</div>
           ))
         )}
       </div>
@@ -1253,11 +1313,10 @@ const IssueManagement = () => {
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors w-full sm:w-auto ${
-                currentPage === page
+              className={`px-3 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors w-full sm:w-auto ${currentPage === page
                   ? 'bg-primary text-white'
                   : 'text-primary bg-white border border-primary/20 hover:bg-primary/10'
-              }`}
+                }`}
             >
               {page}
             </button>

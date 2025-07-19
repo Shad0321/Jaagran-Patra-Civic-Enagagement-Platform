@@ -10,9 +10,13 @@ import {
   Building,
   Search,
   Filter,
+  ChevronDown,
+  Bookmark,
+  ChevronRight,
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+import Loader from './common/Loader';
 
 const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
   const [members, setMembers] = useState([]);
@@ -21,6 +25,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterBodyType, setFilterBodyType] = useState('');
   const [assignmentReason, setAssignmentReason] = useState('');
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -33,11 +38,14 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
 
   const fetchMembers = async () => {
     try {
+      setIsFetching(true);
       const response = await api.get('/auth/members');
       setMembers(response.data.members || []);
     } catch (error) {
       console.error('Error fetching members:', error);
       toast.error('Failed to fetch members');
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -111,52 +119,54 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'IN_PROGRESS':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'RESOLVED':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 border-green-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'LOW':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'MEDIUM':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'HIGH':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'URGENT':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   if (!isOpen || !issue) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="h-5 w-5 text-blue-600" />
+        <div className="flex items-center justify-between p-6 border-b border-primary/10">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+              <Users className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900">
                 Assign Issue to Member
               </h2>
-              <p className="text-sm text-gray-600">Issue #{issue.ticketId}</p>
+              <p className="text-sm text-primary/80">
+                Issue #{issue.ticketId}
+              </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
           >
             <X className="h-5 w-5" />
           </button>
@@ -164,68 +174,88 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
 
         <div className="p-6 space-y-6">
           {/* Issue Details */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-gray-900 mb-3">Issue Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-gray-900">Issue Details</h3>
+              <div className="flex gap-2">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(issue.status)}`}
+                >
+                  {issue.status.replace('_', ' ')}
+                </span>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(issue.priority)}`}
+                >
+                  {issue.priority}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-gray-900">{issue.title}</h4>
-                <p className="text-sm text-gray-600 mt-1">
+                <h4 className="font-semibold text-gray-900 text-lg">{issue.title}</h4>
+                <p className="text-gray-600 mt-1">
                   {issue.description}
                 </p>
-                <div className="flex items-center space-x-2 mt-2">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(issue.status)}`}
-                  >
-                    {issue.status}
-                  </span>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}
-                  >
-                    {issue.priority}
-                  </span>
-                </div>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center text-sm text-gray-600">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  {issue.address || 'No address provided'}
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Clock className="h-4 w-4 mr-2" />
-                  Created: {new Date(issue.createdAt).toLocaleDateString()}
-                </div>
-                {issue.assignedTo && (
-                  <div className="flex items-center text-sm text-green-600">
-                    <User className="h-4 w-4 mr-2" />
-                    Currently assigned to: {issue.assignedTo.name}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="font-medium text-gray-700">Location</p>
+                    <p className="text-gray-600 text-sm">
+                      {issue.address || 'No address provided'}
+                    </p>
                   </div>
-                )}
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Clock className="h-5 w-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="font-medium text-gray-700">Created</p>
+                    <p className="text-gray-600 text-sm">
+                      {new Date(issue.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              {issue.assignedTo && (
+                <div className="flex items-center gap-3 bg-green-50/80 border border-green-200 rounded-lg p-3">
+                  <User className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="font-medium text-green-800">Currently assigned to</p>
+                    <p className="text-green-700 text-sm">
+                      {issue.assignedTo.name}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Search and Filter */}
-          <div className="space-y-4">
-            <h3 className="font-medium text-gray-900">
-              Select Member to Assign
-            </h3>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">Select Member to Assign</h3>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
                 <input
                   type="text"
                   placeholder="Search members..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="pl-10 w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                 />
               </div>
+              
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <select
                   value={filterBodyType}
                   onChange={(e) => setFilterBodyType(e.target.value)}
-                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="pl-10 w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 appearance-none"
                 >
                   <option value="">All Body Types</option>
                   {bodyTypes.map((type) => (
@@ -234,110 +264,118 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                     </option>
                   ))}
                 </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
               </div>
             </div>
           </div>
 
           {/* Member Selection */}
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto">
-              {filteredMembers.length > 0 ? (
-                filteredMembers.map((member) => (
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            {isFetching ? (
+              <div className="flex justify-center py-8">
+                <Loader />
+              </div>
+            ) : filteredMembers.length > 0 ? (
+              <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto pr-2">
+                {filteredMembers.map((member) => (
                   <div
                     key={member.id}
-                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                    className={`p-4 border rounded-xl cursor-pointer transition-all duration-200 ${
                       selectedMember === member.id
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-primary bg-primary/5 shadow-md'
+                        : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'
                     }`}
                     onClick={() => setSelectedMember(member.id)}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <User className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-white">
+                          {member.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-900">
+                          <h4 className="font-semibold text-gray-900">
                             {member.name}
+                            {member.designation && (
+                              <span className="text-xs font-normal text-gray-500 ml-2">
+                                ({member.designation})
+                              </span>
+                            )}
                           </h4>
                           <p className="text-sm text-gray-600">
                             {member.email}
                           </p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <span className="text-xs font-medium bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20">
                               {member.bodyType?.replace(/_/g, ' ')}
                             </span>
                             {member.body && (
-                              <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                              <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full border border-purple-200">
                                 {member.body.name}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-600">
-                          {member.designation || 'Member'}
-                        </p>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          {member.assignedIssuesCount || 0} issues
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <CheckCircle className="h-4 w-4 mr-1.5 text-green-500" />
+                          {member.assignedIssuesCount || 0}
                         </div>
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
                       </div>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <p>No members found</p>
-                  <p className="text-sm">
-                    Try adjusting your search or filters
-                  </p>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                <p className="font-medium">No members found</p>
+                <p className="text-sm mt-1">
+                  Try adjusting your search or filters
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Assignment Reason */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
               Assignment Reason (Optional)
             </label>
             <textarea
               value={assignmentReason}
               onChange={(e) => setAssignmentReason(e.target.value)}
               rows="3"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
               placeholder="Enter reason for assignment..."
             />
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between pt-4 border-t border-primary/10">
             <div>
               {issue.assignedTo && (
                 <button
                   onClick={handleUnassign}
                   disabled={loading}
-                  className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                  className="px-5 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 border border-red-200 hover:shadow-sm disabled:opacity-50"
                 >
                   Reassign to Me
                 </button>
               )}
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-3">
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAssign}
                 disabled={loading || !selectedMember}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Assigning...' : 'Assign Issue'}
               </button>

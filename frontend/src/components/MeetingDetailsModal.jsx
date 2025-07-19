@@ -16,6 +16,7 @@ import {
   Play,
   Square,
   Repeat,
+  ChevronDown,
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
@@ -141,18 +142,28 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <Video className="w-5 h-5 text-blue-600" />
-            Meeting Details
-          </h2>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-primary/10">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+              <Video className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Meeting Details
+              </h2>
+              <p className="text-sm text-primary/80">
+                {meeting.title || 'Meeting information'}
+              </p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
           >
-            <X className="w-6 h-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -170,17 +181,17 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
               <div className="flex gap-2">
                 <button
                   onClick={handleJoinMeeting}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-2"
                 >
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="h-4 w-4" />
                   Join Meeting
                 </button>
                 <button
                   onClick={handleEndMeeting}
                   disabled={loading}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+                  className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 flex items-center gap-2"
                 >
-                  <Square className="w-4 h-4" />
+                  <Square className="h-4 w-4" />
                   End Meeting
                 </button>
               </div>
@@ -189,9 +200,9 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
             {meeting.status === 'SCHEDULED' && (
               <button
                 onClick={handleJoinMeeting}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-2"
               >
-                <Play className="w-4 h-4" />
+                <Play className="h-4 w-4" />
                 Start Meeting
               </button>
             )}
@@ -199,10 +210,10 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
 
           {/* Meeting Information */}
           {editMode ? (
-            <form onSubmit={handleUpdateMeeting} className="space-y-4">
+            <form onSubmit={handleUpdateMeeting} className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Meeting Topic
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Meeting Topic *
                 </label>
                 <input
                   type="text"
@@ -210,13 +221,13 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                   onChange={(e) =>
                     setEditData((prev) => ({ ...prev, topic: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Agenda
                 </label>
                 <textarea
@@ -225,13 +236,13 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                     setEditData((prev) => ({ ...prev, agenda: e.target.value }))
                   }
                   rows="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Duration (minutes)
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Duration (minutes) *
                 </label>
                 <input
                   type="number"
@@ -244,7 +255,7 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                   }
                   min="1"
                   max="1440"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   required
                 />
               </div>
@@ -253,31 +264,38 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+                  className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  {loading ? 'Saving...' : 'Save Changes'}
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditMode(false)}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                  className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
                 >
                   Cancel
                 </button>
               </div>
             </form>
           ) : (
-            <div className="space-y-4">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-bold text-gray-900">
                   {meeting.title}
                 </h3>
                 {meeting.status !== 'COMPLETED' && (
                   <button
                     onClick={() => setEditMode(true)}
-                    className="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition-colors"
+                    className="p-2 text-primary hover:text-primary/80 rounded-lg hover:bg-primary/10 transition-colors"
                   >
-                    <Edit3 className="w-4 h-4" />
+                    <Edit3 className="h-4 w-4" />
                   </button>
                 )}
               </div>
@@ -287,10 +305,10 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Calendar className="w-5 h-5 text-gray-600" />
+                <div className="flex items-center gap-3 p-3 bg-gray-50/80 rounded-lg border border-primary/10">
+                  <Calendar className="h-5 w-5 text-primary/80" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-semibold text-gray-900">
                       Date & Time
                     </p>
                     <p className="text-sm text-gray-600">
@@ -299,10 +317,10 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Clock className="w-5 h-5 text-gray-600" />
+                <div className="flex items-center gap-3 p-3 bg-gray-50/80 rounded-lg border border-primary/10">
+                  <Clock className="h-5 w-5 text-primary/80" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-semibold text-gray-900">
                       Duration
                     </p>
                     <p className="text-sm text-gray-600">
@@ -311,10 +329,10 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Users className="w-5 h-5 text-gray-600" />
+                <div className="flex items-center gap-3 p-3 bg-gray-50/80 rounded-lg border border-primary/10">
+                  <Users className="h-5 w-5 text-primary/80" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-semibold text-gray-900">
                       Participants
                     </p>
                     <p className="text-sm text-gray-600">
@@ -323,14 +341,14 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-gray-50/80 rounded-lg border border-primary/10">
                   {meeting.isOpenToAll ? (
-                    <Globe className="w-5 h-5 text-green-600" />
+                    <Globe className="h-5 w-5 text-primary/80" />
                   ) : (
-                    <Mail className="w-5 h-5 text-gray-600" />
+                    <Mail className="h-5 w-5 text-primary/80" />
                   )}
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Access</p>
+                    <p className="text-sm font-semibold text-gray-900">Access</p>
                     <p className="text-sm text-gray-600">
                       {meeting.isOpenToAll ? 'Open to all' : 'Invitation only'}
                     </p>
@@ -339,10 +357,10 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
               </div>
 
               {meeting.isRecurring && (
-                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                  <Repeat className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center gap-3 p-3 bg-blue-50/80 rounded-lg border border-primary/10">
+                  <Repeat className="h-5 w-5 text-primary/80" />
                   <div>
-                    <p className="text-sm font-medium text-blue-900">
+                    <p className="text-sm font-semibold text-blue-900">
                       Recurring Meeting
                     </p>
                     <p className="text-sm text-blue-600">
@@ -356,8 +374,8 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
 
           {/* Meeting Links */}
           {meeting.meetingLink && (
-            <div className="border-t pt-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-3">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+              <h4 className="text-sm font-semibold text-gray-900 mb-3">
                 Meeting Links
               </h4>
               <div className="space-y-2">
@@ -366,21 +384,21 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                     type="text"
                     value={meeting.meetingLink}
                     readOnly
-                    className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-sm"
+                    className="flex-1 px-4 py-2.5 bg-gray-50/80 border border-primary/20 rounded-lg text-sm"
                   />
                   <button
                     onClick={copyMeetingLink}
-                    className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+                    className="p-2.5 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-primary/10"
                     title="Copy meeting link"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="h-4 w-4" />
                   </button>
                   <button
                     onClick={handleJoinMeeting}
-                    className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors"
+                    className="p-2.5 text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg transition-colors border border-primary/10"
                     title="Open meeting"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <ExternalLink className="h-4 w-4" />
                   </button>
                 </div>
 
@@ -390,14 +408,14 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                       type="text"
                       value={`Meeting ID: ${meeting.zoomMeetingId}`}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-sm"
+                      className="flex-1 px-4 py-2.5 bg-gray-50/80 border border-primary/20 rounded-lg text-sm"
                     />
                     <button
                       onClick={copyMeetingId}
-                      className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+                      className="p-2.5 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-primary/10"
                       title="Copy meeting ID"
                     >
-                      <Copy className="w-4 h-4" />
+                      <Copy className="h-4 w-4" />
                     </button>
                   </div>
                 )}
@@ -406,8 +424,8 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
           )}
 
           {/* Participants */}
-          <div className="border-t pt-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-3">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3">
               Participants ({participants.length})
             </h4>
             {participants.length > 0 ? (
@@ -415,10 +433,10 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                 {participants.map((participant) => (
                   <div
                     key={participant.id}
-                    className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg"
+                    className="flex items-center gap-3 p-3 hover:bg-gray-50/80 rounded-lg border border-primary/10"
                   >
                     <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-gray-600" />
+                      <User className="h-4 w-4 text-gray-600" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">
@@ -448,11 +466,11 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
           </div>
 
           {/* Host Information */}
-          <div className="border-t pt-4">
-            <h4 className="text-sm font-medium text-gray-900 mb-3">Host</h4>
-            <div className="flex items-center gap-3">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3">Host</h4>
+            <div className="flex items-center gap-3 p-3 bg-gray-50/80 rounded-lg border border-primary/10">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-blue-600" />
+                <User className="h-4 w-4 text-blue-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">

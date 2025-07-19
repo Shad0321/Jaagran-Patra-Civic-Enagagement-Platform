@@ -14,6 +14,8 @@ import {
   CheckCircle,
   Clock,
   XCircle,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
@@ -33,19 +35,13 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
     try {
       setLoading(true);
       const response = await api.get('/auth/members');
-
-      // Handle the response structure: response.data.members (direct) or response.data.data.members (nested)
-      const allMembers =
-        response.data?.members || response.data?.data?.members || [];
-
-      // Filter members to show only those under the current MLA's constituency
+      const allMembers = response.data?.members || response.data?.data?.members || [];
       const filteredMembers = Array.isArray(allMembers) ? allMembers : [];
-
       setMembers(filteredMembers);
     } catch (error) {
       console.error('Error fetching members:', error);
       toast.error('Failed to load members');
-      setMembers([]); // Ensure members is always an array
+      setMembers([]);
     } finally {
       setLoading(false);
     }
@@ -121,10 +117,8 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
   };
 
   const handleSendInvitations = async () => {
-    const selectedCount = Array.isArray(selectedMembers)
-      ? selectedMembers.length
-      : 0;
-    const emailCount = Array.isArray(emailInvites) ? emailInvites.length : 0;
+    const selectedCount = selectedMembers.length;
+    const emailCount = emailInvites.length;
 
     if (selectedCount === 0 && emailCount === 0) {
       toast.error('Please select at least one member or add an email');
@@ -133,27 +127,16 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
 
     try {
       setSendingInvitations(true);
-
-      // Combine member emails and custom emails into single invitees array
-      const memberEmails = Array.isArray(selectedMembers)
-        ? selectedMembers.map((m) => m.email)
-        : [];
-      const customEmails = Array.isArray(emailInvites)
-        ? emailInvites.filter((email) => email.trim())
-        : [];
+      const memberEmails = selectedMembers.map((m) => m.email);
+      const customEmails = emailInvites.filter((email) => email.trim());
       const allInvitees = [...memberEmails, ...customEmails];
-
-      const invitationData = {
-        invitees: allInvitees,
-      };
 
       const response = await api.post(
         `/meetings/${meeting.id}/invite`,
-        invitationData
+        { invitees: allInvitees }
       );
 
-      const totalInvites = allInvitees.length;
-      toast.success(`Invitations sent to ${totalInvites} recipients`);
+      toast.success(`Invitations sent to ${allInvitees.length} recipients`);
       onInvitesSent(response.data);
       onClose();
     } catch (error) {
@@ -170,89 +153,108 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
         return {
           icon: <Clock className="w-4 h-4" />,
           color: 'text-blue-600',
-          bgColor: 'bg-blue-100',
+          bgColor: 'bg-blue-100/80',
+          borderColor: 'border-blue-200',
           label: 'Sent',
         };
       case 'ACCEPTED':
         return {
           icon: <CheckCircle className="w-4 h-4" />,
           color: 'text-green-600',
-          bgColor: 'bg-green-100',
+          bgColor: 'bg-green-100/80',
+          borderColor: 'border-green-200',
           label: 'Accepted',
         };
       case 'DECLINED':
         return {
           icon: <XCircle className="w-4 h-4" />,
           color: 'text-red-600',
-          bgColor: 'bg-red-100',
+          bgColor: 'bg-red-100/80',
+          borderColor: 'border-red-200',
           label: 'Declined',
         };
       default:
         return {
           icon: <Clock className="w-4 h-4" />,
           color: 'text-gray-600',
-          bgColor: 'bg-gray-100',
+          bgColor: 'bg-gray-100/80',
+          borderColor: 'border-gray-200',
           label: 'Pending',
         };
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-blue-600" />
-            Invite Members to Meeting
-          </h2>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-primary/10">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+              <UserPlus className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Invite Members to Meeting
+              </h2>
+              <p className="text-sm text-primary/80">
+                {meeting.title}
+              </p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
           >
-            <X className="w-6 h-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           {/* Meeting Info */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="font-medium text-blue-900 mb-1">{meeting.title}</h3>
-            <p className="text-sm text-blue-700">
-              {new Date(meeting.scheduledAt).toLocaleString()}
-            </p>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-gray-900">Meeting Details</h3>
+              <div className="flex items-center text-sm text-primary">
+                <Clock className="w-4 h-4 mr-1" />
+                {new Date(meeting.scheduledAt).toLocaleString()}
+              </div>
+            </div>
+            <p className="text-gray-600">{meeting.description || 'No description provided'}</p>
           </div>
 
           {/* Current Invitations */}
           {currentInvitations.length > 0 && (
-            <div className="border-t pt-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-3">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+              <h3 className="font-bold text-gray-900 mb-4">
                 Current Invitations ({currentInvitations.length})
-              </h4>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+              </h3>
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
                 {currentInvitations.map((invitation) => {
                   const status = getInvitationStatus(invitation);
                   return (
                     <div
                       key={invitation.id}
-                      className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg"
+                      className={`flex items-center gap-4 p-4 border rounded-xl ${status.borderColor} ${status.bgColor}`}
                     >
-                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-gray-600" />
+                      <div className="h-10 w-10 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-white">
+                        {invitation.user?.name?.charAt(0).toUpperCase() || invitation.email.charAt(0).toUpperCase()}
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-900 truncate">
                           {invitation.user?.name || invitation.email}
-                        </p>
-                        <p className="text-xs text-gray-500">
+                        </h4>
+                        <p className="text-sm text-gray-600 truncate">
                           {invitation.user?.email || invitation.email}
                         </p>
                       </div>
-                      <span
-                        className={`inline-flex items-center px-2 py-1 text-xs rounded-full gap-1 ${status.bgColor} ${status.color}`}
-                      >
-                        {status.icon}
-                        {status.label}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex items-center px-3 py-1 text-xs rounded-full border ${status.borderColor} ${status.color}`}>
+                          {status.icon}
+                          <span className="ml-1">{status.label}</span>
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                      </div>
                     </div>
                   );
                 })}
@@ -261,65 +263,71 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
           )}
 
           {/* Search Members */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-3">
-              Select Members
-            </h4>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">Select Members</h3>
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-primary/70" />
               <input
                 type="text"
                 placeholder="Search members..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
               />
             </div>
 
             {loading ? (
-              <Loader/>
+              <div className="flex justify-center py-8">
+                <Loader />
+              </div>
             ) : (
-              <div className="space-y-2 max-h-60 overflow-y-auto">
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
                 {filteredMembers.map((member) => {
-                  const isSelected = selectedMembers.find(
-                    (m) => m.id === member.id
-                  );
-                  const isAlreadyInvited = currentInvitations.some(
-                    (inv) => inv.userId === member.id
-                  );
+                  const isSelected = selectedMembers.find((m) => m.id === member.id);
+                  const isAlreadyInvited = currentInvitations.some((inv) => inv.userId === member.id);
 
                   return (
                     <div
                       key={member.id}
-                      onClick={() =>
-                        !isAlreadyInvited && handleMemberSelect(member)
-                      }
-                      className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                      onClick={() => !isAlreadyInvited && handleMemberSelect(member)}
+                      className={`flex items-center gap-4 p-4 border rounded-xl cursor-pointer transition-all duration-200 ${
                         isAlreadyInvited
-                          ? 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-50'
+                          ? 'bg-gray-50/80 border-gray-200 cursor-not-allowed'
                           : isSelected
-                            ? 'bg-blue-50 border-blue-200 hover:bg-blue-100'
-                            : 'bg-white border-gray-200 hover:bg-gray-50'
+                            ? 'border-primary bg-primary/5 shadow-md'
+                            : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'
                       }`}
                     >
-                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-gray-600" />
+                      <div className="h-10 w-10 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-white">
+                        {member.name.charAt(0).toUpperCase()}
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-900 truncate">
                           {member.name}
+                        </h4>
+                        <p className="text-sm text-gray-600 truncate">
+                          {member.email}
                         </p>
-                        <p className="text-xs text-gray-500">{member.email}</p>
+                        {member.designation && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {member.designation}
+                          </p>
+                        )}
                       </div>
-                      {isAlreadyInvited ? (
-                        <span className="text-xs text-gray-500">
-                          Already invited
-                        </span>
-                      ) : isSelected ? (
-                        <Check className="w-4 h-4 text-blue-600" />
-                      ) : (
-                        <div className="w-4 h-4 border border-gray-300 rounded"></div>
-                      )}
+                      <div className="flex items-center gap-3">
+                        {isAlreadyInvited ? (
+                          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+                            Invited
+                          </span>
+                        ) : isSelected ? (
+                          <div className="h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                            <Check className="h-3 w-3 text-white" />
+                          </div>
+                        ) : (
+                          <div className="h-5 w-5 border-2 border-gray-300 rounded-full"></div>
+                        )}
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                      </div>
                     </div>
                   );
                 })}
@@ -328,42 +336,45 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
           </div>
 
           {/* Email Invitations */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-3">
-              Email Invitations
-            </h4>
-            <div className="flex gap-2 mb-3">
-              <input
-                type="email"
-                placeholder="Enter email address"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleEmailAdd()}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">Email Invitations</h3>
+            <div className="flex gap-3 mb-4">
+              <div className="relative flex-1">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-primary/70" />
+                <input
+                  type="email"
+                  placeholder="Enter email address"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleEmailAdd()}
+                  className="w-full pl-10 pr-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
+                />
+              </div>
               <button
                 onClick={handleEmailAdd}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                className="px-4 py-2.5 bg-gradient-to-r from-primary to-primary/80 text-white rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-2"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="h-4 w-4" />
                 Add
               </button>
             </div>
 
             {emailInvites.length > 0 && (
-              <div className="space-y-2 mb-4">
+              <div className="space-y-3">
                 {emailInvites.map((email) => (
                   <div
                     key={email}
-                    className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-white border border-primary/10 rounded-lg"
                   >
-                    <Mail className="w-4 h-4 text-gray-600" />
-                    <span className="flex-1 text-sm">{email}</span>
+                    <div className="flex items-center gap-3">
+                      <Mail className="h-5 w-5 text-primary" />
+                      <span className="text-gray-700">{email}</span>
+                    </div>
                     <button
                       onClick={() => handleEmailRemove(email)}
-                      className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
+                      className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-50 transition-colors"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                 ))}
@@ -372,23 +383,37 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
           </div>
 
           {/* Selected Members Summary */}
-          {Array.isArray(selectedMembers) && selectedMembers.length > 0 && (
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="text-sm font-medium text-green-900 mb-2">
-                Selected Members ({selectedMembers.length})
-              </h4>
+          {(selectedMembers.length > 0 || emailInvites.length > 0) && (
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+              <h3 className="font-bold text-gray-900 mb-3">
+                Ready to Send ({selectedMembers.length + emailInvites.length})
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {selectedMembers.map((member) => (
                   <span
                     key={member.id}
-                    className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-sm rounded-full gap-1"
+                    className="inline-flex items-center px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium border border-primary/20"
                   >
                     {member.name}
                     <button
                       onClick={() => handleMemberSelect(member)}
-                      className="text-green-600 hover:text-green-800 ml-1"
+                      className="ml-2 text-primary/70 hover:text-primary"
                     >
-                      <X className="w-3 h-3" />
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+                {emailInvites.map((email) => (
+                  <span
+                    key={email}
+                    className="inline-flex items-center px-3 py-1 bg-blue-100/80 text-blue-700 rounded-full text-sm font-medium border border-blue-200"
+                  >
+                    {email}
+                    <button
+                      onClick={() => handleEmailRemove(email)}
+                      className="ml-2 text-blue-600/70 hover:text-blue-700"
+                    >
+                      <X className="h-3 w-3" />
                     </button>
                   </span>
                 ))}
@@ -397,24 +422,21 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-between border-t pt-4">
-            <div className="text-sm text-gray-600">
-              {selectedMembers.length + emailInvites.length} recipients selected
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={onClose}
-                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
+          <div className="flex items-center justify-between pt-4 border-t border-primary/10">
+            <button
+              onClick={onClose}
+              className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
+            >
+              Cancel
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-gray-600">
+                {selectedMembers.length + emailInvites.length} selected
+              </div>
               <button
                 onClick={handleSendInvitations}
-                disabled={
-                  sendingInvitations ||
-                  (selectedMembers.length === 0 && emailInvites.length === 0)
-                }
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                disabled={sendingInvitations || (selectedMembers.length === 0 && emailInvites.length === 0)}
+                className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {sendingInvitations ? (
                   <>
@@ -423,7 +445,7 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
+                    <Send className="h-4 w-4" />
                     Send Invitations
                   </>
                 )}

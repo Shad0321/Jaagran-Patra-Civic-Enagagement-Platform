@@ -329,7 +329,7 @@ export const createIssue = async (
         );
 
         // Simple distance calculation to find nearest constituency
-        let nearestConstituency = null;
+    let nearestConstituency: { id: string; name: string } | null = null;
         let minDistance = Infinity;
 
         const userLat = parseFloat(latitude);
@@ -362,7 +362,7 @@ export const createIssue = async (
         }
 
         if (nearestConstituency) {
-          autoAssignedConstituencyId = nearestConstituency.id;
+      autoAssignedConstituencyId = nearestConstituency.id;
           console.log(
             '🎯 Found nearest constituency:',
             nearestConstituency.name,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import {
   X,
   Calendar,
@@ -12,15 +12,16 @@ import {
   Video,
   Repeat,
   AlertCircle,
+  ChevronDown,
+  User,
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 import Loader from './common/Loader';
 
 const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
-  const { user } = useSelector((state) => state.user);
-  console.log('Current user:', user); // Using user to avoid lint warning
-  const [meetingType, setMeetingType] = useState('instant'); // instant, scheduled, recurring
+  // const { user } = useSelector((state) => state.user);
+  const [meetingType, setMeetingType] = useState('instant');
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState([]);
   const [formData, setFormData] = useState({
@@ -32,8 +33,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
     isOpenToAll: false,
     invitees: [],
     customEmails: [''],
-    // Recurring meeting fields
-    recurrenceType: 1, // 1: Daily, 2: Weekly, 3: Monthly
+    recurrenceType: 1,
     repeatInterval: 1,
     endTimes: 10,
     endDateTime: '',
@@ -50,18 +50,11 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
   const fetchMembers = useCallback(async () => {
     try {
       const response = await api.get('/auth/members');
-      // Handle the response structure: response.data.members (direct) or response.data.data.members (nested)
-      const allMembers =
-        response.data?.members || response.data?.data?.members || [];
-
-      // For now, show all members since filtering logic needs to be updated
-      // based on actual data structure (members don't have mlaId field)
-      const filteredMembers = Array.isArray(allMembers) ? allMembers : [];
-
-      setMembers(filteredMembers);
+      const allMembers = response.data?.members || response.data?.data?.members || [];
+      setMembers(allMembers);
     } catch (error) {
       console.error('Error fetching members:', error);
-      setMembers([]); // Ensure members is always an array
+      setMembers([]);
     }
   }, []);
 
@@ -125,7 +118,6 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
     setLoading(true);
 
     try {
-      // Combine member emails and custom emails
       const allInvitees = [
         ...formData.invitees,
         ...formData.customEmails.filter((email) => email.trim() !== ''),
@@ -140,7 +132,6 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
       };
 
       let endpoint = '/meetings/';
-
       if (meetingType === 'instant') {
         endpoint += 'instant';
       } else if (meetingType === 'scheduled') {
@@ -162,13 +153,11 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
       }
 
       const response = await api.post(endpoint, meetingData);
-
       toast.success(
         `${meetingType === 'instant' ? 'Instant' : meetingType === 'scheduled' ? 'Scheduled' : 'Recurring'} meeting created successfully!`
       );
 
       if (meetingType === 'instant' && response.data.zoomMeeting?.join_url) {
-        // Auto-open instant meetings
         window.open(response.data.zoomMeeting.join_url, '_blank');
       }
 
@@ -191,41 +180,49 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
 
   const getRecurrenceTypeLabel = (type) => {
     switch (type) {
-      case 1:
-        return 'Daily';
-      case 2:
-        return 'Weekly';
-      case 3:
-        return 'Monthly';
-      default:
-        return 'Daily';
+      case 1: return 'Daily';
+      case 2: return 'Weekly';
+      case 3: return 'Monthly';
+      default: return 'Daily';
     }
   };
 
+  // if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <Video className="w-5 h-5 text-blue-600" />
-            Create Meeting
-          </h2>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-primary/10">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+              <Video className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Create Meeting
+              </h2>
+              <p className="text-sm text-primary/80">
+                Schedule or start a new meeting
+              </p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
           >
-            <X className="w-6 h-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Meeting Type */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">
               Meeting Type
-            </label>
+            </h3>
             <div className="grid grid-cols-3 gap-4">
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+              <label className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'instant' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}>
                 <input
                   type="radio"
                   name="meetingType"
@@ -235,12 +232,12 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                   className="mr-3"
                 />
                 <div>
-                  <div className="font-medium text-gray-900">Instant</div>
-                  <div className="text-sm text-gray-500">Start now</div>
+                  <div className="font-semibold text-gray-900">Instant</div>
+                  <div className="text-sm text-gray-600">Start now</div>
                 </div>
               </label>
 
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+              <label className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'scheduled' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}>
                 <input
                   type="radio"
                   name="meetingType"
@@ -250,12 +247,12 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                   className="mr-3"
                 />
                 <div>
-                  <div className="font-medium text-gray-900">Scheduled</div>
-                  <div className="text-sm text-gray-500">Set date & time</div>
+                  <div className="font-semibold text-gray-900">Scheduled</div>
+                  <div className="text-sm text-gray-600">Set date & time</div>
                 </div>
               </label>
 
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+              <label className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'recurring' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}>
                 <input
                   type="radio"
                   name="meetingType"
@@ -265,130 +262,143 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                   className="mr-3"
                 />
                 <div>
-                  <div className="font-medium text-gray-900">Recurring</div>
-                  <div className="text-sm text-gray-500">Repeat meetings</div>
+                  <div className="font-semibold text-gray-900">Recurring</div>
+                  <div className="text-sm text-gray-600">Repeat meetings</div>
                 </div>
               </label>
             </div>
           </div>
 
           {/* Basic Meeting Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Meeting Topic <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="topic"
-                value={formData.topic}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter meeting topic"
-              />
-            </div>
-
-            {(meetingType === 'scheduled' || meetingType === 'recurring') && (
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">
+              Meeting Details
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Duration (minutes) <span className="text-red-500">*</span>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Meeting Topic *
                 </label>
                 <input
-                  type="number"
-                  name="duration"
-                  value={formData.duration}
+                  type="text"
+                  name="topic"
+                  value={formData.topic}
                   onChange={handleInputChange}
-                  min="1"
-                  max="1440"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
+                  placeholder="Enter meeting topic"
                 />
               </div>
-            )}
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Meeting Agenda
-            </label>
-            <textarea
-              name="agenda"
-              value={formData.agenda}
-              onChange={handleInputChange}
-              rows="3"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter meeting agenda (optional)"
-            />
+              {(meetingType === 'scheduled' || meetingType === 'recurring') && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Duration (minutes) *
+                  </label>
+                  <input
+                    type="number"
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="1440"
+                    required
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Meeting Agenda
+              </label>
+              <textarea
+                name="agenda"
+                value={formData.agenda}
+                onChange={handleInputChange}
+                rows="3"
+                className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
+                placeholder="Enter meeting agenda (optional)"
+              />
+            </div>
           </div>
 
           {/* Date and Time for Scheduled/Recurring */}
           {(meetingType === 'scheduled' || meetingType === 'recurring') && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Start Date & Time <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  name="startTime"
-                  value={formData.startTime || getTomorrowDate()}
-                  onChange={handleInputChange}
-                  required
-                  min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+              <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Schedule
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Start Date & Time *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="startTime"
+                    value={formData.startTime || getTomorrowDate()}
+                    onChange={handleInputChange}
+                    required
+                    min={new Date().toISOString().slice(0, 16)}
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Timezone
-                </label>
-                <select
-                  name="timezone"
-                  value={formData.timezone}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="UTC">UTC</option>
-                  <option value="America/New_York">Eastern Time</option>
-                  <option value="America/Chicago">Central Time</option>
-                  <option value="America/Denver">Mountain Time</option>
-                  <option value="America/Los_Angeles">Pacific Time</option>
-                  <option value="Asia/Kolkata">India Standard Time</option>
-                  <option value="Europe/London">London Time</option>
-                </select>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Timezone
+                  </label>
+                  <select
+                    name="timezone"
+                    value={formData.timezone}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 appearance-none"
+                  >
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">Eastern Time</option>
+                    <option value="America/Chicago">Central Time</option>
+                    <option value="America/Denver">Mountain Time</option>
+                    <option value="America/Los_Angeles">Pacific Time</option>
+                    <option value="Asia/Kolkata">India Standard Time</option>
+                    <option value="Europe/London">London Time</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
+                </div>
               </div>
             </div>
           )}
 
           {/* Recurring Meeting Settings */}
           {meetingType === 'recurring' && (
-            <div className="border-t pt-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-                <Repeat className="w-5 h-5 text-blue-600" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+              <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Repeat className="h-5 w-5 text-primary" />
                 Recurrence Settings
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Repeat
                   </label>
                   <select
                     name="recurrenceType"
                     value={formData.recurrenceType}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 appearance-none"
                   >
                     <option value={1}>Daily</option>
                     <option value={2}>Weekly</option>
                     <option value={3}>Monthly</option>
                   </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Every
                   </label>
                   <input
@@ -398,18 +408,15 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                     onChange={handleInputChange}
                     min="1"
                     max="12"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    {getRecurrenceTypeLabel(
-                      formData.recurrenceType
-                    ).toLowerCase()}
-                    (s)
+                    {getRecurrenceTypeLabel(formData.recurrenceType).toLowerCase()}(s)
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     End After
                   </label>
                   <input
@@ -419,7 +426,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                     onChange={handleInputChange}
                     min="1"
                     max="50"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   />
                   <div className="text-xs text-gray-500 mt-1">occurrences</div>
                 </div>
@@ -428,8 +435,8 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
           )}
 
           {/* Access Settings */}
-          <div className="border-t pt-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">
               Access Settings
             </h3>
 
@@ -440,50 +447,50 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                 name="isOpenToAll"
                 checked={formData.isOpenToAll}
                 onChange={handleInputChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
               />
               <label
                 htmlFor="isOpenToAll"
-                className="ml-2 text-sm text-gray-900 flex items-center gap-2"
+                className="ml-3 text-sm font-medium text-gray-700 flex items-center gap-2"
               >
-                <Globe className="w-4 h-4 text-green-600" />
+                <Globe className="w-4 h-4 text-green-500" />
                 Open to all members
               </label>
             </div>
 
             {!formData.isOpenToAll && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Select Members to Invite
                 </label>
-                <div className="max-h-32 overflow-y-auto border border-gray-300 rounded-md p-3">
-                  {Array.isArray(members) &&
-                    members.map((member) => (
-                      <label
-                        key={member.id}
-                        className="flex items-center mb-2 cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={formData.invitees.includes(member.email)}
-                          onChange={() => handleMemberToggle(member.email)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
-                        />
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-900">
-                            {member.name}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            ({member.email})
-                          </span>
+                <div className="max-h-48 overflow-y-auto border border-primary/20 rounded-lg p-4 bg-white/80">
+                  {Array.isArray(members) && members.map((member) => (
+                    <label
+                      key={member.id}
+                      className="flex items-center mb-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.invitees.includes(member.email)}
+                        onChange={() => handleMemberToggle(member.email)}
+                        className="h-4 w-4 text-primary focus:ring-primary/50 border-primary/30 rounded mr-3"
+                      />
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+                          <User className="h-4 w-4 text-primary" />
                         </div>
-                      </label>
-                    ))}
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{member.name}</div>
+                          <div className="text-xs text-gray-500">{member.email}</div>
+                        </div>
+                      </div>
+                    </label>
+                  ))}
                   {(!Array.isArray(members) || members.length === 0) && (
-                    <p className="text-sm text-gray-500 text-center py-2">
-                      No members available
-                    </p>
+                    <div className="text-center py-4 text-gray-500">
+                      <Users className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <p className="text-sm">No members available</p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -491,36 +498,34 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
 
             {/* Custom Email Invites */}
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Additional Email Invites
               </label>
               {formData.customEmails.map((email, index) => (
-                <div key={index} className="flex items-center mb-2">
+                <div key={index} className="flex items-center mb-2 gap-2">
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) =>
-                      handleCustomEmailChange(index, e.target.value)
-                    }
+                    onChange={(e) => handleCustomEmailChange(index, e.target.value)}
                     placeholder="Enter email address"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   />
                   {formData.customEmails.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeCustomEmailField(index)}
-                      className="ml-2 text-red-600 hover:text-red-800"
+                      className="p-2 text-red-500 hover:text-red-700 rounded-full hover:bg-red-50 transition-colors"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="h-4 w-4" />
                     </button>
                   )}
                   {index === formData.customEmails.length - 1 && (
                     <button
                       type="button"
                       onClick={addCustomEmailField}
-                      className="ml-2 text-blue-600 hover:text-blue-800"
+                      className="p-2 text-primary hover:text-primary/80 rounded-full hover:bg-primary/10 transition-colors"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="h-4 w-4" />
                     </button>
                   )}
                 </div>
@@ -529,22 +534,22 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
           </div>
 
           {/* Meeting Settings */}
-          <div className="border-t pt-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">
               Meeting Settings
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     name="hostVideo"
                     checked={formData.settings.hostVideo}
                     onChange={handleSettingsChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-3 text-sm font-medium text-gray-700">
                     Host video on
                   </span>
                 </label>
@@ -555,9 +560,9 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                     name="participantVideo"
                     checked={formData.settings.participantVideo}
                     onChange={handleSettingsChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-3 text-sm font-medium text-gray-700">
                     Participant video on
                   </span>
                 </label>
@@ -568,24 +573,24 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                     name="muteUponEntry"
                     checked={formData.settings.muteUponEntry}
                     onChange={handleSettingsChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-3 text-sm font-medium text-gray-700">
                     Mute participants on entry
                   </span>
                 </label>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     name="joinBeforeHost"
                     checked={formData.settings.joinBeforeHost}
                     onChange={handleSettingsChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-3 text-sm font-medium text-gray-700">
                     Allow join before host
                   </span>
                 </label>
@@ -596,27 +601,28 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                     name="waitingRoom"
                     checked={formData.settings.waitingRoom}
                     onChange={handleSettingsChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-900">
+                  <span className="ml-3 text-sm font-medium text-gray-700">
                     Enable waiting room
                   </span>
                 </label>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Auto Recording
                   </label>
                   <select
                     name="autoRecording"
                     value={formData.settings.autoRecording}
                     onChange={handleSettingsChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 appearance-none"
                   >
                     <option value="none">None</option>
                     <option value="local">Local</option>
                     <option value="cloud">Cloud</option>
                   </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
                 </div>
               </div>
             </div>
@@ -624,8 +630,8 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
 
           {/* Warning for instant meetings */}
           {meetingType === 'instant' && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+            <div className="bg-yellow-50/80 backdrop-blur-sm rounded-xl border border-yellow-200 p-4 flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-yellow-800">
                 <strong>Note:</strong> Instant meetings will start immediately
                 and the meeting window will open automatically.
@@ -634,27 +640,30 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
           )}
 
           {/* Submit Buttons */}
-          <div className="flex justify-end space-x-3 pt-4 border-t">
+          <div className="flex items-center justify-between pt-4 border-t border-primary/10">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+              className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {loading ? (
-                <Loader/>
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Creating...
+                </>
               ) : (
-                <Video className="w-4 h-4" />
+                <>
+                  <Video className="h-4 w-4" />
+                  {`Create ${meetingType === 'instant' ? 'Instant' : meetingType === 'scheduled' ? 'Scheduled' : 'Recurring'} Meeting`}
+                </>
               )}
-              {loading
-                ? 'Creating...'
-                : `Create ${meetingType === 'instant' ? 'Instant' : meetingType === 'scheduled' ? 'Scheduled' : 'Recurring'} Meeting`}
             </button>
           </div>
         </form>

@@ -552,7 +552,7 @@ const ChatPage = () => {
                     </div>
                     {group.messages && group.messages[0] && (
                         <div className={`text-sm mt-2 truncate ${selectedGroup?.id === group.id ? 'text-primary-light' : 'text-gray-600'}`}>
-                            <strong>Last:</strong> {group.messages[0].message}
+                            <strong>Last:</strong> {group.messages[0].message.substring(0, 20)}{group.messages[0].message.length > 20 ? '...' : ''}
                         </div>
                     )}
                 </div>

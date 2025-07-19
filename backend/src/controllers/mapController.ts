@@ -654,7 +654,13 @@ export const getMapStatistics = async (
           : prisma.district.count(),
       ]);
 
-    let electionStats = null;
+    let electionStats: {
+      totalConstituencies: number;
+      totalVotes: number;
+      totalNotaVotes: number;
+      partyWiseVotes: Record<string, number>;
+      year: string | string[];
+    } | null = null;
 
     // If state is specified, get election statistics
     if (stateId) {
@@ -701,7 +707,11 @@ export const getMapStatistics = async (
               totalVotes,
               totalNotaVotes,
               partyWiseVotes: partyStats,
-              year,
+              year: Array.isArray(year)
+                ? year.map((y) => typeof y === 'string' ? y : String(y))
+                : typeof year === 'string'
+                ? year
+                : String(year),
             };
           }
         }

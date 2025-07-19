@@ -197,15 +197,15 @@ const Profile = () => {
                 <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center">
                     <div className="text-sm text-gray-600 mb-1">State</div>
-                    <div className="text-lg font-semibold text-gray-900">{user.state || 'Not set'}</div>
+                    <div className="text-lg font-semibold text-gray-900">{user.state?.name || user.state || 'Not set'}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-sm text-gray-600 mb-1">District</div>
-                    <div className="text-lg font-semibold text-gray-900">{user.district || 'Not set'}</div>
+                    <div className="text-lg font-semibold text-gray-900">{user.district?.name || user.district || 'Not set'}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-sm text-gray-600 mb-1">Constituency</div>
-                    <div className="text-lg font-semibold text-gray-900">{user.constituency || 'Not set'}</div>
+                    <div className="text-lg font-semibold text-gray-900">{user.constituency?.name || user.constituency || 'Not set'}</div>
                   </div>
                 </div>
               </div>

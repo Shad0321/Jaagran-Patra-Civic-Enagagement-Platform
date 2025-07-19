@@ -7,7 +7,7 @@
     "start": "node ./dist/index.js",
     "dev": "nodemon --exec ts-node ./src/index.ts",
     "build": "prisma generate && tsc -p .",
-    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && tsc -p .",
     "format": "prettier --write \"**/*.{js,ts,json,md}\"",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -27,13 +27,12 @@
     "@types/streamifier": "^0.1.2",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
-    "prisma": "^6.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.4.2",
-    "@prisma/client": "^6.11.1",
+    "@prisma/client": "^6.12.0",
     "@types/multer": "^2.0.0",
     "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.17",
@@ -54,6 +53,7 @@
     "node-cron": "^4.2.1",
     "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.5",
+    "prisma": "^6.12.0",
     "streamifier": "^0.1.1",
     "xss": "^1.0.15"
   }

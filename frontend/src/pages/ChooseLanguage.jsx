@@ -12,7 +12,6 @@ const ChooseLanguage = () => {
   const languages = [
     { id: 'hindi', name: 'हिंदी', value: 'हिंदी' },
     { id: 'english', name: 'English', value: 'English' },
-    { id: 'other', name: '', value: '' }, // Empty option for third choice
   ];
 
   const handleLanguageSelect = (language) => {
@@ -37,7 +36,7 @@ const ChooseLanguage = () => {
       <div className="w-full max-w-sm">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Jaagran</h1>
+          <h1 className="text-4xl font-bold text-gray-800">Jaagran</h1>
           <h2 className="text-4xl font-bold text-white">Patra.</h2>
         </div>
 

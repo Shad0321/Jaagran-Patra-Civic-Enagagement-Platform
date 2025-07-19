@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Users, Building, MapPin, Check } from 'lucide-react';
+import { X, Users, Building, MapPin, Check, ChevronDown } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 import Loader from './common/Loader';
@@ -44,18 +44,13 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
     if (isOpen) {
       fetchBodies();
     }
-  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   useEffect(() => {
     if (formData.bodyType) {
       fetchBodies();
     }
-  }, [
-    formData.bodyType,
-    formData.stateId,
-    formData.districtId,
-    formData.constituencyId,
-  ]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [formData.bodyType, formData.stateId, formData.districtId, formData.constituencyId]);
 
   const fetchBodies = async () => {
     try {
@@ -63,8 +58,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
       const params = {};
       if (formData.stateId) params.stateId = formData.stateId;
       if (formData.districtId) params.districtId = formData.districtId;
-      if (formData.constituencyId)
-        params.constituencyId = formData.constituencyId;
+      if (formData.constituencyId) params.constituencyId = formData.constituencyId;
       if (formData.bodyType) params.type = formData.bodyType;
 
       const response = await api.get('/auth/bodies', { params });
@@ -88,12 +82,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.email ||
-      !formData.name ||
-      !formData.password ||
-      !formData.bodyType
-    ) {
+    if (!formData.email || !formData.name || !formData.password || !formData.bodyType) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -139,41 +128,41 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="h-5 w-5 text-blue-600" />
+        <div className="flex items-center justify-between p-6 border-b border-primary/10">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+              <Users className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900">
                 Add New Member
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-primary/80">
                 Add a member to your organization
               </p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
           >
-            <X className="h-6 w-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">
               Basic Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Full Name *
                 </label>
                 <input
@@ -181,14 +170,14 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="Enter full name"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Email Address *
                 </label>
                 <input
@@ -196,14 +185,14 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="Enter email address"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Phone Number
                 </label>
                 <input
@@ -211,13 +200,13 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="Enter phone number"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Password *
                 </label>
                 <input
@@ -225,7 +214,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="Enter password"
                   required
                 />
@@ -234,20 +223,20 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
           </div>
 
           {/* Role & Body Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">
               Role & Body Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Body Type *
                 </label>
                 <select
                   name="bodyType"
                   value={formData.bodyType}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 appearance-none"
                   required
                 >
                   <option value="">Select body type</option>
@@ -257,17 +246,18 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                     </option>
                   ))}
                 </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Body/Organization
                 </label>
                 <select
                   name="bodyId"
                   value={formData.bodyId}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 appearance-none"
                   disabled={loadingBodies}
                 >
                   <option value="">Select body (optional)</option>
@@ -277,6 +267,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                     </option>
                   ))}
                 </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
                 {loadingBodies && (
                   <p className="text-xs text-gray-500 mt-1">
                     Loading bodies...
@@ -285,7 +276,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Designation
                 </label>
                 <input
@@ -293,13 +284,13 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   name="designation"
                   value={formData.designation}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="e.g., Secretary, President, etc."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Description
                 </label>
                 <textarea
@@ -307,7 +298,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="Brief description of role and responsibilities"
                 />
               </div>
@@ -315,20 +306,20 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
           </div>
 
           {/* Permissions */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">
               Permissions
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   name="canReceiveIssues"
                   checked={formData.canReceiveIssues}
                   onChange={handleInputChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                 />
-                <label className="ml-2 text-sm text-gray-700">
+                <label className="ml-3 text-sm font-medium text-gray-700">
                   Can receive and be assigned issues
                 </label>
               </div>
@@ -339,9 +330,9 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   name="canUpdateIssues"
                   checked={formData.canUpdateIssues}
                   onChange={handleInputChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                 />
-                <label className="ml-2 text-sm text-gray-700">
+                <label className="ml-3 text-sm font-medium text-gray-700">
                   Can update issue status and add progress notes
                 </label>
               </div>
@@ -352,9 +343,9 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                   name="canCreateSessions"
                   checked={formData.canCreateSessions}
                   onChange={handleInputChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-5 w-5 text-primary focus:ring-primary/50 border-primary/30 rounded"
                 />
-                <label className="ml-2 text-sm text-gray-700">
+                <label className="ml-3 text-sm font-medium text-gray-700">
                   Can create and manage sessions
                 </label>
               </div>
@@ -362,27 +353,28 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+          <div className="flex items-center justify-between pt-4 border-t border-primary/10">
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {loading ? (
                 <>
-                  <Loader/>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Adding...
                 </>
               ) : (
                 <>
                   <Check className="h-4 w-4" />
-                  <span>Add Member</span>
+                  Add Member
                 </>
               )}
             </button>

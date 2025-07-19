@@ -31,6 +31,13 @@ export const getNavigationItems = (userRole) => {
       icon: 'plus',
       roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
     },
+    {
+      id: 'news',
+      label: 'News & Updates',
+      path: '/news',
+      icon: 'newspaper',
+      roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
+    }
   ];
 
   const roleBasedItems = {
@@ -40,13 +47,6 @@ export const getNavigationItems = (userRole) => {
         label: 'My Issues',
         path: '/issues',
         icon: 'flag',
-        roles: ['CITIZEN'],
-      },
-      {
-        id: 'news',
-        label: 'News & Updates',
-        path: '/news',
-        icon: 'newspaper',
         roles: ['CITIZEN'],
       },
       {

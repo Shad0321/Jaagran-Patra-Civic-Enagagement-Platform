@@ -227,7 +227,7 @@ router.get(
       ].filter((item) => item.count > 0);
 
       // Issue trends (daily data for the period)
-      const issueTrends = [];
+      const issueTrends: any[] = [];
       for (let i = days - 1; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
@@ -298,7 +298,7 @@ router.get(
       });
 
       const categories = uniqueCategories.map((item) => item.category);
-      const categoryTrends = [];
+      const categoryTrends: any[] = [];
 
       for (let i = Math.min(days, 30) - 1; i >= 0; i--) {
         const date = new Date();
@@ -306,11 +306,11 @@ router.get(
         const dateStr = date.toISOString().split('T')[0];
 
         const trendData: any = {
-          date: date.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-          }),
-        };
+      date: date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      }),
+    };
 
         categories.forEach((category) => {
           trendData[category.toLowerCase()] = allIssues.filter(
@@ -350,6 +350,8 @@ router.get(
         title: issue.title,
         description: `${issue.status === 'RESOLVED' ? 'Resolved' : 'Created'} by ${issue.reportedBy.name}`,
         time: new Date(issue.createdAt).toLocaleDateString(),
+        category: issue.category,
+        assignedTo: issue.assignedTo?.name
       }));
 
       const analyticsData = {

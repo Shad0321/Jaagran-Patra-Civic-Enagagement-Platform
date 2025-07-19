@@ -534,7 +534,8 @@ export class ZoomController {
       }
 
       // Get latest Zoom meeting data if available
-      let zoomMeetingData = null;
+    // Define ZoomMeetingResponse type as any for now (replace with actual type if available)
+    let zoomMeetingData: any = null;
       if (session.zoomMeetingId) {
         try {
           zoomMeetingData = await zoomService.getMeeting(session.zoomMeetingId);
@@ -897,7 +898,7 @@ export class ZoomController {
       }
 
       // Get Zoom participants if meeting is ongoing
-      let zoomParticipants = null;
+    let zoomParticipants: any = null;
       if (session.status === 'ONGOING' && session.zoomMeetingId) {
         try {
           zoomParticipants = await zoomService.getMeetingParticipants(
@@ -1053,8 +1054,8 @@ export class ZoomController {
       }
 
       // Add participants to session and send SMTP emails
-      const newParticipants = [];
-      const emailPromises = [];
+      const newParticipants: any[] = [];
+      const emailPromises: any[] = [];
 
       for (const email of invitees) {
         const invitedUser = await prisma.user.findUnique({
