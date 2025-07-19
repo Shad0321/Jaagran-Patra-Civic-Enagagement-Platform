@@ -28,9 +28,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
     { path: '/members', icon: UserCog, label: 'Member Management' },
     { path: '/issues', icon: AlertCircle, label: 'Issue Management' },
     { path: '/news', icon: Newspaper, label: 'News Management' },
-    { path: '/notifications', icon: Bell, label: 'Notifications' },
-    { path: '/sessions', icon: Calendar, label: 'Session Scheduler' },
-    { path: '/chatbot', icon: MessageSquare, label: 'Chatbot Management' },
+    // { path: '/notifications', icon: Bell, label: 'Notifications' },
+    // { path: '/sessions', icon: Calendar, label: 'Session Scheduler' },
+    // { path: '/chatbot', icon: MessageSquare, label: 'Chatbot Management' },
     { path: '/analytics', icon: BarChart3, label: 'Analytics & Reports' },
     { path: '/settings', icon: Settings, label: 'Settings' },
   ];

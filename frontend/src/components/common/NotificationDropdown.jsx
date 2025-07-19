@@ -158,7 +158,7 @@ const NotificationDropdown = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 z-50 transform transition-all duration-200 origin-top-right">
+        <div className="absolute -right-12 sm:right-0 mt-2 w-[280px] sm:w-96 bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 z-50 transform transition-all duration-200 origin-top-right">
           {/* Header */}
           <div className="p-4 border-b border-primary/10">
             <div className="flex items-center justify-between">

@@ -49,3 +49,122 @@
 *::-webkit-scrollbar {
   display:none
 }
+
+/* ============================================= */
+/* Google Translate Widget Base Styling */
+/* ============================================= */
+
+/* Hide Google's default elements */
+.goog-te-banner-frame,
+#goog-gt-tt,
+#goog-gt-vt,
+.VIpgJd-suEOdc,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf {
+  display: none !important;
+}
+
+/* Extra hiding for tooltip elements */
+#goog-gt-tt {
+  visibility: hidden !important;
+}
+
+#goog-gt-tt:hover {
+  visibility: hidden !important;
+}
+
+/* ============================================= */
+/* Gadget Container Styling */
+/* ============================================= */
+
+.goog-te-gadget-icon {
+  display: none !important;
+  background-position: 0 0 !important;
+}
+
+.goog-te-gadget-simple {
+  /* Layout */
+  padding: 10px !important;
+  width: min-content !important;
+  
+  /* Appearance */
+  background-color: white !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 100% !important;
+  box-shadow: 0 1px 3px #0000001a !important;
+  
+  /* Typography */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 14px !important;
+  
+  /* Animation */
+  transition: all 0.2s ease !important;
+}
+
+/* Emoji language indicator */
+.goog-te-gadget-simple::after {
+  content: "🗣️";
+}
+
+/* Hover state */
+.goog-te-gadget-simple:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ============================================= */
+/* Link & Text Elements */
+/* ============================================= */
+
+.VIpgJd-ZVi9od-xl07Ob-lTBxed {
+  display: none !important;
+  color: #4a5568 !important;
+  text-decoration: none !important;
+  align-items: center !important;
+  width: min-content;
+}
+
+.VIpgJd-ZVi9od-xl07Ob-lTBxed span {
+  color: inherit !important;
+}
+
+.VIpgJd-ZVi9od-xl07Ob-lTBxed span[aria-hidden="true"] {
+  font-size: 12px !important;
+}
+
+/* Hide "Select Language" text */
+.goog-te-gadget-simple > span:first-child,
+.goog-te-gadget-simple a > span:first-child,
+.goog-te-menu-value span:first-child {
+  display: none !important;
+}
+
+/* Remove language selector arrow border */
+.VIpgJd-ZVi9od-xl07Ob-lTBxed span[style*="border-left"] {
+  border-left: none !important;
+}
+
+/* ============================================= */
+/* Dropdown Menu Styling */
+/* ============================================= */
+
+.goog-te-menu-value span {
+  color: #4a5568 !important;
+}
+
+/* ============================================= */
+/* Translated Content Adjustment */
+/* ============================================= */
+
+.translated-ltr {
+  z-index: 0 !important;
+}
+
+/* ============================================= */
+/* Responsive Adjustments */
+/* ============================================= */
+
+@media (max-width: 400px) {
+  #google_translate_element {
+    top: 80px !important;
+    right: 15px !important;
+  }
+}

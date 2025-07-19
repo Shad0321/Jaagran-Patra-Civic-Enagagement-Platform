@@ -1181,7 +1181,7 @@ const IssueManagement = () => {
                 <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
                   {/* Media Display - Left Side */}
                   <div className="lg:w-1/3 flex-shrink-0">
-                    <MediaDisplay issue={issue} className="rounded-lg overflow-hidden w-full min-h-48 sm:h-56 lg:h-full object-cover" />
+                    <MediaDisplay issue={issue} className="rounded-lg overflow-hidden w-full min-h-48 sm:min-h-56 lg:h-full object-cover" />
                   </div>
 
                   {/* Details - Right Side */}

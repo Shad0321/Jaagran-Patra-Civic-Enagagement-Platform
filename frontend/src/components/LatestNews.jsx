@@ -276,7 +276,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
 
         {/* News List */}
         {news.length > 0 ? (
-          <div className={`grid gap-6 ${showFull ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+          <div className={`grid gap-6 ${'grid-cols-1'}`}>
             {news.map((item) => (
               <NewsCard key={item.id} item={item} compact={!showFull} />
             ))}

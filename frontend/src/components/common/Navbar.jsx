@@ -105,7 +105,9 @@ const Navbar = () => {
             </span>
           )}
           <NotificationDropdown />
-          <div className="relative w-10 h-10 rounded-full border-3 border-primary">
+          <Link 
+          to={"/my-account"}
+          className="relative w-10 h-10 rounded-full border-3 border-primary">
             <img
               className="object-cover w-full h-full rounded-full"
               src={
@@ -115,7 +117,7 @@ const Navbar = () => {
               }
               alt="Avatar"
             />
-          </div>
+          </Link>
         </div>
       </div>
 
