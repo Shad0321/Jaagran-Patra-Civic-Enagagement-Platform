@@ -17,6 +17,7 @@ import {
   Award,
   TrendingUp
 } from 'lucide-react';
+import logo from "../assets/logo/logo-b.png"
 
 const Home = () => {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -101,8 +102,8 @@ const Home = () => {
             {/* Logo */}
             <div className="flex items-center">
               <Link to="/" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 flex items-center justify-center">
+                  <img src={logo} alt="" />
                 </div>
                 <div>
                   <span className="text-2xl font-bold text-gray-900">Jaagran</span>
@@ -217,32 +218,33 @@ const Home = () => {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-green-100/30 via-transparent to-emerald-100/30"></div>
-        <div className="absolute top-0 left-0 w-full h-full opacity-5">
-          <div className="absolute top-20 left-20 w-32 h-32 bg-green-400 rounded-full blur-3xl"></div>
-          <div className="absolute top-60 right-32 w-48 h-48 bg-emerald-400 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-40 left-1/3 w-40 h-40 bg-green-300 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src="https://imgs.search.brave.com/FP_K0kep9oKiXQG-JB5kA19MMTzqXNmGRemtdglBGBA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTE0/MzQ5NDA2NS9waG90/by9jaGVlcmZ1bC1l/bGVtZW50YXJ5LWFn/ZS1jaGlsZC1wb3J0/cmFpdC13aXRoLWlu/ZGlhbi1uYXRpb25h/bC1mbGFnLmpwZz9z/PTYxMng2MTImdz0w/Jms9MjAmYz0zNThK/OHEwYjdzQjBYU1h3/Vi1VZG0tSGtnRkpD/eXBodHNYQ0YwdlBk/b284PQ"
+            alt="Background"
+            className="w-full h-full object-cover object-center opacity-20"
+          />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20">
           <div className="text-center">
-            <div className="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium mb-8">
+            <div className="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full font-medium mb-8 text-xs sm:text-sm">
               <Sparkles className="w-4 h-4 mr-2" />
               Empowering Democratic Participation
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6">
               <span className="text-gray-900">Jaagran</span>{' '}
               <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 Patra
               </span>
             </h1>
 
-            <p className="text-2xl text-green-700 font-semibold mb-4">
+            <p className="text-lg sm:text-2xl text-green-700 font-semibold mb-4">
               Speed is True Progress
             </p>
 
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
+            <p className="text-sm sm:text-lg text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
               A civic engagement platform empowering citizens and representatives to resolve local issues efficiently.
               Track, report, and act — transparently. Join thousands of citizens making a difference in their communities.
             </p>
@@ -252,7 +254,7 @@ const Home = () => {
               {isAuthenticated ? (
                 <Link
                   to="/dashboard"
-                  className="group bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="group bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-2xl text-xs sm:text-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   <span className="flex items-center justify-center">
                     Go to Dashboard

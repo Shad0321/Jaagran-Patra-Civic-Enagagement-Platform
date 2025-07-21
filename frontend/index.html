@@ -2,22 +2,126 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jaagran Patra</title>
+
+    <!-- SEO Meta -->
+    <meta
+      name="description"
+      content="Jaagran Patra - Civic engagement platform for news, issues, and analytics."
+    />
+    <meta
+      name="keywords"
+      content="Jaagran Patra, civic engagement, news, issues, analytics, India, Uttarakhand, MLA, government, politics, citizen portal"
+    />
+    <meta name="robots" content="noindex, nofollow" />
+<meta name="googlebot" content="noindex, nofollow" />
+<meta name="bingbot" content="noindex, nofollow" />
+    <link rel="robots" href="/robots.txt" />
+    <link rel="sitemap" type="application/yaml" href="/sitemap.yaml" />
+
+    <!-- Open Graph Meta -->
+    <meta property="og:title" content="Jaagran Patra" />
+    <meta
+      property="og:description"
+      content="Empowering civic engagement with news, issue tracking, and analytics."
+    />
+    <meta property="og:image" content="https://your-domain.com/og-image.png" />
+    <meta property="og:url" content="https://your-domain.com/" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card Meta -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jaagran Patra" />
+    <meta
+      name="twitter:description"
+      content="Empowering civic engagement with news, issue tracking, and analytics."
+    />
+    <meta name="twitter:image" content="https://your-domain.com/og-image.png" />
+    <meta name="twitter:site" content="@yourtwitterhandle" />
+    <script>
+      // Hide AI bot on specific pages
+      (function () {
+        // Define pages where you want to hide the AI bot
+        const hiddenPages = [
+          '/chat',
+          '/payment',
+          '/login',
+          '/register',
+          '/admin',
+          '/dashboard',
+        ];
+
+        // Get current page path
+        const currentPath = window.location.pathname;
+
+        // Check if current page should hide the bot
+        const shouldHide = hiddenPages.some(
+          (page) => currentPath.includes(page) || currentPath === page
+        );
+
+        if (shouldHide) {
+          // Wait for DOM to be ready
+          function hideBot() {
+            const botContainer = document.querySelector(
+              '.embedded-agent-container'
+            );
+            if (botContainer) {
+              botContainer.style.display = 'none';
+            }
+          }
+
+          // Try immediately and also wait for DOM
+          hideBot();
+          document.addEventListener('DOMContentLoaded', hideBot);
+
+          // Also use MutationObserver in case bot loads later
+          const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+              mutation.addedNodes.forEach(function (node) {
+                if (node.nodeType === 1) {
+                  const botContainer =
+                    node.querySelector?.('.embedded-agent-container') ||
+                    (node.classList?.contains('embedded-agent-container')
+                      ? node
+                      : null);
+                  if (botContainer) {
+                    botContainer.style.display = 'none';
+                  }
+                }
+              });
+            });
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <div id="google_translate_element" style="position: absolute; top: 100px; right: 10px; z-index: 10;"></div>
+    <div
+      id="google_translate_element"
+      style="position: absolute; top: 100px; right: 10px; z-index: 10"
+    ></div>
+
+    <!-- Google Translate -->
     <script type="text/javascript">
       function googleTranslateElementInit() {
         new google.translate.TranslateElement(
-          {pageLanguage: 'en', includedLanguages: 'en,hi', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,hi',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
           'google_translate_element'
         );
       }
     </script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>    <script type="module" src="/src/main.jsx"></script>
-<script src='https://www.noupe.com/embed/0198237dc2247d588fa06f4082da701c23c3.js'></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Main App -->
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="https://www.noupe.com/embed/0198237dc2247d588fa06f4082da701c23c3.js"></script>
   </body>
 </html>

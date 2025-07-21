@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react'; // Added useCallback
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
 import Loader from '../components/common/Loader';
@@ -49,8 +49,8 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative animate-scale-in">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative animate-scale-in max-h-[90vh] overflow-y-auto">
                 <button
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-light transition-colors"
                     onClick={onClose}
@@ -126,8 +126,6 @@ const GroupMembersModal = ({ group, onClose, onMemberRemoved }) => {
     const { user } = useSelector((state) => state.user);
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(false);
-    // const [inviteUserId, setInviteUserId] = useState('');
-    // const [inviteLoading, setInviteLoading] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -146,25 +144,6 @@ const GroupMembersModal = ({ group, onClose, onMemberRemoved }) => {
         }
     };
 
-    // const handleInviteMember = async (e) => {
-    //     e.preventDefault();
-    //     if (!inviteUserId.trim()) return;
-
-    //     setInviteLoading(true);
-    //     setError('');
-    //     try {
-    //         await api.post(`/chat/groups/${group.id}/invite`, {
-    //             userId: inviteUserId
-    //         });
-    //         setInviteUserId('');
-    //         fetchMembers();
-    //     } catch (err) {
-    //         setError(err?.response?.data?.message || 'Failed to invite member');
-    //     } finally {
-    //         setInviteLoading(false);
-    //     }
-    // };
-
     const handleRemoveMember = async (userId) => {
         if (!confirm('Are you sure you want to remove this member?')) return;
 
@@ -180,8 +159,8 @@ const GroupMembersModal = ({ group, onClose, onMemberRemoved }) => {
     const isOwner = group.owner?.id === user?.id;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md relative max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md relative max-h-[90vh] overflow-y-auto">
                 <button
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-light transition-colors"
                     onClick={onClose}
@@ -190,34 +169,10 @@ const GroupMembersModal = ({ group, onClose, onMemberRemoved }) => {
                 </button>
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">Group Members{members.length && ` (${members.length})` || ''}</h2>
 
-                {/* Invite Member Form */}
-                {/* {isOwner && (
-                    <form onSubmit={handleInviteMember} className="mb-6 pb-6 border-b border-gray-200">
-                        <label className="block text-sm font-semibold mb-2 text-gray-700">Invite Member</label>
-                        <div className="flex gap-3">
-                            <input
-                                type="text"
-                                className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-colors"
-                                placeholder="Enter user ID"
-                                value={inviteUserId}
-                                onChange={(e) => setInviteUserId(e.target.value)}
-                                disabled={inviteLoading}
-                            />
-                            <button
-                                type="submit"
-                                className="px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary-dark disabled:opacity-50 transition-colors"
-                                disabled={inviteLoading || !inviteUserId.trim()}
-                            >
-                                {inviteLoading ? 'Inviting...' : 'Invite'}
-                            </button>
-                        </div>
-                    </form>
-                )} */}
-
                 {error && <div className="text-error text-sm mb-4 bg-red-50 p-3 rounded-lg">{error}</div>}
 
                 {loading ? (
-                    <Loader/>
+                    <Loader />
                 ) : (
                     <div className="space-y-3">
                         {members.map((member) => (
@@ -289,8 +244,8 @@ const PublicGroupsBrowser = ({ onClose, onGroupJoined }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl relative max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
                 <button
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-light transition-colors"
                     onClick={onClose}
@@ -309,8 +264,8 @@ const PublicGroupsBrowser = ({ onClose, onGroupJoined }) => {
                     <div className="space-y-4">
                         {publicGroups.map((group) => (
                             <div key={group.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex-1">
+                                <div className="flex justify-between items-start mb-4 flex-col sm:flex-row sm:items-center">
+                                    <div className="flex-1 mb-4 sm:mb-0">
                                         <h3 className="font-bold text-lg text-gray-800 mb-2">{group.name}</h3>
                                         <p className="text-gray-600 mb-3">{group.description}</p>
                                         <div className="flex flex-wrap gap-2 text-sm text-gray-500">
@@ -322,7 +277,7 @@ const PublicGroupsBrowser = ({ onClose, onGroupJoined }) => {
                                         </div>
                                     </div>
                                     <button
-                                        className="px-6 py-2 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium"
+                                        className="px-6 py-2 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium self-end sm:self-auto"
                                         onClick={() => handleJoinGroup(group.id)}
                                     >
                                         Join
@@ -365,26 +320,31 @@ const ChatPage = () => {
     const messagesEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
     const autoRefreshIntervalRef = useRef(null);
+    const [isGroupListOpen, setIsGroupListOpen] = useState(true); // State for mobile group list visibility
+    const isScrollingUp = useRef(false); // New ref to track user's scroll intent
 
     // Auto-refresh functionality
     useEffect(() => {
         if (selectedGroup) {
-            // Start auto-refresh when a group is selected
             const startAutoRefresh = () => {
                 if (autoRefreshIntervalRef.current) {
                     clearInterval(autoRefreshIntervalRef.current);
                 }
 
                 autoRefreshIntervalRef.current = setInterval(() => {
+                    const container = messagesContainerRef.current;
+                    // Only auto-scroll on refresh if the user is at the bottom or hasn't explicitly scrolled up
+                    const shouldAutoScroll = !isScrollingUp.current && container && (container.scrollHeight - container.scrollTop <= container.clientHeight + 50);
+
                     if (selectedGroup && !messagesLoading) {
-                        fetchMessages(selectedGroup.id, 1, true); // silent refresh
+                        // Fetch messages, and if they were at the bottom or not scrolling, auto-scroll after fetch
+                        fetchMessages(selectedGroup.id, 1, true, shouldAutoScroll);
                     }
                 }, 3000); // Refresh every 3 seconds
             };
 
             startAutoRefresh();
 
-            // Cleanup on unmount or group change
             return () => {
                 if (autoRefreshIntervalRef.current) {
                     clearInterval(autoRefreshIntervalRef.current);
@@ -418,16 +378,36 @@ const ChatPage = () => {
             setMessages([]);
             setCurrentPage(1);
             setHasMoreMessages(true);
-            fetchMessages(selectedGroup.id, 1);
+            fetchMessages(selectedGroup.id, 1, false, true); // Scroll to bottom on initial load
         }
     }, [selectedGroup]);
 
-    // Scroll to bottom on new messages
+    // Scroll to bottom on new messages (only if user is at the bottom or hasn't scrolled up)
     useEffect(() => {
-        if (messagesEndRef.current && messages.length > 0) {
+        if (messagesEndRef.current && messages.length > 0 && !isScrollingUp.current) {
+            // This is primarily for when new messages arrive while the user is already at the bottom.
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [messages]);
+    }, [messages]); // Dependency on messages ensures it runs after messages update
+
+    // Add scroll event listener to detect when user scrolls up
+    const handleScroll = useCallback(() => {
+        const container = messagesContainerRef.current;
+        if (container) {
+            const atBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 10;
+            // If not at the bottom, user must have scrolled up
+            isScrollingUp.current = !atBottom;
+        }
+    }, []);
+
+    useEffect(() => {
+        const container = messagesContainerRef.current;
+        if (container) {
+            container.addEventListener('scroll', handleScroll);
+            return () => container.removeEventListener('scroll', handleScroll);
+        }
+    }, [handleScroll]); // Re-attach listener if handleScroll changes (due to useCallback)
+
 
     const fetchGroups = async () => {
         setLoading(true);
@@ -442,20 +422,31 @@ const ChatPage = () => {
         }
     };
 
-    const fetchMessages = async (groupId, page = 1, silent = false) => {
+    const fetchMessages = async (groupId, page = 1, silent = false, scrollToBottom = false) => {
         if (!silent) setMessagesLoading(true);
         try {
             const res = await api.get(`/chat/groups/${groupId}/messages?page=${page}&limit=20`);
             const newMessages = res.data.data.messages || [];
 
-            if (page === 1) {
-                setMessages(newMessages);
-            } else {
-                setMessages(prev => [...newMessages, ...prev]);
-            }
+            setMessages(prev => {
+                // Ensure messages are sorted from oldest to newest for consistent display
+                const combinedMessages = page === 1 ? newMessages : [...newMessages, ...prev];
+                // Remove duplicates in case of overlap between pages or refresh
+                const uniqueMessages = Array.from(new Map(combinedMessages.map(msg => [msg.id, msg])).values());
+                return uniqueMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            });
 
             setHasMoreMessages(newMessages.length === 20);
             setCurrentPage(page);
+
+            // Only scroll to bottom if explicitly requested or if it's the first page load
+            if (scrollToBottom && messagesEndRef.current) {
+                // Wait for the DOM to update with new messages before scrolling
+                setTimeout(() => {
+                    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                }, 0); // Use setTimeout to ensure DOM is updated
+            }
+
         } catch (err) {
             if (!silent) {
                 setError(err?.response?.data?.message || 'Failed to load messages');
@@ -467,35 +458,53 @@ const ChatPage = () => {
 
     const loadMoreMessages = () => {
         if (selectedGroup && hasMoreMessages && !messagesLoading) {
-            fetchMessages(selectedGroup.id, currentPage + 1);
+            const container = messagesContainerRef.current;
+            const oldScrollHeight = container.scrollHeight; // Capture scroll height BEFORE new messages
+
+            fetchMessages(selectedGroup.id, currentPage + 1).then(() => {
+                // After messages are loaded and state is updated, calculate new scroll position
+                setTimeout(() => {
+                    const newScrollHeight = container.scrollHeight;
+                    // Adjust scroll top to keep the old top message in view
+                    container.scrollTop = newScrollHeight - oldScrollHeight;
+                }, 0); // Ensures DOM has updated before calculating scroll
+            });
         }
     };
+
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!message.trim() || !selectedGroup) return;
 
         const tempMessage = {
-            id: Date.now(),
+            id: Date.now(), // Unique ID for temporary message
             message,
             sender: user,
             createdAt: new Date().toISOString(),
             temporary: true
         };
 
-        setMessages(prev => [...prev, tempMessage]);
-        setMessage('');
+        setMessages(prev => [...prev, tempMessage]); // Add temp message to UI immediately
+        setMessage(''); // Clear input
+
+        // Ensure we scroll to the bottom when a new message is sent
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
 
         try {
             await api.post(`/chat/groups/${selectedGroup.id}/messages`, {
                 message,
                 messageType: 'TEXT',
             });
-            // Remove temp message and fetch fresh messages
-            setMessages(prev => prev.filter(msg => msg.id !== tempMessage.id));
-            fetchMessages(selectedGroup.id, 1, true);
+            // After successful send, trigger a full refresh for the latest messages
+            // This will replace the temporary message with the actual one from the server
+            // and ensure all new messages are caught.
+            fetchMessages(selectedGroup.id, 1, true, true); // Silent refresh, scroll to bottom
         } catch (err) {
             setError(err?.response?.data?.message || 'Failed to send message');
+            // Remove the temporary message if sending fails
             setMessages(prev => prev.filter(msg => msg.id !== tempMessage.id));
         }
     };
@@ -504,6 +513,7 @@ const ChatPage = () => {
         try {
             await api.post(`/chat/groups/${groupId}/join`);
             fetchGroups();
+            setIsGroupListOpen(false); // Hide group list after joining on mobile
         } catch (err) {
             setError(err?.response?.data?.message || 'Failed to join group');
         }
@@ -525,6 +535,9 @@ const ChatPage = () => {
 
     const markMessageAsRead = async (messageId) => {
         try {
+            // Optimization: Only mark as read if it's not our own message and not already marked
+            // You might need to check 'readBy' array for user ID here.
+            // For simplicity, I'm leaving it as is, assuming backend handles idempotency.
             await api.post(`/chat/messages/${messageId}/read`);
         } catch (err) {
             console.error('Failed to mark message as read:', err?.response?.data?.message || 'Unknown error');
@@ -534,58 +547,82 @@ const ChatPage = () => {
     const renderGroupItem = (group, isMember = true) => (
         <div
             key={group.id}
-            className={`p-4 mb-3 rounded-xl cursor-pointer border-2 transition-all duration-200 ${selectedGroup && selectedGroup.id === group.id
+            className={`p-4 sm:p-5 mb-3 rounded-xl cursor-pointer border-2 transition-all duration-200 ${selectedGroup && selectedGroup.id === group.id
                     ? 'bg-primary text-white border-primary shadow-lg'
                     : 'hover:bg-gray-50 border-gray-200 hover:border-primary'
                 }`}
-            onClick={() => setSelectedGroup(group)}
+            onClick={() => {
+                setSelectedGroup(group);
+                setIsGroupListOpen(false); // Close group list on mobile
+            }}
         >
-            <div className="flex justify-between items-start">
-                <div className="flex-1">
-                    <div className="font-bold text-lg mb-1">{group.name}</div>
-                    <div className={`text-sm mb-2 ${selectedGroup?.id === group.id ? 'text-primary-light' : 'text-gray-500'}`}>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                {/* Left content */}
+                <div className="flex-1 min-w-0">
+                    <div className="font-bold text-base sm:text-lg mb-1 truncate">
+                        {group.name}
+                    </div>
+
+                    <div
+                        className={`text-sm sm:text-base mb-2 ${selectedGroup?.id === group.id ? 'text-primary-light' : 'text-gray-500'
+                            }`}
+                    >
                         {GROUP_TYPE_LABELS[group.type] || group.type}
                     </div>
-                    <div className={`text-sm flex items-center gap-4 ${selectedGroup?.id === group.id ? 'text-primary-light' : 'text-gray-400'}`}>
+
+                    <div
+                        className={`text-xs sm:text-sm flex flex-wrap items-center gap-4 ${selectedGroup?.id === group.id ? 'text-primary-light' : 'text-gray-400'
+                            }`}
+                    >
                         <span>👥 {group._count?.members || 0} members</span>
                         <span>💬 {group._count?.messages || 0} messages</span>
                     </div>
-                    {group.messages && group.messages[0] && (
-                        <div className={`text-sm mt-2 truncate ${selectedGroup?.id === group.id ? 'text-primary-light' : 'text-gray-600'}`}>
-                            <strong>Last:</strong> {group.messages[0].message.substring(0, 20)}{group.messages[0].message.length > 20 ? '...' : ''}
+
+                    {group.messages?.[0] && (
+                        <div
+                            className={`text-xs sm:text-sm mt-2 truncate ${selectedGroup?.id === group.id ? 'text-primary-light' : 'text-gray-600'
+                                }`}
+                        >
+                            <strong>Last:</strong>{' '}
+                            {group.messages[0].message.substring(0, 50)}
+                            {group.messages[0].message.length > 50 ? '...' : ''}
                         </div>
                     )}
                 </div>
 
-                {isMember && group.owner?.id !== user?.id && (
-                    <button
-                        className={`text-sm px-3 py-1 rounded-lg transition-colors ${selectedGroup?.id === group.id
-                                ? 'text-primary-light hover:bg-white hover:text-primary'
-                                : 'text-error hover:bg-red-50'
-                            }`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleLeaveGroup(group.id);
-                        }}
-                    >
-                        Leave
-                    </button>
-                )}
-            </div>
+                {/* Right actions */}
+                <div className="flex flex-col gap-2 shrink-0 sm:items-end">
+                    {isMember && group.owner?.id !== user?.id && (
+                        <button
+                            className={`text-xs sm:text-sm px-3 py-1 rounded-lg transition-colors ${selectedGroup?.id === group.id
+                                    ? 'text-primary-light hover:bg-white hover:text-primary'
+                                    : 'text-error hover:bg-red-50'
+                                }`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleLeaveGroup(group.id);
+                            }}
+                        >
+                            Leave
+                        </button>
+                    )}
 
-            {!isMember && (
-                <button
-                    className="mt-3 px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-medium"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleJoinGroup(group.id);
-                    }}
-                >
-                    Join Group
-                </button>
-            )}
+                    {!isMember && (
+                        <button
+                            className="px-4 py-2 text-xs sm:text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-medium"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleJoinGroup(group.id);
+                            }}
+                        >
+                            Join Group
+                        </button>
+                    )}
+                </div>
+            </div>
         </div>
     );
+
 
     return (
         <>
@@ -614,28 +651,28 @@ const ChatPage = () => {
                 />
             )}
 
-            <div className="flex h-[88vh] bg-white rounded-2xl shadow-xl overflow-hidden">
-                {/* Group List */}
-                <div className="w-1/3 border-r border-gray-200 flex flex-col bg-gray-50">
-                    <div className="p-6 border-b border-gray-200 bg-white">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-bold text-gray-800">Chat Groups</h2>
+            <div className="flex flex-col h-[88vh] bg-white rounded-2xl shadow-xl md:flex-row">
+                {/* Group List - Hidden on small screens if a group is selected, otherwise full width */}
+                <div className={`${isGroupListOpen ? 'flex' : 'hidden'} w-full md:w-1/3 border-r border-gray-200 flex-col bg-gray-50 md:flex`}>
+                    <div className="p-4 border-b border-gray-200 bg-white sm:p-6">
+                        <div className="flex items-center justify-between mb-4 sm:mb-6">
+                            <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">Chat Groups</h2>
                             <div className="flex items-center gap-2">
                                 <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-success' : 'bg-error'}`}></div>
                                 <span className="text-sm text-gray-500">{isOnline ? 'Online' : 'Offline'}</span>
                             </div>
                         </div>
 
-                        <div className="flex gap-3">
+                        <div className="flex gap-2 flex-wrap sm:flex-nowrap">
                             {user?.role === 'MLA' &&
                                 <button
-                                className="flex-1 px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium"
-                                onClick={() => setShowCreateModal(true)}
-                            >
-                                + New Group
-                            </button>}
+                                    className="flex-1 px-3 py-2 text-sm bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium whitespace-nowrap sm:px-4 sm:py-2"
+                                    onClick={() => setShowCreateModal(true)}
+                                >
+                                    + New Group
+                                </button>}
                             <button
-                                className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-colors font-medium"
+                                className="flex-1 px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-colors font-medium whitespace-nowrap sm:px-4 sm:py-2"
                                 onClick={() => setShowPublicGroupsBrowser(true)}
                             >
                                 Browse Public
@@ -647,7 +684,7 @@ const ChatPage = () => {
                         )}
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-6">
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6">
                         {loading && <div className="text-center py-8 text-gray-500">Loading groups...</div>}
 
                         {/* Member Groups */}
@@ -668,43 +705,80 @@ const ChatPage = () => {
 
                         {!loading && memberGroups.length === 0 && publicGroups.length === 0 && (
                             <div className="text-center py-12 text-gray-500">
-                                <div className="text-6xl mb-4">💬</div>
-                                <div className="text-lg font-medium mb-2">No groups yet</div>
-                                <div className="text-sm">Create a new group or browse public groups to get started.</div>
+                                <div className="text-5xl mb-4 sm:text-6xl">💬</div>
+                                <div className="text-base font-medium mb-2 sm:text-lg">No groups yet</div>
+                                <div className="text-xs sm:text-sm">Create a new group or browse public groups to get started.</div>
+                                {user && user.role === 'MLA' &&
+                                    <button
+                                        className="mt-6 px-5 py-2 sm:px-6 sm:py-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium"
+                                        onClick={() => setShowCreateModal(true)}
+                                    >
+                                        Create New Group
+                                    </button>}
                             </div>
                         )}
                     </div>
                 </div>
 
                 {/* Chat Window */}
-                <div className="flex-1 flex flex-col">
+                <div className={`flex-1 flex-col ${selectedGroup ? 'flex' : 'hidden'} md:flex`}>
                     {selectedGroup ? (
                         <>
-                            <div className="flex items-center justify-between border-b border-gray-200 p-6 bg-white">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
-                                        <span className="text-primary font-bold text-lg">
+                            <div className="flex items-center justify-between border-b border-gray-200 p-3 bg-white sm:p-6">
+                                <div className="flex items-center gap-2 sm:gap-4">
+                                    {/* Back button for mobile */}
+                                    <button
+                                        className="md:hidden p-1.5 rounded-full hover:bg-gray-100"
+                                        onClick={() => {
+                                            setSelectedGroup(null);
+                                            setIsGroupListOpen(true); // Open group list on mobile
+                                        }}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-gray-600 sm:h-6 sm:w-6"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M15 19l-7-7 7-7"
+                                            />
+                                        </svg>
+                                    </button>
+
+                                    <div className="w-9 h-9 bg-primary-light rounded-full flex items-center justify-center sm:w-12 sm:h-12">
+                                        <span className="text-primary font-bold text-sm sm:text-lg">
                                             {selectedGroup.name.charAt(0)}
                                         </span>
                                     </div>
-                                    <div>
-                                        <div className="font-bold text-xl text-gray-800">{selectedGroup.name}</div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-2">
+
+                                    <div className="min-w-0">
+                                        <div className="font-bold text-sm text-gray-800 truncate max-w-[120px] sm:max-w-full sm:text-xl">
+                                            {selectedGroup.name}
+                                        </div>
+                                        <div className="text-xs text-gray-500 flex items-center gap-1 sm:text-sm sm:gap-2 truncate">
                                             <span>{GROUP_TYPE_LABELS[selectedGroup.type] || selectedGroup.type}</span>
                                             <span>•</span>
                                             <span>{selectedGroup._count?.members || 0} members</span>
                                         </div>
                                     </div>
                                 </div>
+
                                 <button
-                                    className="px-4 py-2 text-primary hover:bg-primary-light rounded-lg transition-colors font-medium"
+                                    className="px-2.5 py-1 mr-4 text-xs sm:text-sm text-primary hover:bg-primary-light rounded-lg transition-colors font-medium sm:px-4 sm:py-2 cursor-pointer"
                                     onClick={() => setShowMembersModal(true)}
                                 >
                                     View Members
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-6 bg-gray-50" ref={messagesContainerRef}>
+
+                            {/* Message Display Area */}
+                            <div className="flex-1 min-h-0 max-h-[calc(80dvh_-_72px)] overflow-y-auto p-4 bg-gray-50 flex flex-col" ref={messagesContainerRef}>
                                 {hasMoreMessages && (
                                     <div className="text-center mb-6">
                                         <button
@@ -727,40 +801,40 @@ const ChatPage = () => {
 
                                 {messages.length === 0 && !messagesLoading && (
                                     <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                                        <div className="text-6xl mb-4">💬</div>
-                                        <div className="text-lg font-medium mb-1">No messages yet</div>
+                                        <div className="text-5xl mb-4 sm:text-6xl">💬</div>
+                                        <div className="text-base font-medium mb-1 sm:text-lg">No messages yet</div>
                                         <div className="text-sm">Start the conversation!</div>
                                     </div>
                                 )}
-
-                                <div className="space-y-4">
+                                {/* Messages will be rendered here */}
+                                <div className="space-y-4 flex-grow">
                                     {messages.map((msg) => (
                                         <div
                                             key={msg.id}
                                             className={`flex ${msg.sender?.id === user?.id ? 'justify-end' : 'justify-start'}`}
                                             onMouseEnter={() => markMessageAsRead(msg.id)}
                                         >
-                                            <div className={`max-w-xs lg:max-w-md p-4 rounded-2xl shadow-sm transition-all duration-200 ${msg.sender?.id === user?.id
-                                                    ? 'bg-primary text-white rounded-tr-none'
-                                                    : 'bg-white text-gray-800 rounded-tl-none border border-gray-200'
+                                            <div className={`max-w-[75%] sm:max-w-xs lg:max-w-md p-3 rounded-2xl shadow-sm transition-all duration-200 ${msg.sender?.id === user?.id
+                                                ? 'bg-primary text-white rounded-tr-none'
+                                                : 'bg-white text-gray-800 rounded-tl-none border border-gray-200'
                                                 } ${msg.temporary ? 'opacity-70' : ''}`}>
                                                 {msg.sender?.id !== user?.id && (
-                                                    <div className="font-semibold text-sm mb-1 flex items-center gap-2">
+                                                    <div className="font-semibold text-xs mb-1 flex items-center gap-1 sm:text-sm sm:gap-2">
                                                         {msg.sender?.avatar ? (
                                                             <img
                                                                 src={msg.sender.avatar}
                                                                 alt={msg.sender.name}
-                                                                className="w-6 h-6 rounded-full object-cover"
+                                                                className="w-5 h-5 rounded-full object-cover sm:w-6 sm:h-6"
                                                             />
                                                         ) : (
-                                                            <span className="w-6 h-6 rounded-full bg-primary-light text-primary flex items-center justify-center text-xs font-bold">
+                                                            <span className="w-5 h-5 rounded-full bg-primary-light text-primary flex items-center justify-center text-xs font-bold sm:w-6 sm:h-6">
                                                                 {msg.sender?.name?.charAt(0)}
                                                             </span>
                                                         )}
                                                         {msg.sender?.name || 'Unknown'}
                                                     </div>
                                                 )}
-                                                <div className="break-words text-sm">{msg.message}</div>
+                                                <div className="break-words text-sm sm:text-base">{msg.message}</div>
                                                 <div className={`text-xs mt-1 flex items-center justify-end gap-1 ${msg.sender?.id === user?.id ? 'text-primary-light' : 'text-gray-500'
                                                     }`}>
                                                     {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -785,11 +859,12 @@ const ChatPage = () => {
                                 <div ref={messagesEndRef} />
                             </div>
 
+
                             <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white">
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="text"
-                                        className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-colors"
+                                        className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-colors text-sm sm:text-base"
                                         placeholder="Type your message..."
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
@@ -797,10 +872,10 @@ const ChatPage = () => {
                                     />
                                     <button
                                         type="submit"
-                                        className="w-12 h-12 bg-primary text-white rounded-xl hover:bg-primary-dark disabled:opacity-50 transition-colors flex items-center justify-center"
+                                        className="w-10 h-10 bg-primary text-white rounded-xl hover:bg-primary-dark disabled:opacity-50 transition-colors flex items-center justify-center sm:w-12 sm:h-12"
                                         disabled={loading || !message.trim()}
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                         </svg>
                                     </button>
@@ -810,19 +885,40 @@ const ChatPage = () => {
                     ) : (
                         <div className="flex-1 flex items-center justify-center bg-gray-50">
                             <div className="text-center text-gray-400">
-                                <div className="text-8xl mb-6">💬</div>
-                                <div className="text-2xl font-medium mb-2">Select a group to start chatting</div>
+                                <div className="text-7xl mb-6 sm:text-8xl">💬</div>
+                                <div className="text-xl font-medium mb-2 sm:text-2xl">Select a group to start chatting</div>
                                 <div className="text-sm">Choose from your existing groups or create a new one</div>
-                                <button
-                                    className="mt-6 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium"
-                                    onClick={() => setShowCreateModal(true)}
-                                >
-                                    Create New Group
-                                </button>
+                                {user && user.role === 'MLA' &&
+                                    <button
+                                        className="mt-6 px-5 py-2 sm:px-6 sm:py-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors font-medium"
+                                        onClick={() => setShowCreateModal(true)}
+                                    >
+                                        Create New Group
+                                    </button>}
                             </div>
                         </div>
                     )}
                 </div>
+
+                {/* Mobile Toggle Button for Group List */}
+                {!selectedGroup && (
+                    <div className="fixed bottom-4 right-4 md:hidden z-40">
+                        <button
+                            className="bg-primary text-white p-4 rounded-full shadow-lg"
+                            onClick={() => setIsGroupListOpen(!isGroupListOpen)}
+                        >
+                            {isGroupListOpen ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+                )}
             </div>
         </>
     );

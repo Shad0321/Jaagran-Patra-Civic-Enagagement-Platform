@@ -198,7 +198,7 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
 
       {/* Image Modal */}
       {selectedImageIndex !== null && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center  z-50 p-4 pb-6">
           <div className="relative max-w-6xl w-full max-h-full flex flex-col">
             {/* Close Button */}
             <button

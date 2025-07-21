@@ -190,7 +190,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
   // if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4  pb-6">
       <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-primary/10">
@@ -221,7 +221,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
             <h3 className="font-bold text-gray-900 mb-4">
               Meeting Type
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <label className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'instant' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}>
                 <input
                   type="radio"
@@ -502,13 +502,13 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                 Additional Email Invites
               </label>
               {formData.customEmails.map((email, index) => (
-                <div key={index} className="flex items-center mb-2 gap-2">
+                <div key={index} className="w-full flex items-center mb-2 gap-1 sm:gap-2">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => handleCustomEmailChange(index, e.target.value)}
                     placeholder="Enter email address"
-                    className="flex-1 px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
+                    className="flex-1 px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 max-w-[80%]"
                   />
                   {formData.customEmails.length > 1 && (
                     <button

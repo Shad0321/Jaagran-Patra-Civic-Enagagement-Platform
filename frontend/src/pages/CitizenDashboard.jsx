@@ -205,7 +205,7 @@ const CitizenDashboard = () => {
 
   if (loading) {
     return (
-      <Loader/>
+      <Loader className="w-full h-96 flex justify-center items-center" />
     );
   }
 

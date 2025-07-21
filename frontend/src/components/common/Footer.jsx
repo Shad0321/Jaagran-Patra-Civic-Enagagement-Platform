@@ -1,6 +1,6 @@
 import React from 'react'
-import { Sparkles } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
+import logo from "../../assets/logo/logo-b.png"
 
 const Footer = () => {
   const location = useLocation();
@@ -16,9 +16,11 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
+              <Link to="/" className="flex items-center space-x-3">
+                <div className="w-10 h-10 flex items-center justify-center">
+                  <img src={logo} alt="" />
+                </div>
+              </Link>
               <div>
                 <span className="text-2xl font-bold">Jaagran</span>
                 <span className="text-2xl font-bold text-green-400"> Patra</span>

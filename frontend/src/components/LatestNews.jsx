@@ -207,7 +207,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-slate-50 to-primary/10 relative overflow-hidden">
+    <div className="min-h-screen  overflow-hidden ">
       {/* Background Graphics */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>

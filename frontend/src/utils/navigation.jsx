@@ -1,8 +1,9 @@
 import React from 'react';
 
-// Navigation items based on user roles
+// Navigation items based on user roles - organized by functionality
 export const getNavigationItems = (userRole) => {
   const commonItems = [
+    // Core Dashboard
     {
       id: 'dashboard',
       label: 'Dashboard',
@@ -10,6 +11,8 @@ export const getNavigationItems = (userRole) => {
       icon: 'home',
       roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
     },
+    
+    // Geographic/Location Features
     {
       id: 'election-map',
       label: 'Election Map',
@@ -24,13 +27,24 @@ export const getNavigationItems = (userRole) => {
       icon: 'map-pin',
       roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
     },
+    
+    // Communication Features
     {
       id: 'chats',
       label: 'Chats',
       path: '/chat',
-      icon: 'plus',
+      icon: 'message-circle',
       roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
     },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      path: '/notifications',
+      icon: 'bell',
+      roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
+    },
+    
+    // Information & Updates
     {
       id: 'news',
       label: 'News & Updates',
@@ -42,6 +56,7 @@ export const getNavigationItems = (userRole) => {
 
   const roleBasedItems = {
     CITIZEN: [
+      // Issue Management
       {
         id: 'my-issues',
         label: 'My Issues',
@@ -49,6 +64,8 @@ export const getNavigationItems = (userRole) => {
         icon: 'flag',
         roles: ['CITIZEN'],
       },
+      
+      // People & Profiles
       {
         id: 'mla-profiles',
         label: 'MLA Profiles',
@@ -57,7 +74,9 @@ export const getNavigationItems = (userRole) => {
         roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
       },
     ],
+    
     MEMBER: [
+      // Issue Management
       {
         id: 'assigned-issues',
         label: 'Assigned Issues',
@@ -66,33 +85,14 @@ export const getNavigationItems = (userRole) => {
         roles: ['MEMBER'],
       },
     ],
+    
     MLA: [
+      // Issue Management
       {
         id: 'issues-overview',
         label: 'Issues Overview',
         path: '/issues',
         icon: 'clipboard',
-        roles: ['MLA'],
-      },
-      {
-        id: 'members',
-        label: 'Manage Members',
-        path: '/member-management',
-        icon: 'users',
-        roles: ['MLA'],
-      },
-      {
-        id: 'meetings',
-        label: 'Meeting Management',
-        path: '/meeting-management',
-        icon: 'video',
-        roles: ['MLA'],
-      },
-      {
-        id: 'constituency',
-        label: 'Constituency',
-        path: '/body-management',
-        icon: 'map',
         roles: ['MLA'],
       },
       {
@@ -102,6 +102,35 @@ export const getNavigationItems = (userRole) => {
         icon: 'user-check',
         roles: ['MLA'],
       },
+      
+      // People Management
+      {
+        id: 'members',
+        label: 'Manage Members',
+        path: '/member-management',
+        icon: 'users',
+        roles: ['MLA'],
+      },
+      
+      // Meeting & Communication
+      {
+        id: 'meetings',
+        label: 'Meeting Management',
+        path: '/meeting-management',
+        icon: 'video',
+        roles: ['MLA'],
+      },
+      
+      // Territory Management
+      {
+        id: 'constituency',
+        label: 'Constituency',
+        path: '/body-management',
+        icon: 'map',
+        roles: ['MLA'],
+      },
+      
+      // Analytics & Reports
       {
         id: 'analytics',
         label: 'Analytics',
@@ -110,7 +139,9 @@ export const getNavigationItems = (userRole) => {
         roles: ['MLA'],
       },
     ],
+    
     ADMIN: [
+      // Issue Management
       {
         id: 'all-issues',
         label: 'All Issues',
@@ -118,6 +149,8 @@ export const getNavigationItems = (userRole) => {
         icon: 'clipboard',
         roles: ['ADMIN'],
       },
+      
+      // User Management
       {
         id: 'user-management',
         label: 'User Management',
@@ -132,18 +165,22 @@ export const getNavigationItems = (userRole) => {
         icon: 'crown',
         roles: ['ADMIN'],
       },
-      {
-        id: 'system-settings',
-        label: 'System Settings',
-        path: '/admin/settings',
-        icon: 'settings',
-        roles: ['ADMIN'],
-      },
+      
+      // Analytics & Reports
       {
         id: 'analytics-reports',
         label: 'Analytics & Reports',
         path: '/admin/analytics',
         icon: 'chart',
+        roles: ['ADMIN'],
+      },
+      
+      // System Administration
+      {
+        id: 'system-settings',
+        label: 'System Settings',
+        path: '/admin/settings',
+        icon: 'settings',
         roles: ['ADMIN'],
       },
     ],
@@ -154,15 +191,6 @@ export const getNavigationItems = (userRole) => {
   if (roleBasedItems[userRole]) {
     items.push(...roleBasedItems[userRole]);
   }
-
-  // Add notification item for all roles
-  items.push({
-    id: 'notifications',
-    label: 'Notifications',
-    path: '/notifications',
-    icon: 'bell',
-    roles: ['CITIZEN', 'MEMBER', 'MLA', 'ADMIN'],
-  });
 
   return items.filter((item) => item.roles.includes(userRole));
 };
@@ -204,7 +232,7 @@ export const getIcon = (iconName) => {
         <line x1="4" y1="22" x2="4" y2="15" />
       </svg>
     ),
-    plus: (
+    'message-circle': (
       <svg
         className="size-4"
         xmlns="http://www.w3.org/2000/svg"
@@ -217,8 +245,7 @@ export const getIcon = (iconName) => {
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M5 12h14" />
-        <path d="M12 5v14" />
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
       </svg>
     ),
     clipboard: (
