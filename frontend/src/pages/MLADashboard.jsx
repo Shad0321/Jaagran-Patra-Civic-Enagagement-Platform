@@ -159,7 +159,7 @@ const MLADashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8 text-center">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-primary/10">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-3">
+            <h1 className="py-2 text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-3">
               MLA Dashboard
             </h1>
             <p className="text-xl text-gray-600 mb-2">Welcome back, {user?.name}</p>

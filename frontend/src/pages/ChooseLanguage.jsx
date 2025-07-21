@@ -1,29 +1,63 @@
 import React, { useState } from 'react';
 import { Check } from 'lucide-react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLanguage } from '../redux/slices/languageSlice';
+import { changeGoogleTranslateLanguage, getCurrentGoogleTranslateLanguage } from '../utils/googleTranslateHelper';
+import { languages } from '../utils/constants';
 
 const ChooseLanguage = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState('हिंदी');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { selectedLanguage: currentLanguage } = useSelector((state) => state.language);
 
-  const languages = [
-    { id: 'hindi', name: 'हिंदी', value: 'हिंदी' },
-    { id: 'english', name: 'English', value: 'English' },
-  ];
+  const [selectedLanguage, setSelectedLanguage] = useState(currentLanguage || 'English');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLanguageSelect = (language) => {
+  const handleLanguageSelect = async (language) => {
+    if (isLoading) return;
+    
+    setIsLoading(true);
     setSelectedLanguage(language);
+    
+    try {
+      // Update Redux state
+      dispatch(setLanguage(language));
+      
+      // Get language code for Google Translate
+      const selectedLangObj = languages.find(lang => lang.value === language);
+      if (selectedLangObj) {
+        console.log('Changing to language:', language, 'Code:', selectedLangObj.code);
+        
+        // Check if we're actually changing to a different language
+        const currentGoogleLang = getCurrentGoogleTranslateLanguage();
+        if (currentGoogleLang !== selectedLangObj.code) {
+          // Change Google Translate language
+          const success = await changeGoogleTranslateLanguage(selectedLangObj.code);
+          if (!success) {
+            console.warn('Failed to change Google Translate language');
+          }
+        } else {
+          console.log('Language is already set to:', selectedLangObj.code);
+        }
+      }
+    } catch (error) {
+      console.error('Error setting language:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleContinue = () => {
-    // Store the selected language in Redux and localStorage
-    dispatch(setLanguage(selectedLanguage));
-
-    // Navigate to login page
-    navigate('/login');
+  const handleContinue = async () => {
+    setIsLoading(true);
+    try {
+      navigate('/login');
+    } catch (error) {
+      console.error('Error on continue:', error);
+      navigate('/login'); // Navigate anyway
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,18 +84,16 @@ const ChooseLanguage = () => {
           {languages.map((language) => (
             <button
               key={language.id}
-              onClick={() =>
-                language.name && handleLanguageSelect(language.value)
-              }
+              onClick={() => handleLanguageSelect(language.value)}
+              disabled={isLoading}
               className={`w-full px-6 py-4 rounded-full border-2 transition-all duration-200 flex items-center justify-between ${
                 selectedLanguage === language.value
                   ? 'bg-white text-gray-800 border-white shadow-lg'
                   : 'bg-transparent text-white border-white/30 hover:border-white/60'
-              } ${!language.name ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-              disabled={!language.name}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
-              <span className="text-lg font-medium">{language.name || ''}</span>
-              {selectedLanguage === language.value && language.name && (
+              <span className="text-lg font-medium">{language.name}</span>
+              {selectedLanguage === language.value && (
                 <Check className="w-5 h-5 text-gray-800" />
               )}
             </button>
@@ -71,9 +103,14 @@ const ChooseLanguage = () => {
         {/* Continue Button */}
         <button
           onClick={handleContinue}
-          className="w-full bg-white text-gray-800 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg cursor-pointer"
+          disabled={isLoading}
+          className={`w-full py-4 rounded-full font-semibold text-lg transition-colors duration-200 shadow-lg ${
+            isLoading
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-white text-gray-800 hover:bg-gray-100 cursor-pointer'
+          }`}
         >
-          Continue
+          {isLoading ? 'Setting Language...' : 'Continue'}
         </button>
       </div>
     </div>

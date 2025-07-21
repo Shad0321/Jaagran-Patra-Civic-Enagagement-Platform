@@ -8,6 +8,8 @@ import {
 } from '../redux/slices/userSlice';
 import { Check, User, Lock, Globe, Save } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { changeGoogleTranslateLanguage } from '../utils/googletranslatehelper.js';
+import { languages } from '../utils/constants';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -55,14 +57,19 @@ const Settings = () => {
     }
   }, [user]);
 
-  const languages = [
-    { id: 'hindi', name: 'हिंदी', value: 'हिंदी' },
-    { id: 'english', name: 'English', value: 'English' },
-  ];
-
-  const handleLanguageChange = (language) => {
-    setCurrentLanguage(language);
-    dispatch(setLanguage(language));
+  const handleLanguageChange = async (language) => {
+    try {
+      setCurrentLanguage(language);
+      dispatch(setLanguage(language));
+      // Get language code for Google Translate
+      const selectedLangObj = languages.find(lang => lang.value === language);
+      if (selectedLangObj) {
+        // Change Google Translate language
+        await changeGoogleTranslateLanguage(selectedLangObj.code);
+      }
+    } catch (error) {
+      console.error('Error setting language:', error);
+    }
     setSuccessMessage('Language updated successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
   };
@@ -221,11 +228,10 @@ const Settings = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`${
-                    activeTab === tab.id
+                  className={`${activeTab === tab.id
                       ? 'border-primary text-primary'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 cursor-pointer`}
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 cursor-pointer`}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.name}
@@ -466,11 +472,10 @@ const Settings = () => {
                     <button
                       key={language.id}
                       onClick={() => handleLanguageChange(language.value)}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 flex items-center justify-between ${
-                        currentLanguage === language.value
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 flex items-center justify-between ${currentLanguage === language.value
                           ? 'bg-primary text-white border-primary'
                           : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
-                      } cursor-pointer`}
+                        } cursor-pointer`}
                     >
                       <span className="font-medium">{language.name}</span>
                       {currentLanguage === language.value && (
