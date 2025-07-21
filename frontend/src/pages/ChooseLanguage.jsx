@@ -3,7 +3,7 @@ import { Check } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLanguage } from '../redux/slices/languageSlice';
-import { changeGoogleTranslateLanguage, getCurrentGoogleTranslateLanguage } from '../utils/googleTranslateHelper';
+import { changeGoogleTranslateLanguage, getCurrentGoogleTranslateLanguage } from '../utils/googletranslatehelper';
 import { languages } from '../utils/constants';
 
 const ChooseLanguage = () => {

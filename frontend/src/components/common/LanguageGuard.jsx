@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { changeGoogleTranslateLanguage } from '../utils/googleTranslateHelper';
+import { changeGoogleTranslateLanguage } from '../../utils/googletranslatehelper';
 
 const LanguageGuard = ({ children }) => {
   const { isLanguageSelected, languageCode } = useSelector((state) => state.language);

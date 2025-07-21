@@ -8,7 +8,7 @@ import {
 } from '../redux/slices/userSlice';
 import { Check, User, Lock, Globe, Save } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { changeGoogleTranslateLanguage } from '../utils/googletranslatehelper.js';
+import { changeGoogleTranslateLanguage } from '../utils/googletranslatehelper';
 import { languages } from '../utils/constants';
 
 const Settings = () => {
