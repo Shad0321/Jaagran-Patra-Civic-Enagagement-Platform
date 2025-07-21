@@ -16,8 +16,8 @@
       content="Jaagran Patra, civic engagement, news, issues, analytics, India, Uttarakhand, MLA, government, politics, citizen portal"
     />
     <meta name="robots" content="noindex, nofollow" />
-<meta name="googlebot" content="noindex, nofollow" />
-<meta name="bingbot" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="bingbot" content="noindex, nofollow" />
     <link rel="robots" href="/robots.txt" />
     <link rel="sitemap" type="application/yaml" href="/sitemap.yaml" />
 
@@ -40,8 +40,36 @@
     />
     <meta name="twitter:image" content="https://your-domain.com/og-image.png" />
     <meta name="twitter:site" content="@yourtwitterhandle" />
+
+    <style>
+      /* CSS fallback to hide bot on specific pages - Enhanced for Noupe agent */
+      body[data-hide-bot="true"] .embedded-agent-container,
+      body[data-hide-bot="true"] .chat-button-variant-2,
+      body[data-hide-bot="true"] .noupe-agent,
+      body[data-hide-bot="true"] .ai-agent-chat-animation-container,
+      body[data-hide-bot="true"] .ai-agent-chat-cover,
+      body[data-hide-bot="true"] .isNoupeAgent,
+      body[data-hide-bot="true"] iframe[src*="noupe.com"],
+      body[data-hide-bot="true"] iframe[title="Embedded Agent"],
+      body[data-hide-bot="true"] iframe[id="form-agent-helper"],
+      body[data-hide-bot="true"] [class*="chatbot"],
+      body[data-hide-bot="true"] [class*="chat-widget"],
+      body[data-hide-bot="true"] [id*="chatbot"],
+      body[data-hide-bot="true"] [id*="chat-widget"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: scale(0) !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        z-index: -9999 !important;
+      }
+    </style>
+
     <script>
-      // Hide AI bot on specific pages
+      // Enhanced AI bot hiding script for Noupe agent
       (function () {
         // Define pages where you want to hide the AI bot
         const hiddenPages = [
@@ -49,51 +77,220 @@
           '/payment',
           '/login',
           '/register',
-          '/admin',
-          '/dashboard',
         ];
 
-        // Get current page path
-        const currentPath = window.location.pathname;
+        // Get current page path and normalize it
+        const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '');
+        
+        // Check if current page should hide the bot (more robust checking)
+        const shouldHide = hiddenPages.some((page) => {
+          const normalizedPage = page.toLowerCase().replace(/\/$/, '');
+          return currentPath === normalizedPage || 
+                 currentPath.startsWith(normalizedPage + '/') ||
+                 currentPath.includes(normalizedPage);
+        });
 
-        // Check if current page should hide the bot
-        const shouldHide = hiddenPages.some(
-          (page) => currentPath.includes(page) || currentPath === page
-        );
+        console.log('Current path:', currentPath, 'Should hide bot:', shouldHide);
 
         if (shouldHide) {
-          // Wait for DOM to be ready
+          // Set data attribute on body for CSS fallback
+          document.documentElement.setAttribute('data-hide-bot', 'true');
+          
+          // Specific selectors for your Noupe agent structure
+          const botSelectors = [
+            '.embedded-agent-container',
+            '.chat-button-variant-2',
+            '.noupe-agent',
+            '.ai-agent-chat-animation-container',
+            '.ai-agent-chat-cover',
+            '.isNoupeAgent',
+            'iframe[src*="noupe.com"]',
+            'iframe[title="Embedded Agent"]',
+            'iframe[id="form-agent-helper"]',
+            '[class*="chatbot"]',
+            '[class*="chat-widget"]',
+            '[class*="ai-chat"]',
+            '[class*="bot-container"]',
+            '[id*="chatbot"]',
+            '[id*="chat-widget"]',
+            '[id*="ai-chat"]',
+            'iframe[src*="chat"]',
+            'div[data-chat]',
+            '.chat-bubble',
+            '.floating-chat'
+          ];
+
           function hideBot() {
-            const botContainer = document.querySelector(
-              '.embedded-agent-container'
-            );
-            if (botContainer) {
-              botContainer.style.display = 'none';
+            let hiddenCount = 0;
+            
+            botSelectors.forEach(selector => {
+              try {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                  if (element && element.style.display !== 'none') {
+                    element.style.setProperty('display', 'none', 'important');
+                    element.style.setProperty('visibility', 'hidden', 'important');
+                    element.style.setProperty('opacity', '0', 'important');
+                    element.style.setProperty('pointer-events', 'none', 'important');
+                    element.style.setProperty('transform', 'scale(0)', 'important');
+                    element.style.setProperty('width', '0', 'important');
+                    element.style.setProperty('height', '0', 'important');
+                    element.style.setProperty('overflow', 'hidden', 'important');
+                    element.setAttribute('data-bot-hidden', 'true');
+                    hiddenCount++;
+                  }
+                });
+              } catch (e) {
+                console.warn('Error hiding bot with selector:', selector, e);
+              }
+            });
+
+            // Also try to hide parent containers
+            const parentSelectors = [
+              '.embedded-agent-container',
+              '.ai-agent-chat-animation-container'
+            ];
+            
+            parentSelectors.forEach(selector => {
+              try {
+                const parents = document.querySelectorAll(selector);
+                parents.forEach(parent => {
+                  if (parent) {
+                    parent.style.setProperty('display', 'none', 'important');
+                    parent.style.setProperty('visibility', 'hidden', 'important');
+                    parent.style.setProperty('opacity', '0', 'important');
+                    parent.style.setProperty('pointer-events', 'none', 'important');
+                    parent.setAttribute('data-bot-hidden', 'true');
+                    hiddenCount++;
+                  }
+                });
+              } catch (e) {
+                console.warn('Error hiding parent with selector:', selector, e);
+              }
+            });
+            
+            if (hiddenCount > 0) {
+              console.log('Hidden', hiddenCount, 'bot elements');
             }
+            
+            return hiddenCount;
           }
 
-          // Try immediately and also wait for DOM
+          // Try to hide immediately
           hideBot();
-          document.addEventListener('DOMContentLoaded', hideBot);
-
-          // Also use MutationObserver in case bot loads later
-          const observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-              mutation.addedNodes.forEach(function (node) {
-                if (node.nodeType === 1) {
-                  const botContainer =
-                    node.querySelector?.('.embedded-agent-container') ||
-                    (node.classList?.contains('embedded-agent-container')
-                      ? node
-                      : null);
-                  if (botContainer) {
-                    botContainer.style.display = 'none';
-                  }
+          
+          // Hide when DOM is ready
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', hideBot);
+          } else {
+            hideBot();
+          }
+          
+          // Hide when window loads (for late-loading scripts)
+          window.addEventListener('load', hideBot);
+          
+          // Use MutationObserver for dynamically added elements
+          let observer;
+          
+          function startObserver() {
+            if (observer) return;
+            
+            observer = new MutationObserver(function (mutations) {
+              let shouldCheck = false;
+              
+              mutations.forEach(function (mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                  mutation.addedNodes.forEach(function (node) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                      // Check if the added node or its children match bot selectors
+                      const nodeClasses = node.className || '';
+                      const nodeId = node.id || '';
+                      
+                      // Check for specific Noupe agent classes
+                      if (nodeClasses.includes('embedded-agent-container') ||
+                          nodeClasses.includes('noupe-agent') ||
+                          nodeClasses.includes('ai-agent-chat') ||
+                          nodeId.includes('agent') ||
+                          nodeId.includes('chat')) {
+                        shouldCheck = true;
+                      }
+                      
+                      // Also check children
+                      botSelectors.some(selector => {
+                        try {
+                          if (node.matches && node.matches(selector)) {
+                            shouldCheck = true;
+                            return true;
+                          }
+                          if (node.querySelector && node.querySelector(selector)) {
+                            shouldCheck = true;
+                            return true;
+                          }
+                        } catch (e) {
+                          // Ignore selector errors
+                        }
+                        return false;
+                      });
+                    }
+                  });
                 }
               });
+              
+              if (shouldCheck) {
+                setTimeout(hideBot, 100); // Small delay to ensure elements are fully rendered
+              }
             });
+            
+            // Start observing
+            observer.observe(document.body, { 
+              childList: true, 
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['class', 'id', 'style']
+            });
+          }
+          
+          // Start observer when DOM is ready
+          if (document.body) {
+            startObserver();
+          } else {
+            document.addEventListener('DOMContentLoaded', startObserver);
+          }
+          
+          // More aggressive periodic checking for first minute
+          let checkCount = 0;
+          const maxChecks = 30; // Check for 1 minute
+          const periodicCheck = setInterval(() => {
+            const hiddenCount = hideBot();
+            checkCount++;
+            
+            // If we successfully hid elements, reduce check frequency
+            if (hiddenCount > 0 && checkCount > 10) {
+              clearInterval(periodicCheck);
+              
+              // Start less frequent checking
+              const slowCheck = setInterval(() => {
+                hideBot();
+              }, 5000);
+              
+              // Stop after 2 more minutes
+              setTimeout(() => {
+                clearInterval(slowCheck);
+              }, 120000);
+            }
+            
+            if (checkCount >= maxChecks) {
+              clearInterval(periodicCheck);
+            }
+          }, 2000);
+          
+          // Clean up observer on page unload
+          window.addEventListener('beforeunload', () => {
+            if (observer) {
+              observer.disconnect();
+            }
+            clearInterval(periodicCheck);
           });
-          observer.observe(document.body, { childList: true, subtree: true });
         }
       })();
     </script>
