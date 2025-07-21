@@ -112,7 +112,6 @@ export const getAssembliesByState = async (
         // Try to find election data file
         const electionDataPath = path.join(
           process.cwd(),
-          '..',
           'form20',
           state.code.toLowerCase(),
           year as string,
@@ -203,7 +202,6 @@ export const getPollingBoothsByAssembly = async (
     try {
       const pollingDataPath = path.join(
         process.cwd(),
-        '..',
         'form20',
         constituency.state.code.toLowerCase(),
         year as string,
@@ -379,7 +377,6 @@ export const getPollingBoothDetails = async (
       try {
         const pollingDataPath = path.join(
           process.cwd(),
-          '..',
           'form20',
           constituency.state.code.toLowerCase(),
           year.trim(),
@@ -576,7 +573,6 @@ export const getElectionComparison = async (
         // Load assembly data for comparison
         const assemblyDataPath = path.join(
           process.cwd(),
-          '..',
           'form20',
           state.code.toLowerCase(),
           year.trim(),

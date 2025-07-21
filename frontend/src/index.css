@@ -142,6 +142,17 @@
   border-left: none !important;
 }
 
+.embedded-agent-container{
+  z-index: 10 !important;
+}
+
+.VIpgJd-ZVi9od-ORHb{
+  display: none !important;
+}
+
+.goog-te-gadget-simple{
+  display: block !important;
+}
 /* ============================================= */
 /* Dropdown Menu Styling */
 /* ============================================= */

@@ -152,7 +152,7 @@ const ElectionResultCard = ({ year, data, isWinner = false }) => (
 );
 
 // Statistics Card Component
-const StatCard = ({ title, value, icon: IconComponent, color, change }) => (
+const StatCard = ({ title, value, icon: IconComponent , change }) => (
   <div className="bg-white rounded-xl shadow-sm border border-primary/20 p-6 hover:shadow-lg transition-shadow duration-300">
     <div className="flex items-center justify-between">
       <div>

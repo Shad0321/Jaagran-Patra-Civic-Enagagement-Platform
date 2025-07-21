@@ -2006,7 +2006,6 @@ export const initializeLocationData = async (
     // Read the assembly data from JSON file
     const assemblyDataPath = path.join(
       process.cwd(),
-      '..',
       'form20',
       'uk',
       '2024',

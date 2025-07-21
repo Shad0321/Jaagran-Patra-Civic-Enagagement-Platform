@@ -8,7 +8,6 @@ import ChooseLanguage from '../pages/ChooseLanguage.jsx';
 import ForgotPassword from '../pages/ForgotPassword.jsx';
 import ResetPassword from '../pages/ResetPassword.jsx';
 import ProtectedRoute from '../components/common/ProtectedRoute.jsx';
-import LanguageGuard from '../components/common/LanguageGuard.jsx';
 import Settings from '../pages/Settings.jsx';
 import Profile from '../pages/Profile.jsx';
 import IssueManagement from '../pages/IssueManagement.jsx';
@@ -25,6 +24,7 @@ import AnalyticsReport from '../pages/AnalyticsReport.jsx';
 import VerifyEmail from '../pages/VerifyEmail.jsx';
 import MLAProfiles from '../pages/MLAProfiles.jsx';
 import ChatPage from '../pages/ChatPage.jsx';
+import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -39,157 +39,125 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: (
-          <LanguageGuard>
             <Login />
-          </LanguageGuard>
         ),
       },
       {
         path: 'signup',
         element: (
-          <LanguageGuard>
             <SignUp />
-          </LanguageGuard>
         ),
       },
       {
         path: 'dashboard',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'settings',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <Settings />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'my-account',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'issues',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <IssueManagement />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'notifications',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <NotificationsPage />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'nearby-issues',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <NearbyIssues />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'election-map',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <InteractiveElectionMap />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'news',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <NewsPage />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'news/:id',
         element: (
-          <LanguageGuard>
             <ProtectedRoute>
               <NewsDetail />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'member-management',
         element: (
-          <LanguageGuard>
             <ProtectedRoute requiredRole="MLA">
               <MemberManagement />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'meeting-management',
         element: (
-          <LanguageGuard>
             <ProtectedRoute requiredRole="MLA">
               <MeetingManagement />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'body-management',
         element: (
-          <LanguageGuard>
             <ProtectedRoute requiredRole="MLA">
               <BodyManagement />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'issue-assignment',
         element: (
-          <LanguageGuard>
             <ProtectedRoute requiredRole="MLA">
               <IssueAssignmentManagement />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       {
         path: 'analytics',
         element: (
-          <LanguageGuard>
             <ProtectedRoute requiredRole="MLA">
               <AnalyticsReport />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
       { path: 'verify-email', element: <VerifyEmail /> },
@@ -197,14 +165,12 @@ const router = createBrowserRouter([
       {
         path: 'chat',
         element: (
-          <LanguageGuard>
             <ProtectedRoute requiredRole="MLA">
               <ChatPage />
             </ProtectedRoute>
-          </LanguageGuard>
         ),
       },
-      //   { path: "*", element: <NotFound /> },
+        { path: "*", element: <NotFoundPage /> },
     ],
   },
 ]);
