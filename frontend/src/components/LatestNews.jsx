@@ -218,8 +218,8 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
 
       <div className="relative z-10 p-2 sm:p-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-primary/10 mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-1 sm:p-6 shadow-lg border border-primary/10 mb-8">
+          <div className="flex flex-col flex-wrap sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
                 <Newspaper className="h-6 w-6 text-white" />
@@ -231,7 +231,7 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
             {!showFull && news.length > 0 && (
               <button
                 onClick={() => navigate('/news')}
-                className="bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-2"
+                className="bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 text-center"
               >
                 View All
                 <ExternalLink className="h-4 w-4" />
