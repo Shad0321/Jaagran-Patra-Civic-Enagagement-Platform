@@ -111,7 +111,9 @@ export const getAssembliesByState = async (
       if (state) {
         // Try to find election data file
         const electionDataPath = path.join(
-          process.cwd(),
+          __dirname,
+          '..', 
+          '..',
           'form20',
           state.code.toLowerCase(),
           year as string,
@@ -201,7 +203,9 @@ export const getPollingBoothsByAssembly = async (
     let pollingBoothsData: ElectionData[] = [];
     try {
       const pollingDataPath = path.join(
-        process.cwd(),
+        __dirname,
+        '..', 
+        '..',
         'form20',
         constituency.state.code.toLowerCase(),
         year as string,
@@ -376,7 +380,9 @@ export const getPollingBoothDetails = async (
     for (const year of yearsList) {
       try {
         const pollingDataPath = path.join(
-          process.cwd(),
+          __dirname,
+          '..', 
+          '..',
           'form20',
           constituency.state.code.toLowerCase(),
           year.trim(),
@@ -572,7 +578,9 @@ export const getElectionComparison = async (
       try {
         // Load assembly data for comparison
         const assemblyDataPath = path.join(
-          process.cwd(),
+          __dirname,
+          '..', 
+          '..',
           'form20',
           state.code.toLowerCase(),
           year.trim(),
@@ -668,7 +676,9 @@ export const getMapStatistics = async (
 
         if (state) {
           const assemblyDataPath = path.join(
-            process.cwd(),
+            __dirname,
+            '..',
+            '..',
             'form20',
             state.code.toLowerCase(),
             year as string,
@@ -704,10 +714,10 @@ export const getMapStatistics = async (
               totalNotaVotes,
               partyWiseVotes: partyStats,
               year: Array.isArray(year)
-                ? year.map((y) => typeof y === 'string' ? y : String(y))
+                ? year.map((y) => (typeof y === 'string' ? y : String(y)))
                 : typeof year === 'string'
-                ? year
-                : String(year),
+                  ? year
+                  : String(year),
             };
           }
         }
