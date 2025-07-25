@@ -90,8 +90,6 @@
                  currentPath.includes(normalizedPage);
         });
 
-        console.log('Current path:', currentPath, 'Should hide bot:', shouldHide);
-
         if (shouldHide) {
           // Set data attribute on body for CSS fallback
           document.documentElement.setAttribute('data-hide-bot', 'true');

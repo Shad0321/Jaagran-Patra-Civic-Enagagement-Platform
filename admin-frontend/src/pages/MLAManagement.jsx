@@ -4,6 +4,36 @@ import api from '../utils/api';
 import toast from 'react-hot-toast';
 import Loader from '../components/common/Loader';
 
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "your_cloud_name"; // Replace with your Cloudinary cloud name
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "your_upload_preset"; // Replace with your upload preset
+
+const uploadToCloudinary = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('folder', 'mla_avatars'); // Optional: organize uploads in folders
+
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Upload failed');
+    }
+
+    const data = await response.json();
+    return data.secure_url; // This is the Cloudinary URL
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    throw error;
+  }
+};
+
 const MLAModal = ({
   isOpen,
   onClose,
@@ -20,54 +50,105 @@ const MLAModal = ({
   onStateChange,
   onInitializeData
 }) => {
-  console.log(mla);
-  
   const [avatarPreview, setAvatarPreview] = useState(mla?.avatar || null);
-  const [avatarFile, setAvatarFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Social Links field definitions
+  const socialLinksList = [
+    { key: 'facebook', label: 'Facebook', placeholder: 'Facebook profile URL' },
+    { key: 'twitter', label: 'Twitter', placeholder: 'Twitter profile URL' },
+    { key: 'instagram', label: 'Instagram', placeholder: 'Instagram profile URL' },
+    { key: 'linkedin', label: 'LinkedIn', placeholder: 'LinkedIn profile URL' },
+    { key: 'website', label: 'Website', placeholder: 'Personal/Official website URL' }
+  ];
 
   useEffect(() => {
     if (mla && mla.avatar) {
       setAvatarPreview(mla.avatar);
     } else {
-      // Reset the preview if there's no mla or no avatar (e.g., for "Add MLA")
-      setAvatarPreview(null); 
+      setAvatarPreview(null);
     }
-  }, [mla]);
+    // Defensive parsing for socialLinks
+    if (mla) {
+      let parsedSocialLinks = {
+        facebook: '',
+        twitter: '',
+        instagram: '',
+        linkedin: '',
+        website: ''
+      };
+      if (mla.socialLinks) {
+        if (typeof mla.socialLinks === 'string' && mla.socialLinks.trim() !== '') {
+          try {
+            const temp = JSON.parse(mla.socialLinks);
+            parsedSocialLinks = { ...parsedSocialLinks, ...temp };
+          } catch (error) {
+            console.error('Error parsing social links:', error);
+            // fallback to empty fields
+          }
+        } else if (typeof mla.socialLinks === 'object') {
+          parsedSocialLinks = { ...parsedSocialLinks, ...mla.socialLinks };
+        }
+      }
+      setFormData(prev => ({
+        ...prev,
+        socialLinks: parsedSocialLinks
+      }));
+    }
+  }, [mla, setFormData]);
 
   if (!isOpen) return null;
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       // Validate file type
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
       if (!allowedTypes.includes(file.type)) {
-        alert('Please select a valid image file (JPEG, PNG, or GIF)');
+        toast.error('Please select a valid image file (JPEG, PNG, or GIF)');
         return;
       }
 
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
-        alert('File size should be less than 5MB');
+        toast.error('File size should be less than 5MB');
         return;
       }
 
-      setAvatarFile(file);
-
-      // Create preview
+      // Create preview immediately
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result);
       };
       reader.readAsDataURL(file);
+
+      // Upload to Cloudinary
+      try {
+        setIsUploadingAvatar(true);
+        toast.loading('Uploading image...', { id: 'avatar-upload' });
+        
+        const cloudinaryUrl = await uploadToCloudinary(file);
+        
+        // Update form data with Cloudinary URL
+        setFormData(prev => ({ ...prev, avatar: cloudinaryUrl }));
+        setAvatarPreview(cloudinaryUrl);
+        
+        toast.success('Image uploaded successfully!', { id: 'avatar-upload' });
+      } catch (error) {
+        console.error('Error uploading to Cloudinary:', error);
+        toast.error('Failed to upload image. Please try again.', { id: 'avatar-upload' });
+        // Reset preview on error
+        setAvatarPreview(mla?.avatar || null);
+      } finally {
+        setIsUploadingAvatar(false);
+      }
     }
   };
 
   const handleRemoveAvatar = () => {
-    setAvatarFile(null);
     setAvatarPreview(null);
     setFormData(prev => ({ ...prev, avatar: null }));
     if (fileInputRef.current) {
@@ -78,7 +159,6 @@ const MLAModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsUploading(true);
-
     // Validate required fields
     if (!formData.name || !formData.email || !formData.stateId || !formData.constituencyId || !formData.party) {
       toast.error('Please fill all required fields');
@@ -87,40 +167,36 @@ const MLAModal = ({
     }
 
     try {
-      // Create FormData for file upload
-      const submitData = new FormData();
-
-      // Add all form fields - ensure required fields are included
-      submitData.append('name', formData.name);
-      submitData.append('email', formData.email);
-      submitData.append('stateId', formData.stateId);
-      submitData.append('constituencyId', formData.constituencyId);
-      submitData.append('party', formData.party);
-      submitData.append('isActive', formData.isActive);
-
-      // Add optional fields only if they have values
-      if (formData.phone) submitData.append('phone', formData.phone);
-      if (formData.position) submitData.append('position', formData.position);
-      if (formData.tenure) submitData.append('tenure', formData.tenure);
-      if (formData.address) submitData.append('address', formData.address);
-      if (formData.bio) submitData.append('bio', formData.bio);
-      if (formData.achievements) submitData.append('achievements', formData.achievements);
+      // Create regular object instead of FormData since we're not uploading files anymore
+      const submitData = {
+        name: formData.name,
+        email: formData.email,
+        stateId: formData.stateId,
+        constituencyId: formData.constituencyId,
+        party: formData.party,
+        isActive: formData.isActive,
+        phone: formData.phone || '',
+        position: formData.position || '',
+        tenure: formData.tenure || '',
+        address: formData.address || '',
+        bio: formData.bio || '',
+        achievements: formData.achievements || '',
+        avatar: formData.avatar || null, // Cloudinary URL or null
+      };
 
       // Handle password based on option
       if (formData.passwordOption === 'custom' && formData.password) {
-        submitData.append('password', formData.password);
+        submitData.password = formData.password;
       }
 
-      // Add avatar file if selected
-      if (avatarFile) {
-        submitData.append('avatar', avatarFile);
+      // Add socialLinks if any field is filled
+      if (formData.socialLinks && Object.values(formData.socialLinks).some(v => v)) {
+        submitData.socialLinks = JSON.stringify(formData.socialLinks);
       }
 
-      // Call the onSubmit function with the FormData
+      // Call the onSubmit function with the data object
       await onSubmit(submitData);
-
       // Reset avatar states after successful submission
-      setAvatarFile(null);
       setAvatarPreview(null);
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -157,17 +233,28 @@ const MLAModal = ({
                         alt="Avatar Preview"
                         className="w-20 h-20 rounded-full object-cover border-2 border-gray-300"
                       />
-                      <button
-                        type="button"
-                        onClick={handleRemoveAvatar}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                      >
-                        <X size={12} />
-                      </button>
+                      {!isUploadingAvatar && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveAvatar}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        >
+                          <X size={12} />
+                        </button>
+                      )}
+                      {isUploadingAvatar && (
+                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                      <Camera size={24} className="text-gray-400" />
+                      {isUploadingAvatar ? (
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-600"></div>
+                      ) : (
+                        <Camera size={24} className="text-gray-400" />
+                      )}
                     </div>
                   )}
                 </div>
@@ -178,14 +265,16 @@ const MLAModal = ({
                     onChange={handleAvatarChange}
                     accept="image/*"
                     className="hidden"
+                    disabled={isUploadingAvatar}
                   />
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center space-x-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                    disabled={isUploadingAvatar}
+                    className="flex items-center space-x-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Upload size={16} />
-                    <span>Upload Photo</span>
+                    <span>{isUploadingAvatar ? 'Uploading...' : 'Upload Photo'}</span>
                   </button>
                   <p className="text-xs text-gray-500">
                     JPG, PNG or GIF. Max size 5MB.
@@ -194,6 +283,33 @@ const MLAModal = ({
               </div>
             </div>
 
+            {/* Social Links Section */}
+            <div className="border-b pb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-3">Social Links</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {socialLinksList.map(link => (
+                  <div key={link.key}>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{link.label}</label>
+                    <input
+                      type="url"
+                      value={formData.socialLinks?.[link.key] || ''}
+                      onChange={e => setFormData(prev => ({
+                        ...prev,
+                        socialLinks: {
+                          ...prev.socialLinks,
+                          [link.key]: e.target.value
+                        }
+                      }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder={link.placeholder}
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Add links to MLA's social media or website (optional).</p>
+            </div>
+
+            {/* Rest of your form fields remain the same */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
@@ -409,19 +525,19 @@ const MLAModal = ({
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-              disabled={isUploading}
+              disabled={isUploading || isUploadingAvatar}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isUploading}
+              disabled={isUploading || isUploadingAvatar}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center space-x-2"
             >
               {isUploading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>Uploading...</span>
+                  <span>Saving...</span>
                 </>
               ) : (
                 <span>{mla ? 'Update' : 'Add'} MLA</span>
@@ -672,6 +788,27 @@ const MLAManagement = () => {
 
   const handleEditMLA = (mla) => {
     setSelectedMLA(mla);
+    // Defensive parsing for socialLinks
+    let parsedSocialLinks = {
+      facebook: '',
+      twitter: '',
+      instagram: '',
+      linkedin: '',
+      website: ''
+    };
+    if (mla.socialLinks) {
+      if (typeof mla.socialLinks === 'string' && mla.socialLinks.trim() !== '') {
+        try {
+          const temp = JSON.parse(mla.socialLinks);
+          parsedSocialLinks = { ...parsedSocialLinks, ...temp };
+        } catch (error) {
+          console.error('Error parsing social links:', error);
+          // fallback to empty fields
+        }
+      } else if (typeof mla.socialLinks === 'object') {
+        parsedSocialLinks = { ...parsedSocialLinks, ...mla.socialLinks };
+      }
+    }
     setFormData({
       name: mla.name,
       email: mla.email,
@@ -684,7 +821,8 @@ const MLAManagement = () => {
       address: mla.address || '',
       bio: mla.bio || '',
       achievements: mla.achievements || '',
-      isActive: mla.isActive
+      isActive: mla.isActive,
+      socialLinks: parsedSocialLinks
     });
     if (mla.stateId) {
       fetchConstituencies(mla.stateId);
@@ -707,7 +845,14 @@ const MLAManagement = () => {
       achievements: '',
       isActive: true,
       passwordOption: 'auto',
-      password: ''
+      password: '',
+      socialLinks: {
+        facebook: '',
+        twitter: '',
+        instagram: '',
+        linkedin: '',
+        website: ''
+      }
     });
     setSelectedMLA(null);
     setConstituencies([]);

@@ -387,6 +387,7 @@ export const getAllMLAs = async (
       bio: mla.mlaProfile?.bio || '',
       achievements: mla.mlaProfile?.achievements || '',
       address: mla.currentAddress || '',
+      socialLinks: mla.mlaProfile?.socialLinks || {},
       members: mla.members,
       assignedIssues: mla.assignedIssues,
     }));
@@ -574,6 +575,7 @@ export const updateMLA = async (
       email,
       phone,
       stateId,
+      avatar,
       constituencyId,
       party,
       address,
@@ -636,7 +638,7 @@ export const updateMLA = async (
         constituencyId,
         currentAddress: address || null,
         isActive: isActive === 'true',
-        avatar: avatarUrl, // Update avatar URL
+        avatar: avatarUrl || avatar || null, // Update avatar URL
       },
     });
 
@@ -683,7 +685,18 @@ export const deleteMLA = async (
   try {
     const { id } = req.params;
 
-    // Delete user (this will cascade delete the MLA profile)
+    // 1. Delete all chat groups owned by the MLA
+    await prisma.chatGroup.deleteMany({
+      where: { ownerId: id },
+    });
+
+    // 2. Disconnect all members associated with this MLA
+    await prisma.user.updateMany({
+      where: { mlaId: id },
+      data: { mlaId: null },
+    });
+
+    // 3. Delete the MLA user (will cascade delete MLA profile)
     await prisma.user.delete({
       where: { id },
     });
@@ -839,12 +852,10 @@ export const createMember = async (
         phone,
         existingUserId: existingUser.id,
       });
-      res
-        .status(409)
-        .json({
-          success: false,
-          error: 'User with this email or phone already exists',
-        });
+      res.status(409).json({
+        success: false,
+        error: 'User with this email or phone already exists',
+      });
       return;
     }
 
@@ -1127,7 +1138,27 @@ export const deleteMember = async (
   try {
     const { id } = req.params;
 
-    // Delete user (this will cascade delete the Member profile)
+    // 1. Delete all issue updates by this member
+    await prisma.issueUpdate.deleteMany({
+      where: { userId: id },
+    });
+
+    // 2. Delete all chat group memberships for this member
+    await prisma.chatGroupMember.deleteMany({
+      where: { userId: id },
+    });
+
+    // 3. Delete all chat group messages sent by this member
+    await prisma.chatGroupMessage.deleteMany({
+      where: { senderId: id },
+    });
+
+    // 4. Delete all chat message reads by this member
+    await prisma.chatMessageRead.deleteMany({
+      where: { userId: id },
+    });
+
+    // 5. Delete the member user (will cascade delete Member profile)
     await prisma.user.delete({
       where: { id },
     });

@@ -10,8 +10,6 @@ import {
   BarChart3,
   PieChart,
   Activity,
-  Filter,
-  Search,
   ChevronRight,
   Home,
   ArrowLeft,
@@ -30,6 +28,9 @@ import {
 } from 'recharts';
 import LatestNews from '../components/LatestNews';
 import 'leaflet/dist/leaflet.css';
+import assembly from "../assets/marker/assembly.svg";
+import pollingBooth from "../assets/marker/polling.svg";
+import state from "../assets/marker/state.svg";
 
 // Import custom marker icons
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -48,45 +49,49 @@ const defaultIcon = new Icon({
   shadowSize: [41, 41],
 });
 
-// Use primary color shades for icons
 const stateIcon = new Icon({
   iconUrl:
     'data:image/svg+xml;base64,' +
     btoa(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#22c55e" width="30" height="30">
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="#1a1a1a" width="32" height="32">
+      <circle cx="16" cy="16" r="14" fill="#ff6b35" stroke="#1a1a1a" stroke-width="3"/>
+      <circle cx="16" cy="16" r="8" fill="#ffffff"/>
+      <text x="16" y="20" text-anchor="middle" fill="#1a1a1a" font-size="10" font-weight="bold">S</text>
     </svg>
   `),
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
-  popupAnchor: [0, -30],
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -16],
 });
 
 const assemblyIcon = new Icon({
   iconUrl:
     'data:image/svg+xml;base64,' +
     btoa(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#16a34a" width="25" height="25">
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" fill="#1a1a1a" width="28" height="28">
+      <polygon points="14,2 26,14 14,26 2,14" fill="#4a90e2" stroke="#1a1a1a" stroke-width="3"/>
+      <circle cx="14" cy="14" r="6" fill="#ffffff"/>
+      <text x="14" y="18" text-anchor="middle" fill="#1a1a1a" font-size="8" font-weight="bold">A</text>
     </svg>
   `),
-  iconSize: [25, 25],
-  iconAnchor: [12, 25],
-  popupAnchor: [0, -25],
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+  popupAnchor: [0, -14],
 });
 
 const pollingBoothIcon = new Icon({
   iconUrl:
     'data:image/svg+xml;charset=utf-8,' +
     encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#a3e635" width="20" height="20">
-      <circle cx="12" cy="9" r="2" fill="#FFFFFF"/>
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1a1a1a" width="24" height="24">
+      <rect x="4" y="4" width="16" height="16" rx="3" fill="#50c878" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4" fill="#ffffff"/>
+      <text x="12" y="15" text-anchor="middle" fill="#1a1a1a" font-size="6" font-weight="bold">P</text>
     </svg>
   `),
-  iconSize: [20, 20],
-  iconAnchor: [10, 20],
-  popupAnchor: [0, -20],
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+  popupAnchor: [0, -12],
 });
 
 // Component to update map view
@@ -484,12 +489,13 @@ const InteractiveElectionMap = () => {
       <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col space-y-4 py-4">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-center flex-wrap space-y-3">
               <div className="flex items-center space-x-4">
                 <h1 className="text-xs sm:text-sm md:text-3xl font-bold text-gray-900">
                   Election Analytics Dashboard
                 </h1>
-                <div className="hidden md:block">
+              </div>
+                <div className="md:block pr-4 ">
                   <Breadcrumb
                     mapLevel={mapLevel}
                     selectedState={selectedState}
@@ -498,7 +504,6 @@ const InteractiveElectionMap = () => {
                     onNavigate={handleBreadcrumbNavigation}
                   />
                 </div>
-              </div>
 
               <div className="flex items-center space-x-4">
                 <select
@@ -1025,7 +1030,7 @@ const InteractiveElectionMap = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                  <img src={state} alt="" />
                   <span className="text-sm font-medium">States</span>
                 </div>
                 <span className="text-xs text-gray-500">
@@ -1034,7 +1039,7 @@ const InteractiveElectionMap = () => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                  <img src={assembly} alt="" />
                   <span className="text-sm font-medium">Assemblies</span>
                 </div>
                 <span className="text-xs text-gray-500">
@@ -1043,7 +1048,7 @@ const InteractiveElectionMap = () => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                  <img src={pollingBooth} alt="" />
                   <span className="text-sm font-medium">
                     Polling Booths
                   </span>
