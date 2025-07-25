@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { signupUser, clearError } from '../redux/slices/userSlice';
 import logo from "../assets/logo/logo-b.png";
+import bgLogin from "../assets/bg-login.jpg";
 
 const SignUp = () => {
   const dispatch = useDispatch();
@@ -104,8 +105,9 @@ const SignUp = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-primary px-4 py-8 overflow-hidden">
+      <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0' />
       {/* Card */}
-      <div className="relative w-full max-w-md z-10 bg-white/70 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-white/30">
+      <div className="relative w-full max-w-md bg-white/70 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-white/30 z-10">
         <div className="text-4xl font-bold mb-1">
           <img src={logo} alt="Jaagran Patra Logo" className="w-16 h-16 mb-2" />
           <span className="text-dark">Jaagran</span>{' '}
@@ -114,7 +116,7 @@ const SignUp = () => {
         <div className="w-16 h-1 bg-primary rounded-full mb-6" />
         <p className="text-dark font-medium text-sm">Join the Movement</p>
 
-        <form onSubmit={handleSubmit} className="mt-8">
+        <form onSubmit={handleSubmit} className="mt-8 z-10">
           <div className="flex flex-col gap-5">
             <InputField
               name="name"

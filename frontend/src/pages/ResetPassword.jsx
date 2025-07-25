@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPassword, clearError } from '../redux/slices/userSlice';
+import bgLogin from "../assets/bg-login.jpg";
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -94,8 +95,9 @@ const ResetPassword = () => {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-primary flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="relative min-h-screen bg-primary flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none' />
+        <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
           <div className="flex flex-col items-center leading-10 font-semibold text-4xl mb-8">
             <span className="text-dark">Jaagran</span>
             <span className="text-light">Patra.</span>
@@ -105,7 +107,7 @@ const ResetPassword = () => {
           </h2>
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="mt-8 mx-auto sm:w-full sm:max-w-md z-10">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
@@ -155,7 +157,7 @@ const ResetPassword = () => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-8 mx-auto sm:w-full sm:max-w-md">
         <div className="relative w-full max-w-md z-10 bg-white/90 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-white/30">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Backend error is now shown as toast, not inline */}
