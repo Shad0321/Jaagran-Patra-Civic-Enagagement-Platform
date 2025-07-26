@@ -104,7 +104,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-primary px-4 py-8 overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-primary/5 px-4 py-8 overflow-hidden">
       <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0' />
       {/* Card */}
       <div className="relative w-full max-w-md bg-white/70 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-white/30 z-10">

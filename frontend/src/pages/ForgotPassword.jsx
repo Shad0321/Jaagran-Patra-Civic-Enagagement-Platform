@@ -32,22 +32,22 @@ const ForgotPassword = () => {
 
   if (isSubmitted) {
     return (
-      <div className="relative min-h-screen bg-primary flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="relative min-h-screen bg-primary/5 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20' />
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
           <div className="flex flex-col items-center leading-10 font-semibold text-4xl mb-8">
             <span className="text-dark">Jaagran</span>
             <span className="text-primary">Patra.</span>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
             Check your email
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-300">
+          <p className="mt-2 text-center text-sm text-black/80">
             We've sent a password reset link to {email}
           </p>
         </div>
 
-        <div className="mt-8 mx-auto sm:w-full sm:max-w-md">
+        <div className="mt-8 mx-auto sm:w-full sm:max-w-md z-10">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
@@ -88,17 +88,17 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-primary flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-primary/5 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none' />
       <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
         <div className="flex flex-col items-center leading-10 font-semibold text-4xl mb-8">
           <span className="text-dark">Jaagran</span>
-          <span className="text-light">Patra.</span>
+          <span className="text-primary">Patra.</span>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
           Forgot your password?
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-300 max-w-[90vw] mx-auto">
+        <p className="mt-2 text-center text-sm text-black/80 max-w-[90vw] mx-auto">
           Enter your email address and we'll send you a link to reset your
           password
         </p>

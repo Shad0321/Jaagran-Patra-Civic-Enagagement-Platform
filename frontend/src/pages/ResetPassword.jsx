@@ -95,14 +95,14 @@ const ResetPassword = () => {
 
   if (isSuccess) {
     return (
-      <div className="relative min-h-screen bg-primary flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="relative min-h-screen bg-primary/5 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none' />
         <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
           <div className="flex flex-col items-center leading-10 font-semibold text-4xl mb-8">
             <span className="text-dark">Jaagran</span>
-            <span className="text-light">Patra.</span>
+            <span className="text-primary">Patra.</span>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
             Password Reset Successful
           </h2>
         </div>
