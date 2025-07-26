@@ -1,0 +1,496 @@
+{
+  "state": "UK",
+  "constituency": "Rajya Sabha",
+  "members": [
+    {
+      "Area Name": "Purola",
+      "Candidate Name": "Shri Durgeshwar Lal",
+      "Address": "Gram Rekcha, P.O. Fitadi, Tehsil Mori, District Uttarkashi.",
+      "Latitude": 30.8906,
+      "Longitude": 78.0678
+    },
+    {
+      "Area Name": "Yamunotri",
+      "Candidate Name": "Shri Sanjay Dobhal",
+      "Address": "Gram Chakar Gaon, P.O. Barkot, District Uttarkashi.",
+      "Latitude": 30.8086,
+      "Longitude": 78.2054
+    },
+    {
+      "Area Name": "Gangotri",
+      "Candidate Name": "Shri Suresh Singh Chauhan",
+      "Address": "Gram Jamak, P.O. Maneri, District Uttarkashi.",
+      "Latitude": 30.7422,
+      "Longitude": 78.4593
+    },
+    {
+      "Area Name": "Badrinath",
+      "Candidate Name": "Shri Rajendra Singh Bhandari",
+      "Address": "Gram- Nail P.O.- Trisula, Tehsil- Pokhari, District- Chamoli.",
+      "Latitude": 30.7426,
+      "Longitude": 79.4936
+    },
+    {
+      "Area Name": "Tharali",
+      "Candidate Name": "Shri Bhupal Ram Tamta",
+      "Address": "Gram Devalgwad, District Chamoli.",
+      "Latitude": 30.0317,
+      "Longitude": 79.4763
+    },
+    {
+      "Area Name": "Karnaprayag",
+      "Candidate Name": "Shri Anil Nautiyal",
+      "Address": "Gram & P.O. Midoli Chamoli, Via Gauchar.",
+      "Latitude": 30.2604,
+      "Longitude": 79.2489
+    },
+    {
+      "Area Name": "Kedarnath",
+      "Candidate Name": "Smt. Shailarani Rawat",
+      "Address": "Aishwarya Kunj, Agastyamuni, Rudraprayag.",
+      "Latitude": 30.1648,
+      "Longitude": 78.7775
+    },
+    {
+      "Area Name": "Rudraprayag",
+      "Candidate Name": "Shri Bharat Singh Chaudhary",
+      "Address": "Gram Mawana, P.O. Dholtir, District Rudraprayag.",
+      "Latitude": 30.2847,
+      "Longitude": 78.9839
+    },
+    {
+      "Area Name": "Ghansali",
+      "Candidate Name": "Shri Shakti Lal Shah",
+      "Address": "Gram Chanji Malli, P.O.- Chanji Patti Hulanakhal, District- Tehri Garhwal.",
+      "Latitude": 30.3872,
+      "Longitude": 78.1447
+    },
+    {
+      "Area Name": "Devprayag",
+      "Candidate Name": "Shri Vinod Kandari",
+      "Address": "Kandari Bhawan Gram & P.O. Maletha, District Tehri Garhwal.",
+      "Latitude": 30.1467,
+      "Longitude": 78.5988
+    },
+    {
+      "Area Name": "Narendranagar",
+      "Candidate Name": "Shri Subodh Uniyal",
+      "Address": "Uniyal Bhawan, Narendra Nagar, District Tehri Garhwal.",
+      "Latitude": 30.1619,
+      "Longitude": 78.2938
+    },
+    {
+      "Area Name": "Pratapnagar",
+      "Candidate Name": "Shri Vikram Singh Negi",
+      "Address": "F-8 THDC Colony, Tehri Nagar, Ajabpur Kalan, Dehradun.",
+      "Latitude": 30.3785,
+      "Longitude": 78.0682
+    },
+    {
+      "Area Name": "Tehri",
+      "Candidate Name": "Shri Kishore Upadhyay",
+      "Address": "Gram- Pali, P.O. Anjanisain, District Tehri Garhwal.",
+      "Latitude": 30.383,
+      "Longitude": 78.4803
+    },
+    {
+      "Area Name": "Dhanaulti",
+      "Candidate Name": "Shri Pritam Singh Panwar",
+      "Address": "Mh-5 THDC Colony, Tehri Nagar, Ajabpur Kalan Dehradun.",
+      "Latitude": 30.4436,
+      "Longitude": 78.0739
+    },
+    {
+      "Area Name": "Chakrata",
+      "Candidate Name": "Shri Pritam Singh",
+      "Address": "Gram - Brunad Wastil, P.O.- Brunad, Tehsil- Tyuni, District- Dehradun.",
+      "Latitude": 30.7036,
+      "Longitude": 77.8634
+    },
+    {
+      "Area Name": "Vikasnagar",
+      "Candidate Name": "Shri Munna Singh Chauhan",
+      "Address": "Gram Rakhtad, P.O.- Nagthat, Via Kalsi, District- Dehradun.",
+      "Latitude": 30.4694,
+      "Longitude": 77.7729
+    },
+    {
+      "Area Name": "Sahaspur",
+      "Candidate Name": "Shri Sahdev Singh Pundir",
+      "Address": "Gram Suddhowala, P.O. Suddhowala, District- Dehradun.",
+      "Latitude": 30.3167,
+      "Longitude": 78.0167
+    },
+    {
+      "Area Name": "Dharampur",
+      "Candidate Name": "Shri Vinod Chamoli",
+      "Address": "103/6 Old Nehru Colony, District Dehradun.",
+      "Latitude": 30.3165,
+      "Longitude": 78.0322
+    },
+    {
+      "Area Name": "Raipur",
+      "Candidate Name": "Shri Umesh Sharma Kau",
+      "Address": "272 Ashok Vihar, Ajabpur Kalan, Dehradun.",
+      "Latitude": 30.3457,
+      "Longitude": 78.0326
+    },
+    {
+      "Area Name": "Rajpur Road",
+      "Candidate Name": "Shri Khajan Das",
+      "Address": "1. Gram Jhangheri, Biror P.O. Srikot, Tehsil, Nainbag, Dehradun. 2. 13/380 Mohit Basant Vihar Dehradun, 54/461 Govind Nagar Race Course Dehradun.",
+      "Latitude": 30.3785,
+      "Longitude": 78.0682
+    },
+    {
+      "Area Name": "Dehradun Cantonment",
+      "Candidate Name": "Smt. Savita Kapoor",
+      "Address": "223 Indiranagar, District Dehradun.",
+      "Latitude": 30.3165,
+      "Longitude": 78.0322
+    },
+    {
+      "Area Name": "Mussoorie",
+      "Candidate Name": "Shri Ganesh Joshi",
+      "Address": "105 A Nashville Road, District Dehradun.",
+      "Latitude": 30.4598,
+      "Longitude": 78.0644
+    },
+    {
+      "Area Name": "Doiwala",
+      "Candidate Name": "Shri Brijbhushan Gairola",
+      "Address": "Ekta Vihar, B Block, Chauk Bazar, Doiwala, District Dehradun.",
+      "Latitude": 30.1872,
+      "Longitude": 78.1025
+    },
+    {
+      "Area Name": "Rishikesh",
+      "Candidate Name": "Shri Prem Chand Agrawal",
+      "Address": "Natthanpur, P.O. IIP Mohkampur, Dehradun.",
+      "Latitude": 30.0869,
+      "Longitude": 78.2676
+    },
+    {
+      "Area Name": "Haridwar",
+      "Candidate Name": "Shri Madan Kaushik",
+      "Address": "House No. 224, Gali No.-07 Khannagar, Jwalapur, Haridwar.",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642
+    },
+    {
+      "Area Name": "BHEL-Ranipur",
+      "Candidate Name": "Shri Adesh Chauhan",
+      "Address": "Manav Seva Bhawan, Roorkee Road, Bahadrabad, District Haridwar.",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642
+    },
+    {
+      "Area Name": "Jwalapur",
+      "Candidate Name": "E. Ravi Bahadur",
+      "Address": "House No.-6 Valmiki Basti, Jwalapur, Haridwar.",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642
+    },
+    {
+      "Area Name": "Bhagwanpur",
+      "Candidate Name": "Smt. Mamta Rakesh",
+      "Address": "Gram- Bhagwanpur, District- Haridwar.",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642
+    },
+    {
+      "Area Name": "Jhabrera",
+      "Candidate Name": "Shri Virendra Kumar",
+      "Address": "Gram & P.O. Sherpur Khelmau, District Haridwar.",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642
+    },
+    {
+      "Area Name": "Pirankaliyar",
+      "Candidate Name": "Shri Furkan Ahmed",
+      "Address": "Rampur Roorkee, District Haridwar.",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642
+    },
+    {
+      "Area Name": "Roorkee",
+      "Candidate Name": "Shri Pradeep Batra",
+      "Address": "Hotel Prakash, 19 Civil Lines, New Jadugar Road Roorkee, Haridwar.",
+      "Latitude": 29.8543,
+      "Longitude": 77.888
+    },
+    {
+      "Area Name": "Khanpur",
+      "Candidate Name": "Shri Umesh Kumar Patrakar",
+      "Address": "A-9, IT Park, Sahastradhara Road, Dehradun.",
+      "Latitude": 30.3165,
+      "Longitude": 78.0322
+    },
+    {
+      "Area Name": "Manglaur",
+      "Candidate Name": "Shri Shahzad",
+      "Address": "Gram Lahboli, Tehsil Roorkee, Haridwar. 22/1 Ravindra Nath Tagore Marg-2 Near Passport Office, New Cantt Road, Dehradun.",
+      "Latitude": 29.7916,
+      "Longitude": 77.879
+    },
+    {
+      "Area Name": "Laksar",
+      "Candidate Name": "Vacant",
+      "Address": "",
+      "Latitude": 29.7597,
+      "Longitude": 78.0419
+    },
+    {
+      "Area Name": "Haridwar Rural",
+      "Candidate Name": "Smt. Anupama Rawat",
+      "Address": "Pragati Vihar, Near Ankur Gas Agency, Rishikesh, Dehradun.",
+      "Latitude": 30.0869,
+      "Longitude": 78.2676
+    },
+    {
+      "Area Name": "Yamkeshwar",
+      "Candidate Name": "Smt. Renu Bisht",
+      "Address": "Power House Mohalla, Near Old Rojgar Karyalaya, District- Pauri Garhwal.",
+      "Latitude": 30.0869,
+      "Longitude": 78.2676
+    },
+    {
+      "Area Name": "Pauri",
+      "Candidate Name": "Shri Rajkumar Pori",
+      "Address": "Gram Naogaon, Patti Kandarsyun, P.O. Dungrikhal, Pauri Garhwal.",
+      "Latitude": 30.1468,
+      "Longitude": 78.7775
+    },
+    {
+      "Area Name": "Srinagar",
+      "Candidate Name": "Dr. Dhan Singh Rawat",
+      "Address": "1/1 Circular Road, Dehradun.",
+      "Latitude": 30.2224,
+      "Longitude": 78.7834
+    },
+    {
+      "Area Name": "Chaubattakhal",
+      "Candidate Name": "Shri Satpal Maharaj",
+      "Address": "Ratanpur Ward No. 1 Kumbhi Chaur Kotdwar.",
+      "Latitude": 29.7469,
+      "Longitude": 78.5283
+    },
+    {
+      "Area Name": "Lansdowne",
+      "Candidate Name": "Shri Dalip Singh Rawat",
+      "Address": "R-01, Yamuna Colony, Dehradun.",
+      "Latitude": 29.8418,
+      "Longitude": 78.6806
+    },
+    {
+      "Area Name": "Kotdwar",
+      "Candidate Name": "Smt. Ritu Khanduri Bhushan",
+      "Address": "R-01, Yamuna Colony, Dehradun.",
+      "Latitude": 29.7469,
+      "Longitude": 78.5283
+    },
+    {
+      "Area Name": "Dharchula",
+      "Candidate Name": "Shri Harish Singh Dhami",
+      "Address": "Gram & P.O. Madkot, Tehsil Munsyari, District- Pithoragarh.",
+      "Latitude": 29.8484,
+      "Longitude": 80.5396
+    },
+    {
+      "Area Name": "Didihat",
+      "Candidate Name": "Shri Bishan Singh",
+      "Address": "Malli Jakhni, P.O. Bij, District Pithoragarh.",
+      "Latitude": 29.8062,
+      "Longitude": 80.2833
+    },
+    {
+      "Area Name": "Pithoragarh",
+      "Candidate Name": "Shri Mayukh Mahar",
+      "Address": "Gram Chausar, P.O. Bin District Pithoragarh.",
+      "Latitude": 29.5822,
+      "Longitude": 80.2187
+    },
+    {
+      "Area Name": "Gangolihat",
+      "Candidate Name": "Shri Fakir Ram",
+      "Address": "Gram P.O. Nagor, Tehsil Berinag P.O. Chaudmanya, District Pithoragarh.",
+      "Latitude": 29.4803,
+      "Longitude": 80.0773
+    },
+    {
+      "Area Name": "Kapkot",
+      "Candidate Name": "Shri Suresh Gadhiya",
+      "Address": "Gram Seema, P.O. Harsila, Tehsil Kapkot, District Bageshwar.",
+      "Latitude": 29.9229,
+      "Longitude": 79.8913
+    },
+    {
+      "Area Name": "Bageshwar",
+      "Candidate Name": "Smt. Parvati Das",
+      "Address": "Mohalla - Bankhola, Bhagirathi Durg Bazar, Ward, District- Bageshwar.",
+      "Latitude": 29.8404,
+      "Longitude": 79.7696
+    },
+    {
+      "Area Name": "Dwarahat",
+      "Candidate Name": "Shri Madan Singh Bisht",
+      "Address": "Gram-Kanal Gaon, Post Office-Bagwali, Pokhar, Block-Dwarahat, District- Almora.",
+      "Latitude": 29.7779,
+      "Longitude": 79.4277
+    },
+    {
+      "Area Name": "Salt",
+      "Candidate Name": "Shri Mahesh Jeena",
+      "Address": "Gram- Sadigaon, P.O.- Turachaura, Tehsil- Bhikiyasain, District- Almora.",
+      "Latitude": 29.7779,
+      "Longitude": 79.4277
+    },
+    {
+      "Area Name": "Ranikhet",
+      "Candidate Name": "Shri Pramod Nainwal",
+      "Address": "Gram-Bhatroj Khan, District Almora.",
+      "Latitude": 29.6424,
+      "Longitude": 79.4322
+    },
+    {
+      "Area Name": "Someshwar",
+      "Candidate Name": "Smt. Rekha Arya",
+      "Address": "Someshwar, P.O. Someshwar, District Almora.",
+      "Latitude": 29.6004,
+      "Longitude": 79.647
+    },
+    {
+      "Area Name": "Almora",
+      "Candidate Name": "Shri Manoj Tiwari",
+      "Address": "House No. 62, Mohalla Tyunra, District -Almora.",
+      "Latitude": 29.5972,
+      "Longitude": 79.6606
+    },
+    {
+      "Area Name": "Jageshwar",
+      "Candidate Name": "Shri Mohan Singh",
+      "Address": "Gram P.O. Gunaditya, District - Almora.",
+      "Latitude": 29.6399,
+      "Longitude": 79.8629
+    },
+    {
+      "Area Name": "Lohaghat",
+      "Candidate Name": "Shri Khushal Singh Adhikari",
+      "Address": "Gram Baligaon, Tehsil Lohaghat, P.O. Simalkhet, District- Champawat.",
+      "Latitude": 29.4036,
+      "Longitude": 80.0896
+    },
+    {
+      "Area Name": "Champawat",
+      "Candidate Name": "Shri Pushkar Singh Dhami",
+      "Address": "Gram-Nagla Tarai, Khatima District- Udham Singh Nagar.",
+      "Latitude": 29.3354,
+      "Longitude": 80.0784
+    },
+    {
+      "Area Name": "Lalkuan",
+      "Candidate Name": "Dr. Mohan Singh Bisht",
+      "Address": "Gram Halduchaud Jaggi P.O. Halduchaud, District Nainital.",
+      "Latitude": 29.0667,
+      "Longitude": 79.5167
+    },
+    {
+      "Area Name": "Bhimtal",
+      "Candidate Name": "Shri Ram Singh Kaira",
+      "Address": "Gram-Kairagaon, Okhal Kanda P.O.-Josyura Tehsil Dhari, Block Okhal Kanda, District- Nainital.",
+      "Latitude": 29.3444,
+      "Longitude": 79.5639
+    },
+    {
+      "Area Name": "Nainital",
+      "Candidate Name": "Smt. Sarita Arya",
+      "Address": "Gram Bhumiyadhar Mallidhar, Bhawali, Nainital.",
+      "Latitude": 29.3919,
+      "Longitude": 79.4542
+    },
+    {
+      "Area Name": "Haldwani",
+      "Candidate Name": "Shri Sumit Hridyesh",
+      "Address": "Sankalan Civil Line Haldwani.",
+      "Latitude": 29.2186,
+      "Longitude": 79.5176
+    },
+    {
+      "Area Name": "Kaladhungi",
+      "Candidate Name": "Shri Banshidhar Bhagat",
+      "Address": "Gram- Lohariyasal Malla, P.O. Kathghariya, Tehsil - Haldwani, District- Nainital.",
+      "Latitude": 29.2833,
+      "Longitude": 79.35
+    },
+    {
+      "Area Name": "Ramnagar",
+      "Candidate Name": "Shri Diwan Singh Bisht",
+      "Address": "Gram Shankarpur Khajanchi, P.O. Ramnagar, District Nainital.",
+      "Latitude": 29.3925,
+      "Longitude": 79.1283
+    },
+    {
+      "Area Name": "Jaspur",
+      "Candidate Name": "Shri Adesh Singh Chauhan",
+      "Address": "Gram Nivar Mandi P.O. Jaspur, Udham Singh Nagar.",
+      "Latitude": 29.2792,
+      "Longitude": 78.8278
+    },
+    {
+      "Area Name": "Kashipur",
+      "Candidate Name": "Shri Trilok Singh Cheema",
+      "Address": "Cheema Niwas, Gram Tanda Ujjain Chaiti Gaon, District- Udhamsingh Nagar.",
+      "Latitude": 29.2136,
+      "Longitude": 78.9569
+    },
+    {
+      "Area Name": "Bajpur",
+      "Candidate Name": "Shri Yashpal Arya",
+      "Address": "Gram Chadayal Suyal P.O. Manpur Pashchim Haldwani Nainital.",
+      "Latitude": 29.165,
+      "Longitude": 79.1611
+    },
+    {
+      "Area Name": "Gadarpur",
+      "Candidate Name": "Shri Arvind Pandey",
+      "Address": "Santosh Nagar Gularbhoj, Gadarpur Udham Singh Nagar.",
+      "Latitude": 29.04,
+      "Longitude": 79.18
+    },
+    {
+      "Area Name": "Rudrapur",
+      "Candidate Name": "Shri Shiv Arora",
+      "Address": "C-22 Alliance Colony Rudrapur, Udham Singh Nagar.",
+      "Latitude": 28.98,
+      "Longitude": 79.4
+    },
+    {
+      "Area Name": "Kichha",
+      "Candidate Name": "Shri Tilak Raj Behar",
+      "Address": "103 Awas Vikas Rudrapur District Udham Singh Nagar.",
+      "Latitude": 28.9115,
+      "Longitude": 79.5046
+    },
+    {
+      "Area Name": "Sitarganj",
+      "Candidate Name": "Shri Saurabh Bahuguna",
+      "Address": "187-Sector 4 Defence Colony Dehradun.",
+      "Latitude": 28.9293,
+      "Longitude": 79.7036
+    },
+    {
+      "Area Name": "Nanakmatta",
+      "Candidate Name": "Shri Gopal Singh Rana",
+      "Address": "Ward No. 19 Khatima Bhud Maholiya Sitarganj Road.",
+      "Latitude": 28.9875,
+      "Longitude": 79.79
+    },
+    {
+      "Area Name": "Khatima",
+      "Candidate Name": "Shri Bhuvan Chandra Kapri",
+      "Address": "Ward No.- 13 Pilibhit Road, Khatima, Udham Singh Nagar.",
+      "Latitude": 28.9214,
+      "Longitude": 79.97
+    }
+  ]
+}

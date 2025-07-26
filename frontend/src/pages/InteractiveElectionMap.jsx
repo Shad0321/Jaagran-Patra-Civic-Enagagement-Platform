@@ -94,6 +94,21 @@ const pollingBoothIcon = new Icon({
   popupAnchor: [0, -12],
 });
 
+const rajyaSabhaIcon = new Icon({
+  iconUrl:
+    'data:image/svg+xml;base64,' +
+    btoa(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="#1a1a1a" width="32" height="32">
+      <circle cx="16" cy="16" r="14" fill="#8B5CF6" stroke="#1a1a1a" stroke-width="3"/>
+      <circle cx="16" cy="16" r="8" fill="#ffffff"/>
+      <text x="16" y="20" text-anchor="middle" fill="#1a1a1a" font-size="10" font-weight="bold">RS</text>
+    </svg>
+  `),
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -16],
+});
+
 // Component to update map view
 const MapViewUpdater = ({ center, zoom }) => {
   const map = useMap();
@@ -157,7 +172,7 @@ const ElectionResultCard = ({ year, data, isWinner = false }) => (
 );
 
 // Statistics Card Component
-const StatCard = ({ title, value, icon: IconComponent , change }) => (
+const StatCard = ({ title, value, icon: IconComponent, change }) => (
   <div className="bg-white rounded-xl shadow-sm border border-primary/20 p-6 hover:shadow-lg transition-shadow duration-300">
     <div className="flex items-center justify-between">
       <div>
@@ -191,30 +206,30 @@ const Breadcrumb = ({
     { label: 'India', level: 'india', active: mapLevel === 'india' },
     ...(selectedState
       ? [
-          {
-            label: selectedState.name,
-            level: 'state',
-            active: mapLevel === 'state',
-          },
-        ]
+        {
+          label: selectedState.name,
+          level: 'state',
+          active: mapLevel === 'state',
+        },
+      ]
       : []),
     ...(selectedAssembly
       ? [
-          {
-            label: selectedAssembly.name,
-            level: 'assembly',
-            active: mapLevel === 'assembly',
-          },
-        ]
+        {
+          label: selectedAssembly.name,
+          level: 'assembly',
+          active: mapLevel === 'assembly',
+        },
+      ]
       : []),
     ...(selectedPollingBooth
       ? [
-          {
-            label: selectedPollingBooth.name,
-            level: 'polling',
-            active: mapLevel === 'polling',
-          },
-        ]
+        {
+          label: selectedPollingBooth.name,
+          level: 'polling',
+          active: mapLevel === 'polling',
+        },
+      ]
       : []),
   ];
 
@@ -225,9 +240,8 @@ const Breadcrumb = ({
         <React.Fragment key={item.level}>
           <button
             onClick={() => onNavigate(item.level)}
-            className={`hover:text-primary transition-colors ${
-              item.active ? 'text-primary font-bold underline' : 'text-gray-500'
-            }`}
+            className={`hover:text-primary transition-colors ${item.active ? 'text-primary font-bold underline' : 'text-gray-500'
+              }`}
           >
             {item.label}
           </button>
@@ -254,6 +268,8 @@ const InteractiveElectionMap = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [allStatesData, setAllStatesData] = useState([]); // Store all states for reference
+  const [showRajyaSabha, setShowRajyaSabha] = useState(false);
+  const [rajyaSabhaData, setRajyaSabhaData] = useState([]);
 
   // Sample data for charts (you would replace this with real data)
   const generateChartData = () => {
@@ -352,6 +368,23 @@ const InteractiveElectionMap = () => {
       }
     } catch (error) {
       console.error('Error fetching polling booth details:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRajyaSabhaData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/map/rajyasabha-data`
+      );
+      const data = await response.json();
+      if (data.success) {
+        setRajyaSabhaData(data.data.members);
+      }
+    } catch (error) {
+      console.error('Error fetching Rajya Sabha data:', error);
     } finally {
       setLoading(false);
     }
@@ -461,7 +494,7 @@ const InteractiveElectionMap = () => {
       case 'assembly':
         return () => handlePollingBoothClick(item);
       default:
-        return () => {};
+        return () => { };
     }
   };
 
@@ -494,16 +527,25 @@ const InteractiveElectionMap = () => {
                 <h1 className="text-xs sm:text-sm md:text-3xl font-bold text-gray-900">
                   Election Analytics Dashboard
                 </h1>
+              <div className="hidden md:block pr-4 ">
+                <Breadcrumb
+                  mapLevel={mapLevel}
+                  selectedState={selectedState}
+                  selectedAssembly={selectedAssembly}
+                  selectedPollingBooth={selectedPollingBooth}
+                  onNavigate={handleBreadcrumbNavigation}
+                />
               </div>
-                <div className="md:block pr-4 ">
-                  <Breadcrumb
-                    mapLevel={mapLevel}
-                    selectedState={selectedState}
-                    selectedAssembly={selectedAssembly}
-                    selectedPollingBooth={selectedPollingBooth}
-                    onNavigate={handleBreadcrumbNavigation}
-                  />
-                </div>
+              </div>
+              <div className="block md:hidden pr-4 ">
+                <Breadcrumb
+                  mapLevel={mapLevel}
+                  selectedState={selectedState}
+                  selectedAssembly={selectedAssembly}
+                  selectedPollingBooth={selectedPollingBooth}
+                  onNavigate={handleBreadcrumbNavigation}
+                />
+              </div>
 
               <div className="flex items-center space-x-4">
                 <select
@@ -514,6 +556,23 @@ const InteractiveElectionMap = () => {
                   <option value="2024">2024</option>
                   <option value="2022">2022</option>
                 </select>
+
+                {selectedState?.name === "Uttarakhand" && (
+                  <button
+                    onClick={() => {
+                      setShowRajyaSabha(!showRajyaSabha);
+                      if (!showRajyaSabha && rajyaSabhaData.length === 0) {
+                        fetchRajyaSabhaData();
+                      }
+                    }}
+                    className={`px-4 py-2 rounded-lg transition-colors ${showRajyaSabha
+                        ? 'bg-primary text-white'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
+                  >
+                    Rajya Sabha
+                  </button>
+                )}
 
                 {mapLevel !== 'india' && (
                   <button
@@ -574,535 +633,578 @@ const InteractiveElectionMap = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Enhanced Map Container - MODIFIED FOR STICKY POSITION */}
-      <div className="lg:col-span-2 lg:sticky lg:top-6 lg:self-start">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          {/* Map Tabs */}
-          <div className="border-b border-gray-200 px-6 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex space-x-6">
-                <button
-                  onClick={() => setActiveTab('overview')}
-                  className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-                    activeTab === 'overview'
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Map Overview
-                </button>
-                <button
-                  onClick={() => setActiveTab('analytics')}
-                  className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-                    activeTab === 'analytics'
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Analytics
-                </button>
+          {/* Enhanced Map Container - MODIFIED FOR STICKY POSITION */}
+          <div className="lg:col-span-2 lg:sticky lg:top-6 lg:self-start">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              {/* Map Tabs */}
+              <div className="border-b border-gray-200 px-6 py-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex space-x-6">
+                    <button
+                      onClick={() => setActiveTab('overview')}
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'overview'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                    >
+                      Map Overview
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('analytics')}
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'analytics'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                    >
+                      Analytics
+                    </button>
+                  </div>
+
+                  {/* View Mode Indicator */}
+                  <div className="flex items-center space-x-2 text-xs text-gray-600">
+                    {mapLevel === 'india' && (
+                      <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                        Showing all {allStatesData.length} states
+                      </span>
+                    )}
+                    {mapLevel === 'state' && selectedState && (
+                      <span className="px-2 py-1 bg-green-50 text-green-700 rounded-full">
+                        Focused on {selectedState.name}
+                      </span>
+                    )}
+                    {mapLevel === 'assembly' && selectedAssembly && (
+                      <span className="px-2 py-1 bg-orange-50 text-orange-700 rounded-full">
+                        Assembly: {selectedAssembly.name}
+                      </span>
+                    )}
+                    {mapLevel === 'polling' && selectedPollingBooth && (
+                      <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full">
+                        Booth: {selectedPollingBooth.name}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              {/* View Mode Indicator */}
-              <div className="flex items-center space-x-2 text-xs text-gray-600">
-                {mapLevel === 'india' && (
-                  <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
-                    Showing all {allStatesData.length} states
-                  </span>
-                )}
-                {mapLevel === 'state' && selectedState && (
-                  <span className="px-2 py-1 bg-green-50 text-green-700 rounded-full">
-                    Focused on {selectedState.name}
-                  </span>
-                )}
-                {mapLevel === 'assembly' && selectedAssembly && (
-                  <span className="px-2 py-1 bg-orange-50 text-orange-700 rounded-full">
-                    Assembly: {selectedAssembly.name}
-                  </span>
-                )}
-                {mapLevel === 'polling' && selectedPollingBooth && (
-                  <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full">
-                    Booth: {selectedPollingBooth.name}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+              {activeTab === 'overview' && (
+                <div className="h-96 lg:h-[600px]">
+                  {loading ? (
+                    <Loader />
+                  ) : (
+                    <MapContainer
+                      center={mapCenter}
+                      zoom={mapZoom}
+                      style={{ height: '100%', width: '100%' }}
+                      className="z-0"
+                    >
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      />
+                      <MapViewUpdater center={mapCenter} zoom={mapZoom} />
 
-          {activeTab === 'overview' && (
-            <div className="h-96 lg:h-[600px]">
-              {loading ? (
-                <Loader/>
-              ) : (
-                <MapContainer
-                  center={mapCenter}
-                  zoom={mapZoom}
-                  style={{ height: '100%', width: '100%' }}
-                  className="z-0"
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
-                  <MapViewUpdater center={mapCenter} zoom={mapZoom} />
-
-                  {filteredMapData.map(
-                    (item, index) =>
-                      item.latitude &&
-                      item.longitude && (
-                        <Marker
-                          key={`${mapLevel}-${item.id || index}`} // Better key to handle level changes
-                          position={[item.latitude, item.longitude]}
-                          icon={getMarkerIcon()}
-                          eventHandlers={{
-                            click: getMarkerClickHandler(item),
-                          }}
-                        >
-                          <Popup>
-                            <div className="p-3 min-w-64">
-                              <h3 className="font-semibold text-lg mb-2 flex items-center">
-                                {item.name}
-                                {mapLevel === 'state' &&
-                                  selectedState &&
-                                  selectedState.id === item.id && (
-                                    <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                      Selected
-                                    </span>
-                                  )}
-                              </h3>
-                              {item.electionData && (
-                                <div className="space-y-2 text-sm">
-                                  <div className="flex justify-between">
-                                    <span className="font-medium">
-                                      Total Votes:
-                                    </span>
-                                    <span>
-                                      {item.electionData.Total_Votes_Constituency?.toLocaleString()}
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="font-medium">
-                                      NOTA Votes:
-                                    </span>
-                                    <span>
-                                      {item.electionData.NOTA_Votes_Constituency?.toLocaleString()}
-                                    </span>
-                                  </div>
-                                  {item.electionData
-                                    .Party_Votes_Assembly_Aggregated && (
-                                    <div className="mt-3">
-                                      <span className="font-medium">
-                                        Top Parties:
-                                      </span>
-                                      <div className="mt-1 space-y-1">
-                                        {Object.entries(
-                                          item.electionData
-                                            .Party_Votes_Assembly_Aggregated
-                                        )
-                                          .sort(([, a], [, b]) => b - a)
-                                          .slice(0, 3)
-                                          .map(([party, votes]) => (
-                                            <div
-                                              key={party}
-                                              className="flex justify-between text-xs"
-                                            >
-                                              <span className="truncate">
-                                                {party}:
-                                              </span>
-                                              <span className="ml-2">
-                                                {votes.toLocaleString()}
-                                              </span>
+                      {/* Regular markers */}
+                      {filteredMapData.map(
+                        (item, index) =>
+                          item.latitude &&
+                          item.longitude && (
+                            <Marker
+                              key={`${mapLevel}-${item.id || index}`}
+                              position={[item.latitude, item.longitude]}
+                              icon={getMarkerIcon()}
+                              eventHandlers={{
+                                click: getMarkerClickHandler(item),
+                              }}
+                            >
+                              <Popup>
+                                <div className="p-3 min-w-64">
+                                  <h3 className="font-semibold text-lg mb-2 flex items-center">
+                                    {item.name}
+                                    {mapLevel === 'state' &&
+                                      selectedState &&
+                                      selectedState.id === item.id && (
+                                        <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                          Selected
+                                        </span>
+                                      )}
+                                  </h3>
+                                  {item.electionData && (
+                                    <div className="space-y-2 text-sm">
+                                      <div className="flex justify-between">
+                                        <span className="font-medium">
+                                          Total Votes:
+                                        </span>
+                                        <span>
+                                          {item.electionData.Total_Votes_Constituency?.toLocaleString()}
+                                        </span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span className="font-medium">
+                                          NOTA Votes:
+                                        </span>
+                                        <span>
+                                          {item.electionData.NOTA_Votes_Constituency?.toLocaleString()}
+                                        </span>
+                                      </div>
+                                      {item.electionData
+                                        .Party_Votes_Assembly_Aggregated && (
+                                          <div className="mt-3">
+                                            <span className="font-medium">
+                                              Top Parties:
+                                            </span>
+                                            <div className="mt-1 space-y-1">
+                                              {Object.entries(
+                                                item.electionData
+                                                  .Party_Votes_Assembly_Aggregated
+                                              )
+                                                .sort(([, a], [, b]) => b - a)
+                                                .slice(0, 3)
+                                                .map(([party, votes]) => (
+                                                  <div
+                                                    key={party}
+                                                    className="flex justify-between text-xs"
+                                                  >
+                                                    <span className="truncate">
+                                                      {party}:
+                                                    </span>
+                                                    <span className="ml-2">
+                                                      {votes.toLocaleString()}
+                                                    </span>
+                                                  </div>
+                                                ))}
                                             </div>
-                                          ))}
+                                          </div>
+                                        )}
+                                    </div>
+                                  )}
+                                  {item.electionResults && (
+                                    <div className="space-y-2 text-sm">
+                                      <div className="p-2 bg-green-50 rounded">
+                                        <div className="font-medium text-green-700">
+                                          Winner:{' '}
+                                          {
+                                            item.electionResults.winner
+                                              .candidate
+                                          }
+                                        </div>
+                                        <div className="text-green-600">
+                                          {item.electionResults.winner.party} •{' '}
+                                          {item.electionResults.winner.votes.toLocaleString()}{' '}
+                                          votes (
+                                          {
+                                            item.electionResults.winner
+                                              .percentage
+                                          }
+                                          %)
+                                        </div>
+                                      </div>
+                                      <div className="text-center text-sm font-medium text-blue-600">
+                                        Margin:{' '}
+                                        {item.electionResults.margin.toLocaleString()}{' '}
+                                        votes
                                       </div>
                                     </div>
                                   )}
                                 </div>
-                              )}
-                              {item.electionResults && (
-                                <div className="space-y-2 text-sm">
-                                  <div className="p-2 bg-green-50 rounded">
-                                    <div className="font-medium text-green-700">
-                                      Winner:{' '}
-                                      {
-                                        item.electionResults.winner
-                                          .candidate
-                                      }
-                                    </div>
-                                    <div className="text-green-600">
-                                      {item.electionResults.winner.party} •{' '}
-                                      {item.electionResults.winner.votes.toLocaleString()}{' '}
-                                      votes (
-                                      {
-                                        item.electionResults.winner
-                                          .percentage
-                                      }
-                                      %)
-                                    </div>
-                                  </div>
-                                  <div className="text-center text-sm font-medium text-blue-600">
-                                    Margin:{' '}
-                                    {item.electionResults.margin.toLocaleString()}{' '}
-                                    votes
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </Popup>
-                        </Marker>
-                      )
+                              </Popup>
+                            </Marker>
+                          )
+                      )}
+
+                      {/* Rajya Sabha markers */}
+  {showRajyaSabha && selectedState?.name === "Uttarakhand" && 
+    rajyaSabhaData.map((member, index) => (
+      member.Latitude && member.Longitude && (
+        <Marker
+          key={`rajya-sabha-${index}`}
+          position={[member.Latitude, member.Longitude]}
+          icon={rajyaSabhaIcon}
+        >
+          <Popup>
+            <div className="p-3 min-w-64">
+              <h3 className="font-semibold text-lg mb-2">
+                {member["Area Name"]}
+              </h3>
+              <div className="space-y-2 text-sm">
+                <div>
+                  <span className="font-medium">Candidate:</span>{' '}
+                  {member["Candidate Name"]}
+                </div>
+                <div>
+                  <span className="font-medium">Address:</span>{' '}
+                  {member["Address"]}
+                </div>
+              </div>
+            </div>
+          </Popup>
+        </Marker>
+      )
+    ))
+  }
+                    </MapContainer>
                   )}
-                </MapContainer>
+                </div>
+              )}
+
+              {activeTab === 'analytics' && (
+                <div className="p-6 h-96 lg:h-[600px] overflow-y-auto">
+                  <div className="space-y-6">
+                    {chartData.length > 0 && (
+                      <>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center">
+                            <BarChart3 className="w-5 h-5 mr-2" />
+                            Party Vote Share
+                          </h3>
+                          <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={chartData}>
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis
+                                dataKey="name"
+                                angle={-45}
+                                textAnchor="end"
+                                height={100}
+                              />
+                              <YAxis />
+                              <Tooltip
+                                formatter={(value) => [
+                                  value.toLocaleString(),
+                                  'Votes',
+                                ]}
+                              />
+                              <Bar dataKey="votes" fill="#3B82F6" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center">
+                            <PieChart className="w-5 h-5 mr-2" />
+                            Vote Distribution
+                          </h3>
+                          <ResponsiveContainer width="100%" height={300}>
+                            <RechartsPieChart>
+                              <Pie
+                                data={chartData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ name, percentage }) =>
+                                  `${name}: ${percentage}%`
+                                }
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="votes"
+                              >
+                                {chartData.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={COLORS[index % COLORS.length]}
+                                  />
+                                ))}
+                              </Pie>
+                              <Tooltip
+                                formatter={(value) => [
+                                  value.toLocaleString(),
+                                  'Votes',
+                                ]}
+                              />
+                            </RechartsPieChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </>
+                    )}
+
+                    {chartData.length === 0 && (
+                      <div className="text-center py-12">
+                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-500">
+                          No Analytics Data Available
+                        </h3>
+                        <p className="text-gray-400">
+                          Select a Assembly to view analytics
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
-          )}
-
-          {activeTab === 'analytics' && (
-            <div className="p-6 h-96 lg:h-[600px] overflow-y-auto">
-              <div className="space-y-6">
-                {chartData.length > 0 && (
-                  <>
-                    <div>
-                      <h3 className="text-lg font-semibold mb-4 flex items-center">
-                        <BarChart3 className="w-5 h-5 mr-2" />
-                        Party Vote Share
-                      </h3>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={chartData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis
-                            dataKey="name"
-                            angle={-45}
-                            textAnchor="end"
-                            height={100}
-                          />
-                          <YAxis />
-                          <Tooltip
-                            formatter={(value) => [
-                              value.toLocaleString(),
-                              'Votes',
-                            ]}
-                          />
-                          <Bar dataKey="votes" fill="#3B82F6" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-4 flex items-center">
-                        <PieChart className="w-5 h-5 mr-2" />
-                        Vote Distribution
-                      </h3>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <RechartsPieChart>
-                          <Pie
-                            data={chartData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percentage }) =>
-                              `${name}: ${percentage}%`
-                            }
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="votes"
-                          >
-                            {chartData.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            formatter={(value) => [
-                              value.toLocaleString(),
-                              'Votes',
-                            ]}
-                          />
-                        </RechartsPieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </>
-                )}
-
-                {chartData.length === 0 && (
-                  <div className="text-center py-12">
-                    <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-500">
-                      No Analytics Data Available
-                    </h3>
-                    <p className="text-gray-400">
-                      Select a Assembly to view analytics
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Enhanced Sidebar */}
-      <div className="space-y-6">
-        {/* Current Location Info */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <Info className="w-5 h-5 text-blue-600" />
-            <h3 className="font-semibold text-lg">Current Location</h3>
           </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Level:</span>
-              <span className="font-medium text-gray-900 capitalize">
-                {mapLevel}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Year:</span>
-              <span className="font-medium text-gray-900">
-                {selectedYear}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Data Points:</span>
-              <span className="font-medium text-gray-900">
-                {mapData.length}
-              </span>
-            </div>
-            {selectedState && (
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">State:</span>
-                <span className="font-medium text-gray-900">
-                  {selectedState.name}
-                </span>
-              </div>
-            )}
-            {selectedAssembly && (
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">Assembly:</span>
-                <span className="font-medium text-gray-900">
-                  {selectedAssembly.name}
-                </span>
-              </div>
-            )}
-            {selectedPollingBooth && (
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">
-                  Polling Booth:
-                </span>
-                <span className="font-medium text-gray-900">
-                  {selectedPollingBooth.name}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Quick Stats */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <Activity className="w-5 h-5 text-green-600" />
-            <h3 className="font-semibold text-lg">Quick Stats</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">
-                {mapData.length}
+          {/* Enhanced Sidebar */}
+          <div className="space-y-6">
+            {/* Current Location Info */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <Info className="w-5 h-5 text-blue-600" />
+                <h3 className="font-semibold text-lg">Current Location</h3>
               </div>
-              <div className="text-sm text-gray-600">
-                {mapLevel === 'india' && 'States'}
-                {mapLevel === 'state' && 'Assemblies'}
-                {mapLevel === 'assembly' && 'Polling Booths'}
-                {mapLevel === 'polling' && 'Detail Views'}
-              </div>
-            </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
-                {
-                  mapData.filter(
-                    (item) => item.electionData || item.electionResults
-                  ).length
-                }
-              </div>
-              <div className="text-sm text-gray-600">With Data</div>
-            </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">
-                {Math.round(
-                  (mapData.filter(
-                    (item) => item.electionData || item.electionResults
-                  ).length /
-                    mapData.length) *
-                    100
-                ) || 0}
-                %
-              </div>
-              <div className="text-sm text-gray-600">Coverage</div>
-            </div>
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600">
-                {totalVotes > 0
-                  ? (totalVotes / 1000000).toFixed(1) + 'M'
-                  : '0'}
-              </div>
-              <div className="text-sm text-gray-600">Total Votes</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Top Performers */}
-        {chartData.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
-              <h3 className="font-semibold text-lg">Top Performers</h3>
-            </div>
-            <div className="space-y-3">
-              {chartData.slice(0, 5).map((party, index) => (
-                <div
-                  key={party.name}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div
-                      className={`w-3 h-3 rounded-full`}
-                      style={{
-                        backgroundColor: COLORS[index % COLORS.length],
-                      }}
-                    ></div>
-                    <span className="font-medium text-gray-900">
-                      {party.name}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-gray-900">
-                      {party.percentage}%
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {party.votes.toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Polling Booth Details */}
-        {boothDetails && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <Users className="w-5 h-5 text-purple-600" />
-              <h3 className="font-semibold text-lg">Election Comparison</h3>
-            </div>
-            <div className="space-y-4">
-              <div className="text-center">
-                <h4 className="font-medium text-gray-900">
-                  {boothDetails.booth.name}
-                </h4>
-                <p className="text-sm text-gray-600">
-                  {boothDetails.constituency.name},{' '}
-                  {boothDetails.constituency.state.name}
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {Object.entries(boothDetails.booth.yearlyData)
-                  .reverse()
-                  .map(([year, data]) => (
-                    <ElectionResultCard
-                      key={year}
-                      year={year}
-                      data={data}
-                      isWinner={year === '2024'}
-                    />
-                  ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Interactive Legend */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="font-semibold text-lg mb-4">Interactive Legend</h3>
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <img src={state} alt="" />
-                  <span className="text-sm font-medium">States</span>
-                </div>
-                <span className="text-xs text-gray-500">
-                  Click to explore
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <img src={assembly} alt="" />
-                  <span className="text-sm font-medium">Assemblies</span>
-                </div>
-                <span className="text-xs text-gray-500">
-                  Zoom in from states
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <img src={pollingBooth} alt="" />
-                  <span className="text-sm font-medium">
-                    Polling Booths
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Level:</span>
+                  <span className="font-medium text-gray-900 capitalize">
+                    {mapLevel}
                   </span>
                 </div>
-                <span className="text-xs text-gray-500">Detailed view</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Year:</span>
+                  <span className="font-medium text-gray-900">
+                    {selectedYear}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Data Points:</span>
+                  <span className="font-medium text-gray-900">
+                    {mapData.length}
+                  </span>
+                </div>
+                {selectedState && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">State:</span>
+                    <span className="font-medium text-gray-900">
+                      {selectedState.name}
+                    </span>
+                  </div>
+                )}
+                {selectedAssembly && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">Assembly:</span>
+                    <span className="font-medium text-gray-900">
+                      {selectedAssembly.name}
+                    </span>
+                  </div>
+                )}
+                {selectedPollingBooth && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">
+                      Polling Booth:
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {selectedPollingBooth.name}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-200">
-              <h4 className="font-medium text-sm mb-2">Navigation Tips</h4>
-              <ul className="text-xs text-gray-600 space-y-1">
-                <li>• Click markers to drill down</li>
-                <li>• Use breadcrumbs to navigate back</li>
-                <li>• Search to find specific locations</li>
-                <li>• Switch between map and analytics views</li>
-              </ul>
+            {/* Quick Stats */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <Activity className="w-5 h-5 text-green-600" />
+                <h3 className="font-semibold text-lg">Quick Stats</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {mapData.length}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {mapLevel === 'india' && 'States'}
+                    {mapLevel === 'state' && 'Assemblies'}
+                    {mapLevel === 'assembly' && 'Polling Booths'}
+                    {mapLevel === 'polling' && 'Detail Views'}
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
+                    {
+                      mapData.filter(
+                        (item) => item.electionData || item.electionResults
+                      ).length
+                    }
+                  </div>
+                  <div className="text-sm text-gray-600">With Data</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {Math.round(
+                      (mapData.filter(
+                        (item) => item.electionData || item.electionResults
+                      ).length /
+                        mapData.length) *
+                      100
+                    ) || 0}
+                    %
+                  </div>
+                  <div className="text-sm text-gray-600">Coverage</div>
+                </div>
+                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600">
+                    {totalVotes > 0
+                      ? (totalVotes / 1000000).toFixed(1) + 'M'
+                      : '0'}
+                  </div>
+                  <div className="text-sm text-gray-600">Total Votes</div>
+                </div>
+              </div>
             </div>
+
+            {/* Top Performers */}
+            {chartData.length > 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-semibold text-lg">Top Performers</h3>
+                </div>
+                <div className="space-y-3">
+                  {chartData.slice(0, 5).map((party, index) => (
+                    <div
+                      key={party.name}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className={`w-3 h-3 rounded-full`}
+                          style={{
+                            backgroundColor: COLORS[index % COLORS.length],
+                          }}
+                        ></div>
+                        <span className="font-medium text-gray-900">
+                          {party.name}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold text-gray-900">
+                          {party.percentage}%
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {party.votes.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Polling Booth Details */}
+            {boothDetails && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Users className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-semibold text-lg">Election Comparison</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h4 className="font-medium text-gray-900">
+                      {boothDetails.booth.name}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      {boothDetails.constituency.name},{' '}
+                      {boothDetails.constituency.state.name}
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    {Object.entries(boothDetails.booth.yearlyData)
+                      .reverse()
+                      .map(([year, data]) => (
+                        <ElectionResultCard
+                          key={year}
+                          year={year}
+                          data={data}
+                          isWinner={year === '2024'}
+                        />
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Interactive Legend */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="font-semibold text-lg mb-4">Interactive Legend</h3>
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img src={state} alt="" />
+                      <span className="text-sm font-medium">States</span>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      Click to explore
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img src={assembly} alt="" />
+                      <span className="text-sm font-medium">Assemblies</span>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      Zoom in from states
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img src={pollingBooth} alt="" />
+                      <span className="text-sm font-medium">
+                        Polling Booths
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500">Detailed view</span>
+                  </div>
+                  {selectedState?.name === "Uttarakhand" && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">RS</span>
+            </div>
+            <span className="text-sm font-medium">Rajya Sabha</span>
           </div>
+          <span className="text-xs text-gray-500">
+            Toggle from header
+          </span>
         </div>
+      )}
+                </div>
 
-        {/* Latest News Widget */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <LatestNews
-            userState={selectedState?.name || 'all'}
-            limit={3}
-            showFull={false}
-          />
-        </div>
+                <div className="pt-4 border-t border-gray-200">
+                  <h4 className="font-medium text-sm mb-2">Navigation Tips</h4>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>• Click markers to drill down</li>
+                    <li>• Use breadcrumbs to navigate back</li>
+                    <li>• Search to find specific locations</li>
+                    <li>• Switch between map and analytics views</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
-        {/* Data Sources */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="font-semibold text-lg mb-4">Data Sources</h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>Election Commission of India</span>
+            {/* Latest News Widget */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <LatestNews
+                userState={selectedState?.name || 'all'}
+                limit={3}
+                showFull={false}
+              />
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Wikipedia</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span>Form 20 Data</span>
-            </div>
-            {/* <div className="pt-2 border-t border-gray-200">
+
+            {/* Data Sources */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="font-semibold text-lg mb-4">Data Sources</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Election Commission of India</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Wikipedia</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>Form 20 Data</span>
+                </div>
+                {/* <div className="pt-2 border-t border-gray-200">
               <p className="text-xs text-gray-500">
                 Last updated: {new Date().toLocaleDateString()}
               </p>
             </div> */}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
       </div>
     </div>
   );

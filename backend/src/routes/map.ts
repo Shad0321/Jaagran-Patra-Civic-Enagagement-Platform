@@ -6,6 +6,7 @@ import {
   getPollingBoothDetails,
   getElectionComparison,
   getMapStatistics,
+  getRajyaSabhaData,
 } from '../controllers/mapController';
 import { authenticate } from '../middleware/auth';
 
@@ -24,6 +25,7 @@ router.get(
 );
 router.get('/states/:stateId/election-comparison', getElectionComparison);
 router.get('/statistics', getMapStatistics);
+router.get('/rajyasabha-data', getRajyaSabhaData);
 
 // Protected routes (require authentication but accessible to all authenticated users)
 router.use(authenticate);

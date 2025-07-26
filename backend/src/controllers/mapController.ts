@@ -745,3 +745,27 @@ export const getMapStatistics = async (
     });
   }
 };
+
+// Get all Rajya Sabha data for UK
+export const getRajyaSabhaData = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const filePath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'form20',
+      'uk',
+      'rajyasabha.json'
+    );
+    if (!fs.existsSync(filePath)) {
+      res.status(404).json({ success: false, error: 'Rajya Sabha data not found' });
+      return;
+    }
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const data = JSON.parse(fileContent);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Error fetching Rajya Sabha data:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch Rajya Sabha data', details: error });
+  }
+};
