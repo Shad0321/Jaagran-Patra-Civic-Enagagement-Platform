@@ -91,7 +91,7 @@ const Login = () => {
       <img
         src={bgLogin}
         alt="Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none"
       />
       <img
         src={IndiaCulture}

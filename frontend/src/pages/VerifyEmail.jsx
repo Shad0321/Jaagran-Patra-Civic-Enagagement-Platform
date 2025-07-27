@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import bgLogin from '../assets/bg-login.jpg';
+import IndiaCulture from '../assets/india.png';
 
 const VerifyEmail = () => {
   const [email, setEmail] = useState('');
@@ -54,8 +55,13 @@ const VerifyEmail = () => {
       <img
         src={bgLogin}
         alt="Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none"
       />
+      <img
+              src={IndiaCulture}
+              alt="Background"
+              className="absolute inset-0 w-[500px] h-[500px] object-contain opacity-20 z-0 pointer-events-none"
+            />
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full z-10">
         <h2 className="text-2xl font-bold mb-4">Verify Your Email</h2>
         <form onSubmit={handleSubmit} className="space-y-4 z-10">

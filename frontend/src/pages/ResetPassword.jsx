@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPassword, clearError } from '../redux/slices/userSlice';
 import bgLogin from '../assets/bg-login.jpg';
+import IndiaCulture from '../assets/india.png';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -99,8 +100,13 @@ const ResetPassword = () => {
         <img
           src={bgLogin}
           alt="Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none"
         />
+        <img
+                src={IndiaCulture}
+                alt="Background"
+                className="absolute inset-0 w-[500px] h-[500px] object-contain opacity-20 z-0 pointer-events-none"
+              />
         <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
           <div className="flex flex-col items-center leading-10 font-semibold text-4xl mb-8">
             <span className="text-dark">Jaagran</span>

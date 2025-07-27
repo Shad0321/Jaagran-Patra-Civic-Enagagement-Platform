@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signupUser, clearError } from '../redux/slices/userSlice';
 import logo from '../assets/new_logo/logo.png';
 import bgLogin from '../assets/bg-login.jpg';
+import IndiaCulture from '../assets/india.png';
 
 const SignUp = () => {
   const dispatch = useDispatch();
@@ -112,8 +113,13 @@ const SignUp = () => {
       <img
         src={bgLogin}
         alt="Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
+        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0"
       />
+      <img
+              src={IndiaCulture}
+              alt="Background"
+              className="absolute inset-0 w-[500px] h-[500px] object-contain opacity-20 z-0 pointer-events-none"
+            />
       {/* Card */}
       <div className="relative w-full max-w-md bg-white/70 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-white/30 z-10">
         <div className="text-4xl font-bold mb-1">
