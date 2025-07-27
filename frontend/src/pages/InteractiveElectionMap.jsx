@@ -28,9 +28,9 @@ import {
 } from 'recharts';
 import LatestNews from '../components/LatestNews';
 import 'leaflet/dist/leaflet.css';
-import assembly from "../assets/marker/assembly.svg";
-import pollingBooth from "../assets/marker/polling.svg";
-import state from "../assets/marker/state.svg";
+import assembly from '../assets/marker/assembly.svg';
+import pollingBooth from '../assets/marker/polling.svg';
+import state from '../assets/marker/state.svg';
 
 // Import custom marker icons
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -206,30 +206,30 @@ const Breadcrumb = ({
     { label: 'India', level: 'india', active: mapLevel === 'india' },
     ...(selectedState
       ? [
-        {
-          label: selectedState.name,
-          level: 'state',
-          active: mapLevel === 'state',
-        },
-      ]
+          {
+            label: selectedState.name,
+            level: 'state',
+            active: mapLevel === 'state',
+          },
+        ]
       : []),
     ...(selectedAssembly
       ? [
-        {
-          label: selectedAssembly.name,
-          level: 'assembly',
-          active: mapLevel === 'assembly',
-        },
-      ]
+          {
+            label: selectedAssembly.name,
+            level: 'assembly',
+            active: mapLevel === 'assembly',
+          },
+        ]
       : []),
     ...(selectedPollingBooth
       ? [
-        {
-          label: selectedPollingBooth.name,
-          level: 'polling',
-          active: mapLevel === 'polling',
-        },
-      ]
+          {
+            label: selectedPollingBooth.name,
+            level: 'polling',
+            active: mapLevel === 'polling',
+          },
+        ]
       : []),
   ];
 
@@ -240,8 +240,9 @@ const Breadcrumb = ({
         <React.Fragment key={item.level}>
           <button
             onClick={() => onNavigate(item.level)}
-            className={`hover:text-primary transition-colors ${item.active ? 'text-primary font-bold underline' : 'text-gray-500'
-              }`}
+            className={`hover:text-primary transition-colors ${
+              item.active ? 'text-primary font-bold underline' : 'text-gray-500'
+            }`}
           >
             {item.label}
           </button>
@@ -494,7 +495,7 @@ const InteractiveElectionMap = () => {
       case 'assembly':
         return () => handlePollingBoothClick(item);
       default:
-        return () => { };
+        return () => {};
     }
   };
 
@@ -527,15 +528,15 @@ const InteractiveElectionMap = () => {
                 <h1 className="text-xs sm:text-sm md:text-3xl font-bold text-gray-900">
                   Election Analytics Dashboard
                 </h1>
-              <div className="hidden md:block pr-4 ">
-                <Breadcrumb
-                  mapLevel={mapLevel}
-                  selectedState={selectedState}
-                  selectedAssembly={selectedAssembly}
-                  selectedPollingBooth={selectedPollingBooth}
-                  onNavigate={handleBreadcrumbNavigation}
-                />
-              </div>
+                <div className="hidden md:block pr-4 ">
+                  <Breadcrumb
+                    mapLevel={mapLevel}
+                    selectedState={selectedState}
+                    selectedAssembly={selectedAssembly}
+                    selectedPollingBooth={selectedPollingBooth}
+                    onNavigate={handleBreadcrumbNavigation}
+                  />
+                </div>
               </div>
               <div className="block md:hidden pr-4 ">
                 <Breadcrumb
@@ -557,7 +558,7 @@ const InteractiveElectionMap = () => {
                   <option value="2022">2022</option>
                 </select>
 
-                {selectedState?.name === "Uttarakhand" && (
+                {selectedState?.name === 'Uttarakhand' && (
                   <button
                     onClick={() => {
                       setShowRajyaSabha(!showRajyaSabha);
@@ -565,10 +566,11 @@ const InteractiveElectionMap = () => {
                         fetchRajyaSabhaData();
                       }
                     }}
-                    className={`px-4 py-2 rounded-lg transition-colors ${showRajyaSabha
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      showRajyaSabha
                         ? 'bg-primary text-white'
                         : 'bg-gray-100 hover:bg-gray-200'
-                      }`}
+                    }`}
                   >
                     Rajya Sabha
                   </button>
@@ -642,19 +644,21 @@ const InteractiveElectionMap = () => {
                   <div className="flex space-x-6">
                     <button
                       onClick={() => setActiveTab('overview')}
-                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'overview'
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
+                        activeTab === 'overview'
                           ? 'border-primary text-primary'
                           : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
+                      }`}
                     >
                       Map Overview
                     </button>
                     <button
                       onClick={() => setActiveTab('analytics')}
-                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'analytics'
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
+                        activeTab === 'analytics'
                           ? 'border-primary text-primary'
                           : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
+                      }`}
                     >
                       Analytics
                     </button>
@@ -705,11 +709,11 @@ const InteractiveElectionMap = () => {
 
                       {/* Regular markers */}
                       {filteredMapData.map(
-                        (item, index) =>
+                        (item) =>
                           item.latitude &&
                           item.longitude && (
                             <Marker
-                              key={`${mapLevel}-${item.id || index}`}
+                              key={item.id ? `marker-${item.id}` : `marker-${item.latitude}-${item.longitude}`}
                               position={[item.latitude, item.longitude]}
                               icon={getMarkerIcon()}
                               eventHandlers={{
@@ -748,33 +752,33 @@ const InteractiveElectionMap = () => {
                                       </div>
                                       {item.electionData
                                         .Party_Votes_Assembly_Aggregated && (
-                                          <div className="mt-3">
-                                            <span className="font-medium">
-                                              Top Parties:
-                                            </span>
-                                            <div className="mt-1 space-y-1">
-                                              {Object.entries(
-                                                item.electionData
-                                                  .Party_Votes_Assembly_Aggregated
-                                              )
-                                                .sort(([, a], [, b]) => b - a)
-                                                .slice(0, 3)
-                                                .map(([party, votes]) => (
-                                                  <div
-                                                    key={party}
-                                                    className="flex justify-between text-xs"
-                                                  >
-                                                    <span className="truncate">
-                                                      {party}:
-                                                    </span>
-                                                    <span className="ml-2">
-                                                      {votes.toLocaleString()}
-                                                    </span>
-                                                  </div>
-                                                ))}
-                                            </div>
+                                        <div className="mt-3">
+                                          <span className="font-medium">
+                                            Top Parties:
+                                          </span>
+                                          <div className="mt-1 space-y-1">
+                                            {Object.entries(
+                                              item.electionData
+                                                .Party_Votes_Assembly_Aggregated
+                                            )
+                                              .sort(([, a], [, b]) => b - a)
+                                              .slice(0, 3)
+                                              .map(([party, votes]) => (
+                                                <div
+                                                  key={party}
+                                                  className="flex justify-between text-xs"
+                                                >
+                                                  <span className="truncate">
+                                                    {party}:
+                                                  </span>
+                                                  <span className="ml-2">
+                                                    {votes.toLocaleString()}
+                                                  </span>
+                                                </div>
+                                              ))}
                                           </div>
-                                        )}
+                                        </div>
+                                      )}
                                     </div>
                                   )}
                                   {item.electionResults && (
@@ -812,35 +816,41 @@ const InteractiveElectionMap = () => {
                       )}
 
                       {/* Rajya Sabha markers */}
-  {showRajyaSabha && selectedState?.name === "Uttarakhand" && 
-    rajyaSabhaData.map((member, index) => (
-      member.Latitude && member.Longitude && (
-        <Marker
-          key={`rajya-sabha-${index}`}
-          position={[member.Latitude, member.Longitude]}
-          icon={rajyaSabhaIcon}
-        >
-          <Popup>
-            <div className="p-3 min-w-64">
-              <h3 className="font-semibold text-lg mb-2">
-                {member["Area Name"]}
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="font-medium">Candidate:</span>{' '}
-                  {member["Candidate Name"]}
-                </div>
-                <div>
-                  <span className="font-medium">Address:</span>{' '}
-                  {member["Address"]}
-                </div>
-              </div>
-            </div>
-          </Popup>
-        </Marker>
-      )
-    ))
-  }
+                      {showRajyaSabha &&
+                        selectedState?.name === 'Uttarakhand' &&
+                        rajyaSabhaData.map(
+                          (member, index) =>
+                            member.Latitude &&
+                            member.Longitude && (
+                              <Marker
+                                key={`rajya-sabha-${index}`}
+                                position={[member.Latitude, member.Longitude]}
+                                icon={rajyaSabhaIcon}
+                              >
+                                <Popup>
+                                  <div className="p-3 min-w-64">
+                                    <h3 className="font-semibold text-lg mb-2">
+                                      {member['Area Name']}
+                                    </h3>
+                                    <div className="space-y-2 text-sm">
+                                      <div>
+                                        <span className="font-medium">
+                                          Candidate:
+                                        </span>{' '}
+                                        {member['Candidate Name']}
+                                      </div>
+                                      <div>
+                                        <span className="font-medium">
+                                          Address:
+                                        </span>{' '}
+                                        {member['Address']}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </Popup>
+                              </Marker>
+                            )
+                        )}
                     </MapContainer>
                   )}
                 </div>
@@ -1023,7 +1033,7 @@ const InteractiveElectionMap = () => {
                         (item) => item.electionData || item.electionResults
                       ).length /
                         mapData.length) *
-                      100
+                        100
                     ) || 0}
                     %
                   </div>
@@ -1144,19 +1154,21 @@ const InteractiveElectionMap = () => {
                     </div>
                     <span className="text-xs text-gray-500">Detailed view</span>
                   </div>
-                  {selectedState?.name === "Uttarakhand" && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">RS</span>
-            </div>
-            <span className="text-sm font-medium">Rajya Sabha</span>
-          </div>
-          <span className="text-xs text-gray-500">
-            Toggle from header
-          </span>
-        </div>
-      )}
+                  {selectedState?.name === 'Uttarakhand' && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">
+                            RS
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium">Rajya Sabha</span>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        Toggle from header
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-4 border-t border-gray-200">

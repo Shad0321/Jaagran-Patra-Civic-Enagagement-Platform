@@ -76,7 +76,7 @@ const NewsDetail = () => {
           url: window.location.href,
         });
       } catch (err) {
-        console.log('Error sharing:', err);
+        console.error('Error sharing:', err);
       }
     } else {
       // Fallback: copy to clipboard
@@ -96,9 +96,7 @@ const NewsDetail = () => {
   };
 
   if (loading) {
-    return (
-      <Loader/>
-    );
+    return <Loader />;
   }
 
   if (error) {

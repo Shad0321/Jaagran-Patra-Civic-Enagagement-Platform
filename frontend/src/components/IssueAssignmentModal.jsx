@@ -159,9 +159,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
               <h2 className="text-xl font-bold text-gray-900">
                 Assign Issue to Member
               </h2>
-              <p className="text-sm text-primary/80">
-                Issue #{issue.ticketId}
-              </p>
+              <p className="text-sm text-primary/80">Issue #{issue.ticketId}</p>
             </div>
           </div>
           <button
@@ -193,10 +191,10 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
 
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold text-gray-900 text-lg">{issue.title}</h4>
-                <p className="text-gray-600 mt-1">
-                  {issue.description}
-                </p>
+                <h4 className="font-semibold text-gray-900 text-lg">
+                  {issue.title}
+                </h4>
+                <p className="text-gray-600 mt-1">{issue.description}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -225,7 +223,9 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                 <div className="flex items-center gap-3 bg-green-50/80 border border-green-200 rounded-lg p-3">
                   <User className="h-5 w-5 text-green-600" />
                   <div>
-                    <p className="font-medium text-green-800">Currently assigned to</p>
+                    <p className="font-medium text-green-800">
+                      Currently assigned to
+                    </p>
                     <p className="text-green-700 text-sm">
                       {issue.assignedTo.name}
                     </p>
@@ -237,8 +237,10 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
 
           {/* Search and Filter */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">Select Member to Assign</h3>
-            
+            <h3 className="font-bold text-gray-900 mb-4">
+              Select Member to Assign
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
@@ -250,7 +252,7 @@ const IssueAssignmentModal = ({ isOpen, onClose, issue, onSuccess }) => {
                   className="pl-10 w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                 />
               </div>
-              
+
               <div className="relative">
                 <select
                   value={filterBodyType}

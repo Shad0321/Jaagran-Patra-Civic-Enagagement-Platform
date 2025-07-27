@@ -159,11 +159,12 @@ const BodyManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-primary/10">
             <div className="flex justify-between items-center flex-wrap space-y-2">
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
-                  Body Management
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2 pt-2">
+                  Constituency Management
                 </h1>
                 <p className="text-gray-600">
-                  Manage political and administrative bodies in your constituency
+                  Manage political and administrative bodies in your
+                  constituency
                 </p>
               </div>
               <button
@@ -171,7 +172,7 @@ const BodyManagement = () => {
                 className="bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-2.5 rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-2"
               >
                 <Plus className="h-5 w-5" />
-                <span>Add Body</span>
+                <span>Add Constituency</span>
               </button>
             </div>
           </div>
@@ -182,7 +183,9 @@ const BodyManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Bodies</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Constituencies
+                </p>
                 <p className="text-2xl font-bold text-primary">
                   {stats.totalBodies}
                 </p>
@@ -196,7 +199,9 @@ const BodyManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-emerald-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Bodies</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Active Constituencies
+                </p>
                 <p className="text-2xl font-bold text-emerald-600">
                   {stats.activeBodies}
                 </p>
@@ -210,7 +215,9 @@ const BodyManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Members</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Members
+                </p>
                 <p className="text-2xl font-bold text-purple-600">
                   {stats.totalMembers}
                 </p>
@@ -227,7 +234,7 @@ const BodyManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <h2 className="text-lg font-semibold text-gray-900">
-                Bodies ({filteredBodies.length})
+                Constituencies ({filteredBodies.length})
               </h2>
 
               <div className="flex flex-col sm:flex-row gap-3">
@@ -250,7 +257,7 @@ const BodyManagement = () => {
                     onChange={(e) => setSelectedBodyType(e.target.value)}
                     className="w-full pl-3 pr-8 py-2 bg-white/80 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 appearance-none"
                   >
-                    <option value="">All Body Types</option>
+                    <option value="">All Constituency Types</option>
                     {bodyTypes.map((type) => (
                       <option key={type.value} value={type.value}>
                         {type.label}
@@ -342,11 +349,13 @@ const BodyManagement = () => {
                         <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-full">
                           Members: {body.memberCount || 0}
                         </span>
-                        <span className={`px-2 py-1 rounded-full ${
-                          body.isActive 
-                            ? 'bg-emerald-50 text-emerald-700' 
-                            : 'bg-red-50 text-red-700'
-                        }`}>
+                        <span
+                          className={`px-2 py-1 rounded-full ${
+                            body.isActive
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-red-50 text-red-700'
+                          }`}
+                        >
                           Status: {body.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </div>
@@ -360,19 +369,19 @@ const BodyManagement = () => {
                   <Building className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
-                  No bodies found
+                  No constituencies found
                 </h3>
                 <p className="text-gray-500 text-sm mb-4">
                   {searchTerm || selectedBodyType
                     ? 'Try adjusting your search or filters'
-                    : 'Add your first body to get started'}
+                    : 'Add your first constituency to get started'}
                 </p>
                 <button
                   onClick={handleAddBody}
                   className="px-4 py-2 bg-gradient-to-r from-primary to-primary/80 text-white text-sm font-medium rounded-lg hover:shadow-md transition-all duration-200 inline-flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  Add New Body
+                  Add New Constituency
                 </button>
               </div>
             )}

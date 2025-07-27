@@ -86,16 +86,6 @@ const api = {
     if (isFormData && headers['Content-Type']) {
       delete headers['Content-Type'];
     }
-
-    console.log(
-      'API POST request:',
-      endpoint,
-      'Headers:',
-      headers,
-      'Token:',
-      token
-    );
-
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers,

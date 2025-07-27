@@ -1,17 +1,17 @@
 // routes/chat.ts
 import { Router } from 'express';
-import { 
-  createGroup, 
-  getGroups, 
+import {
+  createGroup,
+  getGroups,
   getPublicGroups,
-  getGroupMessages, 
-  sendMessage, 
-  joinGroup, 
-  leaveGroup, 
-  inviteMember, 
-  removeMember, 
+  getGroupMessages,
+  sendMessage,
+  joinGroup,
+  leaveGroup,
+  inviteMember,
+  removeMember,
   getGroupMembers,
-  markMessageAsRead
+  markMessageAsRead,
 } from '../controllers/chatController';
 import { authenticate } from '../middleware/auth';
 import { body, param } from 'express-validator';
@@ -24,28 +24,42 @@ router.use(authenticate);
 
 // Validation middleware
 const createGroupValidation = [
-  body('name').trim().isLength({ min: 1, max: 100 }).withMessage('Group name is required and must be less than 100 characters'),
-  body('description').optional().isLength({ max: 500 }).withMessage('Description must be less than 500 characters'),
-  body('type').isIn(['PUBLIC_MLA_GROUP', 'PRIVATE_MLA_GROUP']).withMessage('Invalid group type'),
-  handleValidationErrors
+  body('name')
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Group name is required and must be less than 100 characters'),
+  body('description')
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage('Description must be less than 500 characters'),
+  body('type')
+    .isIn(['PUBLIC_MLA_GROUP', 'PRIVATE_MLA_GROUP'])
+    .withMessage('Invalid group type'),
+  handleValidationErrors,
 ];
 
 const sendMessageValidation = [
   param('groupId').isString().withMessage('Group ID is required'),
-  body('message').trim().isLength({ min: 1, max: 1000 }).withMessage('Message is required and must be less than 1000 characters'),
-  body('messageType').optional().isIn(['TEXT', 'IMAGE', 'AUDIO', 'FILE']).withMessage('Invalid message type'),
-  handleValidationErrors
+  body('message')
+    .trim()
+    .isLength({ min: 1, max: 1000 })
+    .withMessage('Message is required and must be less than 1000 characters'),
+  body('messageType')
+    .optional()
+    .isIn(['TEXT', 'IMAGE', 'AUDIO', 'FILE'])
+    .withMessage('Invalid message type'),
+  handleValidationErrors,
 ];
 
 const inviteMemberValidation = [
   param('groupId').isString().withMessage('Group ID is required'),
   body('userId').isString().withMessage('User ID is required'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 const groupIdValidation = [
   param('groupId').isString().withMessage('Group ID is required'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 // Routes
@@ -75,12 +89,13 @@ router.post('/groups/:groupId/leave', groupIdValidation, leaveGroup);
 router.post('/groups/:groupId/invite', inviteMemberValidation, inviteMember);
 
 // Remove a member from a group (Only MLA or authorized members)
-router.delete('/groups/:groupId/members/:userId', 
+router.delete(
+  '/groups/:groupId/members/:userId',
   [
     param('groupId').isString().withMessage('Group ID is required'),
     param('userId').isString().withMessage('User ID is required'),
-    handleValidationErrors
-  ], 
+    handleValidationErrors,
+  ],
   removeMember
 );
 
@@ -88,11 +103,12 @@ router.delete('/groups/:groupId/members/:userId',
 router.get('/groups/:groupId/members', groupIdValidation, getGroupMembers);
 
 // Mark message as read
-router.post('/messages/:messageId/read', 
+router.post(
+  '/messages/:messageId/read',
   [
     param('messageId').isString().withMessage('Message ID is required'),
-    handleValidationErrors
-  ], 
+    handleValidationErrors,
+  ],
   markMessageAsRead
 );
 

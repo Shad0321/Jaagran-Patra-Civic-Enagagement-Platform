@@ -19,7 +19,6 @@ const Settings = () => {
   // Show backend error as toast
   useEffect(() => {
     if (error) {
-      console.log('API Error:', error);
       toast.error(error);
     }
   }, [error]);
@@ -62,7 +61,7 @@ const Settings = () => {
       setCurrentLanguage(language);
       dispatch(setLanguage(language));
       // Get language code for Google Translate
-      const selectedLangObj = languages.find(lang => lang.value === language);
+      const selectedLangObj = languages.find((lang) => lang.value === language);
       if (selectedLangObj) {
         // Change Google Translate language
         await changeGoogleTranslateLanguage(selectedLangObj.code);
@@ -79,7 +78,6 @@ const Settings = () => {
     if (name === 'avatar' && type === 'file') {
       const file = files[0];
       setAvatarFile(file);
-      console.log('Selected avatar file:', file);
       if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -111,20 +109,14 @@ const Settings = () => {
     try {
       let payload,
         isFormData = false;
-      console.log('Submitting profile update. avatarFile:', avatarFile);
       if (avatarFile) {
         payload = new FormData();
         payload.append('name', profileData.name);
         payload.append('phone', profileData.phone);
         payload.append('avatar', avatarFile);
         isFormData = true;
-        // Debug: log FormData content
-        for (let pair of payload.entries()) {
-          console.log('FormData:', pair[0], pair[1]);
-        }
       } else {
         payload = { ...profileData };
-        console.log('Payload (no avatar):', payload);
       }
       // Pass a flag to the thunk so it can set headers
       await dispatch(updateUserProfile({ data: payload, isFormData })).unwrap();
@@ -228,10 +220,11 @@ const Settings = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`${activeTab === tab.id
+                  className={`${
+                    activeTab === tab.id
                       ? 'border-primary text-primary'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 cursor-pointer`}
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 cursor-pointer`}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.name}
@@ -472,10 +465,11 @@ const Settings = () => {
                     <button
                       key={language.id}
                       onClick={() => handleLanguageChange(language.value)}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 flex items-center justify-between ${currentLanguage === language.value
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 flex items-center justify-between ${
+                        currentLanguage === language.value
                           ? 'bg-primary text-white border-primary'
                           : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
-                        } cursor-pointer`}
+                      } cursor-pointer`}
                     >
                       <span className="font-medium">{language.name}</span>
                       {currentLanguage === language.value && (

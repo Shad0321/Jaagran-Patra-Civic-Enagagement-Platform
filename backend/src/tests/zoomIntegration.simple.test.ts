@@ -21,8 +21,6 @@ import zoomService from '../services/zoomService';
  */
 
 async function testZoomIntegration() {
-  console.log('🔍 Testing Zoom API Integration...\n');
-
   try {
     // Test 1: Get current user first
     console.log('1. Testing getCurrentUser()...');

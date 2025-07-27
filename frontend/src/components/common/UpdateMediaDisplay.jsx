@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Image, Volume2, Play, Pause, X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Image,
+  Volume2,
+  Play,
+  Pause,
+  X,
+  ZoomIn,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 
 const UpdateMediaDisplay = ({ update, className = '' }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -49,7 +58,7 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
 
   const navigateImage = (direction) => {
     setImageLoading(true);
-    setSelectedImageIndex(prev => {
+    setSelectedImageIndex((prev) => {
       if (direction === 'prev') {
         return prev === 0 ? images.length - 1 : prev - 1;
       } else {
@@ -163,7 +172,7 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                   <Play className="h-4 w-4 ml-0.5" />
                 )}
               </button>
-              
+
               <div className="flex-1">
                 <input
                   type="range"
@@ -173,7 +182,7 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                   onChange={handleTimeChange}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                   style={{
-                    backgroundSize: `${(currentTime / (duration || 1)) * 100}% 100%`
+                    backgroundSize: `${(currentTime / (duration || 1)) * 100}% 100%`,
                   }}
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -182,7 +191,7 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                 </div>
               </div>
             </div>
-            
+
             <audio
               ref={audioRef}
               src={`${API_BASE_URL}${audioUrl}`}
@@ -207,7 +216,7 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
             >
               <X className="h-8 w-8" />
             </button>
-            
+
             {/* Navigation Arrows */}
             {images.length > 1 && (
               <>
@@ -225,14 +234,14 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                 </button>
               </>
             )}
-            
+
             {/* Image Counter */}
             {images.length > 1 && (
               <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
                 {selectedImageIndex + 1} / {images.length}
               </div>
             )}
-            
+
             {/* Main Image */}
             <div className="flex-1 flex items-center justify-center">
               {imageLoading && (

@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { X, Building, Check, MapPin, Phone, Mail, Edit, ChevronDown } from 'lucide-react';
+import {
+  X,
+  Building,
+  Check,
+  MapPin,
+  Phone,
+  Mail,
+  Edit,
+  ChevronDown,
+} from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 import Loader from './common/Loader';
@@ -75,12 +84,8 @@ const EditBodyModal = ({ isOpen, onClose, body, onSuccess }) => {
               <Edit className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
-                Edit Body
-              </h2>
-              <p className="text-sm text-primary/80">
-                Update body information
-              </p>
+              <h2 className="text-xl font-bold text-gray-900">Edit Body</h2>
+              <p className="text-sm text-primary/80">Update body information</p>
             </div>
           </div>
           <button
@@ -95,9 +100,7 @@ const EditBodyModal = ({ isOpen, onClose, body, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Basic Information
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Basic Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -290,9 +293,7 @@ const EditBodyModal = ({ isOpen, onClose, body, onSuccess }) => {
 
           {/* Statistics */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Statistics
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Statistics</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-primary/5 rounded-lg p-4 border border-primary/10">
                 <p className="text-sm text-gray-600">Members</p>

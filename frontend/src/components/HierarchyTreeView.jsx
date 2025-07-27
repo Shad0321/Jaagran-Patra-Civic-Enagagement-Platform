@@ -42,7 +42,8 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
 
   const getMemberStatusColor = (member) => {
     if (!member.isActive) return 'bg-red-100 text-red-800 border-red-200';
-    if (member.assignedIssuesCount > 0) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    if (member.assignedIssuesCount > 0)
+      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
     return 'bg-green-100 text-green-800 border-green-200';
   };
 
@@ -70,7 +71,7 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
               Organizational Hierarchy
             </h2>
             <p className="text-xs sm:text-sm text-primary/80">
-              MLA → Bodies → Members structure
+              MLA → Constituencies → Members structure
             </p>
           </div>
         </div>
@@ -92,8 +93,12 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
               <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-gray-900 text-sm sm:text-base truncate">{data.mla.name}</h3>
-              <p className="text-xs sm:text-sm text-primary/80 truncate">{data.mla.email}</p>
+              <h3 className="font-bold text-gray-900 text-sm sm:text-base truncate">
+                {data.mla.name}
+              </h3>
+              <p className="text-xs sm:text-sm text-primary/80 truncate">
+                {data.mla.email}
+              </p>
               <div className="flex gap-1 sm:gap-2 mt-1 flex-wrap">
                 <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full border border-primary/20">
                   MLA
@@ -110,7 +115,7 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                 {data.mla.totalMembers} Members
               </p>
               <p className="text-xs text-primary/80">
-                {data.bodies.length} Bodies
+                {data.bodies.length} Constituencies
               </p>
             </div>
           </div>
@@ -185,19 +190,25 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                   <div className="flex items-center text-xs text-gray-500">
                                     <Mail className="h-3 w-3 mr-1 flex-shrink-0" />
-                                    <span className="truncate">{member.email}</span>
+                                    <span className="truncate">
+                                      {member.email}
+                                    </span>
                                   </div>
                                   {member.phone && (
                                     <div className="flex items-center text-xs text-gray-500">
                                       <Phone className="h-3 w-3 mr-1 flex-shrink-0" />
-                                      <span className="truncate">{member.phone}</span>
+                                      <span className="truncate">
+                                        {member.phone}
+                                      </span>
                                     </div>
                                   )}
                                 </div>
                               </div>
                               <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
                                 <div className="text-right space-y-1">
-                                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full border ${getMemberStatusColor(member)}`}>
+                                  <span
+                                    className={`inline-block px-2 py-1 text-xs font-medium rounded-full border ${getMemberStatusColor(member)}`}
+                                  >
                                     {member.isActive ? 'Active' : 'Inactive'}
                                   </span>
                                   <p className="text-xs text-gray-500">
@@ -242,9 +253,9 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
               ) : (
                 <div className="text-center py-8 text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10">
                   <Building className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-sm">No bodies found</p>
+                  <p className="text-sm">No Constituencies found</p>
                   <p className="text-xs sm:text-sm mt-1">
-                    Bodies will appear here when created
+                    Constituencies will appear here when created
                   </p>
                 </div>
               )}
@@ -254,7 +265,9 @@ const HierarchyTreeView = ({ data, onEditMember, onDeleteMember }) => {
                 <div className="mt-6 p-4 sm:p-5 bg-yellow-50/80 backdrop-blur-sm rounded-xl shadow border border-yellow-200">
                   <h4 className="font-semibold text-yellow-800 mb-4 flex items-center gap-2 text-sm sm:text-base">
                     <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 flex-shrink-0" />
-                    <span>Unassigned Members ({data.unassignedMembers.length})</span>
+                    <span>
+                      Unassigned Members ({data.unassignedMembers.length})
+                    </span>
                   </h4>
                   <div className="grid grid-cols-1 gap-3">
                     {data.unassignedMembers.map((member) => (

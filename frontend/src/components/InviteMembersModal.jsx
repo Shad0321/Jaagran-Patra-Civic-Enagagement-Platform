@@ -35,7 +35,8 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
     try {
       setLoading(true);
       const response = await api.get('/auth/members');
-      const allMembers = response.data?.members || response.data?.data?.members || [];
+      const allMembers =
+        response.data?.members || response.data?.data?.members || [];
       const filteredMembers = Array.isArray(allMembers) ? allMembers : [];
       setMembers(filteredMembers);
     } catch (error) {
@@ -131,10 +132,9 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
       const customEmails = emailInvites.filter((email) => email.trim());
       const allInvitees = [...memberEmails, ...customEmails];
 
-      const response = await api.post(
-        `/meetings/${meeting.id}/invite`,
-        { invitees: allInvitees }
-      );
+      const response = await api.post(`/meetings/${meeting.id}/invite`, {
+        invitees: allInvitees,
+      });
 
       toast.success(`Invitations sent to ${allInvitees.length} recipients`);
       onInvitesSent(response.data);
@@ -197,9 +197,7 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
               <h2 className="text-xl font-bold text-gray-900">
                 Invite Members to Meeting
               </h2>
-              <p className="text-sm text-primary/80">
-                {meeting.title}
-              </p>
+              <p className="text-sm text-primary/80">{meeting.title}</p>
             </div>
           </div>
           <button
@@ -220,7 +218,9 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
                 {new Date(meeting.scheduledAt).toLocaleString()}
               </div>
             </div>
-            <p className="text-gray-600">{meeting.description || 'No description provided'}</p>
+            <p className="text-gray-600">
+              {meeting.description || 'No description provided'}
+            </p>
           </div>
 
           {/* Current Invitations */}
@@ -238,7 +238,8 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
                       className={`flex items-center gap-4 p-4 border rounded-xl ${status.borderColor} ${status.bgColor}`}
                     >
                       <div className="h-10 w-10 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-white">
-                        {invitation.user?.name?.charAt(0).toUpperCase() || invitation.email.charAt(0).toUpperCase()}
+                        {invitation.user?.name?.charAt(0).toUpperCase() ||
+                          invitation.email.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-gray-900 truncate">
@@ -249,7 +250,9 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`inline-flex items-center px-3 py-1 text-xs rounded-full border ${status.borderColor} ${status.color}`}>
+                        <span
+                          className={`inline-flex items-center px-3 py-1 text-xs rounded-full border ${status.borderColor} ${status.color}`}
+                        >
                           {status.icon}
                           <span className="ml-1">{status.label}</span>
                         </span>
@@ -283,13 +286,19 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
             ) : (
               <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
                 {filteredMembers.map((member) => {
-                  const isSelected = selectedMembers.find((m) => m.id === member.id);
-                  const isAlreadyInvited = currentInvitations.some((inv) => inv.userId === member.id);
+                  const isSelected = selectedMembers.find(
+                    (m) => m.id === member.id
+                  );
+                  const isAlreadyInvited = currentInvitations.some(
+                    (inv) => inv.userId === member.id
+                  );
 
                   return (
                     <div
                       key={member.id}
-                      onClick={() => !isAlreadyInvited && handleMemberSelect(member)}
+                      onClick={() =>
+                        !isAlreadyInvited && handleMemberSelect(member)
+                      }
                       className={`flex items-center gap-4 p-4 border rounded-xl cursor-pointer transition-all duration-200 ${
                         isAlreadyInvited
                           ? 'bg-gray-50/80 border-gray-200 cursor-not-allowed'
@@ -435,7 +444,10 @@ const InviteMembersModal = ({ meeting, onClose, onInvitesSent }) => {
               </div>
               <button
                 onClick={handleSendInvitations}
-                disabled={sendingInvitations || (selectedMembers.length === 0 && emailInvites.length === 0)}
+                disabled={
+                  sendingInvitations ||
+                  (selectedMembers.length === 0 && emailInvites.length === 0)
+                }
                 className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {sendingInvitations ? (

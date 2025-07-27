@@ -67,7 +67,6 @@ const MemberManagement = () => {
 
   const fetchMembers = async () => {
     if (!user || !user.id) {
-      console.log('User data not available yet');
       return;
     }
 
@@ -94,14 +93,14 @@ const MemberManagement = () => {
       const uniqueBodies = new Set(
         membersData.map((m) => m.body?.id).filter(Boolean)
       ).size;
-      const memberIssues = membersData.reduce(
-        (sum, m) => sum + (m.assignedIssuesCount || 0),
-        0
-      );
+      // const memberIssues = membersData.reduce(
+      //   (sum, m) => sum + (m.assignedIssuesCount || 0),
+      //   0
+      // );
 
       // Add MLA's own assigned issues to the total count
       const mlaIssues = mlaIssuesResponse.data.data?.issues?.length || 0;
-      const totalIssues = memberIssues + mlaIssues;
+      const totalIssues = mlaIssues;
 
       setStats({
         totalMembers: membersData.length,
@@ -119,7 +118,6 @@ const MemberManagement = () => {
 
   const fetchHierarchyData = async () => {
     if (!user || !user.id) {
-      console.log('User data not available yet');
       return;
     }
 
@@ -215,13 +213,17 @@ const MemberManagement = () => {
 
   if (!user) {
     return (
-      <Loader className={"w-screen h-screen flex items-center justify-center"} />
+      <Loader
+        className={'w-screen h-screen flex items-center justify-center'}
+      />
     );
   }
 
   if (loading) {
     return (
-      <Loader className={"w-screen h-screen flex items-center justify-center"} />
+      <Loader
+        className={'w-screen h-screen flex items-center justify-center'}
+      />
     );
   }
 
@@ -266,7 +268,9 @@ const MemberManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Members</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Members
+                </p>
                 <p className="text-2xl font-bold text-primary">
                   {stats.totalMembers}
                 </p>
@@ -280,7 +284,9 @@ const MemberManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-emerald-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Members</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Active Members
+                </p>
                 <p className="text-2xl font-bold text-emerald-600">
                   {stats.activeMembers}
                 </p>
@@ -294,7 +300,9 @@ const MemberManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Bodies</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Constituencies
+                </p>
                 <p className="text-2xl font-bold text-purple-600">
                   {stats.totalBodies}
                 </p>
@@ -308,7 +316,9 @@ const MemberManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-amber-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Issues Assigned</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Issues Assigned
+                </p>
                 <p className="text-2xl font-bold text-amber-600">
                   {stats.totalIssuesAssigned}
                 </p>
@@ -453,7 +463,8 @@ const MemberManagement = () => {
                         <div className="flex items-center gap-2">
                           <Building className="h-4 w-4 text-primary/70" />
                           <span>
-                            {member.bodyType?.replace(/_/g, ' ') || 'No Body Type'}
+                            {member.bodyType?.replace(/_/g, ' ') ||
+                              'No Body Type'}
                           </span>
                         </div>
                         {member.body && (

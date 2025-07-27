@@ -50,7 +50,12 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
     if (formData.bodyType) {
       fetchBodies();
     }
-  }, [formData.bodyType, formData.stateId, formData.districtId, formData.constituencyId]);
+  }, [
+    formData.bodyType,
+    formData.stateId,
+    formData.districtId,
+    formData.constituencyId,
+  ]);
 
   const fetchBodies = async () => {
     try {
@@ -58,7 +63,8 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
       const params = {};
       if (formData.stateId) params.stateId = formData.stateId;
       if (formData.districtId) params.districtId = formData.districtId;
-      if (formData.constituencyId) params.constituencyId = formData.constituencyId;
+      if (formData.constituencyId)
+        params.constituencyId = formData.constituencyId;
       if (formData.bodyType) params.type = formData.bodyType;
 
       const response = await api.get('/auth/bodies', { params });
@@ -82,7 +88,12 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.name || !formData.password || !formData.bodyType) {
+    if (
+      !formData.email ||
+      !formData.name ||
+      !formData.password ||
+      !formData.bodyType
+    ) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -157,9 +168,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Basic Information
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Basic Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -270,7 +279,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
                 {loadingBodies && (
                   <p className="text-xs text-gray-500 mt-1">
-                    Loading bodies...
+                    Loading constituencies...
                   </p>
                 )}
               </div>
@@ -307,9 +316,7 @@ const AddMemberModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Permissions */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Permissions
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Permissions</h3>
             <div className="space-y-4">
               <div className="flex items-center">
                 <input

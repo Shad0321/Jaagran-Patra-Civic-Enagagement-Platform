@@ -26,7 +26,7 @@ export const corsConfig = cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     if (config.allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -36,9 +36,8 @@ export const corsConfig = cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range']
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
 });
-
 
 // XSS sanitization middleware
 export const sanitizeInput = (

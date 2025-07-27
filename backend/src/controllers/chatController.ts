@@ -156,8 +156,8 @@ export const getGroups = asyncHandler(
     });
 
     // Get public groups that user can join (excluding ones they're already in)
-    const memberGroupIds = memberGroups.map(group => group.id);
-    
+    const memberGroupIds = memberGroups.map((group) => group.id);
+
     const publicGroups = await prisma.chatGroup.findMany({
       where: {
         type: 'PUBLIC_MLA_GROUP',
@@ -231,7 +231,7 @@ export const getPublicGroups = asyncHandler(
       },
     });
 
-    const excludeGroupIds = memberGroupIds.map(member => member.groupId);
+    const excludeGroupIds = memberGroupIds.map((member) => member.groupId);
 
     // Get public groups that user can join
     const publicGroups = await prisma.chatGroup.findMany({

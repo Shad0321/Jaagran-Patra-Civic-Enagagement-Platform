@@ -22,11 +22,9 @@ export class MeetingReminderService {
    */
   start(): void {
     if (this.isRunning) {
-      console.log('Meeting reminder service is already running');
       return;
     }
 
-    console.log('Starting meeting reminder service...');
     this.isRunning = true;
 
     // Schedule reminder checks every 5 minutes
@@ -46,8 +44,6 @@ export class MeetingReminderService {
         console.error('Error in meeting cleanup:', error);
       }
     });
-
-    console.log('Meeting reminder service started successfully');
   }
 
   /**
@@ -55,15 +51,12 @@ export class MeetingReminderService {
    */
   stop(): void {
     if (!this.isRunning) {
-      console.log('Meeting reminder service is not running');
       return;
     }
 
-    console.log('Stopping meeting reminder service...');
     this.isRunning = false;
     // Note: node-cron doesn't provide a direct way to stop all scheduled tasks
     // You might want to store task references and destroy them here
-    console.log('Meeting reminder service stopped');
   }
 
   /**
@@ -124,10 +117,6 @@ export class MeetingReminderService {
             );
 
             await this.markReminderSent(reminderKey);
-
-            console.log(
-              `✅ Sent ${interval.label} reminder for meeting: ${meeting.title}`
-            );
           }
         } catch (error) {
           console.error(
@@ -159,12 +148,6 @@ export class MeetingReminderService {
         },
       });
 
-      if (completedMeetings.count > 0) {
-        console.log(
-          `✅ Updated ${completedMeetings.count} meetings to COMPLETED status`
-        );
-      }
-
       // Cancel scheduled meetings that are more than 1 hour past their start time
       const expiredMeetings = await prisma.session.updateMany({
         where: {
@@ -178,10 +161,6 @@ export class MeetingReminderService {
         },
       });
 
-      if (expiredMeetings.count > 0) {
-        console.log(`✅ Cancelled ${expiredMeetings.count} expired meetings`);
-      }
-
       // Clean up old reminder records (older than 7 days)
       const cleanupDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       await prisma.meetingReminder.deleteMany({
@@ -191,8 +170,6 @@ export class MeetingReminderService {
           },
         },
       });
-
-      console.log('✅ Cleaned up old reminder records');
     } catch (error) {
       console.error('❌ Error in cleanup process:', error);
     }
@@ -235,7 +212,6 @@ export class MeetingReminderService {
   async sendImmediateReminder(sessionId: string): Promise<void> {
     try {
       await MeetingScheduler.sendMeetingNotifications(sessionId, 'reminder');
-      console.log(`✅ Sent immediate reminder for meeting: ${sessionId}`);
     } catch (error) {
       console.error(
         `❌ Error sending immediate reminder for meeting ${sessionId}:`,

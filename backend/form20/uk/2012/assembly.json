@@ -1,81 +1,81 @@
 {
-    "election_name": "2012 Uttarakhand Legislative Assembly election",
-    "election_date": "30 January 2012",
-    "total_seats": 70,
-    "seats_needed_for_majority": 36,
-    "chief_minister_before_election": {
-      "name": "Bhuwan Chandra Khanduri",
-      "party": "BJP"
+  "election_name": "2012 Uttarakhand Legislative Assembly election",
+  "election_date": "30 January 2012",
+  "total_seats": 70,
+  "seats_needed_for_majority": 36,
+  "chief_minister_before_election": {
+    "name": "Bhuwan Chandra Khanduri",
+    "party": "BJP"
+  },
+  "elected_chief_minister": {
+    "name": "Vijay Bahuguna",
+    "party": "INC"
+  },
+  "parties_and_alliances": [
+    {
+      "party": "Bharatiya Janata Party",
+      "leader": "B. C. Khanduri",
+      "contesting_seats": 70
     },
-    "elected_chief_minister": {
-      "name": "Vijay Bahuguna",
-      "party": "INC"
+    {
+      "party": "Indian National Congress",
+      "leader": "Vijay Bahuguna",
+      "contesting_seats": 70
     },
-    "parties_and_alliances": [
-      {
-        "party": "Bharatiya Janata Party",
-        "leader": "B. C. Khanduri",
-        "contesting_seats": 70
-      },
-      {
-        "party": "Indian National Congress",
-        "leader": "Vijay Bahuguna",
-        "contesting_seats": 70
-      },
-      {
-        "party": "Bahujan Samaj Party",
-        "leader": "Mayawati",
-        "contesting_seats": 70
-      },
-      {
-        "party": "Uttarakhand Kranti Dal (P)",
-        "leader": "Trivendra Singh Panwar",
-        "contesting_seats": 44
-      }
-    ],
-    "party_wise_results": [
-      {
-        "rank": 1,
-        "party": "Indian National Congress (INC)",
-        "seats_contested": 70,
-        "seats_won": 32,
-        "popular_vote": "1,436,042",
-        "vote_percentage": "33.79%",
-        "leader_in_house": "Vijay Bahuguna (2012-2014), Harish Rawat (2014-2017)"
-      },
-      {
-        "rank": 2,
-        "party": "Bharatiya Janata Party (BJP)",
-        "seats_contested": 70,
-        "seats_won": 31,
-        "popular_vote": "1,408,341",
-        "vote_percentage": "33.13%",
-        "leader_in_house": "Ajay Bhatt"
-      },
-      {
-        "rank": 3,
-        "party": "Bahujan Samaj Party (BSP)",
-        "seats_contested": 70,
-        "seats_won": 3,
-        "popular_vote": "518,257",
-        "vote_percentage": "12.19%",
-        "leader_in_house": "Hari Das"
-      },
-      {
-        "rank": 4,
-        "party": "Uttarakhand Kranti Dal (P) (UKD(P))",
-        "seats_contested": 44,
-        "seats_won": 1,
-        "vote_percentage": "1.93%",
-        "vote_percentage_in_seats_contested": "3.18%",
-        "leader_in_house": "Pritam Singh Panwar"
-      },
-      {
-        "rank": 5,
-        "party": "Independents",
-        "seats_won": 3,
-        "vote_percentage": "12.34%",
-        "leader_in_house": "N/A"
-      }
-    ]
-  }
+    {
+      "party": "Bahujan Samaj Party",
+      "leader": "Mayawati",
+      "contesting_seats": 70
+    },
+    {
+      "party": "Uttarakhand Kranti Dal (P)",
+      "leader": "Trivendra Singh Panwar",
+      "contesting_seats": 44
+    }
+  ],
+  "party_wise_results": [
+    {
+      "rank": 1,
+      "party": "Indian National Congress (INC)",
+      "seats_contested": 70,
+      "seats_won": 32,
+      "popular_vote": "1,436,042",
+      "vote_percentage": "33.79%",
+      "leader_in_house": "Vijay Bahuguna (2012-2014), Harish Rawat (2014-2017)"
+    },
+    {
+      "rank": 2,
+      "party": "Bharatiya Janata Party (BJP)",
+      "seats_contested": 70,
+      "seats_won": 31,
+      "popular_vote": "1,408,341",
+      "vote_percentage": "33.13%",
+      "leader_in_house": "Ajay Bhatt"
+    },
+    {
+      "rank": 3,
+      "party": "Bahujan Samaj Party (BSP)",
+      "seats_contested": 70,
+      "seats_won": 3,
+      "popular_vote": "518,257",
+      "vote_percentage": "12.19%",
+      "leader_in_house": "Hari Das"
+    },
+    {
+      "rank": 4,
+      "party": "Uttarakhand Kranti Dal (P) (UKD(P))",
+      "seats_contested": 44,
+      "seats_won": 1,
+      "vote_percentage": "1.93%",
+      "vote_percentage_in_seats_contested": "3.18%",
+      "leader_in_house": "Pritam Singh Panwar"
+    },
+    {
+      "rank": 5,
+      "party": "Independents",
+      "seats_won": 3,
+      "vote_percentage": "12.34%",
+      "leader_in_house": "N/A"
+    }
+  ]
+}

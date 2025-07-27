@@ -500,7 +500,6 @@ export const createMLA = async (
         return;
       }
     }
-    console.log('Avatar URL:', avatarUrl);
 
     // Use provided password or generate a temporary password
     const finalPassword =
@@ -847,11 +846,6 @@ export const createMember = async (
       },
     });
     if (existingUser) {
-      console.log('User already exists:', {
-        email,
-        phone,
-        existingUserId: existingUser.id,
-      });
       res.status(409).json({
         success: false,
         error: 'User with this email or phone already exists',
@@ -944,19 +938,6 @@ export const createMember = async (
       password || Math.random().toString(36).substring(2, 12);
     const hashedPassword = await bcrypt.hash(finalPassword, 10);
 
-    console.log('Creating member with data:', {
-      email,
-      phone,
-      name,
-      role: UserRole.MEMBER,
-      mlaId: mlaId, // Always set from validated MLA
-      finalStateId,
-      finalConstituencyId,
-      bodyId: finalBodyId,
-      currentAddress: address || null,
-      isActive: isActive !== undefined ? isActive : true,
-    });
-
     // Create user with MEMBER role
     const user = await prisma.user.create({
       data: {
@@ -988,14 +969,6 @@ export const createMember = async (
     // Create or update local body if localBodyName is provided (separate from default body)
     if (localBodyName && finalStateId && finalConstituencyId) {
       try {
-        console.log('Creating/updating local body:', {
-          localBodyName,
-          finalStateId,
-          finalConstituencyId,
-          bodyType,
-          code: localBodyName.replace(/\s+/g, '_').toUpperCase(),
-        });
-
         const localBody = await prisma.body.upsert({
           where: {
             stateId_districtId_constituencyId_code_type: {
@@ -1018,8 +991,6 @@ export const createMember = async (
           },
         });
 
-        console.log('Local body created/updated:', localBody);
-
         // Update user with the local body (this will override the default body if both exist)
         await prisma.user.update({
           where: { id: user.id },
@@ -1027,15 +998,8 @@ export const createMember = async (
         });
       } catch (bodyError) {
         console.error('Error creating/updating local body:', bodyError);
-        // Don't fail the entire operation, just log the error
-        console.log('Continuing without local body assignment');
       }
     } else if (localBodyName) {
-      console.log('Cannot create local body - missing location data:', {
-        localBodyName,
-        finalStateId,
-        finalConstituencyId,
-      });
     }
 
     // Fetch the created member with related data

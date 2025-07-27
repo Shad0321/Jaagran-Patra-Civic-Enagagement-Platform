@@ -167,7 +167,9 @@ const IssueAssignmentManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Issues</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Issues
+                </p>
                 <p className="text-2xl font-bold text-primary">{stats.total}</p>
               </div>
               <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">

@@ -112,24 +112,54 @@ const NotificationDropdown = () => {
       case 'ISSUE_ASSIGNMENT':
         return (
           <div className="p-2 max-h-fit bg-blue-100 rounded-full text-blue-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
             </svg>
           </div>
         );
       case 'ISSUE_UPDATE':
         return (
           <div className="p-2 max-h-fit bg-green-100 rounded-full text-green-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
           </div>
         );
       default:
         return (
           <div className="p-2 max-h-fit bg-purple-100 rounded-full text-purple-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
             </svg>
           </div>
         );
@@ -162,9 +192,7 @@ const NotificationDropdown = () => {
           {/* Header */}
           <div className="p-4 border-b border-primary/10">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900">
-                Notifications
-              </h3>
+              <h3 className="text-lg font-bold text-gray-900">Notifications</h3>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
                   <button
@@ -196,8 +224,12 @@ const NotificationDropdown = () => {
                 <div className="mx-auto h-16 w-16 text-gray-400">
                   <Bell className="w-full h-full" />
                 </div>
-                <h4 className="mt-2 text-sm font-medium text-gray-900">No notifications</h4>
-                <p className="mt-1 text-sm text-gray-500">We'll notify you when something arrives.</p>
+                <h4 className="mt-2 text-sm font-medium text-gray-900">
+                  No notifications
+                </h4>
+                <p className="mt-1 text-sm text-gray-500">
+                  We'll notify you when something arrives.
+                </p>
               </div>
             ) : (
               notifications.map((notification) => (
@@ -211,7 +243,7 @@ const NotificationDropdown = () => {
                   <div className="flex gap-3">
                     {/* Icon */}
                     {getNotificationIcon(notification.type)}
-                    
+
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">

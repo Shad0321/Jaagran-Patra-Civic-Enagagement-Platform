@@ -15,9 +15,9 @@ import {
   ChevronRight,
   Sparkles,
   Award,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
-import logo from "../assets/logo/logo-b.png"
+import logo from '../assets/new_logo/logo.png';
 import { logoutUser } from '../redux/slices/userSlice';
 import { toast } from 'react-toastify';
 import { clearLanguage } from '../redux/slices/languageSlice';
@@ -48,52 +48,58 @@ const Home = () => {
     {
       icon: ShieldCheck,
       title: 'MLA Dashboard',
-      description: 'Track civic issues, assign tasks, and monitor resolutions with priority levels and real-time progress stats.',
+      description:
+        'Track civic issues, assign tasks, and monitor resolutions with priority levels and real-time progress stats.',
       color: 'bg-green-50 text-green-600',
-      bgGradient: 'from-green-400 to-emerald-500'
+      bgGradient: 'from-green-400 to-emerald-500',
     },
     {
       icon: Users,
       title: 'Citizen Insights',
-      description: 'View local issues, monitor MLA performance, and stay informed about your area\'s developments.',
+      description:
+        "View local issues, monitor MLA performance, and stay informed about your area's developments.",
       color: 'bg-blue-50 text-blue-600',
-      bgGradient: 'from-blue-400 to-cyan-500'
+      bgGradient: 'from-blue-400 to-cyan-500',
     },
     {
       icon: MapPinned,
       title: 'Interactive Map',
-      description: 'Dive from state to polling booth to explore performance data. Visual insights with interactive comparisons.',
+      description:
+        'Dive from state to polling booth to explore performance data. Visual insights with interactive comparisons.',
       color: 'bg-purple-50 text-purple-600',
-      bgGradient: 'from-purple-400 to-indigo-500'
+      bgGradient: 'from-purple-400 to-indigo-500',
     },
     {
       icon: MessageCircle,
       title: 'AI Chatbot',
-      description: 'Get quick answers about MLAs, regional performance, or upcoming events—powered by intelligent search.',
+      description:
+        'Get quick answers about MLAs, regional performance, or upcoming events—powered by intelligent search.',
       color: 'bg-orange-50 text-orange-600',
-      bgGradient: 'from-orange-400 to-red-500'
+      bgGradient: 'from-orange-400 to-red-500',
     },
     {
       icon: Newspaper,
       title: 'Latest News',
-      description: 'Stay updated with region-specific or national announcements—curated and published by administrators.',
+      description:
+        'Stay updated with region-specific or national announcements—curated and published by administrators.',
       color: 'bg-pink-50 text-pink-600',
-      bgGradient: 'from-pink-400 to-rose-500'
+      bgGradient: 'from-pink-400 to-rose-500',
     },
     {
       icon: CalendarClock,
       title: 'Session Scheduler',
-      description: 'MLAs can initiate public or internal sessions. Attendees get timely notifications via email/SMS.',
+      description:
+        'MLAs can initiate public or internal sessions. Attendees get timely notifications via email/SMS.',
       color: 'bg-teal-50 text-teal-600',
-      bgGradient: 'from-teal-400 to-green-500'
-    }
+      bgGradient: 'from-teal-400 to-green-500',
+    },
   ];
 
   const stats = [
     { icon: Award, value: '2.5K+', label: 'Issues Resolved' },
     { icon: Users, value: '15K+', label: 'Active Citizens' },
     { icon: TrendingUp, value: '89%', label: 'Success Rate' },
-    { icon: MapPinned, value: '28', label: 'States Connected' }
+    { icon: MapPinned, value: '28', label: 'States Connected' },
   ];
 
   const handleSignOut = async () => {
@@ -119,8 +125,13 @@ const Home = () => {
                   <img src={logo} alt="" />
                 </div>
                 <div>
-                  <span className="text-2xl font-bold text-gray-900">Jaagran</span>
-                  <span className="text-2xl font-bold text-green-600"> Patra</span>
+                  <span className="text-2xl font-bold text-gray-900">
+                    Jaagran
+                  </span>
+                  <span className="text-2xl font-bold text-green-600">
+                    {' '}
+                    Patra
+                  </span>
                 </div>
               </Link>
             </div>
@@ -150,8 +161,9 @@ const Home = () => {
                     Dashboard
                   </Link>
                   <button
-                  onClick={() => handleSignOut()}
-                  className="p-2 text-gray-500 hover:text-gray-700 cursor-pointer hover:bg-primary/10 rounded-full transition-colors">
+                    onClick={() => handleSignOut()}
+                    className="p-2 text-gray-500 hover:text-gray-700 cursor-pointer hover:bg-primary/10 rounded-full transition-colors"
+                  >
                     <LogOut className="w-5 h-5" />
                   </button>
                 </div>
@@ -179,7 +191,11 @@ const Home = () => {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 text-gray-500 hover:text-gray-700"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
@@ -260,8 +276,10 @@ const Home = () => {
             </p>
 
             <p className="text-sm sm:text-lg text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
-              A civic engagement platform empowering citizens and representatives to resolve local issues efficiently.
-              Track, report, and act — transparently. Join thousands of citizens making a difference in their communities.
+              A civic engagement platform empowering citizens and
+              representatives to resolve local issues efficiently. Track,
+              report, and act — transparently. Join thousands of citizens making
+              a difference in their communities.
             </p>
 
             {/* CTA Buttons */}
@@ -304,7 +322,9 @@ const Home = () => {
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 text-green-600 rounded-xl mb-3 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
                     <stat.icon className="w-6 h-6" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    {stat.value}
+                  </div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
                 </div>
               ))}
@@ -321,7 +341,8 @@ const Home = () => {
               Powerful Features for Democratic Engagement
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Discover how Jaagran Patra bridges the gap between citizens and their representatives
+              Discover how Jaagran Patra bridges the gap between citizens and
+              their representatives
             </p>
           </div>
 
@@ -331,13 +352,21 @@ const Home = () => {
                 key={index}
                 className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-green-200"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+                ></div>
                 <div className="relative p-8">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 ${feature.color} rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`inline-flex items-center justify-center w-16 h-16 ${feature.color} rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}
+                  >
                     <feature.icon className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
               </div>
             ))}

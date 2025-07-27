@@ -112,7 +112,7 @@ export const getAssembliesByState = async (
         // Try to find election data file
         const electionDataPath = path.join(
           __dirname,
-          '..', 
+          '..',
           '..',
           'form20',
           state.code.toLowerCase(),
@@ -204,7 +204,7 @@ export const getPollingBoothsByAssembly = async (
     try {
       const pollingDataPath = path.join(
         __dirname,
-        '..', 
+        '..',
         '..',
         'form20',
         constituency.state.code.toLowerCase(),
@@ -216,12 +216,6 @@ export const getPollingBoothsByAssembly = async (
         const fileContent = fs.readFileSync(pollingDataPath, 'utf8');
         const allPollingData: ElectionData[] = JSON.parse(fileContent);
 
-        console.log(`🔍 Looking for constituency: "${constituency.name}"`);
-        console.log(
-          `📋 Available constituencies in JSON:`,
-          allPollingData.map((pd) => pd.Constituency)
-        );
-
         // Try multiple matching strategies
         pollingBoothsData = allPollingData.filter((pd) => {
           const jsonConstituency = pd.Constituency.toLowerCase().trim();
@@ -229,7 +223,7 @@ export const getPollingBoothsByAssembly = async (
 
           // Direct match
           if (jsonConstituency === dbConstituency) {
-            console.log(`✅ Direct match found: "${pd.Constituency}"`);
+            console.log(`Direct match found: "${pd.Constituency}"`);
             return true;
           }
 
@@ -242,7 +236,6 @@ export const getPollingBoothsByAssembly = async (
               .trim();
 
           if (normalizeStr(jsonConstituency) === normalizeStr(dbConstituency)) {
-            console.log(`✅ Normalized match found: "${pd.Constituency}"`);
             return true;
           }
 
@@ -251,16 +244,11 @@ export const getPollingBoothsByAssembly = async (
             jsonConstituency.includes(dbConstituency) ||
             dbConstituency.includes(jsonConstituency)
           ) {
-            console.log(`✅ Partial match found: "${pd.Constituency}"`);
             return true;
           }
 
           return false;
         });
-
-        console.log(
-          `📊 Found ${pollingBoothsData.length} matching constituencies`
-        );
       }
     } catch (error) {
       console.log(
@@ -343,9 +331,6 @@ export const getPollingBoothDetails = async (
 
     // Decode the booth name properly
     boothName = decodeURIComponent(boothName);
-    console.log(
-      `🔍 Searching for booth: "${boothName}" in constituency ID: ${constituencyId}`
-    );
 
     // Get constituency information
     const constituency = await prisma.constituency.findUnique({
@@ -363,15 +348,9 @@ export const getPollingBoothDetails = async (
     });
 
     if (!constituency) {
-      console.log(`❌ Constituency not found for ID: ${constituencyId}`);
       res.status(404).json({ error: 'Constituency not found' });
       return;
     }
-
-    console.log(
-      `📍 Found constituency: "${constituency.name}" in state: "${constituency.state.name}" (${constituency.state.code})`
-    );
-    console.log(`🔍 Searching for booth: "${boothName}"`);
 
     const yearsList = (years as string).split(',');
     const boothDetailsData: any = {};
@@ -381,7 +360,7 @@ export const getPollingBoothDetails = async (
       try {
         const pollingDataPath = path.join(
           __dirname,
-          '..', 
+          '..',
           '..',
           'form20',
           constituency.state.code.toLowerCase(),
@@ -392,10 +371,6 @@ export const getPollingBoothDetails = async (
         if (fs.existsSync(pollingDataPath)) {
           const fileContent = fs.readFileSync(pollingDataPath, 'utf8');
           const allPollingData: ElectionData[] = JSON.parse(fileContent);
-
-          console.log(
-            `🔍 Looking for constituency: "${constituency.name}" in year ${year}`
-          );
 
           // Find ALL constituencies that match our search criteria
           const matchingConstituencies = allPollingData.filter((pd) => {
@@ -426,17 +401,10 @@ export const getPollingBoothDetails = async (
             return false;
           });
 
-          console.log(
-            `📋 Found ${matchingConstituencies.length} matching constituencies`
-          );
-
           // Collect all assembly segments from all matching constituencies
           let allAssemblySegments: any[] = [];
           matchingConstituencies.forEach((constData) => {
             if (constData.Assembly_Segments) {
-              console.log(
-                `📋 Adding ${constData.Assembly_Segments.length} segments from "${constData.Constituency}"`
-              );
               allAssemblySegments = allAssemblySegments.concat(
                 constData.Assembly_Segments
               );
@@ -444,10 +412,6 @@ export const getPollingBoothDetails = async (
           });
 
           if (allAssemblySegments.length > 0) {
-            console.log(
-              `📋 Total assembly segments to search: ${allAssemblySegments.length}`
-            );
-
             const boothData = allAssemblySegments.find((booth) => {
               const jsonBoothName = booth.Name.toLowerCase().trim();
               const searchBoothName = boothName.toLowerCase().trim();
@@ -477,7 +441,6 @@ export const getPollingBoothDetails = async (
             });
 
             if (boothData) {
-              console.log(`✅ Found booth data for: "${boothData.Name}"`);
               boothDetailsData[year] = {
                 name: boothData.Name,
                 latitude: boothData.Latitude,
@@ -497,17 +460,7 @@ export const getPollingBoothDetails = async (
                 margin: boothData.Margin,
                 year,
               };
-            } else {
-              console.log(`❌ No booth found for: "${boothName}"`);
-              console.log(
-                `📋 Available booths:`,
-                allAssemblySegments.map((b) => b.Name)
-              );
             }
-          } else {
-            console.log(
-              `❌ No assembly segments found for constituency: "${constituency.name}"`
-            );
           }
         }
       } catch (error) {
@@ -579,7 +532,7 @@ export const getElectionComparison = async (
         // Load assembly data for comparison
         const assemblyDataPath = path.join(
           __dirname,
-          '..', 
+          '..',
           '..',
           'form20',
           state.code.toLowerCase(),
@@ -747,7 +700,10 @@ export const getMapStatistics = async (
 };
 
 // Get all Rajya Sabha data for UK
-export const getRajyaSabhaData = async (req: Request, res: Response): Promise<void> => {
+export const getRajyaSabhaData = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const filePath = path.join(
       __dirname,
@@ -758,7 +714,9 @@ export const getRajyaSabhaData = async (req: Request, res: Response): Promise<vo
       'rajyasabha.json'
     );
     if (!fs.existsSync(filePath)) {
-      res.status(404).json({ success: false, error: 'Rajya Sabha data not found' });
+      res
+        .status(404)
+        .json({ success: false, error: 'Rajya Sabha data not found' });
       return;
     }
     const fileContent = fs.readFileSync(filePath, 'utf8');
@@ -766,6 +724,12 @@ export const getRajyaSabhaData = async (req: Request, res: Response): Promise<vo
     res.json({ success: true, data });
   } catch (error) {
     console.error('Error fetching Rajya Sabha data:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch Rajya Sabha data', details: error });
+    res
+      .status(500)
+      .json({
+        success: false,
+        error: 'Failed to fetch Rajya Sabha data',
+        details: error,
+      });
   }
 };

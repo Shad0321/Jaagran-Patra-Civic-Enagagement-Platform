@@ -379,8 +379,6 @@ export class ZoomController {
     res: Response
   ): Promise<void> {
     try {
-      console.log(req);
-
       const userId = req.user?.id;
       const { type = 'all', page = 1, limit = 10 } = req.query;
 
@@ -534,8 +532,8 @@ export class ZoomController {
       }
 
       // Get latest Zoom meeting data if available
-    // Define ZoomMeetingResponse type as any for now (replace with actual type if available)
-    let zoomMeetingData: any = null;
+      // Define ZoomMeetingResponse type as any for now (replace with actual type if available)
+      let zoomMeetingData: any = null;
       if (session.zoomMeetingId) {
         try {
           zoomMeetingData = await zoomService.getMeeting(session.zoomMeetingId);
@@ -898,7 +896,7 @@ export class ZoomController {
       }
 
       // Get Zoom participants if meeting is ongoing
-    let zoomParticipants: any = null;
+      let zoomParticipants: any = null;
       if (session.status === 'ONGOING' && session.zoomMeetingId) {
         try {
           zoomParticipants = await zoomService.getMeetingParticipants(

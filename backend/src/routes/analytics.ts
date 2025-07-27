@@ -306,11 +306,11 @@ router.get(
         const dateStr = date.toISOString().split('T')[0];
 
         const trendData: any = {
-      date: date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      }),
-    };
+          date: date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          }),
+        };
 
         categories.forEach((category) => {
           trendData[category.toLowerCase()] = allIssues.filter(
@@ -348,10 +348,10 @@ router.get(
       const recentActivities = allIssues.slice(0, 10).map((issue) => ({
         type: issue.status === 'RESOLVED' ? 'resolved' : 'created',
         title: issue.title,
-        description: `${issue.status === 'RESOLVED' ? 'Resolved' : 'Created'} by ${issue.reportedBy.name}`,
+        description: `Created by - ${issue.reportedBy.name}`,
         time: new Date(issue.createdAt).toLocaleDateString(),
         category: issue.category,
-        assignedTo: issue.assignedTo?.name
+        assignedTo: issue.assignedTo?.name,
       }));
 
       const analyticsData = {

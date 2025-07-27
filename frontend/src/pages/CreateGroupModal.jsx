@@ -3,17 +3,17 @@ import { X, Users, Lock, Globe, Loader2 } from 'lucide-react';
 import api from '../utils/api';
 
 const GROUP_TYPES = [
-  { 
-    value: 'PUBLIC_MLA_GROUP', 
+  {
+    value: 'PUBLIC_MLA_GROUP',
     label: 'Public MLA Group',
     description: 'Anyone can join this group',
-    icon: <Globe className="h-4 w-4 text-blue-500" />
+    icon: <Globe className="h-4 w-4 text-blue-500" />,
   },
-  { 
-    value: 'PRIVATE_MLA_GROUP', 
+  {
+    value: 'PRIVATE_MLA_GROUP',
     label: 'Private MLA Group',
     description: 'Only MLAs and approved members can join',
-    icon: <Lock className="h-4 w-4 text-purple-500" />
+    icon: <Lock className="h-4 w-4 text-purple-500" />,
   },
 ];
 
@@ -43,7 +43,8 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
       }, 1500);
     } catch (err) {
       setError(
-        err?.response?.data?.message || 'Failed to create group. Only MLAs can create groups.'
+        err?.response?.data?.message ||
+          'Failed to create group. Only MLAs can create groups.'
       );
     } finally {
       setLoading(false);
@@ -57,7 +58,9 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold text-gray-800">Create New Group</h2>
+            <h2 className="text-lg font-semibold text-gray-800">
+              Create New Group
+            </h2>
           </div>
           <button
             className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
@@ -72,7 +75,9 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
         <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4">
           {/* Group Name */}
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Group Name</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Group Name
+            </label>
             <input
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
@@ -86,7 +91,9 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Description (Optional)</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Description (Optional)
+            </label>
             <textarea
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all min-h-[100px]"
               value={description}
@@ -98,28 +105,36 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
 
           {/* Group Type */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Group Type</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Group Type
+            </label>
             <div className="space-y-2">
               {GROUP_TYPES.map((group) => (
-                <div 
+                <div
                   key={group.value}
                   className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
-                    type === group.value 
-                      ? 'border-primary bg-primary/10' 
+                    type === group.value
+                      ? 'border-primary bg-primary/10'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => setType(group.value)}
                 >
-                  <div className="mt-0.5">
-                    {group.icon}
-                  </div>
+                  <div className="mt-0.5">{group.icon}</div>
                   <div className="flex-1">
-                    <div className="font-medium text-gray-800">{group.label}</div>
-                    <div className="text-xs text-gray-500">{group.description}</div>
+                    <div className="font-medium text-gray-800">
+                      {group.label}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {group.description}
+                    </div>
                   </div>
-                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                    type === group.value ? 'border-primary bg-primary' : 'border-gray-300'
-                  }`}>
+                  <div
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                      type === group.value
+                        ? 'border-primary bg-primary'
+                        : 'border-gray-300'
+                    }`}
+                  >
                     {type === group.value && (
                       <div className="w-2 h-2 rounded-full bg-white"></div>
                     )}
@@ -138,8 +153,18 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
           )}
           {success && (
             <div className="p-3 bg-green-50 text-green-600 text-sm rounded-lg flex items-center gap-2">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
               <span>{success}</span>
             </div>
@@ -165,7 +190,9 @@ const CreateGroupModal = ({ onClose, onCreated }) => {
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Creating...
                 </>
-              ) : 'Create Group'}
+              ) : (
+                'Create Group'
+              )}
             </button>
           </div>
         </form>

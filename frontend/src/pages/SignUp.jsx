@@ -3,13 +3,15 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { signupUser, clearError } from '../redux/slices/userSlice';
-import logo from "../assets/logo/logo-b.png";
-import bgLogin from "../assets/bg-login.jpg";
+import logo from '../assets/new_logo/logo.png';
+import bgLogin from '../assets/bg-login.jpg';
 
 const SignUp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated } = useSelector((state) => state.user);
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.user
+  );
 
   const [formData, setFormData] = useState({
     name: '',
@@ -97,7 +99,9 @@ const SignUp = () => {
 
     try {
       const result = await dispatch(signupUser(submitData)).unwrap();
-      toast.success(result?.message || 'Registration successful! Please verify your email.');
+      toast.success(
+        result?.message || 'Registration successful! Please verify your email.'
+      );
     } catch (err) {
       console.error('Signup failed:', err);
     }
@@ -105,7 +109,11 @@ const SignUp = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-primary/5 px-4 py-8 overflow-hidden">
-      <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0' />
+      <img
+        src={bgLogin}
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
+      />
       {/* Card */}
       <div className="relative w-full max-w-md bg-white/70 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-white/30 z-10">
         <div className="text-4xl font-bold mb-1">
@@ -191,7 +199,15 @@ const SignUp = () => {
 };
 
 // 🧩 Reusable InputField component
-const InputField = ({ name, type, value, onChange, placeholder, error, loading }) => (
+const InputField = ({
+  name,
+  type,
+  value,
+  onChange,
+  placeholder,
+  error,
+  loading,
+}) => (
   <div>
     <input
       type={type}

@@ -139,12 +139,18 @@ const NearbyIssues = () => {
         page: pagination.page.toString(),
         limit: pagination.limit.toString(),
         ...(debouncedFilters.status && { status: debouncedFilters.status }),
-        ...(debouncedFilters.priority && { priority: debouncedFilters.priority }),
-        ...(debouncedFilters.category && { category: debouncedFilters.category }),
+        ...(debouncedFilters.priority && {
+          priority: debouncedFilters.priority,
+        }),
+        ...(debouncedFilters.category && {
+          category: debouncedFilters.category,
+        }),
         ...(debouncedFilters.search && { search: debouncedFilters.search }),
       });
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/issues/nearby?${queryParams}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/issues/nearby?${queryParams}`
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -369,7 +375,9 @@ const NearbyIssues = () => {
               disabled={loading}
               className="flex items-center gap-2 px-4 py-2 bg-white/80 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
             >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+              />
               Refresh
             </button>
           </div>
@@ -382,7 +390,8 @@ const NearbyIssues = () => {
               <div className="flex items-center">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
                 <span className="text-sm text-primary/80">
-                  Updating search results in <span className="font-medium">1 second</span>...
+                  Updating search results in{' '}
+                  <span className="font-medium">1 second</span>...
                 </span>
               </div>
             </div>
@@ -417,7 +426,9 @@ const NearbyIssues = () => {
                 max="50"
                 step="0.1"
                 value={filters.radius}
-                onChange={(e) => handleFilterChange('radius', parseFloat(e.target.value) || 5)}
+                onChange={(e) =>
+                  handleFilterChange('radius', parseFloat(e.target.value) || 5)
+                }
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-primary/50 focus:border-primary/30"
               />
             </div>
@@ -474,7 +485,9 @@ const NearbyIssues = () => {
             </h3>
             <p className="mt-1 text-gray-600">{error}</p>
             <button
-              onClick={() => location ? fetchNearbyIssues() : getCurrentLocation()}
+              onClick={() =>
+                location ? fetchNearbyIssues() : getCurrentLocation()
+              }
               className="mt-6 bg-gradient-to-r from-primary to-primary/80 text-white px-6 py-2 rounded-lg hover:shadow-md transition-all duration-200 inline-flex items-center gap-2"
             >
               {location ? 'Try Again' : 'Get Location'}
@@ -487,7 +500,8 @@ const NearbyIssues = () => {
               No issues found
             </h3>
             <p className="mt-1 text-gray-600">
-              No issues found within {filters.radius}km of your location with the current filters.
+              No issues found within {filters.radius}km of your location with
+              the current filters.
             </p>
           </div>
         ) : (
@@ -496,7 +510,8 @@ const NearbyIssues = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 overflow-hidden">
               <div className="px-6 py-4 border-b border-primary/20">
                 <h3 className="text-lg font-medium text-primary">
-                  {pagination.total} issue{pagination.total !== 1 ? 's' : ''} found
+                  {pagination.total} issue{pagination.total !== 1 ? 's' : ''}{' '}
+                  found
                 </h3>
               </div>
               <div className="divide-y divide-primary/10">
@@ -505,18 +520,25 @@ const NearbyIssues = () => {
                   const StatusIcon = statusDisplay.icon;
 
                   return (
-                    <div key={issue.id} className="p-6 hover:bg-primary/5 transition-colors">
+                    <div
+                      key={issue.id}
+                      className="p-6 hover:bg-primary/5 transition-colors"
+                    >
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex flex-wrap items-center gap-2 mb-3">
                             <h4 className="text-lg font-medium text-gray-900">
                               {issue.title}
                             </h4>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusDisplay.color}`}>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusDisplay.color}`}
+                            >
                               <StatusIcon className="mr-1 h-3 w-3" />
                               {issue.status.replace('_', ' ')}
                             </span>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(issue.priority)}`}
+                            >
                               {issue.priority}
                             </span>
                           </div>
@@ -595,37 +617,57 @@ const NearbyIssues = () => {
                                   >
                                     <div className="flex items-start">
                                       <div className="flex-shrink-0 mr-3">
-                                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                                          comment.user.role === 'CITIZEN' ? 'bg-blue-100' :
-                                          comment.user.role === 'MLA' ? 'bg-purple-100' :
-                                          comment.user.role === 'MEMBER' ? 'bg-green-100' :
-                                          'bg-gray-100'
-                                        }`}>
-                                          <User className={`h-5 w-5 ${
-                                            comment.user.role === 'CITIZEN' ? 'text-blue-600' :
-                                            comment.user.role === 'MLA' ? 'text-purple-600' :
-                                            comment.user.role === 'MEMBER' ? 'text-green-600' :
-                                            'text-gray-600'
-                                          }`} />
+                                        <div
+                                          className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                            comment.user.role === 'CITIZEN'
+                                              ? 'bg-blue-100'
+                                              : comment.user.role === 'MLA'
+                                                ? 'bg-purple-100'
+                                                : comment.user.role === 'MEMBER'
+                                                  ? 'bg-green-100'
+                                                  : 'bg-gray-100'
+                                          }`}
+                                        >
+                                          <User
+                                            className={`h-5 w-5 ${
+                                              comment.user.role === 'CITIZEN'
+                                                ? 'text-blue-600'
+                                                : comment.user.role === 'MLA'
+                                                  ? 'text-purple-600'
+                                                  : comment.user.role ===
+                                                      'MEMBER'
+                                                    ? 'text-green-600'
+                                                    : 'text-gray-600'
+                                            }`}
+                                          />
                                         </div>
                                       </div>
                                       <div className="flex-1">
                                         <div className="flex items-center justify-between">
                                           <div className="text-sm font-medium text-gray-900">
                                             {comment.user.name}
-                                            <span className={`ml-2 text-xs px-2 py-1 rounded-full ${
-                                              comment.user.role === 'CITIZEN' ? 'bg-blue-100 text-blue-800' :
-                                              comment.user.role === 'MLA' ? 'bg-purple-100 text-purple-800' :
-                                              comment.user.role === 'MEMBER' ? 'bg-green-100 text-green-800' :
-                                              'bg-gray-100 text-gray-800'
-                                            }`}>
+                                            <span
+                                              className={`ml-2 text-xs px-2 py-1 rounded-full ${
+                                                comment.user.role === 'CITIZEN'
+                                                  ? 'bg-blue-100 text-blue-800'
+                                                  : comment.user.role === 'MLA'
+                                                    ? 'bg-purple-100 text-purple-800'
+                                                    : comment.user.role ===
+                                                        'MEMBER'
+                                                      ? 'bg-green-100 text-green-800'
+                                                      : 'bg-gray-100 text-gray-800'
+                                              }`}
+                                            >
                                               {comment.user.role}
                                             </span>
                                           </div>
                                           <div className="text-xs text-gray-500">
-                                            {formatDistanceToNow(new Date(comment.createdAt), {
-                                              addSuffix: true,
-                                            })}
+                                            {formatDistanceToNow(
+                                              new Date(comment.createdAt),
+                                              {
+                                                addSuffix: true,
+                                              }
+                                            )}
                                           </div>
                                         </div>
                                         <div className="mt-1 text-sm text-gray-700">
@@ -652,7 +694,9 @@ const NearbyIssues = () => {
                             <div className="mt-4 border-t border-gray-200 pt-4">
                               <textarea
                                 value={newComments[issue.id] || ''}
-                                onChange={(e) => handleCommentChange(issue.id, e.target.value)}
+                                onChange={(e) =>
+                                  handleCommentChange(issue.id, e.target.value)
+                                }
                                 placeholder="Share your thoughts about this issue..."
                                 rows="3"
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-primary/50 focus:border-primary/30 resize-none"
@@ -663,7 +707,10 @@ const NearbyIssues = () => {
                                 </div>
                                 <button
                                   onClick={() => handleCommentSubmit(issue.id)}
-                                  disabled={!newComments[issue.id]?.trim() || commentingIssues.has(issue.id)}
+                                  disabled={
+                                    !newComments[issue.id]?.trim() ||
+                                    commentingIssues.has(issue.id)
+                                  }
                                   className="bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-2 rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                   {commentingIssues.has(issue.id) ? (
@@ -688,7 +735,8 @@ const NearbyIssues = () => {
                               <p className="mt-1 text-xs">
                                 <span className="text-primary cursor-pointer hover:underline">
                                   Sign in
-                                </span> to join the conversation
+                                </span>{' '}
+                                to join the conversation
                               </p>
                             </div>
                           )}
@@ -705,7 +753,10 @@ const NearbyIssues = () => {
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-sm text-gray-700">
                   Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                  {Math.min(pagination.page * pagination.limit, pagination.total)}{' '}
+                  {Math.min(
+                    pagination.page * pagination.limit,
+                    pagination.total
+                  )}{' '}
                   of {pagination.total} results
                 </div>
                 <div className="flex gap-2">

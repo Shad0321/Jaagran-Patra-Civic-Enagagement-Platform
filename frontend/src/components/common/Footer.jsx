@@ -1,13 +1,11 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import logo from "../../assets/logo/logo-b.png"
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import logo from '../../assets/new_logo/logo.png';
 
 const Footer = () => {
   const location = useLocation();
 
-  if (
-    location.pathname === '/chat'
-  ) {
+  if (location.pathname === '/chat') {
     return null;
   }
   return (
@@ -23,31 +21,83 @@ const Footer = () => {
               </Link>
               <div>
                 <span className="text-2xl font-bold">Jaagran</span>
-                <span className="text-2xl font-bold text-green-400"> Patra</span>
+                <span className="text-2xl font-bold text-green-400">
+                  {' '}
+                  Patra
+                </span>
               </div>
             </div>
             <p className="text-gray-400 mb-4">
-              Empowering democratic participation through technology.
-              Connecting citizens with their representatives for a better tomorrow.
+              Empowering democratic participation through technology. Connecting
+              citizens with their representatives for a better tomorrow.
             </p>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><Link to="/about" className="hover:text-green-400 transition-colors">About</Link></li>
-              <li><Link to="/contact" className="hover:text-green-400 transition-colors">Contact</Link></li>
-              <li><Link to="/privacy" className="hover:text-green-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-green-400 transition-colors">Terms of Service</Link></li>
+              <li>
+                <Link
+                  to="/about"
+                  className="hover:text-green-400 transition-colors"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contact"
+                  className="hover:text-green-400 transition-colors"
+                >
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/privacy"
+                  className="hover:text-green-400 transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/terms"
+                  className="hover:text-green-400 transition-colors"
+                >
+                  Terms of Service
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">Support</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><Link to="/help" className="hover:text-green-400 transition-colors">Help Center</Link></li>
-              <li><Link to="/faq" className="hover:text-green-400 transition-colors">FAQ</Link></li>
-              <li><Link to="/feedback" className="hover:text-green-400 transition-colors">Feedback</Link></li>
+              <li>
+                <Link
+                  to="/help"
+                  className="hover:text-green-400 transition-colors"
+                >
+                  Help Center
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/faq"
+                  className="hover:text-green-400 transition-colors"
+                >
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/feedback"
+                  className="hover:text-green-400 transition-colors"
+                >
+                  Feedback
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -57,7 +107,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

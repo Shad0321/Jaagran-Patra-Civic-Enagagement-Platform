@@ -207,7 +207,7 @@ const MeetingManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-primary/10">
             <div className="flex justify-between items-center flex-wrap space-y-2">
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2 pt-2">
                   Meeting Management
                 </h1>
                 <p className="text-gray-600">
@@ -263,7 +263,9 @@ const MeetingManagement = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Meetings</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Meetings
+                </p>
                 <p className="text-2xl font-bold text-primary">
                   {pagination.total}
                 </p>
@@ -374,7 +376,10 @@ const MeetingManagement = () => {
                   </thead>
                   <tbody className="bg-white/80 divide-y divide-gray-200/50">
                     {filteredMeetings.map((meeting) => (
-                      <tr key={meeting.id} className="hover:bg-primary/5 transition-colors">
+                      <tr
+                        key={meeting.id}
+                        className="hover:bg-primary/5 transition-colors"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10">
@@ -474,7 +479,9 @@ const MeetingManagement = () => {
 
                             {meeting.meetingLink && (
                               <button
-                                onClick={() => copyMeetingLink(meeting.meetingLink)}
+                                onClick={() =>
+                                  copyMeetingLink(meeting.meetingLink)
+                                }
                                 className="text-gray-600 hover:text-gray-800 p-1.5 rounded-lg hover:bg-gray-100/50 transition-colors"
                                 title="Copy Meeting Link"
                               >
@@ -505,13 +512,19 @@ const MeetingManagement = () => {
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-700">
                       Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                      {Math.min(pagination.page * pagination.limit, pagination.total)}{' '}
+                      {Math.min(
+                        pagination.page * pagination.limit,
+                        pagination.total
+                      )}{' '}
                       of {pagination.total} meetings
                     </div>
                     <div className="flex gap-2">
                       <button
                         onClick={() =>
-                          setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+                          setPagination((prev) => ({
+                            ...prev,
+                            page: prev.page - 1,
+                          }))
                         }
                         disabled={pagination.page === 1}
                         className="px-3 py-1 text-sm bg-white/80 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -520,7 +533,10 @@ const MeetingManagement = () => {
                       </button>
                       <button
                         onClick={() =>
-                          setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
+                          setPagination((prev) => ({
+                            ...prev,
+                            page: prev.page + 1,
+                          }))
                         }
                         disabled={pagination.page === pagination.totalPages}
                         className="px-3 py-1 text-sm bg-white/80 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"

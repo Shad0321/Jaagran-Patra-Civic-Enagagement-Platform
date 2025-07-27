@@ -90,7 +90,7 @@ const Navbar = () => {
             to="/"
             aria-label="Brand"
           >
-            <span className="text-dark">Jaagran</span>
+            <span className="text-dark font-dmsans">Jaagran</span>
             <span className="text-primary">Patra.</span>
           </Link>
         </div>
@@ -105,9 +105,10 @@ const Navbar = () => {
             </span>
           )}
           <NotificationDropdown />
-          <Link 
-          to={"/my-account"}
-          className="relative w-10 h-10 rounded-full border-3 border-primary">
+          <Link
+            to={'/my-account'}
+            className="relative w-10 h-10 rounded-full border-3 border-primary"
+          >
             <img
               className="object-cover w-full h-full rounded-full"
               src={

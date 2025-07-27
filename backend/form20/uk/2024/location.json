@@ -25,7 +25,7 @@
       {
         "Name": "Pratapnagar",
         "latitude": 30.4497,
-        "longitude": 78.4780
+        "longitude": 78.478
       },
       {
         "Name": "Tehri",
@@ -155,7 +155,7 @@
       {
         "Name": "Dharchula",
         "latitude": 29.8485,
-        "longitude": 80.5430
+        "longitude": 80.543
       },
       {
         "Name": "Didihat",
@@ -200,7 +200,7 @@
       {
         "Name": "Someshwar (SC)",
         "latitude": 29.78087,
-        "longitude": 79.60340
+        "longitude": 79.6034
       },
       {
         "Name": "Almora",
@@ -215,12 +215,12 @@
       {
         "Name": "Lohaghat",
         "latitude": 29.42,
-        "longitude": 80.10
+        "longitude": 80.1
       },
       {
         "Name": "Champawat",
         "latitude": 29.33,
-        "longitude": 80.10
+        "longitude": 80.1
       }
     ]
   },
@@ -239,7 +239,7 @@
       },
       {
         "Name": "Nainital (SC)",
-        "latitude": 29.40,
+        "latitude": 29.4,
         "longitude": 79.47
       },
       {
@@ -275,17 +275,17 @@
       {
         "Name": "Rudrapur",
         "latitude": 28.98,
-        "longitude": 79.40
+        "longitude": 79.4
       },
       {
         "Name": "Kichha",
         "latitude": 28.92,
-        "longitude": 79.50
+        "longitude": 79.5
       },
       {
         "Name": "Sitarganj",
         "latitude": 28.93,
-        "longitude": 79.70
+        "longitude": 79.7
       },
       {
         "Name": "Nanakmatta (ST)",
@@ -319,7 +319,7 @@
       },
       {
         "Name": "Haridwar",
-        "latitude": 29.945690,
+        "latitude": 29.94569,
         "longitude": 78.164246
       },
       {
@@ -340,7 +340,7 @@
       {
         "Name": "Jhabrera (SC)",
         "latitude": 29.804342,
-        "longitude": 77.796700
+        "longitude": 77.7967
       },
       {
         "Name": "Piran Kaliyar",
@@ -359,7 +359,7 @@
       },
       {
         "Name": "Manglaur",
-        "latitude": 29.80,
+        "latitude": 29.8,
         "longitude": 77.87
       },
       {

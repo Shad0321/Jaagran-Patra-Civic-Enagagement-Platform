@@ -1,5 +1,15 @@
-import React, { useState } from 'react';
-import { X, Building, Check, MapPin, Phone, Mail, User, ChevronDown } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  X,
+  Building,
+  Check,
+  MapPin,
+  Phone,
+  Mail,
+  User,
+  ChevronDown,
+  Navigation,
+} from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 import Loader from './common/Loader';
@@ -18,6 +28,11 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
     contactPhone: '',
   });
   const [loading, setLoading] = useState(false);
+  const [addressSelected, setAddressSelected] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+
+  const addressInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
   const bodyTypes = [
     { value: 'SHAKTI_KENDRA', label: 'Shakti Kendra' },
@@ -34,6 +49,129 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
     { value: 'OTHER', label: 'Other' },
   ];
 
+  // Initialize Google Places Autocomplete
+  useEffect(() => {
+    if (
+      isOpen &&
+      window.google &&
+      addressInputRef.current &&
+      !autocompleteRef.current
+    ) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        {
+          types: ['address'],
+          componentRestrictions: { country: 'IN' }, // Restrict to India
+          fields: [
+            'place_id',
+            'geometry',
+            'formatted_address',
+            'address_components',
+          ],
+        }
+      );
+
+      autocompleteRef.current.addListener('place_changed', handlePlaceSelect);
+    }
+
+    // Cleanup on unmount or modal close
+    return () => {
+      if (autocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(
+          autocompleteRef.current
+        );
+        autocompleteRef.current = null;
+      }
+    };
+  }, [isOpen]);
+
+  const handlePlaceSelect = () => {
+    const place = autocompleteRef.current.getPlace();
+
+    if (place.geometry) {
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      setFormData((prev) => ({
+        ...prev,
+        address: place.formatted_address,
+        latitude: lat.toString(),
+        longitude: lng.toString(),
+      }));
+
+      setAddressSelected(true);
+      toast.success('Address selected successfully!');
+    } else {
+      toast.error('Please select a valid address from the dropdown');
+      setAddressSelected(false);
+    }
+  };
+
+  // Handle manual address input (reset coordinates when typing)
+  const handleAddressChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      address: value,
+      latitude: '',
+      longitude: '',
+    }));
+    setAddressSelected(false);
+  };
+
+  // Get current location
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by this browser');
+      return;
+    }
+
+    setIsLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        // Reverse geocoding to get address
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+          setIsLoadingLocation(false);
+
+          if (status === 'OK' && results[0]) {
+            setFormData((prev) => ({
+              ...prev,
+              address: results[0].formatted_address,
+              latitude: lat.toString(),
+              longitude: lng.toString(),
+            }));
+            setAddressSelected(true);
+            toast.success('Current location detected!');
+          } else {
+            // Even if geocoding fails, we can still use the coordinates
+            setFormData((prev) => ({
+              ...prev,
+              address: `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`,
+              latitude: lat.toString(),
+              longitude: lng.toString(),
+            }));
+            setAddressSelected(true);
+            toast.success('Location coordinates obtained!');
+          }
+        });
+      },
+      (error) => {
+        setIsLoadingLocation(false);
+        toast.error('Error getting current location: ' + error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -47,6 +185,14 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
 
     if (!formData.name || !formData.code || !formData.type) {
       toast.error('Please fill in all required fields');
+      return;
+    }
+
+    // Check if address is selected and has coordinates
+    if (formData.address && (!formData.latitude || !formData.longitude)) {
+      toast.error(
+        'Please select a valid address from Google suggestions or use current location'
+      );
       return;
     }
 
@@ -77,6 +223,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
       contactEmail: '',
       contactPhone: '',
     });
+    setAddressSelected(false);
   };
 
   const handleClose = () => {
@@ -97,10 +244,10 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">
-                Add New Body
+                Add New Constituency
               </h2>
               <p className="text-sm text-primary/80">
-                Create a new political/administrative body
+                Create a new political/administrative constituency
               </p>
             </div>
           </div>
@@ -116,9 +263,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Basic Information
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Basic Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -168,7 +313,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform translate-y-1/2 h-4 w-4 text-primary/70" />
+                <ChevronDown className="absolute right-3 top-10 h-4 w-4 text-primary/70 pointer-events-none" />
               </div>
 
               <div className="md:col-span-2">
@@ -193,50 +338,88 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
               <MapPin className="h-5 w-5 text-primary/80" />
               Location Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Address
-                </label>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Address
+                  </label>
+                  <button
+                    type="button"
+                    onClick={getCurrentLocation}
+                    disabled={isLoadingLocation}
+                    className="flex items-center gap-1 px-3 py-1.5 text-xs bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors disabled:opacity-50"
+                  >
+                    {isLoadingLocation ? (
+                      <>
+                        <div className="animate-spin rounded-full h-3 w-3 border-b border-primary"></div>
+                        Getting...
+                      </>
+                    ) : (
+                      <>
+                        <Navigation className="h-3 w-3" />
+                        Use Current Location
+                      </>
+                    )}
+                  </button>
+                </div>
                 <input
+                  ref={addressInputRef}
                   type="text"
                   name="address"
                   value={formData.address}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
-                  placeholder="Enter full address"
+                  onChange={handleAddressChange}
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 ${
+                    addressSelected
+                      ? 'border-green-300 bg-green-50/50'
+                      : 'border-primary/20'
+                  }`}
+                  placeholder="Start typing address... (Google suggestions will appear)"
                 />
+                {addressSelected && (
+                  <div className="flex items-center gap-1 mt-1 text-xs text-green-600">
+                    <Check className="h-3 w-3" />
+                    Valid address selected
+                  </div>
+                )}
+                {formData.address && !addressSelected && (
+                  <div className="mt-1 text-xs text-amber-600">
+                    Please select an address from Google suggestions
+                  </div>
+                )}
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Latitude
-                </label>
-                <input
-                  type="number"
-                  name="latitude"
-                  value={formData.latitude}
-                  onChange={handleInputChange}
-                  step="any"
-                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
-                  placeholder="e.g., 28.7041"
-                />
-              </div>
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Latitude
+                  </label>
+                  <input
+                    type="number"
+                    name="latitude"
+                    value={formData.latitude}
+                    readOnly
+                    step="any"
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg bg-gray-50/80 text-gray-600"
+                    placeholder="Auto-filled from address"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Longitude
-                </label>
-                <input
-                  type="number"
-                  name="longitude"
-                  value={formData.longitude}
-                  onChange={handleInputChange}
-                  step="any"
-                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
-                  placeholder="e.g., 77.1025"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Longitude
+                  </label>
+                  <input
+                    type="number"
+                    name="longitude"
+                    value={formData.longitude}
+                    readOnly
+                    step="any"
+                    className="w-full px-4 py-2.5 border border-primary/20 rounded-lg bg-gray-50/80 text-gray-600"
+                    placeholder="Auto-filled from address"
+                  />
+                </div>
+              </div> */}
             </div>
           </div>
 
@@ -263,7 +446,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Contact Phone
+                  Phone Number
                 </label>
                 <input
                   type="tel"
@@ -277,7 +460,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Contact Email
+                  Email
                 </label>
                 <input
                   type="email"
@@ -313,7 +496,7 @@ const AddBodyModal = ({ isOpen, onClose, onSuccess }) => {
               ) : (
                 <>
                   <Check className="h-4 w-4" />
-                  Add Body
+                  Add
                 </>
               )}
             </button>

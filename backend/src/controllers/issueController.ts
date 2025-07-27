@@ -37,13 +37,6 @@ const logMLAInfo = async (stateId: string) => {
         },
       },
     });
-
-    console.log('📊 MLAs in state:', mlas.length);
-    mlas.forEach((mla) => {
-      console.log(
-        `👤 MLA: ${mla.name}, Constituency: ${mla.constituency?.name || 'Not assigned'} (ID: ${mla.constituencyId || 'None'})`
-      );
-    });
   } catch (error) {
     console.error('Error fetching MLA info:', error);
   }
@@ -143,55 +136,13 @@ export const createIssue = async (
       });
 
       if (!stateExists) {
-        console.warn('Invalid stateId provided:', stateId);
-        // Try to find the correct state if we have address information
-        if (address) {
-          console.log(
-            'Attempting to geocode address for state detection:',
-            address
-          );
-          // const geocodeResult = await geocodeAddress(address);
-
-          // if (geocodeResult && geocodeResult.addressComponents.state) {
-          //   const stateName = geocodeResult.addressComponents.state;
-          //   console.log('Geocoded state:', stateName);
-          //
-          //   // Try to find a matching state in the database
-          //   const matchingState = await prisma.state.findFirst({
-          //     where: {
-          //       OR: [
-          //         { name: { contains: stateName, mode: 'insensitive' } },
-          //         { code: { contains: stateName, mode: 'insensitive' } },
-          //       ],
-          //     },
-          //   });
-          //
-          //   if (matchingState) {
-          //     console.log('Found matching state in database:', matchingState.name);
-          //     validatedStateId = matchingState.id;
-          //
-          //     // Update coordinates if not provided
-          //     if (!latitude || !longitude) {
-          //       latitude = geocodeResult.latitude.toString();
-          //       longitude = geocodeResult.longitude.toString();
-          //       console.log('Updated coordinates from geocoding:', latitude, longitude);
-          //     }
-          //   } else {
-          //     console.warn('No matching state found in database for:', stateName);
-          //   }
-          // }
-        }
-
-        // If we still don't have a valid state, use the first available state as fallback
         if (!validatedStateId || stateId === validatedStateId) {
-          console.log('Using fallback state logic');
           const fallbackState = await prisma.state.findFirst({
             orderBy: { name: 'asc' },
           });
 
           if (fallbackState) {
             validatedStateId = fallbackState.id;
-            console.log('Using fallback state:', fallbackState.name);
           } else {
             res.status(400).json({
               error:
@@ -202,52 +153,14 @@ export const createIssue = async (
         }
       }
     } else {
-      // No stateId provided, try to geocode from address
-      if (address) {
-        console.log(
-          'No stateId provided, attempting to geocode address:',
-          address
-        );
-        // const geocodeResult = await geocodeAddress(address);
-
-        // if (geocodeResult && geocodeResult.addressComponents.state) {
-        //   const stateName = geocodeResult.addressComponents.state;
-        //   console.log('Geocoded state:', stateName);
-        //
-        //   // Try to find a matching state in the database
-        //   const matchingState = await prisma.state.findFirst({
-        //     where: {
-        //       OR: [
-        //         { name: { contains: stateName, mode: 'insensitive' } },
-        //         { code: { contains: stateName, mode: 'insensitive' } },
-        //       ],
-        //     },
-        //   });
-        //
-        //   if (matchingState) {
-        //     console.log('Found matching state in database:', matchingState.name);
-        //     validatedStateId = matchingState.id;
-        //
-        //     // Update coordinates if not provided
-        //     if (!latitude || !longitude) {
-        //       latitude = geocodeResult.latitude.toString();
-        //       longitude = geocodeResult.longitude.toString();
-        //       console.log('Updated coordinates from geocoding:', latitude, longitude);
-        //     }
-        //   }
-        // }
-      }
-
       // If we still don't have a valid state, use the first available state as fallback
       if (!validatedStateId) {
-        console.log('Using fallback state logic');
         const fallbackState = await prisma.state.findFirst({
           orderBy: { name: 'asc' },
         });
 
         if (fallbackState) {
           validatedStateId = fallbackState.id;
-          console.log('Using fallback state:', fallbackState.name);
         } else {
           res.status(400).json({
             error:
@@ -299,16 +212,11 @@ export const createIssue = async (
     let autoAssignedConstituencyId = constituencyId;
 
     if (userRole === UserRole.CITIZEN && !assignedToId) {
-      console.log('🔍 Auto-assignment logic triggered for CITIZEN');
-      console.log('📍 Initial constituency ID:', constituencyId);
-      console.log('📍 Coordinates:', latitude, longitude);
-
       // Debug: Log MLA information for this state
       await logMLAInfo(validatedStateId);
 
       // If constituency is not provided, try to find nearest constituency based on coordinates
       if (!constituencyId && latitude && longitude) {
-        console.log('🔍 Searching for nearest constituency...');
         const constituencies = await prisma.constituency.findMany({
           where: {
             stateId: validatedStateId,
@@ -323,13 +231,8 @@ export const createIssue = async (
           },
         });
 
-        console.log(
-          '🏛️ Found constituencies with coordinates:',
-          constituencies.length
-        );
-
         // Simple distance calculation to find nearest constituency
-    let nearestConstituency: { id: string; name: string } | null = null;
+        let nearestConstituency: { id: string; name: string } | null = null;
         let minDistance = Infinity;
 
         const userLat = parseFloat(latitude);
@@ -362,25 +265,12 @@ export const createIssue = async (
         }
 
         if (nearestConstituency) {
-      autoAssignedConstituencyId = nearestConstituency.id;
-          console.log(
-            '🎯 Found nearest constituency:',
-            nearestConstituency.name,
-            'ID:',
-            nearestConstituency.id
-          );
-        } else {
-          console.log('❌ No nearest constituency found');
+          autoAssignedConstituencyId = nearestConstituency.id;
         }
       }
 
       // Find the MLA for the constituency
       if (autoAssignedConstituencyId) {
-        console.log(
-          '🔍 Searching for MLA in constituency:',
-          autoAssignedConstituencyId
-        );
-
         const mla = await prisma.user.findFirst({
           where: {
             role: UserRole.MLA,
@@ -392,19 +282,9 @@ export const createIssue = async (
           },
         });
 
-        console.log(
-          '👤 MLA found:',
-          mla ? `${mla.name} (ID: ${mla.id})` : 'None'
-        );
-
         if (mla) {
           finalAssignedToId = mla.id;
-          console.log('✅ Issue will be assigned to MLA:', mla.name);
-        } else {
-          console.log('❌ No active MLA found for constituency');
         }
-      } else {
-        console.log('❌ No constituency determined for assignment');
       }
     }
 
@@ -494,8 +374,6 @@ export const createIssue = async (
         },
       });
 
-      console.log('📝 Assignment notification created:', assignmentMessage);
-
       // Create notification for the assigned user
       try {
         const currentUser = await prisma.user.findUnique({
@@ -503,16 +381,12 @@ export const createIssue = async (
           select: { name: true },
         });
 
-        console.log('🔔 About to create assignment notification...');
         await createAssignmentNotification(
           issue.id,
           issue.title,
           finalAssignedToId,
           userId,
           currentUser?.name || 'Unknown'
-        );
-        console.log(
-          '✅ Assignment notification creation completed successfully'
         );
       } catch (error) {
         console.error('❌ Failed to create assignment notification:', error);
@@ -523,15 +397,12 @@ export const createIssue = async (
         // Don't throw here - we don't want notification failure to prevent issue creation
       }
     } else {
-      console.log('⚠️ No assignment made - issue remains unassigned');
-
       // If no MLA found, try to find any MLA in the same state as fallback
       if (
         userRole === UserRole.CITIZEN &&
         !finalAssignedToId &&
         validatedStateId
       ) {
-        console.log('🔄 Attempting fallback assignment to any MLA in state...');
         const fallbackMla = await prisma.user.findFirst({
           where: {
             role: UserRole.MLA,
@@ -544,7 +415,6 @@ export const createIssue = async (
         });
 
         if (fallbackMla) {
-          console.log('🎯 Fallback MLA found:', fallbackMla.name);
           await prisma.issue.update({
             where: { id: issue.id },
             data: { assignedToId: fallbackMla.id },
@@ -567,16 +437,12 @@ export const createIssue = async (
               select: { name: true },
             });
 
-            console.log('🔔 Creating notification for fallback assignment...');
             await createAssignmentNotification(
               issue.id,
               issue.title,
               fallbackMla.id,
               userId,
               currentUser?.name || 'Unknown'
-            );
-            console.log(
-              '✅ Fallback assignment notification created successfully'
             );
           } catch (error) {
             console.error(
@@ -587,10 +453,7 @@ export const createIssue = async (
               console.error('Error details:', error.message);
               console.error('Stack trace:', error.stack);
             }
-            // Don't throw here - we don't want notification failure to prevent issue creation
           }
-        } else {
-          console.log('❌ No MLAs found in the entire state');
         }
       }
     }
@@ -1131,12 +994,10 @@ export const updateIssue = async (
           });
 
           if (!memberUnderMLA) {
-            res
-              .status(400)
-              .json({
-                error:
-                  'You can only assign issues to members under your supervision.',
-              });
+            res.status(400).json({
+              error:
+                'You can only assign issues to members under your supervision.',
+            });
             return;
           }
         }
@@ -1459,12 +1320,9 @@ export const getAssignedIssues = async (
 
     // Only MLAs and Members can access assigned issues
     if (userRole !== UserRole.MLA && userRole !== UserRole.MEMBER) {
-      res
-        .status(403)
-        .json({
-          error:
-            'Access denied. Only MLAs and Members can view assigned issues.',
-        });
+      res.status(403).json({
+        error: 'Access denied. Only MLAs and Members can view assigned issues.',
+      });
       return;
     }
 
@@ -1674,11 +1532,9 @@ export const getMyIssues = async (
 
     // Only Citizens can access their own issues
     if (userRole !== UserRole.CITIZEN) {
-      res
-        .status(403)
-        .json({
-          error: 'Access denied. Only Citizens can view their own issues.',
-        });
+      res.status(403).json({
+        error: 'Access denied. Only Citizens can view their own issues.',
+      });
       return;
     }
 
@@ -1860,11 +1716,9 @@ export const updateIssueProgress = async (
     }
 
     if (!canUpdate) {
-      res
-        .status(403)
-        .json({
-          error: 'You can only update issues assigned to you or your MLA',
-        });
+      res.status(403).json({
+        error: 'You can only update issues assigned to you or your MLA',
+      });
       return;
     }
 

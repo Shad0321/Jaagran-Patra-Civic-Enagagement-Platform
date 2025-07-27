@@ -59,12 +59,16 @@ const MLADashboard = () => {
       // Calculate stats
       const stats = {
         totalAssignedIssues: issues.length,
-        pendingIssues: issues.filter((issue) => issue.status === 'PENDING').length,
-        inProgressIssues: issues.filter((issue) => issue.status === 'IN_PROGRESS').length,
-        resolvedIssues: issues.filter((issue) => issue.status === 'RESOLVED').length,
+        pendingIssues: issues.filter((issue) => issue.status === 'PENDING')
+          .length,
+        inProgressIssues: issues.filter(
+          (issue) => issue.status === 'IN_PROGRESS'
+        ).length,
+        resolvedIssues: issues.filter((issue) => issue.status === 'RESOLVED')
+          .length,
         totalMembers: members.length,
         activeCitizens: new Set(issues.map((issue) => issue.reportedById)).size,
-        inactiveMembers: members.filter(member => !member.active).length,
+        inactiveMembers: members.filter((member) => !member.isActive).length,
       };
 
       setStats(stats);
@@ -139,7 +143,9 @@ const MLADashboard = () => {
 
   if (loading) {
     return (
-      <Loader className={"w-screen h-screen flex items-center justify-center"} />
+      <Loader
+        className={'w-screen h-screen flex items-center justify-center'}
+      />
     );
   }
 
@@ -162,7 +168,9 @@ const MLADashboard = () => {
             <h1 className="py-2 text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-3">
               MLA Dashboard
             </h1>
-            <p className="text-xl text-gray-600 mb-2">Welcome back, {user?.name}</p>
+            <p className="text-xl text-gray-600 mb-2">
+              Welcome back, {user?.name}
+            </p>
             <p className="text-gray-500">
               Manage assigned issues and track progress in your constituency.
             </p>
@@ -170,11 +178,13 @@ const MLADashboard = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Issues</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Issues
+                </p>
                 <p className="text-2xl font-bold text-primary">
                   {stats.totalAssignedIssues}
                 </p>
@@ -230,7 +240,9 @@ const MLADashboard = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Members</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Members
+                </p>
                 <p className="text-2xl font-bold text-purple-600">
                   {stats.totalMembers}
                 </p>
@@ -244,7 +256,9 @@ const MLADashboard = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Citizens</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Active Citizens
+                </p>
                 <p className="text-2xl font-bold text-primary">
                   {stats.activeCitizens}
                 </p>
@@ -288,14 +302,16 @@ const MLADashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
-                  Body Management
+                  Constituency Management
                 </h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Create and manage political bodies and organizations
+                  Create and manage political constituencies and organizations
                 </p>
                 <div className="flex items-center space-x-2 text-primary">
                   <Building className="h-4 w-4" />
-                  <span className="text-sm font-medium">Manage Bodies</span>
+                  <span className="text-sm font-medium">
+                    Manage Constituencies
+                  </span>
                 </div>
               </div>
               <div className="h-12 min-w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all">
@@ -358,7 +374,10 @@ const MLADashboard = () => {
               <h2 className="text-xl font-semibold text-gray-900">
                 Assigned Issues
               </h2>
-              <Link to="/issues" className="text-primary hover:text-primary/80 text-sm font-medium transition-colors">
+              <Link
+                to="/issues"
+                className="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
+              >
                 View All
               </Link>
             </div>
@@ -402,19 +421,28 @@ const MLADashboard = () => {
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
                             <div className="flex items-center">
                               <MapPin className="h-3.5 w-3.5 mr-1.5 text-primary/70" />
-                              <span>{issue.address || 'Location not specified'}</span>
+                              <span>
+                                {issue.address || 'Location not specified'}
+                              </span>
                             </div>
                             <div className="flex items-center">
                               <Calendar className="h-3.5 w-3.5 mr-1.5 text-primary/70" />
-                              <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
+                              <span>
+                                {new Date(issue.createdAt).toLocaleDateString()}
+                              </span>
                             </div>
                             <div className="flex items-center">
-                              <span>Reported by: {issue.reportedBy?.name || 'Unknown'}</span>
+                              <span>
+                                Reported by:{' '}
+                                {issue.reportedBy?.name || 'Unknown'}
+                              </span>
                             </div>
                             {issue.assignedTo && (
                               <div className="flex items-center text-primary">
                                 <UserCheck className="h-3.5 w-3.5 mr-1.5" />
-                                <span>Assigned to: {issue.assignedTo.name}</span>
+                                <span>
+                                  Assigned to: {issue.assignedTo.name}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -440,7 +468,17 @@ const MLADashboard = () => {
                               onClick={() => openUpdateModal(issue)}
                               className="px-3 py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-xs font-medium rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-1 cursor-pointer"
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="12"
+                                height="12"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
                                 <path d="M12 20h9"></path>
                                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                               </svg>
@@ -458,28 +496,52 @@ const MLADashboard = () => {
                       </div>
 
                       {/* Progress Updates */}
-                      {issue.progressUpdates && issue.progressUpdates.length > 0 && (
-                        <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
-                          <div className="flex items-center gap-2 mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                              <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <h4 className="text-sm font-medium text-gray-700">Latest Update</h4>
-                            <span className="text-xs text-gray-500 ml-auto">
-                              {new Date(
-                                issue.progressUpdates[issue.progressUpdates.length - 1].createdAt
-                              ).toLocaleDateString()}
-                            </span>
+                      {issue.progressUpdates &&
+                        issue.progressUpdates.length > 0 && (
+                          <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
+                            <div className="flex items-center gap-2 mb-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-primary"
+                              >
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                              <h4 className="text-sm font-medium text-gray-700">
+                                Latest Update
+                              </h4>
+                              <span className="text-xs text-gray-500 ml-auto">
+                                {new Date(
+                                  issue.progressUpdates[
+                                    issue.progressUpdates.length - 1
+                                  ].createdAt
+                                ).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 pl-2">
+                              {
+                                issue.progressUpdates[
+                                  issue.progressUpdates.length - 1
+                                ].message
+                              }
+                            </p>
+                            <UpdateMediaDisplay
+                              update={
+                                issue.progressUpdates[
+                                  issue.progressUpdates.length - 1
+                                ]
+                              }
+                              className="mt-2"
+                            />
                           </div>
-                          <p className="text-sm text-gray-600 pl-2">
-                            {issue.progressUpdates[issue.progressUpdates.length - 1].message}
-                          </p>
-                          <UpdateMediaDisplay
-                            update={issue.progressUpdates[issue.progressUpdates.length - 1]}
-                            className="mt-2"
-                          />
-                        </div>
-                      )}
+                        )}
                     </div>
                   </div>
                 ))}
@@ -494,7 +556,8 @@ const MLADashboard = () => {
                     No issues assigned yet
                   </h3>
                   <p className="text-gray-500 text-sm">
-                    Issues will appear here when citizens report them in your constituency
+                    Issues will appear here when citizens report them in your
+                    constituency
                   </p>
                   <button className="mt-4 px-4 py-2 bg-gradient-to-r from-primary to-primary/80 text-white text-sm font-medium rounded-lg hover:shadow-md transition-all duration-200">
                     Check for new issues

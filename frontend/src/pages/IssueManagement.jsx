@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Plus,
@@ -14,6 +14,9 @@ import {
   Camera,
   Upload,
   Volume2,
+  Send,
+  Navigation, 
+  Check,
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
@@ -30,13 +33,16 @@ const IssueModal = ({
   onSubmit,
   formData,
   setFormData,
-  // nearbyBodies,
-  // loadingBodies,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [selectedImages, setSelectedImages] = useState([]);
+  const [addressSelected, setAddressSelected] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+
+  const addressInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
   const categoryOptions = [
     { value: 'INFRASTRUCTURE', label: 'Infrastructure' },
@@ -53,14 +59,66 @@ const IssueModal = ({
 
   const priorityOptions = [
     { value: 'LOW', label: 'Low', color: 'bg-blue-100 text-blue-800' },
-    {
-      value: 'MEDIUM',
-      label: 'Medium',
-      color: 'bg-yellow-100 text-yellow-800',
-    },
+    { value: 'MEDIUM', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
     { value: 'HIGH', label: 'High', color: 'bg-orange-100 text-orange-800' },
     { value: 'URGENT', label: 'Urgent', color: 'bg-red-100 text-red-800' },
   ];
+
+  // Initialize Google Places Autocomplete
+  useEffect(() => {
+    if (isOpen && window.google && addressInputRef.current && !autocompleteRef.current) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        {
+          types: ['address'],
+          componentRestrictions: { country: 'IN' },
+          fields: ['place_id', 'geometry', 'formatted_address', 'address_components'],
+        }
+      );
+
+      autocompleteRef.current.addListener('place_changed', handlePlaceSelect);
+    }
+
+    return () => {
+      if (autocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        autocompleteRef.current = null;
+      }
+    };
+  }, [isOpen]);
+
+  const handlePlaceSelect = () => {
+    const place = autocompleteRef.current.getPlace();
+
+    if (place.geometry) {
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      setFormData((prev) => ({
+        ...prev,
+        address: place.formatted_address,
+        latitude: lat,
+        longitude: lng,
+      }));
+
+      setAddressSelected(true);
+      toast.success('Address selected successfully!');
+    } else {
+      toast.error('Please select a valid address from the dropdown');
+      setAddressSelected(false);
+    }
+  };
+
+  const handleAddressChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      address: value,
+      latitude: '',
+      longitude: '',
+    }));
+    setAddressSelected(false);
+  };
 
   const startRecording = async () => {
     try {
@@ -94,56 +152,107 @@ const IssueModal = ({
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    setSelectedImages((prev) => [...prev, ...files]);
+    const newImages = [...selectedImages, ...files].slice(0, 5);
+    setSelectedImages(newImages);
     setFormData((prev) => ({
       ...prev,
-      images: [...(prev.images || []), ...files],
+      images: newImages,
     }));
   };
 
   const removeImage = (index) => {
-    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    const newImages = selectedImages.filter((_, i) => i !== index);
+    setSelectedImages(newImages);
     setFormData((prev) => ({
       ...prev,
-      images: prev.images?.filter((_, i) => i !== index) || [],
+      images: newImages,
     }));
   };
 
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData((prev) => ({
-            ...prev,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          }));
-          toast.success('Location captured successfully');
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          toast.error('Could not get location');
-        }
-      );
-    } else {
-      toast.error('Geolocation not supported');
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by this browser');
+      return;
     }
+
+    setIsLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        // Reverse geocoding to get address
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+          setIsLoadingLocation(false);
+
+          if (status === 'OK' && results[0]) {
+            setFormData((prev) => ({
+              ...prev,
+              address: results[0].formatted_address,
+              latitude: lat,
+              longitude: lng,
+            }));
+            setAddressSelected(true);
+            toast.success('Current location detected!');
+          } else {
+            setFormData((prev) => ({
+              ...prev,
+              address: `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`,
+              latitude: lat,
+              longitude: lng,
+            }));
+            setAddressSelected(true);
+            toast.success('Location coordinates obtained!');
+          }
+        });
+      },
+      (error) => {
+        setIsLoadingLocation(false);
+        toast.error('Error getting current location: ' + error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-primary/10">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
+              <Plus className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+              <p className="text-sm text-gray-500 mt-1">
+                Fill in the details to report a new issue
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
-        <form onSubmit={onSubmit}>
-          <div className="space-y-4">
+        <div className="p-6 space-y-6">
+          <form onSubmit={onSubmit} className="space-y-6">
             {/* Title and Category */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Issue Title *
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Issue Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -151,15 +260,15 @@ const IssueModal = ({
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, title: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   placeholder="Brief description of the issue"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category *
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Category <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.category}
@@ -169,7 +278,7 @@ const IssueModal = ({
                       category: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   required
                 >
                   <option value="">Select Category</option>
@@ -182,10 +291,10 @@ const IssueModal = ({
               </div>
             </div>
 
-            {/* Priority and Assign to Body */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Priority and Location */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Priority
                 </label>
                 <select
@@ -196,7 +305,7 @@ const IssueModal = ({
                       priority: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                 >
                   {priorityOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -206,67 +315,86 @@ const IssueModal = ({
                 </select>
               </div>
 
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Assign to Body</label>
-                <select
-                  value={formData.bodyId}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bodyId: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={loadingBodies}
-                >
-                  <option value="">Select Body (Optional)</option>
-                  {nearbyBodies.map(body => (
-                    <option key={body.id} value={body.id}>
-                      {body.name} - {body.constituency?.name || 'Unknown'}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
-            </div>
-
-            {/* Location */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address
-                </label>
-                <textarea
-                  value={formData.address}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      address: e.target.value,
-                    }))
-                  }
-                  rows="2"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter the location address"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Location
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Location Coordinates
                 </label>
                 <button
                   type="button"
                   onClick={getCurrentLocation}
-                  className="w-full px-3 py-2 text-left border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-50"
+                  className="w-full px-4 py-2.5 text-left border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 hover:bg-gray-50/80 transition-colors flex items-center justify-between"
                 >
                   <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    {formData.latitude && formData.longitude
-                      ? `${formData.latitude.toFixed(4)}, ${formData.longitude.toFixed(4)}`
-                      : 'Click to capture location'}
+                    <MapPin className="h-5 w-5 text-primary/80 mr-2" />
+                    {formData.latitude && formData.longitude ? (
+                      <span className="text-gray-900">
+                        {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">Click to capture location</span>
+                    )}
                   </div>
+                  {isLoadingLocation && (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  )}
                 </button>
               </div>
             </div>
 
+            {/* Address with Google Autocomplete */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-semibold text-gray-700">
+                  Address
+                </label>
+                <button
+                  type="button"
+                  onClick={getCurrentLocation}
+                  disabled={isLoadingLocation}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors disabled:opacity-50"
+                >
+                  {isLoadingLocation ? (
+                    <>
+                      <div className="animate-spin rounded-full h-3 w-3 border-b border-primary"></div>
+                      Getting...
+                    </>
+                  ) : (
+                    <>
+                      <Navigation className="h-3 w-3" />
+                      Use Current Location
+                    </>
+                  )}
+                </button>
+              </div>
+              <input
+                ref={addressInputRef}
+                type="text"
+                value={formData.address}
+                onChange={handleAddressChange}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 ${
+                  addressSelected
+                    ? 'border-green-300 bg-green-50/50'
+                    : 'border-primary/20'
+                }`}
+                placeholder="Start typing address... (Google suggestions will appear)"
+              />
+              {addressSelected && (
+                <div className="flex items-center gap-1 mt-1 text-xs text-green-600">
+                  <Check className="h-3 w-3" />
+                  Valid address selected
+                </div>
+              )}
+              {formData.address && !addressSelected && (
+                <div className="mt-1 text-xs text-amber-600">
+                  Please select an address from Google suggestions
+                </div>
+              )}
+            </div>
+
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description *
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Description <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={formData.description}
@@ -277,40 +405,44 @@ const IssueModal = ({
                   }))
                 }
                 rows="4"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                 placeholder="Provide detailed description of the issue"
                 required
               />
             </div>
 
-            {/* Audio Recording */}
+            {/* Voice Note */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Voice Note
               </label>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={isRecording ? stopRecording : startRecording}
-                  className={`flex items-center px-4 py-2 rounded-md ${isRecording
+                  className={`flex items-center px-4 py-2.5 rounded-lg transition-colors ${
+                    isRecording
                       ? 'bg-red-100 text-red-700 hover:bg-red-200'
                       : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                    }`}
+                  }`}
                 >
                   {isRecording ? (
-                    <MicOff className="h-4 w-4 mr-2" />
+                    <>
+                      <MicOff className="h-5 w-5 mr-2" />
+                      Stop Recording
+                    </>
                   ) : (
-                    <Mic className="h-4 w-4 mr-2" />
+                    <>
+                      <Mic className="h-5 w-5 mr-2" />
+                      Start Recording
+                    </>
                   )}
-                  {isRecording ? 'Stop Recording' : 'Start Recording'}
                 </button>
 
                 {audioBlob && (
-                  <div className="flex items-center space-x-2">
-                    <Volume2 className="h-4 w-4 text-green-600" />
-                    <span className="text-sm text-green-600">
-                      Audio recorded
-                    </span>
+                  <div className="flex items-center gap-2 bg-gray-50/80 rounded-lg p-3">
+                    <Volume2 className="h-5 w-5 text-green-600" />
+                    <span className="text-sm text-green-600">Audio recorded</span>
                     <audio controls className="h-8">
                       <source
                         src={URL.createObjectURL(audioBlob)}
@@ -324,13 +456,13 @@ const IssueModal = ({
 
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Images
               </label>
               <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <label className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md cursor-pointer hover:bg-gray-200">
-                    <Camera className="h-4 w-4 mr-2" />
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                    <Camera className="h-5 w-5 mr-2" />
                     Add Images
                     <input
                       type="file"
@@ -340,24 +472,26 @@ const IssueModal = ({
                       className="hidden"
                     />
                   </label>
-                  <span className="text-sm text-gray-500">Max 5 images</span>
+                  <span className="text-sm text-gray-500">
+                    {selectedImages.length}/5 images
+                  </span>
                 </div>
 
                 {selectedImages.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {selectedImages.map((image, index) => (
-                      <div key={index} className="relative">
+                      <div key={index} className="relative group">
                         <img
                           src={URL.createObjectURL(image)}
                           alt={`Preview ${index + 1}`}
-                          className="w-full h-24 object-cover rounded-md"
+                          className="w-full h-28 object-cover rounded-lg"
                         />
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-4 w-4" />
                         </button>
                       </div>
                     ))}
@@ -365,24 +499,26 @@ const IssueModal = ({
                 )}
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-end space-x-3 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Submit Issue
-            </button>
-          </div>
-        </form>
+            {/* Form Actions */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-primary/10">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 flex items-center gap-2"
+              >
+                <Send className="h-4 w-4" />
+                Submit Issue
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -433,10 +569,14 @@ const IssueDetailsModal = ({
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'PENDING': return <Clock className="h-4 w-4 mr-1" />;
-      case 'IN_PROGRESS': return <AlertCircle className="h-4 w-4 mr-1" />;
-      case 'RESOLVED': return <CheckCircle className="h-4 w-4 mr-1" />;
-      default: return <Clock className="h-4 w-4 mr-1" />;
+      case 'PENDING':
+        return <Clock className="h-4 w-4 mr-1" />;
+      case 'IN_PROGRESS':
+        return <AlertCircle className="h-4 w-4 mr-1" />;
+      case 'RESOLVED':
+        return <CheckCircle className="h-4 w-4 mr-1" />;
+      default:
+        return <Clock className="h-4 w-4 mr-1" />;
     }
   };
 
@@ -454,11 +594,15 @@ const IssueDetailsModal = ({
                 {issue.title}
               </h2>
               <div className="flex items-center flex-wrap gap-2 mt-1">
-                <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getStatusColor(issue.status)}`}>
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${getStatusColor(issue.status)}`}
+                >
                   {getStatusIcon(issue.status)}
                   {issue.status}
                 </span>
-                <span className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${getPriorityColor(issue.priority)}`}>
+                <span
+                  className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${getPriorityColor(issue.priority)}`}
+                >
                   {issue.priority}
                 </span>
                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
@@ -496,7 +640,10 @@ const IssueDetailsModal = ({
                 </div>
 
                 {/* Media Display */}
-                <MediaDisplay issue={issue} className="rounded-lg overflow-hidden" />
+                <MediaDisplay
+                  issue={issue}
+                  className="rounded-lg overflow-hidden"
+                />
 
                 {issue.address && (
                   <div>
@@ -555,10 +702,12 @@ const IssueDetailsModal = ({
                       {issue.assignedTo.mlaProfile && (
                         <div className="mt-3 space-y-1 text-sm text-blue-600">
                           <p className="flex items-center">
-                            <span className="font-medium">Party:</span> {issue.assignedTo.mlaProfile.partyName}
+                            <span className="font-medium">Party:</span>{' '}
+                            {issue.assignedTo.mlaProfile.partyName}
                           </p>
                           <p className="flex items-center">
-                            <span className="font-medium">Position:</span> {issue.assignedTo.mlaProfile.position}
+                            <span className="font-medium">Position:</span>{' '}
+                            {issue.assignedTo.mlaProfile.position}
                           </p>
                         </div>
                       )}
@@ -640,7 +789,10 @@ const IssueDetailsModal = ({
                     <p className="text-gray-700 mb-3">{update.message}</p>
 
                     {/* Update Media Display */}
-                    <UpdateMediaDisplay update={update} className="rounded-lg overflow-hidden mb-3" />
+                    <UpdateMediaDisplay
+                      update={update}
+                      className="rounded-lg overflow-hidden mb-3"
+                    />
 
                     {update.progressPercentage && (
                       <div className="mb-3">
@@ -823,7 +975,6 @@ const IssueManagement = () => {
   const fetchIssues = useCallback(async () => {
     // Don't fetch if user data is not available
     if (!user) {
-      console.log('🔍 fetchIssues - User not available, skipping');
       return;
     }
 
@@ -845,13 +996,6 @@ const IssueManagement = () => {
         endpoint = '/issues/assigned-to-me';
       }
 
-      console.log(
-        '🔍 fetchIssues - User role:',
-        user?.role,
-        'Endpoint:',
-        endpoint
-      );
-
       const response = await api.get(`${endpoint}?${params}`);
       setIssues(response.data.data.issues || []);
       setTotalPages(response.data.data.pagination?.pages || 1);
@@ -866,14 +1010,11 @@ const IssueManagement = () => {
   const fetchNearbyBodies = useCallback(async () => {
     // Don't fetch if user data is not available
     if (!user) {
-      console.log('🔍 fetchNearbyBodies - User not available, skipping');
       return;
     }
 
     try {
       setLoadingBodies(true);
-      console.log('🔍 fetchNearbyBodies - User role:', user?.role);
-
       // Get user's location data from localStorage or API
       const userProfile = JSON.parse(
         localStorage.getItem('userProfile') || '{}'
@@ -895,16 +1036,8 @@ const IssueManagement = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log(
-      '🔍 IssueManagement useEffect - User role:',
-      user?.role,
-      'User available:',
-      !!user
-    );
-
     // Don't make API calls if user data is not loaded yet
     if (!user) {
-      console.log('🔍 User not loaded yet, skipping API calls');
       return;
     }
 
@@ -912,10 +1045,7 @@ const IssueManagement = () => {
 
     // Only fetch nearby bodies for citizens who can report issues
     if (user?.role === 'CITIZEN') {
-      console.log('🔍 Fetching nearby bodies for CITIZEN');
       fetchNearbyBodies();
-    } else {
-      console.log('🔍 Skipping nearby bodies for role:', user?.role);
     }
   }, [fetchIssues, fetchNearbyBodies, user]);
 
@@ -924,8 +1054,6 @@ const IssueManagement = () => {
     try {
       // Debug: Check if token exists
       const token = localStorage.getItem('token');
-      console.log('Token from localStorage:', token);
-
       if (!token) {
         toast.error('You are not logged in. Please login first.');
         return;
@@ -950,11 +1078,6 @@ const IssueManagement = () => {
       if (!formData.stateId) {
         submitData.append('stateId', 'cmcyt0pwn0000gen8kkequkpi'); // Default UK state
       }
-
-      console.log(
-        'Submitting issue with data:',
-        Array.from(submitData.entries())
-      );
 
       const response = await api.post('/issues/citizen', submitData);
 
@@ -1101,8 +1224,12 @@ const IssueManagement = () => {
     <div className="p-2 sm:p-4 md:p-6 max-w-7xl mx-auto w-full">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 truncate">{getPageTitle()}</h1>
-          <p className="text-gray-600 text-sm sm:text-base truncate">{getPageDescription()}</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-1 pt-2 truncate">
+            {getPageTitle()}
+          </h1>
+          <p className="text-gray-600 text-sm sm:text-base truncate">
+            {getPageDescription()}
+          </p>
         </div>
         {canReportIssue() && (
           <button
@@ -1181,7 +1308,10 @@ const IssueManagement = () => {
                 <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
                   {/* Media Display - Left Side */}
                   <div className="lg:w-1/3 flex-shrink-0">
-                    <MediaDisplay issue={issue} className="rounded-lg overflow-hidden w-full min-h-48 sm:min-h-56 lg:h-full object-cover" />
+                    <MediaDisplay
+                      issue={issue}
+                      className="rounded-lg overflow-hidden w-full min-h-48 sm:min-h-56 lg:h-full object-cover"
+                    />
                   </div>
 
                   {/* Details - Right Side */}
@@ -1238,7 +1368,9 @@ const IssueManagement = () => {
                     {issue.address && (
                       <div className="flex items-center text-sm text-gray-600 bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors duration-200">
                         <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
-                        <span className="truncate font-medium">{issue.address}</span>
+                        <span className="truncate font-medium">
+                          {issue.address}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -1255,7 +1387,10 @@ const IssueManagement = () => {
                     </h4>
                     <div className="space-y-3">
                       {issue.updates.slice(0, 2).map((update, index) => (
-                        <div key={index} className="bg-white rounded-lg p-3 shadow-sm">
+                        <div
+                          key={index}
+                          className="bg-white rounded-lg p-3 shadow-sm"
+                        >
                           <div className="text-sm text-gray-700 leading-relaxed break-words">
                             <span className="font-semibold text-primary">
                               {update.createdBy?.name}:
@@ -1267,7 +1402,10 @@ const IssueManagement = () => {
                               {new Date(update.createdAt).toLocaleDateString()}
                             </span>
                           </div>
-                          <UpdateMediaDisplay update={update} className="mt-2 rounded-md overflow-hidden" />
+                          <UpdateMediaDisplay
+                            update={update}
+                            className="mt-2 rounded-md overflow-hidden"
+                          />
                         </div>
                       ))}
                     </div>
@@ -1287,8 +1425,18 @@ const IssueManagement = () => {
                   >
                     <span className="flex items-center justify-center">
                       View Details
-                      <svg className="w-4 h-4 ml-2 transition-transform duration-200 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-4 h-4 ml-2 transition-transform duration-200 group-hover/btn:translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </span>
                   </button>
@@ -1313,16 +1461,19 @@ const IssueManagement = () => {
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors w-full sm:w-auto ${currentPage === page
+              className={`px-3 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors w-full sm:w-auto ${
+                currentPage === page
                   ? 'bg-primary text-white'
                   : 'text-primary bg-white border border-primary/20 hover:bg-primary/10'
-                }`}
+              }`}
             >
               {page}
             </button>
           ))}
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+            }
             disabled={currentPage === totalPages}
             className="px-3 py-2 text-xs sm:text-sm font-medium text-primary bg-white border border-primary/20 rounded-md hover:bg-primary/10 disabled:opacity-50 w-full sm:w-auto"
           >

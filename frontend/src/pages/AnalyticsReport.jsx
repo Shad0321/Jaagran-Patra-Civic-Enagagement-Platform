@@ -50,7 +50,7 @@ const AnalyticsReport = () => {
       setLoading(true);
       setError('');
       const response = await api.get(`/analytics/mla-report?days=${days}`);
-      
+
       if (response.data.success) {
         setAnalyticsData(response.data.analytics);
       } else {
@@ -92,7 +92,10 @@ const AnalyticsReport = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `mla-analytics-report-${dateRange}days.pdf`);
+      link.setAttribute(
+        'download',
+        `mla-analytics-report-${dateRange}days.pdf`
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -173,12 +176,13 @@ const AnalyticsReport = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-primary/10">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2 flex items-center">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2 flex items-center pt-2">
                   <Activity className="mr-3 h-8 w-8 text-primary" />
                   Analytics Report
                 </h1>
                 <p className="text-gray-600">
-                  Performance overview for {user?.name} - {user?.mlaProfile?.constituency || 'Your Constituency'}
+                  Performance overview for {user?.name} -{' '}
+                  {user?.mlaProfile?.constituency || 'Your Constituency'}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
@@ -203,7 +207,9 @@ const AnalyticsReport = () => {
                   disabled={refreshing}
                   className="px-4 py-2 bg-white/80 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 flex items-center gap-2"
                 >
-                  <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
+                  />
                   Refresh
                 </button>
 
@@ -225,7 +231,9 @@ const AnalyticsReport = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Issues</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Issues
+                  </p>
                   <p className="text-2xl font-bold text-primary">
                     {analyticsData.overview.totalIssues || 0}
                   </p>
@@ -239,14 +247,18 @@ const AnalyticsReport = () => {
                 <span className="text-sm text-green-600">
                   +{analyticsData.overview.issueGrowth || 0}%
                 </span>
-                <span className="text-sm text-gray-500 ml-1">from last period</span>
+                <span className="text-sm text-gray-500 ml-1">
+                  from last period
+                </span>
               </div>
             </div>
 
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-emerald-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Resolved Issues</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Resolved Issues
+                  </p>
                   <p className="text-2xl font-bold text-emerald-600">
                     {analyticsData.overview.resolvedIssues || 0}
                   </p>
@@ -265,7 +277,9 @@ const AnalyticsReport = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-yellow-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending Issues</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Pending Issues
+                  </p>
                   <p className="text-2xl font-bold text-yellow-600">
                     {analyticsData.overview.pendingIssues || 0}
                   </p>
@@ -276,7 +290,8 @@ const AnalyticsReport = () => {
               </div>
               <div className="mt-4">
                 <span className="text-sm text-gray-600">
-                  Avg. {analyticsData.overview.avgResolutionTime || 0} days to resolve
+                  Avg. {analyticsData.overview.avgResolutionTime || 0} days to
+                  resolve
                 </span>
               </div>
             </div>
@@ -284,7 +299,9 @@ const AnalyticsReport = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Members</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Active Members
+                  </p>
                   <p className="text-2xl font-bold text-purple-600">
                     {analyticsData.overview.activeMembers || 0}
                   </p>
@@ -326,12 +343,14 @@ const AnalyticsReport = () => {
                         fill="#8884d8"
                         dataKey="value"
                       >
-                        {analyticsData.charts.statusDistribution.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={PIE_COLORS[index % PIE_COLORS.length]}
-                          />
-                        ))}
+                        {analyticsData.charts.statusDistribution.map(
+                          (entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={PIE_COLORS[index % PIE_COLORS.length]}
+                            />
+                          )
+                        )}
                       </Pie>
                       <Tooltip />
                     </PieChart>
@@ -428,7 +447,8 @@ const AnalyticsReport = () => {
                         .filter((key) => key !== 'date')
                         .map((category, index) => {
                           const colorKeys = Object.keys(COLORS);
-                          const color = COLORS[colorKeys[index % colorKeys.length]];
+                          const color =
+                            COLORS[colorKeys[index % colorKeys.length]];
                           return (
                             <Area
                               key={category}

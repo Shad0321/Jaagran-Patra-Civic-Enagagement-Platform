@@ -3,42 +3,47 @@ import { Check } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setLanguage } from '../redux/slices/languageSlice';
-import { changeGoogleTranslateLanguage, getCurrentGoogleTranslateLanguage } from '../utils/googletranslatehelper';
+import {
+  changeGoogleTranslateLanguage,
+  getCurrentGoogleTranslateLanguage,
+} from '../utils/googletranslatehelper';
 import { languages } from '../utils/constants';
 
 const ChooseLanguage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { selectedLanguage: currentLanguage } = useSelector((state) => state.language);
+  const { selectedLanguage: currentLanguage } = useSelector(
+    (state) => state.language
+  );
 
-  const [selectedLanguage, setSelectedLanguage] = useState(currentLanguage || 'English');
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    currentLanguage || 'English'
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLanguageSelect = async (language) => {
     if (isLoading) return;
-    
+
     setIsLoading(true);
     setSelectedLanguage(language);
-    
+
     try {
       // Update Redux state
       dispatch(setLanguage(language));
-      
+
       // Get language code for Google Translate
-      const selectedLangObj = languages.find(lang => lang.value === language);
+      const selectedLangObj = languages.find((lang) => lang.value === language);
       if (selectedLangObj) {
-        console.log('Changing to language:', language, 'Code:', selectedLangObj.code);
-        
         // Check if we're actually changing to a different language
         const currentGoogleLang = getCurrentGoogleTranslateLanguage();
         if (currentGoogleLang !== selectedLangObj.code) {
           // Change Google Translate language
-          const success = await changeGoogleTranslateLanguage(selectedLangObj.code);
+          const success = await changeGoogleTranslateLanguage(
+            selectedLangObj.code
+          );
           if (!success) {
             console.warn('Failed to change Google Translate language');
           }
-        } else {
-          console.log('Language is already set to:', selectedLangObj.code);
         }
       }
     } catch (error) {

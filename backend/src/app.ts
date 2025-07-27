@@ -27,18 +27,20 @@ app.set('trust proxy', 1);
 // Apply middleware in order
 app.use(compressionMiddleware);
 app.use(securityHeaders);
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || config.allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS policy violation'));
-    }
-  },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || config.allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS policy violation'));
+      }
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true,
+  })
+);
 app.use(generalLimiter);
 
 // Body parsing middleware

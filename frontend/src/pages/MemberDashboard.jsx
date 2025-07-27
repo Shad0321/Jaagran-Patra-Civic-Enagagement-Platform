@@ -43,10 +43,15 @@ const MemberDashboard = () => {
 
       const stats = {
         totalAssignedIssues: issues.length,
-        pendingIssues: issues.filter((issue) => issue.status === 'PENDING').length,
-        inProgressIssues: issues.filter((issue) => issue.status === 'IN_PROGRESS').length,
-        resolvedIssues: issues.filter((issue) => issue.status === 'RESOLVED').length,
-        localIssues: issues.filter((issue) => issue.bodyId === user.bodyId).length,
+        pendingIssues: issues.filter((issue) => issue.status === 'PENDING')
+          .length,
+        inProgressIssues: issues.filter(
+          (issue) => issue.status === 'IN_PROGRESS'
+        ).length,
+        resolvedIssues: issues.filter((issue) => issue.status === 'RESOLVED')
+          .length,
+        localIssues: issues.filter((issue) => issue.bodyId === user.bodyId)
+          .length,
       };
 
       setStats(stats);
@@ -130,21 +135,25 @@ const MemberDashboard = () => {
       <div className="relative z-10 p-2 sm:p-6 max-w-7xl mx-auto">
         {/* Welcome Section */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-primary/10 mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2 pt-1">
             Member Dashboard
           </h1>
           <p className="text-gray-600">
-            Welcome back, <span className="font-medium text-primary">{user?.name}</span>. Manage assigned issues and support your local community as a{' '}
+            Welcome back,{' '}
+            <span className="font-medium text-primary">{user?.name}</span>.
+            Manage assigned issues and support your local community as a{' '}
             {user?.memberProfile?.designation || 'Member'}.
           </p>
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Issues</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Issues
+                </p>
                 <p className="text-2xl font-bold text-primary">
                   {stats.totalAssignedIssues}
                 </p>
@@ -200,7 +209,9 @@ const MemberDashboard = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Local Issues</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Local Issues
+                </p>
                 <p className="text-2xl font-bold text-purple-600">
                   {stats.localIssues}
                 </p>
@@ -215,8 +226,8 @@ const MemberDashboard = () => {
         {/* Role Info */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50 p-6 mb-8 backdrop-blur-sm">
           <div className="flex items-center space-x-4">
-            <div className="h-12 w-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
-              <UserCheck className="h-6 w-6 text-white" />
+            <div className="min-h-12 min-w-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
+              <UserCheck className="min-h-6 min-w-6 text-white" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-blue-900">
@@ -236,7 +247,7 @@ const MemberDashboard = () => {
         {/* Assigned Issues */}
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-primary/10">
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-row sm:items-center justify-between gap-4">
               <h2 className="text-lg font-semibold text-gray-900">
                 Assigned Issues
               </h2>
@@ -315,21 +326,28 @@ const MemberDashboard = () => {
                       </div>
                     </div>
 
-                    {issue.progressUpdates && issue.progressUpdates.length > 0 && (
-                      <div className="mt-4 p-3 bg-gray-50/50 rounded-md border border-gray-200/30">
-                        <p className="text-sm font-medium text-gray-700 mb-1">
-                          Latest Update:
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {issue.progressUpdates[issue.progressUpdates.length - 1].message}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(
-                            issue.progressUpdates[issue.progressUpdates.length - 1].createdAt
-                          ).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
+                    {issue.progressUpdates &&
+                      issue.progressUpdates.length > 0 && (
+                        <div className="mt-4 p-3 bg-gray-50/50 rounded-md border border-gray-200/30">
+                          <p className="text-sm font-medium text-gray-700 mb-1">
+                            Latest Update:
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {
+                              issue.progressUpdates[
+                                issue.progressUpdates.length - 1
+                              ].message
+                            }
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(
+                              issue.progressUpdates[
+                                issue.progressUpdates.length - 1
+                              ].createdAt
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
@@ -340,7 +358,8 @@ const MemberDashboard = () => {
                 </div>
                 <p className="text-gray-900 mb-1">No issues assigned yet</p>
                 <p className="text-gray-500 text-sm">
-                  Issues will appear here when they are assigned to you by your MLA
+                  Issues will appear here when they are assigned to you by your
+                  MLA
                 </p>
               </div>
             )}

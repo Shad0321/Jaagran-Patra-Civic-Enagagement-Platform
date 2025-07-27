@@ -3,9 +3,9 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, clearError } from '../redux/slices/userSlice';
-import logo from "../assets/logo/logo-b.png";
-import bgLogin from "../assets/bg-login.jpg";
-import IndiaCulture from "../assets/india.png";
+import logo from '../assets/new_logo/logo.png';
+import bgLogin from '../assets/bg-login.jpg';
+import IndiaCulture from '../assets/india.png';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -88,8 +88,16 @@ const Login = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-primary/5 px-4 py-8 overflow-hidden">
-      <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none' />
-      <img src={IndiaCulture} alt="Background" className='absolute inset-0 w-[500px] h-[500px] object-contain opacity-20 z-0 pointer-events-none' />
+      <img
+        src={bgLogin}
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none"
+      />
+      <img
+        src={IndiaCulture}
+        alt="Background"
+        className="absolute inset-0 w-[500px] h-[500px] object-contain opacity-20 z-0 pointer-events-none"
+      />
       <div className="relative w-full max-w-md bg-white/70 backdrop-blur-xl rounded-xl shadow-xl p-8 border border-white/30 z-10">
         <div className="text-4xl font-bold mb-1">
           <img src={logo} alt="Jaagran Patra Logo" className="w-16 h-16 mb-2" />

@@ -1,5 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Image, Volume2, VolumeX, Play, Pause, X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Image,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  X,
+  ZoomIn,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 
 const MediaDisplay = ({ issue, className = '' }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -49,7 +59,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
 
   const navigateImage = (direction) => {
     setImageLoading(true);
-    setSelectedImageIndex(prev => {
+    setSelectedImageIndex((prev) => {
       if (direction === 'prev') {
         return prev === 0 ? images.length - 1 : prev - 1;
       } else {
@@ -115,13 +125,13 @@ const MediaDisplay = ({ issue, className = '' }) => {
             {images.map((imageUrl, index) => (
               <div
                 key={index}
-                className="relative group cursor-pointer rounded-md md:rounded-lg overflow-hidden bg-gray-100 aspect-square transition-all duration-200 hover:shadow-md max-h-24 sm:max-h-28 md:max-h-32"
+                className="relative group cursor-pointer rounded-md md:rounded-lg overflow-hidden bg-gray-100 aspect-square transition-all duration-200 hover:shadow-md"
                 onClick={() => handleImageClick(index)}
               >
                 <img
                   src={`${imageUrl}`}
                   alt={`Issue attachment ${index + 1}`}
-                  className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   crossOrigin="anonymous"
                   onError={(e) => {
                     e.target.src = '/placeholder-image.svg';
@@ -147,7 +157,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
               Voice Note
             </span>
           </div>
-          
+
           {/* Mobile-first audio controls layout */}
           <div className="space-y-3">
             {/* Play button and time display - stacked on very small screens */}
@@ -166,7 +176,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
                   <Play className="h-5 w-5 sm:h-4 sm:w-4 ml-0.5" />
                 )}
               </button>
-              
+
               {/* Time display - visible on all screen sizes */}
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 font-medium">
                 <span className="whitespace-nowrap min-w-[2.5rem]">
@@ -178,7 +188,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
                 </span>
               </div>
             </div>
-            
+
             {/* Progress bar - full width */}
             <div className="w-full">
               <div className="relative">
@@ -200,9 +210,9 @@ const MediaDisplay = ({ issue, className = '' }) => {
                     background: #3b82f6;
                     cursor: pointer;
                     border: 2px solid white;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
                   }
-                  
+
                   .slider::-moz-range-thumb {
                     width: 16px;
                     height: 16px;
@@ -210,19 +220,25 @@ const MediaDisplay = ({ issue, className = '' }) => {
                     background: #3b82f6;
                     cursor: pointer;
                     border: 2px solid white;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
                   }
-                  
+
                   .slider::-webkit-slider-track {
                     height: 8px;
                     border-radius: 4px;
-                    background: linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(currentTime / (duration || 1)) * 100}%, #e5e7eb ${(currentTime / (duration || 1)) * 100}%, #e5e7eb 100%);
+                    background: linear-gradient(
+                      to right,
+                      #3b82f6 0%,
+                      #3b82f6 ${(currentTime / (duration || 1)) * 100}%,
+                      #e5e7eb ${(currentTime / (duration || 1)) * 100}%,
+                      #e5e7eb 100%
+                    );
                   }
                 `}</style>
               </div>
             </div>
           </div>
-          
+
           <audio
             ref={audioRef}
             src={`${voiceNote}`}
@@ -246,7 +262,7 @@ const MediaDisplay = ({ issue, className = '' }) => {
             >
               <X className="h-6 w-6 sm:h-8 sm:w-8" />
             </button>
-            
+
             {/* Navigation Arrows */}
             {images.length > 1 && (
               <>
@@ -264,14 +280,14 @@ const MediaDisplay = ({ issue, className = '' }) => {
                 </button>
               </>
             )}
-            
+
             {/* Image Counter */}
             {images.length > 1 && (
               <div className="absolute top-2 sm:top-4 left-1/2 transform -translate-x-1/2 z-20 px-2 py-0.5 sm:px-3 sm:py-1 bg-black/50 text-white text-xs sm:text-sm rounded-full">
                 {selectedImageIndex + 1} / {images.length}
               </div>
             )}
-            
+
             {/* Main Image */}
             <div className="flex-1 flex items-center justify-center">
               {imageLoading && (

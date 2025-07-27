@@ -126,7 +126,6 @@ const NotificationsPage = () => {
     if (filter === 'read') return notification.readAt;
     return true;
   });
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-slate-50 to-primary/10 relative overflow-hidden">
       {/* Background Graphics */}
@@ -191,7 +190,10 @@ const NotificationsPage = () => {
               </div>
 
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>Showing {filteredNotifications.length} of {notifications.length}</span>
+                <span>
+                  Showing {filteredNotifications?.length} of{' '}
+                  {notifications?.length}
+                </span>
               </div>
             </div>
           </div>
@@ -225,10 +227,11 @@ const NotificationsPage = () => {
               <div
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
-                className={`bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border ${!notification.readAt
+                className={`bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border ${
+                  !notification.readAt
                     ? 'border-primary/20 hover:border-primary/30'
                     : 'border-gray-200/50'
-                  } p-6 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.01]`}
+                } p-6 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.01]`}
               >
                 <div className="flex items-start gap-4">
                   <div className="text-3xl mt-1">
@@ -237,7 +240,9 @@ const NotificationsPage = () => {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className={`text-lg font-semibold ${!notification.readAt ? 'text-gray-900' : 'text-gray-700'}`}>
+                      <h3
+                        className={`text-lg font-semibold ${!notification.readAt ? 'text-gray-900' : 'text-gray-700'}`}
+                      >
                         {notification.title}
                       </h3>
                       {!notification.readAt && (
@@ -257,10 +262,14 @@ const NotificationsPage = () => {
 
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
                       <div className="flex items-center gap-3">
-                        <span className={`px-2 py-1 rounded-full text-xs ${getNotificationColor(notification.type)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${getNotificationColor(notification.type)}`}
+                        >
                           {notification.type.replace('_', ' ')}
                         </span>
-                        <span className="text-gray-500">From: {notification.sentBy.name}</span>
+                        <span className="text-gray-500">
+                          From: {notification.sentBy.name}
+                        </span>
                       </div>
                       <span className="text-gray-500">
                         {formatDistanceToNow(new Date(notification.createdAt), {

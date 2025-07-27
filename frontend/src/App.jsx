@@ -25,8 +25,8 @@ const App = () => {
       <hr />
       <Outlet /> {/* Nested routes render here */}
       <ToastContainer position="top-right" />
-      <Faqs/>
-      <Footer/>
+      <Faqs />
+      <Footer />
     </div>
   );
 };

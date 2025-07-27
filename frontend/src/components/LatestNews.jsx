@@ -78,7 +78,15 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
     } finally {
       setLoading(false);
     }
-  }, [apiUrl, page, showFull, limit, userState, selectedCategory, debouncedSearchTerm]);
+  }, [
+    apiUrl,
+    page,
+    showFull,
+    limit,
+    userState,
+    selectedCategory,
+    debouncedSearchTerm,
+  ]);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -142,7 +150,9 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
             <Star className="w-4 h-4 text-yellow-500 fill-current" />
           )}
           {item.category && (
-            <span className={`px-2 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20`}>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20`}
+            >
               {item.category}
             </span>
           )}
@@ -153,12 +163,16 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
         </div>
       </div>
 
-      <h3 className={`font-bold text-gray-900 mb-2 ${compact ? 'text-base' : 'text-xl'} line-clamp-2`}>
+      <h3
+        className={`font-bold text-gray-900 mb-2 ${compact ? 'text-base' : 'text-xl'} line-clamp-2`}
+      >
         {item.title}
       </h3>
 
       {item.summary && (
-        <p className={`text-gray-600 mb-3 ${compact ? 'text-sm' : 'text-base'} line-clamp-2`}>
+        <p
+          className={`text-gray-600 mb-3 ${compact ? 'text-sm' : 'text-base'} line-clamp-2`}
+        >
           {item.summary}
         </p>
       )}
@@ -219,12 +233,12 @@ const LatestNews = ({ userState = null, limit = 5, showFull = false }) => {
       <div className="relative z-10 p-2 sm:p-6 max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-1 sm:p-6 shadow-lg border border-primary/10 mb-8">
-          <div className="flex flex-col flex-wrap sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
+          <div className="flex flex-col flex-wrap sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 space-y-2">
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
                 <Newspaper className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent pt-2">
                 {showFull ? 'Latest News & Updates' : 'Latest News'}
               </h1>
             </div>

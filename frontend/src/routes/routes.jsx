@@ -38,126 +38,122 @@ const router = createBrowserRouter([
       { path: 'reset-my-password', element: <ResetPassword /> },
       {
         path: 'login',
-        element: (
-            <Login />
-        ),
+        element: <Login />,
       },
       {
         path: 'signup',
-        element: (
-            <SignUp />
-        ),
+        element: <SignUp />,
       },
       {
         path: 'dashboard',
         element: (
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'settings',
         element: (
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'my-account',
         element: (
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'issues',
         element: (
-            <ProtectedRoute>
-              <IssueManagement />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <IssueManagement />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'notifications',
         element: (
-            <ProtectedRoute>
-              <NotificationsPage />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <NotificationsPage />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'nearby-issues',
         element: (
-            <ProtectedRoute>
-              <NearbyIssues />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <NearbyIssues />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'election-map',
         element: (
-            <ProtectedRoute>
-              <InteractiveElectionMap />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <InteractiveElectionMap />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'news',
         element: (
-            <ProtectedRoute>
-              <NewsPage />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <NewsPage />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'news/:id',
         element: (
-            <ProtectedRoute>
-              <NewsDetail />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <NewsDetail />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'member-management',
         element: (
-            <ProtectedRoute requiredRole="MLA">
-              <MemberManagement />
-            </ProtectedRoute>
+          <ProtectedRoute requiredRole="MLA">
+            <MemberManagement />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'meeting-management',
         element: (
-            <ProtectedRoute requiredRole="MLA">
-              <MeetingManagement />
-            </ProtectedRoute>
+          <ProtectedRoute requiredRole="MLA">
+            <MeetingManagement />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'body-management',
         element: (
-            <ProtectedRoute requiredRole="MLA">
-              <BodyManagement />
-            </ProtectedRoute>
+          <ProtectedRoute requiredRole="MLA">
+            <BodyManagement />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'issue-assignment',
         element: (
-            <ProtectedRoute requiredRole="MLA">
-              <IssueAssignmentManagement />
-            </ProtectedRoute>
+          <ProtectedRoute requiredRole="MLA">
+            <IssueAssignmentManagement />
+          </ProtectedRoute>
         ),
       },
       {
         path: 'analytics',
         element: (
-            <ProtectedRoute requiredRole="MLA">
-              <AnalyticsReport />
-            </ProtectedRoute>
+          <ProtectedRoute requiredRole="MLA">
+            <AnalyticsReport />
+          </ProtectedRoute>
         ),
       },
       { path: 'verify-email', element: <VerifyEmail /> },
@@ -165,12 +161,12 @@ const router = createBrowserRouter([
       {
         path: 'chat',
         element: (
-            <ProtectedRoute requiredRole="MLA">
-              <ChatPage />
-            </ProtectedRoute>
+          <ProtectedRoute requiredRole="MLA">
+            <ChatPage />
+          </ProtectedRoute>
         ),
       },
-        { path: "*", element: <NotFoundPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ]);

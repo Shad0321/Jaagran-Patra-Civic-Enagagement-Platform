@@ -420,7 +420,6 @@ const MemberManagement = () => {
 
   const handleBodyTypeChange = (bodyType) => {
     // You can add specific logic based on body type if needed
-    console.log('Body type changed:', bodyType);
   };
 
   const handleAddMember = async (e) => {

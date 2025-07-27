@@ -55,11 +55,9 @@ export const handleUploadError = (
         .json({ error: 'File too large. Maximum size is 10MB.' });
     }
     if (error.code === 'LIMIT_FILE_COUNT') {
-      return res
-        .status(400)
-        .json({
-          error: 'Too many files. Maximum 5 images and 1 voice note allowed.',
-        });
+      return res.status(400).json({
+        error: 'Too many files. Maximum 5 images and 1 voice note allowed.',
+      });
     }
     if (error.code === 'LIMIT_UNEXPECTED_FILE') {
       return res.status(400).json({ error: 'Unexpected file field.' });

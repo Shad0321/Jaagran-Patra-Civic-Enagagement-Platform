@@ -9,7 +9,7 @@ import mapRoutes from './map';
 import newsRoutes from './news';
 import analyticsRoutes from './analytics';
 import meetingRoutes from './meetings';
-import chatRoutes from './chat'; 
+import chatRoutes from './chat';
 
 const router = Router();
 

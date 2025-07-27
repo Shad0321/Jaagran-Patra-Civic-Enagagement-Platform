@@ -50,7 +50,8 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
   const fetchMembers = useCallback(async () => {
     try {
       const response = await api.get('/auth/members');
-      const allMembers = response.data?.members || response.data?.data?.members || [];
+      const allMembers =
+        response.data?.members || response.data?.data?.members || [];
       setMembers(allMembers);
     } catch (error) {
       console.error('Error fetching members:', error);
@@ -180,10 +181,14 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
 
   const getRecurrenceTypeLabel = (type) => {
     switch (type) {
-      case 1: return 'Daily';
-      case 2: return 'Weekly';
-      case 3: return 'Monthly';
-      default: return 'Daily';
+      case 1:
+        return 'Daily';
+      case 2:
+        return 'Weekly';
+      case 3:
+        return 'Monthly';
+      default:
+        return 'Daily';
     }
   };
 
@@ -218,11 +223,11 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Meeting Type */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Meeting Type
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Meeting Type</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <label className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'instant' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}>
+              <label
+                className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'instant' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}
+              >
                 <input
                   type="radio"
                   name="meetingType"
@@ -237,7 +242,9 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                 </div>
               </label>
 
-              <label className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'scheduled' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}>
+              <label
+                className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'scheduled' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}
+              >
                 <input
                   type="radio"
                   name="meetingType"
@@ -252,7 +259,9 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                 </div>
               </label>
 
-              <label className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'recurring' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}>
+              <label
+                className={`flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200 ${meetingType === 'recurring' ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-primary/30 hover:shadow-sm'} border`}
+              >
                 <input
                   type="radio"
                   name="meetingType"
@@ -271,9 +280,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
 
           {/* Basic Meeting Info */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Meeting Details
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Meeting Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -411,7 +418,10 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                     className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    {getRecurrenceTypeLabel(formData.recurrenceType).toLowerCase()}(s)
+                    {getRecurrenceTypeLabel(
+                      formData.recurrenceType
+                    ).toLowerCase()}
+                    (s)
                   </div>
                 </div>
 
@@ -436,9 +446,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
 
           {/* Access Settings */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Access Settings
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Access Settings</h3>
 
             <div className="flex items-center mb-4">
               <input
@@ -464,28 +472,33 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                   Select Members to Invite
                 </label>
                 <div className="max-h-48 overflow-y-auto border border-primary/20 rounded-lg p-4 bg-white/80">
-                  {Array.isArray(members) && members.map((member) => (
-                    <label
-                      key={member.id}
-                      className="flex items-center mb-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.invitees.includes(member.email)}
-                        onChange={() => handleMemberToggle(member.email)}
-                        className="h-4 w-4 text-primary focus:ring-primary/50 border-primary/30 rounded mr-3"
-                      />
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
-                          <User className="h-4 w-4 text-primary" />
+                  {Array.isArray(members) &&
+                    members.map((member) => (
+                      <label
+                        key={member.id}
+                        className="flex items-center mb-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.invitees.includes(member.email)}
+                          onChange={() => handleMemberToggle(member.email)}
+                          className="h-4 w-4 text-primary focus:ring-primary/50 border-primary/30 rounded mr-3"
+                        />
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <User className="h-4 w-4 text-primary" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {member.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {member.email}
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{member.name}</div>
-                          <div className="text-xs text-gray-500">{member.email}</div>
-                        </div>
-                      </div>
-                    </label>
-                  ))}
+                      </label>
+                    ))}
                   {(!Array.isArray(members) || members.length === 0) && (
                     <div className="text-center py-4 text-gray-500">
                       <Users className="h-8 w-8 mx-auto mb-2 text-gray-400" />
@@ -502,11 +515,16 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
                 Additional Email Invites
               </label>
               {formData.customEmails.map((email, index) => (
-                <div key={index} className="w-full flex items-center mb-2 gap-1 sm:gap-2">
+                <div
+                  key={index}
+                  className="w-full flex items-center mb-2 gap-1 sm:gap-2"
+                >
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => handleCustomEmailChange(index, e.target.value)}
+                    onChange={(e) =>
+                      handleCustomEmailChange(index, e.target.value)
+                    }
                     placeholder="Enter email address"
                     className="flex-1 px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 max-w-[80%]"
                   />
@@ -535,9 +553,7 @@ const CreateMeetingModal = ({ onClose, onMeetingCreated }) => {
 
           {/* Meeting Settings */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6">
-            <h3 className="font-bold text-gray-900 mb-4">
-              Meeting Settings
-            </h3>
+            <h3 className="font-bold text-gray-900 mb-4">Meeting Settings</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-4">

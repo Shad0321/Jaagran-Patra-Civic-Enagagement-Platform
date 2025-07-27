@@ -4,7 +4,9 @@ import { Navigate } from 'react-router-dom';
 import { changeGoogleTranslateLanguage } from '../../utils/googletranslatehelper';
 
 const LanguageGuard = ({ children }) => {
-  const { isLanguageSelected, languageCode } = useSelector((state) => state.language);
+  const { isLanguageSelected, languageCode } = useSelector(
+    (state) => state.language
+  );
 
   useEffect(() => {
     // Auto-apply Google Translate when language is already selected

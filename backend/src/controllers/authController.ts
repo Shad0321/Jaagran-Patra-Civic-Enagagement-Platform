@@ -413,8 +413,6 @@ export const updateProfile = async (
         return;
       }
     }
-    console.log('Avatar URL:', avatarUrl);
-
     const updateData: any = {};
     if (name) updateData.name = name;
     if (phone) updateData.phone = phone;

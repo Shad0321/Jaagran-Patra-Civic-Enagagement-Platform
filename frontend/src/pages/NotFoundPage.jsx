@@ -16,7 +16,9 @@ const NotFoundPage = () => {
         {/* Content */}
         <div className="space-y-3">
           <h1 className="text-4xl font-bold text-gray-900">404</h1>
-          <h2 className="text-2xl font-semibold text-gray-800">Page Not Found</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Page Not Found
+          </h2>
           <p className="text-gray-600">
             Oops! The page you're looking for doesn't exist or has been moved.
           </p>

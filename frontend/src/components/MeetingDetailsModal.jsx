@@ -34,8 +34,6 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
   const fetchParticipants = useCallback(async () => {
     try {
       const response = await api.get(`/meetings/${meeting.id}/participants`);
-      console.log('Participants fetched:', response.data.participants);
-
       setParticipants(response.data.data.participants || []);
     } catch (error) {
       console.error('Error fetching participants:', error);
@@ -210,7 +208,10 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
 
           {/* Meeting Information */}
           {editMode ? (
-            <form onSubmit={handleUpdateMeeting} className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6 space-y-4">
+            <form
+              onSubmit={handleUpdateMeeting}
+              className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-6 space-y-4"
+            >
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Meeting Topic *
@@ -348,7 +349,9 @@ const MeetingDetailsModal = ({ meeting, onClose, onMeetingUpdated }) => {
                     <Mail className="h-5 w-5 text-primary/80" />
                   )}
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Access</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      Access
+                    </p>
                     <p className="text-sm text-gray-600">
                       {meeting.isOpenToAll ? 'Open to all' : 'Invitation only'}
                     </p>

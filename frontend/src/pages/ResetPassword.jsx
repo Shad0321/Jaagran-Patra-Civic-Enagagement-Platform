@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPassword, clearError } from '../redux/slices/userSlice';
-import bgLogin from "../assets/bg-login.jpg";
+import bgLogin from '../assets/bg-login.jpg';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -96,7 +96,11 @@ const ResetPassword = () => {
   if (isSuccess) {
     return (
       <div className="relative min-h-screen bg-primary/5 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <img src={bgLogin} alt="Background" className='absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none' />
+        <img
+          src={bgLogin}
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover opacity-20 z-0 pointer-events-none"
+        />
         <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
           <div className="flex flex-col items-center leading-10 font-semibold text-4xl mb-8">
             <span className="text-dark">Jaagran</span>

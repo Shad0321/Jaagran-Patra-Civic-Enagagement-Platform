@@ -186,9 +186,10 @@ function createEmailTemplate(content: string, title: string) {
 
 export async function sendVerificationEmail(email: string, token: string) {
   const subject = 'Welcome to Jaagran Patra - Verify Your Email';
-  const frontendBaseUrl = process.env.FRONTEND_BASE_URL || 'http://localhost:5173';
+  const frontendBaseUrl =
+    process.env.FRONTEND_BASE_URL || 'http://localhost:5173';
   const verifyUrl = `${frontendBaseUrl}/verify-email?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
-  
+
   const content = `
     <div class="greeting">Welcome to Jaagran Patra! 🎉</div>
     <div class="message">
@@ -209,8 +210,11 @@ export async function sendVerificationEmail(email: string, token: string) {
     </div>
   `;
 
-  const html = createEmailTemplate(content, 'Email Verification - Jaagran Patra');
-  
+  const html = createEmailTemplate(
+    content,
+    'Email Verification - Jaagran Patra'
+  );
+
   const text = `Welcome to Jaagran Patra!
 
 Thank you for joining our civic engagement platform. To complete your registration, please verify your email address by clicking the following link:
@@ -233,9 +237,10 @@ Jaagran Patra Team`;
 
 export async function sendResetPasswordEmail(email: string, token: string) {
   const subject = 'Reset Your Jaagran Patra Password';
-  const frontendBaseUrl = process.env.FRONTEND_BASE_URL || 'http://localhost:5173';
+  const frontendBaseUrl =
+    process.env.FRONTEND_BASE_URL || 'http://localhost:5173';
   const resetUrl = `${frontendBaseUrl}/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
-  
+
   const content = `
     <div class="greeting">Password Reset Request</div>
     <div class="message">
@@ -257,7 +262,7 @@ export async function sendResetPasswordEmail(email: string, token: string) {
   `;
 
   const html = createEmailTemplate(content, 'Password Reset - Jaagran Patra');
-  
+
   const text = `Password Reset Request - Jaagran Patra
 
 We received a request to reset the password for your Jaagran Patra account.

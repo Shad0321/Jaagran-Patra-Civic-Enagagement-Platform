@@ -204,18 +204,15 @@ const CitizenDashboard = () => {
   };
 
   if (loading) {
-    return (
-      <Loader className="w-full h-96 flex justify-center items-center" />
-    );
+    return <Loader className="w-full h-96 flex justify-center items-center" />;
   }
-
 
   return (
     <div className="p-2 pt-20 sm:p-4 md:px-20 mx-auto min-h-screen bg-gradient-to-br from-primary/10 via-white to-primary/5">
       {/* Welcome Section */}
       <div className="mb-8 text-center md:text-left">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-primary mb-2 drop-shadow-sm">
-          Welcome back, {user?.name}!
+        <h1 className="text-3xl md:text-4xl font-bold text-black mb-2 drop-shadow-sm">
+          Welcome back, <span className="text-primary">{user?.name}!</span>
         </h1>
         <p className="text-gray-600 text-base md:text-lg">
           Here's an overview of your reported issues and community updates.
@@ -229,28 +226,36 @@ const CitizenDashboard = () => {
             <AlertCircle className="h-7 w-7 text-primary" />
           </div>
           <p className="text-sm font-medium text-gray-600">Total Issues</p>
-          <p className="text-2xl font-extrabold text-primary">{stats.totalIssues}</p>
+          <p className="text-2xl font-extrabold text-primary">
+            {stats.totalIssues}
+          </p>
         </div>
         <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6 flex flex-col items-center hover:shadow-xl transition-all">
           <div className="h-12 w-12 bg-yellow-100 rounded-full flex items-center justify-center mb-2">
             <Clock className="h-7 w-7 text-yellow-600" />
           </div>
           <p className="text-sm font-medium text-gray-600">Pending</p>
-          <p className="text-2xl font-extrabold text-yellow-600">{stats.pendingIssues}</p>
+          <p className="text-2xl font-extrabold text-yellow-600">
+            {stats.pendingIssues}
+          </p>
         </div>
         <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6 flex flex-col items-center hover:shadow-xl transition-all">
           <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
             <AlertCircle className="h-7 w-7 text-blue-600" />
           </div>
           <p className="text-sm font-medium text-gray-600">In Progress</p>
-          <p className="text-2xl font-extrabold text-blue-600">{stats.inProgressIssues}</p>
+          <p className="text-2xl font-extrabold text-blue-600">
+            {stats.inProgressIssues}
+          </p>
         </div>
         <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6 flex flex-col items-center hover:shadow-xl transition-all">
           <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
             <CheckCircle className="h-7 w-7 text-green-600" />
           </div>
           <p className="text-sm font-medium text-gray-600">Resolved</p>
-          <p className="text-2xl font-extrabold text-green-600">{stats.resolvedIssues}</p>
+          <p className="text-2xl font-extrabold text-green-600">
+            {stats.resolvedIssues}
+          </p>
         </div>
       </div>
 
@@ -258,7 +263,9 @@ const CitizenDashboard = () => {
       <div className="mb-8">
         <div className="bg-white rounded-2xl shadow-lg border border-primary/20 p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-            <h2 className="text-lg md:text-xl font-bold text-primary">Recent Issues & Community Updates</h2>
+            <h2 className="text-lg md:text-xl font-bold text-primary">
+              Recent Issues & Community Updates
+            </h2>
             <a
               href="/issues"
               className="text-primary hover:text-primary/80 text-sm font-semibold underline underline-offset-2"
@@ -347,20 +354,20 @@ const CitizenDashboard = () => {
               <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p>No issues reported yet</p>
               <p className="text-sm">
-                Start by reporting your first issue to your local representatives
+                Start by reporting your first issue to your local
+                representatives
               </p>
             </div>
           )}
         </div>
       </div>
 
-
       {/* Quick Actions & News */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
         <div className="lg:col-span-2">
           {/* Latest News Widget */}
           <div className="bg-gradient-to-br from-primary/10 to-white rounded-2xl shadow-lg border-2 border-primary/30 p-0 md:p-0 overflow-hidden">
-            <div className="p-6">
+            <div className="p-2 sm:p-6">
               <LatestNews
                 userState={user?.state?.name || 'all'}
                 limit={4}
@@ -382,14 +389,18 @@ const CitizenDashboard = () => {
                 className="flex items-center p-3 bg-primary/10 rounded-xl hover:bg-primary/20 transition-all group"
               >
                 <Plus className="h-5 w-5 text-primary mr-3 group-hover:scale-110 transition-transform" />
-                <span className="font-semibold text-primary group-hover:underline">Report New Issue</span>
+                <span className="font-semibold text-primary group-hover:underline">
+                  Report New Issue
+                </span>
               </a>
               <a
                 href="/issues"
                 className="flex items-center p-3 bg-gray-50 rounded-xl hover:bg-primary/10 transition-all group"
               >
                 <MessageSquare className="h-5 w-5 text-primary mr-3 group-hover:scale-110 transition-transform" />
-                <span className="font-semibold text-primary group-hover:text-primary group-hover:underline">View My Issues</span>
+                <span className="font-semibold text-primary group-hover:text-primary group-hover:underline">
+                  View My Issues
+                </span>
               </a>
             </div>
           </div>

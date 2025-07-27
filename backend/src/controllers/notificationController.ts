@@ -47,10 +47,6 @@ export const createNotification = async (
         },
       },
     });
-
-    console.log(
-      `📬 Notification created: ${title} for ${recipientIds.length} recipients`
-    );
     return notification;
   } catch (error) {
     console.error('Error creating notification:', error);
@@ -67,13 +63,6 @@ export const createAssignmentNotification = async (
   assignerName: string
 ) => {
   try {
-    console.log('🔔 Creating assignment notification...');
-    console.log(`  Issue ID: ${issueId}`);
-    console.log(`  Issue Title: ${issueTitle}`);
-    console.log(`  Assignee ID: ${assigneeId}`);
-    console.log(`  Assigner ID: ${assignerId}`);
-    console.log(`  Assigner Name: ${assignerName}`);
-
     const result = await createNotification(
       'New Issue Assigned',
       `A new issue "${issueTitle}" has been assigned to you by ${assignerName}`,
@@ -85,7 +74,6 @@ export const createAssignmentNotification = async (
       { issueId, action: 'assigned' }
     );
 
-    console.log('✅ Assignment notification created successfully!');
     return result;
   } catch (error) {
     console.error('❌ Error creating assignment notification:', error);

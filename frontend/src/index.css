@@ -47,7 +47,7 @@
 }
 
 *::-webkit-scrollbar {
-  display:none
+  display: none;
 }
 
 /* ============================================= */
@@ -85,24 +85,25 @@
   /* Layout */
   padding: 10px !important;
   width: min-content !important;
-  
+
   /* Appearance */
   background-color: white !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 100% !important;
   box-shadow: 0 1px 3px #0000001a !important;
-  
+
   /* Typography */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   font-size: 14px !important;
-  
+
   /* Animation */
   transition: all 0.2s ease !important;
 }
 
 /* Emoji language indicator */
 .goog-te-gadget-simple::after {
-  content: "🗣️";
+  content: '🗣️';
 }
 
 /* Hover state */
@@ -126,7 +127,7 @@
   color: inherit !important;
 }
 
-.VIpgJd-ZVi9od-xl07Ob-lTBxed span[aria-hidden="true"] {
+.VIpgJd-ZVi9od-xl07Ob-lTBxed span[aria-hidden='true'] {
   font-size: 12px !important;
 }
 
@@ -138,19 +139,19 @@
 }
 
 /* Remove language selector arrow border */
-.VIpgJd-ZVi9od-xl07Ob-lTBxed span[style*="border-left"] {
+.VIpgJd-ZVi9od-xl07Ob-lTBxed span[style*='border-left'] {
   border-left: none !important;
 }
 
-.embedded-agent-container{
+.embedded-agent-container {
   z-index: 10 !important;
 }
 
-.VIpgJd-ZVi9od-ORHb{
+.VIpgJd-ZVi9od-ORHb {
   display: none !important;
 }
 
-.goog-te-gadget-simple{
+.goog-te-gadget-simple {
   display: block !important;
 }
 /* ============================================= */
@@ -169,11 +170,11 @@
   z-index: 0 !important;
 }
 
-#google_translate_element{
+#google_translate_element {
   z-index: 10 !important;
 }
 
-.VIpgJd-ZVi9od-ORHb-OEVmcd{
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
   display: none !important;
   margin-top: -50px !important;
 }

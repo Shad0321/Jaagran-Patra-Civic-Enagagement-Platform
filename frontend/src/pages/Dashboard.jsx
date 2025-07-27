@@ -10,9 +10,7 @@ const Dashboard = () => {
 
   // Show loading if user data is being fetched or not yet available
   if (loading || !user) {
-    return (
-      <Loader/>
-    );
+    return <Loader />;
   }
 
   // Route to appropriate dashboard based on user role
