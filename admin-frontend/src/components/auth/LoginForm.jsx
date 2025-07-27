@@ -4,7 +4,6 @@ import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
 import Loader from '../../components/common/Loader';
-import IndiaCulture from '../assets/india.png';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,13 +27,8 @@ const LoginForm = () => {
       <img 
         src={"https://img.freepik.com/free-photo/sunset-mosque-background_23-2151942644.jpg?semt=ais_hybrid&w=740"} 
         alt="Background" 
-        className='absolute inset-0 w-full h-full object-cover opacity-90 z-0' 
+        className='absolute inset-0 w-full h-full object-cover opacity-20 z-0' 
       />
-      <img
-              src={IndiaCulture}
-              alt="Background"
-              className="absolute inset-0 w-[500px] h-[500px] object-contain opacity-20 z-0 pointer-events-none"
-            />
       <div className="relative max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 z-10">
         {/* Header */}
         <div className="text-center mb-8">
