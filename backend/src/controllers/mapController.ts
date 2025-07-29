@@ -700,10 +700,42 @@ export const getMapStatistics = async (
 };
 
 // Get all Rajya Sabha data for UK
-export const getRajyaSabhaData = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+// export const getRajyaSabhaData = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   try {
+//     const filePath = path.join(
+//       __dirname,
+//       '..',
+//       '..',
+//       'form20',
+//       'uk',
+//       'rajyasabha.json'
+//     );
+//     if (!fs.existsSync(filePath)) {
+//       res
+//         .status(404)
+//         .json({ success: false, error: 'Rajya Sabha data not found' });
+//       return;
+//     }
+//     const fileContent = fs.readFileSync(filePath, 'utf8');
+//     const data = JSON.parse(fileContent);
+//     res.json({ success: true, data });
+//   } catch (error) {
+//     console.error('Error fetching Rajya Sabha data:', error);
+//     res
+//       .status(500)
+//       .json({
+//         success: false,
+//         error: 'Failed to fetch Rajya Sabha data',
+//         details: error,
+//       });
+//   }
+// };
+
+// Get all Vidhan Sabha data for UK
+export const getVidhanSabhaData = async (req: Request, res: Response): Promise<void> => {
   try {
     const filePath = path.join(
       __dirname,
@@ -711,25 +743,24 @@ export const getRajyaSabhaData = async (
       '..',
       'form20',
       'uk',
-      'rajyasabha.json'
+      '2022',
+      'vidhanSabha.json'
     );
+    
     if (!fs.existsSync(filePath)) {
-      res
-        .status(404)
-        .json({ success: false, error: 'Rajya Sabha data not found' });
+      res.status(404).json({ success: false, error: 'Vidhan Sabha data not found' });
       return;
     }
+    
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const data = JSON.parse(fileContent);
     res.json({ success: true, data });
   } catch (error) {
-    console.error('Error fetching Rajya Sabha data:', error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: 'Failed to fetch Rajya Sabha data',
-        details: error,
-      });
+    console.error('Error fetching Vidhan Sabha data:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch Vidhan Sabha data',
+      details: error,
+    });
   }
 };

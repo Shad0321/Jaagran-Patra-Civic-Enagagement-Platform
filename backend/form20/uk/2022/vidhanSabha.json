@@ -1,0 +1,4836 @@
+{
+  "state": "UK",
+  "constituency": "Vidhan Sabha",
+  "bodies": [
+    {
+      "Area Name": "Purola",
+      "Address": "Gram Rekcha, Tehsil Mori, District Uttarkashi.",
+      "Latitude": 30.8906,
+      "Longitude": 78.0678,
+      "results": [
+        {
+          "Party": "BJP",
+          "CandidateName": "Durgeshwar Lal",
+          "Votes": 27856,
+          "Vote Share": 54.29
+        },
+        {
+          "Party": "INC",
+          "CandidateName": "Malchand",
+          "Votes": 21560,
+          "Vote Share": 42.02
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ujali Devi",
+          "Votes": 389,
+          "Vote Share": 0.76
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Chain Singh",
+          "Votes": 464,
+          "Vote Share": 0.9
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Prakash",
+          "Votes": 538,
+          "Vote Share": 1.05
+        },
+        {
+          "Party": "Rashtriya Lokneeti Party",
+          "CandidateName": "Ram Prasad",
+          "Votes": 495,
+          "Vote Share": 0.96
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 330,
+          "Vote Share": 0.64
+        }
+      ],
+      "totalVotes": 51302
+    },
+    {
+      "Area Name": "Yamunotri",
+      "Address": "Village Chakragaon, Post/Tehsil Barkot, District Uttarkashi.",
+      "Latitude": 30.8086,
+      "Longitude": 78.2054,
+      "results": [
+        {
+          "Party": "Independent",
+          "CandidateName": "Sanjay Dobhal",
+          "Votes": 22952,
+          "Vote Share": 44.49
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Deepak Bijalwan",
+          "Votes": 16313,
+          "Vote Share": 31.62
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Kedar Singh Rawat",
+          "Votes": 10620,
+          "Vote Share": 20.59
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Manoj Kohli 'Shyam'",
+          "Votes": 583,
+          "Vote Share": 1.13
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 565,
+          "Vote Share": 1.09
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Jagveer Singh",
+          "Votes": 343,
+          "Vote Share": 0.67
+        },
+        {
+          "Party": "Rashtriya Uttarakhand Party",
+          "CandidateName": "Vishal Singh",
+          "Votes": 295,
+          "Vote Share": 0.57
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Ramesh Chand Ramola",
+          "Votes": 264,
+          "Vote Share": 0.51
+        },
+        {
+          "Party": "Satya Bahumat Party",
+          "CandidateName": "Vipin",
+          "Votes": 218,
+          "Vote Share": 0.42
+        }
+      ],
+      "totalVotes": 51588
+    },
+    {
+      "Area Name": "Gangotri",
+      "Address": "Village Jamak, Post Maneri, Tehsil Bhatwari, Uttarkashi",
+      "Latitude": 30.7422,
+      "Longitude": 78.4593,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Suresh Singh Chauhan",
+          "Votes": 29619,
+          "Vote Share": 49.86
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Vijaypal Singh Sajwan",
+          "Votes": 21590,
+          "Vote Share": 36.34
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Ajay Kothiyal (COLONEL RETD) KC,SC, VSM",
+          "Votes": 6161,
+          "Vote Share": 10.37
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Navneet Uniyal",
+          "Votes": 476,
+          "Vote Share": 0.8
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Budhi Lal",
+          "Votes": 394,
+          "Vote Share": 0.66
+        },
+        {
+          "Party": "Communist Party of India",
+          "CandidateName": "Mahavir Prasad",
+          "Votes": 372,
+          "Vote Share": 0.63
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Jasveer Singh",
+          "Votes": 351,
+          "Vote Share": 0.59
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 241,
+          "Vote Share": 0.41
+        },
+        {
+          "Party": "Jai Maha Bharath Party",
+          "CandidateName": "Babu Lal Ghoghiyal",
+          "Votes": 271,
+          "Vote Share": 0.46
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Vijay Bahuguna",
+          "Votes": 174,
+          "Vote Share": 0.29
+        }
+      ],
+      "totalVotes": 59408
+    },
+    {
+      "Area Name": "Badrinath",
+      "Address": "Village-Nail-Etha, Post-Trishula, Tehsil-Pokhari, P.Add-Vivekanand Colony Gopeshwar, District-Chamoli",
+      "Latitude": 30.7426,
+      "Longitude": 79.4936,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Rajendra Singh Bhandari",
+          "Votes": 32661,
+          "Vote Share": 48.49
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Mahendra Bhatt",
+          "Votes": 30595,
+          "Vote Share": 45.42
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Bhagwati Prasad Mandoli",
+          "Votes": 871,
+          "Vote Share": 1.29
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 853,
+          "Vote Share": 1.27
+        },
+        {
+          "Party": "Communist Party of India",
+          "CandidateName": "Vinod Joshi",
+          "Votes": 798,
+          "Vote Share": 1.18
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Mukesh Lal Koshwal",
+          "Votes": 552,
+          "Vote Share": 0.82
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Shailendra Prakash Singh",
+          "Votes": 481,
+          "Vote Share": 0.71
+        },
+        {
+          "Party": "Peoples Party of India (Democratic)",
+          "CandidateName": "Pushkar Lal Baichhwal",
+          "Votes": 397,
+          "Vote Share": 0.59
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Beeru Sajwan",
+          "Votes": 343,
+          "Vote Share": 0.51
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Dheerendra Pal Singh",
+          "Votes": 280,
+          "Vote Share": 0.42
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mukund Singh",
+          "Votes": 210,
+          "Vote Share": 0.31
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sunil Che",
+          "Votes": 170,
+          "Vote Share": 0.25
+        }
+      ],
+      "totalVotes": 67358
+    },
+    {
+      "Area Name": "Tharali",
+      "Address": "Vill- Dewalgwar, Post- Kulsari, Tehsil- Tharali, District- Chamoli, Uttarakhand",
+      "Latitude": 30.0317,
+      "Longitude": 79.4763,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Bhupal Ram Tamta",
+          "Votes": 32852,
+          "Vote Share": 52.2
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Dr. Jeet Ram",
+          "Votes": 24550,
+          "Vote Share": 39.01
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Guddu Lal",
+          "Votes": 1866,
+          "Vote Share": 2.97
+        },
+        {
+          "Party": "Uttarakhand Janekta Party",
+          "CandidateName": "Naini Ram",
+          "Votes": 970,
+          "Vote Share": 1.54
+        },
+        {
+          "Party": "Communist Party of India (Marxist)",
+          "CandidateName": "Kunwar Ram",
+          "Votes": 834,
+          "Vote Share": 1.32
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Laxman Ram",
+          "Votes": 725,
+          "Vote Share": 1.15
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 663,
+          "Vote Share": 1.05
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Ganesh Kumar",
+          "Votes": 527,
+          "Vote Share": 0.84
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Kasbi Lal Shah",
+          "Votes": 388,
+          "Vote Share": 0.62
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Kishore Kumar",
+          "Votes": 217,
+          "Vote Share": 0.34
+        }
+      ],
+      "totalVotes": 62929
+    },
+    {
+      "Area Name": "Karnaprayag",
+      "Address": "Palsari, Gauchar, District Chamoli, Uttarakhand",
+      "Latitude": 30.2604,
+      "Longitude": 79.2489,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Anil Nautiyal",
+          "Votes": 28911,
+          "Vote Share": 49.8
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Mukesh Negi",
+          "Votes": 22196,
+          "Vote Share": 38.24
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Teeka Prasad Maikhuri",
+          "Votes": 2961,
+          "Vote Share": 5.1
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Balwant Singh Negi",
+          "Votes": 1063,
+          "Vote Share": 1.83
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 936,
+          "Vote Share": 1.61
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Madan Mohan Singh Bhandari",
+          "Votes": 897,
+          "Vote Share": 1.55
+        },
+        {
+          "Party": "Communist Party of India (Marxist-Leninist) (Liberation)",
+          "CandidateName": "Indresh Maikhuri",
+          "Votes": 590,
+          "Vote Share": 1.02
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Dayal Singh Bisht",
+          "Votes": 486,
+          "Vote Share": 0.84
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Umesh Khanduri",
+          "Votes": 464,
+          "Vote Share": 0.8
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Ranjna Rawat",
+          "Votes": 240,
+          "Vote Share": 0.41
+        },
+        {
+          "Party": "Peoples Party of India (Democratic)",
+          "CandidateName": "Sureshi Devi",
+          "Votes": 173,
+          "Vote Share": 0.3
+        },
+        {
+          "Party": "Uttarakhand Janekta Party",
+          "CandidateName": "Dr Mukesh Pant",
+          "Votes": 71,
+          "Vote Share": 0.12
+        }
+      ],
+      "totalVotes": 58052
+    },
+    {
+      "Area Name": "Kedarnath",
+      "Address": "Basant Vihar, Nakot Ward 4, Nagar Panchayat Agastyamuni, District Rudraprayag",
+      "Latitude": 30.1648,
+      "Longitude": 78.7775,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Shaila Rani Rawat",
+          "Votes": 21886,
+          "Vote Share": 36.5
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Kuldeep Singh Rawat",
+          "Votes": 13423,
+          "Vote Share": 22.38
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Manoj Rawat",
+          "Votes": 12557,
+          "Vote Share": 20.94
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Sumant",
+          "Votes": 4647,
+          "Vote Share": 7.75
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Devesh Nautiyal",
+          "Votes": 3068,
+          "Vote Share": 5.12
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 751,
+          "Vote Share": 1.25
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Gajpal Singh Rawat",
+          "Votes": 746,
+          "Vote Share": 1.24
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Kuldeep Singh",
+          "Votes": 795,
+          "Vote Share": 1.33
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Rekha Devi",
+          "Votes": 697,
+          "Vote Share": 1.16
+        },
+        {
+          "Party": "Communist Party of India (Marxist)",
+          "CandidateName": "Rajaram",
+          "Votes": 689,
+          "Vote Share": 1.15
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Shyam Lal Chandrawal",
+          "Votes": 584,
+          "Vote Share": 0.97
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Suraj Singh",
+          "Votes": 360,
+          "Vote Share": 0.6
+        },
+        {
+          "Party": "Peoples Party Of India (Democratic)",
+          "CandidateName": "Manoj Kumar Tinsola",
+          "Votes": 280,
+          "Vote Share": 0.47
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Badrish",
+          "Votes": 240,
+          "Vote Share": 0.4
+        }
+      ],
+      "totalVotes": 59972
+    },
+    {
+      "Area Name": "Rudraprayag",
+      "Address": "Village Mavana Post Office Gholtir Teshsil Rudraprayag District Rudraprayag",
+      "Latitude": 30.2847,
+      "Longitude": 78.9839,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Bharat Singh Chaudhary",
+          "Votes": 29660,
+          "Vote Share": 47.44
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Pradeep Prasad Thapliyal",
+          "Votes": 19858,
+          "Vote Share": 31.76
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Matbar Singh Kandari",
+          "Votes": 4838,
+          "Vote Share": 7.74
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Mohit Dimri",
+          "Votes": 4623,
+          "Vote Share": 7.39
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sudhir Negi",
+          "Votes": 1219,
+          "Vote Share": 1.95
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 871,
+          "Vote Share": 1.39
+        },
+        {
+          "Party": "Communist Party of India",
+          "CandidateName": "Sudhir Rauthan",
+          "Votes": 694,
+          "Vote Share": 1.11
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Pyar Singh Negi",
+          "Votes": 413,
+          "Vote Share": 0.66
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mahabir Singh Jagwan",
+          "Votes": 412,
+          "Vote Share": 0.66
+        },
+        {
+          "Party": "Bahujan Mukti Party",
+          "CandidateName": "Birendra Pratap Singh",
+          "Votes": 323,
+          "Vote Share": 0.52
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Laxman Singh",
+          "Votes": 193,
+          "Vote Share": 0.31
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Mohit",
+          "Votes": 181,
+          "Vote Share": 0.29
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Bhagwati Prasad",
+          "Votes": 112,
+          "Vote Share": 0.18
+        }
+      ],
+      "totalVotes": 62526
+    },
+    {
+      "Area Name": "Ghansali",
+      "Address": "Village- Chanji Malli, P.o.- Chanji, Tehsil- Ghansali Tehri Garhwal, Tehri Garhwal, Uttarakhand",
+      "Latitude": 30.3872,
+      "Longitude": 78.1447,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Shakti Lal Shah",
+          "Votes": 20949,
+          "Vote Share": 42.73
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Dhahi Lal Shah",
+          "Votes": 10664,
+          "Vote Share": 21.75
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Bheem Lal Arya",
+          "Votes": 9204,
+          "Vote Share": 18.77
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Darshan Lal Das",
+          "Votes": 4739,
+          "Vote Share": 9.67
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Kamal Das",
+          "Votes": 1653,
+          "Vote Share": 3.37
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Shoorveer Lal",
+          "Votes": 1363,
+          "Vote Share": 2.78
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 742,
+          "Vote Share": 1.51
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Vijay Prakash",
+          "Votes": 454,
+          "Vote Share": 0.93
+        }
+      ],
+      "totalVotes": 49026
+    },
+    {
+      "Area Name": "Devprayag",
+      "Address": "Village - Maletha, P.O.- Maletha, Tehsil-Kirtinagar Tehri Garhwal",
+      "Latitude": 30.1467,
+      "Longitude": 78.5988,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Vinod Kandari",
+          "Votes": 17330,
+          "Vote Share": 36.48
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Diwakar Bhatt",
+          "Votes": 14742,
+          "Vote Share": 31.03
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Mantri Prasad Naithani",
+          "Votes": 13585,
+          "Vote Share": 28.59
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Uttam Singh",
+          "Votes": 1092,
+          "Vote Share": 2.3
+        },
+        {
+          "Party": "Bahujan Mukti Party",
+          "CandidateName": "Bijendra Lal",
+          "Votes": 759,
+          "Vote Share": 1.6
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 487,
+          "Vote Share": 1.03
+        }
+      ],
+      "totalVotes": 47508
+    },
+    {
+      "Area Name": "Narendranagar",
+      "Address": "Uniyal Bhawan, Narendra Nagar, Tehri Garhwal, Uttarakhand",
+      "Latitude": 30.1619,
+      "Longitude": 78.2938,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Subodh Uniyal",
+          "Votes": 27430,
+          "Vote Share": 48.33
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Om Gopal",
+          "Votes": 25632,
+          "Vote Share": 45.16
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Sardar Singh Pundir",
+          "Votes": 2187,
+          "Vote Share": 3.85
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Pushpa Rawat",
+          "Votes": 698,
+          "Vote Share": 1.23
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 589,
+          "Vote Share": 1.04
+        },
+        {
+          "Party": "Communist Party of India",
+          "CandidateName": "Jagdish Kuliyal",
+          "Votes": 461,
+          "Vote Share": 0.81
+        },
+        {
+          "Party": "Uttarakhand Janta Party",
+          "CandidateName": "Ranbeer Singh Aswal",
+          "Votes": 350,
+          "Vote Share": 0.62
+        }
+      ],
+      "totalVotes": 56758
+    },
+    {
+      "Area Name": "Pratapnagar",
+      "Address": "Vill. Khand P.o. Rajakhet Patti Dharmandal Tehsil Pratapnagar Tehri Garhwal, Tehri Garhwal, Uttarakhand",
+      "Latitude": 30.3785,
+      "Longitude": 78.0682,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Vikram Singh Negi",
+          "Votes": 19131,
+          "Vote Share": 45.41
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Vijay Singh Panwar",
+          "Votes": 16790,
+          "Vote Share": 39.85
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Pankaj Vyas",
+          "Votes": 4842,
+          "Vote Share": 11.49
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Sagar Singh Bhandari",
+          "Votes": 895,
+          "Vote Share": 2.12
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 691,
+          "Vote Share": 1.64
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Jaipal Singh Rana",
+          "Votes": 262,
+          "Vote Share": 0.62
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Narayan Singh",
+          "Votes": 212,
+          "Vote Share": 0.5
+        }
+      ],
+      "totalVotes": 42132
+    },
+    {
+      "Area Name": "Tehri",
+      "Address": "Village- Pali, Post-Anjanisain, Patti-Lamridhar, Tehsil-Jakhnidhar, Distt.-Tehri Garhwal.",
+      "Latitude": 30.383,
+      "Longitude": 78.4803,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Kishore Upadhyay",
+          "Votes": 19802,
+          "Vote Share": 42.31
+        },
+        {
+          "Party": "Uttarakhand Janekta Party",
+          "CandidateName": "Dinesh Dhanai",
+          "Votes": 18851,
+          "Vote Share": 40.28
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Dhan Singh Negi",
+          "Votes": 6385,
+          "Vote Share": 13.64
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Trilok Singh Negi",
+          "Votes": 742,
+          "Vote Share": 1.59
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 415,
+          "Vote Share": 0.89
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Urmila",
+          "Votes": 252,
+          "Vote Share": 0.54
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Vijay Semwal",
+          "Votes": 193,
+          "Vote Share": 0.41
+        },
+        {
+          "Party": "Right to Recall Party",
+          "CandidateName": "Prem Dutt",
+          "Votes": 161,
+          "Vote Share": 0.34
+        }
+      ],
+      "totalVotes": 46801
+    },
+    {
+      "Area Name": "Dhanaulti",
+      "Address": "Village - Than, Post Bhavan, Tehri Garhwal",
+      "Latitude": 30.4436,
+      "Longitude": 78.0739,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Pritam Singh Panwar",
+          "Votes": 22827,
+          "Vote Share": 40.68
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Jot Singh Bisht",
+          "Votes": 18143,
+          "Vote Share": 32.33
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mahaveer Singh Rangarh",
+          "Votes": 12644,
+          "Vote Share": 22.53
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Amendra Bisht",
+          "Votes": 1735,
+          "Vote Share": 3.09
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 641,
+          "Vote Share": 1.14
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Gaurav Tiwari",
+          "Votes": 391,
+          "Vote Share": 0.7
+        },
+        {
+          "Party": "Uttarakhand Janekta Party",
+          "CandidateName": "Jay Narayan",
+          "Votes": 210,
+          "Vote Share": 0.37
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Usha Panwar",
+          "Votes": 163,
+          "Vote Share": 0.29
+        }
+      ],
+      "totalVotes": 56113
+    },
+    {
+      "Area Name": "Chakrata",
+      "Address": "Village Brinad Bastil P.O. Brinad, Tehsil Tyuni, District Dehradun Uttarakhand",
+      "Latitude": 30.7036,
+      "Longitude": 77.8634,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Pritam Singh",
+          "Votes": 36853,
+          "Vote Share": 51.62
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Ram Sharan Nautiyal",
+          "Votes": 27417,
+          "Vote Share": 38.39
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Kamlesh Bhatt",
+          "Votes": 3624,
+          "Vote Share": 5.08
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 1380,
+          "Vote Share": 1.93
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Gajendra Dutt",
+          "Votes": 963,
+          "Vote Share": 1.35
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Daulat Kunvar",
+          "Votes": 946,
+          "Vote Share": 1.32
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Darshan Dobhal",
+          "Votes": 485,
+          "Vote Share": 0.68
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Bheem Dutt",
+          "Votes": 388,
+          "Vote Share": 0.54
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Kuldeep Singh Chauhan",
+          "Votes": 364,
+          "Vote Share": 0.51
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Manbir Singh Chauhan",
+          "Votes": 219,
+          "Vote Share": 0.31
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Ramanand Singh",
+          "Votes": 135,
+          "Vote Share": 0.19
+        }
+      ],
+      "totalVotes": 71394
+    },
+    {
+      "Area Name": "Vikasnagar",
+      "Address": "Village- Rakhtad, Post Office- Nagthat, Tehsil- Kalsi, Dist. Dehradun",
+      "Latitude": 30.4694,
+      "Longitude": 77.7729,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Munna Singh Chauhan",
+          "Votes": 40819,
+          "Vote Share": 50.27
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Nav Prabhat",
+          "Votes": 35626,
+          "Vote Share": 43.88
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Praveen Bansal",
+          "Votes": 1883,
+          "Vote Share": 2.32
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Gurumel Singh Rathod",
+          "Votes": 1336,
+          "Vote Share": 1.65
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Deshraj",
+          "Votes": 468,
+          "Vote Share": 0.58
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 388,
+          "Vote Share": 0.48
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sandeep Duby",
+          "Votes": 376,
+          "Vote Share": 0.46
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Swaraj Singh",
+          "Votes": 297,
+          "Vote Share": 0.37
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Priti Thapliyal",
+          "Votes": 148,
+          "Vote Share": 0.18
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Bhupendra Kumar Tomar",
+          "Votes": 135,
+          "Vote Share": 0.17
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Raghuveer Singh Mehta",
+          "Votes": 104,
+          "Vote Share": 0.13
+        }
+      ],
+      "totalVotes": 81192
+    },
+    {
+      "Area Name": "Sahaspur",
+      "Address": "Vill. & Post- Suddhowala, Tehsil- Vikasnagar, District- Dehradun",
+      "Latitude": 30.3167,
+      "Longitude": 78.0167,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Sahdev Singh Pundir",
+          "Votes": 64008,
+          "Vote Share": 51.31
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Aryendra Sharma",
+          "Votes": 55653,
+          "Vote Share": 44.61
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Bharat Singh",
+          "Votes": 2235,
+          "Vote Share": 1.79
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 1099,
+          "Vote Share": 0.88
+        },
+        {
+          "Party": "Communist Party of India (Marxist)",
+          "CandidateName": "Kamrudeen",
+          "Votes": 638,
+          "Vote Share": 0.51
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Amit Yadav",
+          "Votes": 503,
+          "Vote Share": 0.4
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Ganesh Prasad Kala",
+          "Votes": 345,
+          "Vote Share": 0.28
+        },
+        {
+          "Party": "Jai Maha Bharath Party",
+          "CandidateName": "Ram Bachan Ram",
+          "Votes": 276,
+          "Vote Share": 0.22
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "(Dr) Deveshwar K Bhatt",
+          "Votes": 255,
+          "Vote Share": 0.2
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Kalpana Bisht",
+          "Votes": 212,
+          "Vote Share": 0.17
+        },
+        {
+          "Party": "Sainik Samaj Party",
+          "CandidateName": "Lt. Colonel Girish Chandra (Retd.)",
+          "Votes": 191,
+          "Vote Share": 0.15
+        }
+      ],
+      "totalVotes": 124751
+    },
+    {
+      "Area Name": "Dharampur",
+      "Address": "103/6, Old Nehru Colony, Dehradun 248001",
+      "Latitude": 30.3165,
+      "Longitude": 78.0322,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Vinod Chamoli",
+          "Votes": 58538,
+          "Vote Share": 49.47
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Dinesh Agarwal",
+          "Votes": 48448,
+          "Vote Share": 40.95
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Beer Singh Panwar",
+          "Votes": 5206,
+          "Vote Share": 4.4
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Yogendra Chauhan",
+          "Votes": 3162,
+          "Vote Share": 2.67
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Lalit Thapa",
+          "Votes": 706,
+          "Vote Share": 0.6
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 528,
+          "Vote Share": 0.45
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Javed Khan",
+          "Votes": 451,
+          "Vote Share": 0.38
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Kiran Rawat Kashyap",
+          "Votes": 452,
+          "Vote Share": 0.38
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Naresh Chandra Bounthiyal",
+          "Votes": 404,
+          "Vote Share": 0.34
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sardaar Harkishan Singh Bawa",
+          "Votes": 167,
+          "Vote Share": 0.14
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Mohd. Naseer",
+          "Votes": 133,
+          "Vote Share": 0.11
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Gulbahar",
+          "Votes": 107,
+          "Vote Share": 0.09
+        },
+        {
+          "Party": "Uttarakhand Raksha Morcha",
+          "CandidateName": "Sundarlal Thapliyal",
+          "Votes": 99,
+          "Vote Share": 0.08
+        },
+        {
+          "Party": "Peoples Party of India (Democratic)",
+          "CandidateName": "Deepak",
+          "Votes": 85,
+          "Vote Share": 0.07
+        },
+        {
+          "Party": "Rashtriya Adarsh Party",
+          "CandidateName": "Mohar Singh Kataria",
+          "Votes": 78,
+          "Vote Share": 0.07
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Rajendra Prasad Gairola",
+          "Votes": 76,
+          "Vote Share": 0.06
+        },
+        {
+          "Party": "Bharatiya Jan Jagriti Party",
+          "CandidateName": "Balbir Kumar Talwar",
+          "Votes": 65,
+          "Vote Share": 0.05
+        },
+        {
+          "Party": "Rashtriya Lok Dal",
+          "CandidateName": "Sardar Khan Pappu",
+          "Votes": 50,
+          "Vote Share": 0.04
+        },
+        {
+          "Party": "Sainik Samaj Party",
+          "CandidateName": "Rajendra Singh Negi",
+          "Votes": 49,
+          "Vote Share": 0.04
+        },
+        {
+          "Party": "Rashtriya Samaj Dal (R)",
+          "CandidateName": "(Advocate) Brij Bhushan Karanwal",
+          "Votes": 45,
+          "Vote Share": 0.04
+        }
+      ],
+      "totalVotes": 118321
+    },
+    {
+      "Area Name": "Raipur",
+      "Address": "272 Ashok Vihar, Ajabpur Kalan, Dehradun, Uttarakhand",
+      "Latitude": 30.3457,
+      "Longitude": 78.0326,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Umesh Sharma Kau",
+          "Votes": 65756,
+          "Vote Share": 60.68
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Hira Singh Bisht",
+          "Votes": 35704,
+          "Vote Share": 32.95
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Navin Pirshali",
+          "Votes": 3992,
+          "Vote Share": 3.68
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 956,
+          "Vote Share": 0.88
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Anil Dobhal",
+          "Votes": 994,
+          "Vote Share": 0.92
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Sarmista Praliyan",
+          "Votes": 893,
+          "Vote Share": 0.82
+        },
+        {
+          "Party": "Peoples Party of India (Democratic)",
+          "CandidateName": "Ram Pal Singh",
+          "Votes": 162,
+          "Vote Share": 0.15
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Shahid Raza",
+          "Votes": 117,
+          "Vote Share": 0.11
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mohd. Ehsan",
+          "Votes": 115,
+          "Vote Share": 0.11
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Ganga Prasad",
+          "Votes": 109,
+          "Vote Share": 0.1
+        },
+        {
+          "Party": "Rashtriya Samaj Dal (R)",
+          "CandidateName": "Suman Karanwal",
+          "Votes": 71,
+          "Vote Share": 0.07
+        },
+        {
+          "Party": "Rashtravadi Vikas Party",
+          "CandidateName": "Jitendra Srivastava",
+          "Votes": 65,
+          "Vote Share": 0.06
+        },
+        {
+          "Party": "Rashtrawadi Janlok Party (Satya)",
+          "CandidateName": "Sundar Singh Rawat (Aazad)",
+          "Votes": 61,
+          "Vote Share": 0.06
+        },
+        {
+          "Party": "Right to Recall Party",
+          "CandidateName": "Rakesh Barthwal",
+          "Votes": 51,
+          "Vote Share": 0.05
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Priti Dimri",
+          "Votes": 129,
+          "Vote Share": 0.12
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Narendra Singh Varma",
+          "Votes": 141,
+          "Vote Share": 0.13
+        }
+      ],
+      "totalVotes": 108360
+    },
+    {
+      "Area Name": "Rajpur Road",
+      "Address": "54/46, Race Course, Govind Nagar, Araghar, Dehradun, Uttarakhand",
+      "Latitude": 30.3785,
+      "Longitude": 78.0682,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Khajan Dass",
+          "Votes": 37027,
+          "Vote Share": 54.1
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Rajkumar",
+          "Votes": 25864,
+          "Vote Share": 37.79
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Dimpal",
+          "Votes": 4127,
+          "Vote Share": 6.03
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 617,
+          "Vote Share": 0.9
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Dhansingh",
+          "Votes": 404,
+          "Vote Share": 0.59
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Amar Singh Swedia",
+          "Votes": 396,
+          "Vote Share": 0.58
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Ramu Rajoria",
+          "Votes": 213,
+          "Vote Share": 0.31
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Kamlesh Mathur",
+          "Votes": 178,
+          "Vote Share": 0.26
+        },
+        {
+          "Party": "Rashtriya Uttarakhand Party",
+          "CandidateName": "Vijay Kumar",
+          "Votes": 122,
+          "Vote Share": 0.18
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Billu",
+          "Votes": 108,
+          "Vote Share": 0.16
+        }
+      ],
+      "totalVotes": 68439
+    },
+    {
+      "Area Name": "Dehradun Cantonment",
+      "Address": "230 Indra Nagar Colony, Vasant Vihar, Dehradun, Uttarakhand",
+      "Latitude": 30.3165,
+      "Longitude": 78.0322,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Savita Kapoor",
+          "Votes": 45492,
+          "Vote Share": 59.64
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Suryakant Dhasmana",
+          "Votes": 24554,
+          "Vote Share": 32.19
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Ravinder Singh Anand",
+          "Votes": 3265,
+          "Vote Share": 4.28
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Dinesh Rawat",
+          "Votes": 1056,
+          "Vote Share": 1.38
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Anirudh Kala",
+          "Votes": 813,
+          "Vote Share": 1.07
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 614,
+          "Vote Share": 0.8
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Jaspal Singh",
+          "Votes": 426,
+          "Vote Share": 0.56
+        },
+        {
+          "Party": "Peace Party",
+          "CandidateName": "Mohd. Salim",
+          "Votes": 181,
+          "Vote Share": 0.24
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Dr. R K Pathak",
+          "Votes": 134,
+          "Vote Share": 0.18
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Nanda Kishor Semwal",
+          "Votes": 109,
+          "Vote Share": 0.14
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sachin Chhetri",
+          "Votes": 99,
+          "Vote Share": 0.13
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Geeta Chandola",
+          "Votes": 76,
+          "Vote Share": 0.1
+        },
+        {
+          "Party": "Rashtriya Uttarakhand Party",
+          "CandidateName": "Vinod Aswal",
+          "Votes": 73,
+          "Vote Share": 0.1
+        }
+      ],
+      "totalVotes": 76278
+    },
+    {
+      "Area Name": "Mussoorie",
+      "Address": "105-a Neshvilla Road, Dehradun, Uttarakhand",
+      "Latitude": 30.4598,
+      "Longitude": 78.0644,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Ganesh Joshi",
+          "Votes": 44847,
+          "Vote Share": 57.0
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Godavari Thapli",
+          "Votes": 29522,
+          "Vote Share": 37.52
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Prem Kishan",
+          "Votes": 2759,
+          "Vote Share": 3.51
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 701,
+          "Vote Share": 0.89
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Manish Gauniyal",
+          "Votes": 688,
+          "Vote Share": 0.87
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ashok Panwar",
+          "Votes": 466,
+          "Vote Share": 0.59
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Sanjay Mall",
+          "Votes": 206,
+          "Vote Share": 0.26
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Sakuntla Rawat",
+          "Votes": 197,
+          "Vote Share": 0.25
+        }
+      ],
+      "totalVotes": 78685
+    },
+    {
+      "Area Name": "Doiwala",
+      "Address": "Lane NO 03 Ekta Vihar B Block Lower Nathanpur, Dehradun, Uttarakhand",
+      "Latitude": 30.1872,
+      "Longitude": 78.1025,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Brij Bhushan Gairola",
+          "Votes": 64946,
+          "Vote Share": 57.72
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Gaurav (Ginny)",
+          "Votes": 35925,
+          "Vote Share": 31.93
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Jitendra Singh Negi",
+          "Votes": 4785,
+          "Vote Share": 4.25
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Raju Maurya 'Ketan'",
+          "Votes": 3387,
+          "Vote Share": 3.01
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Shiv Prasad Semwal",
+          "Votes": 1873,
+          "Vote Share": 1.66
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 992,
+          "Vote Share": 0.88
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Vinod Kumar",
+          "Votes": 601,
+          "Vote Share": 0.53
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Santosh Dixit",
+          "Votes": 286,
+          "Vote Share": 0.25
+        },
+        {
+          "Party": "Uttarakhand Parivartan Party",
+          "CandidateName": "Prateek Bahuguna",
+          "Votes": 170,
+          "Vote Share": 0.15
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Tribirendra Singh Rawat (Trivendra)",
+          "Votes": 172,
+          "Vote Share": 0.15
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Anurag Kukreti",
+          "Votes": 142,
+          "Vote Share": 0.13
+        },
+        {
+          "Party": "Right to Recall Party",
+          "CandidateName": "Ajay Kumar Kaushik",
+          "Votes": 111,
+          "Vote Share": 0.1
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal (Democratic)",
+          "CandidateName": "Rajkishore Singh Rawat",
+          "Votes": 110,
+          "Vote Share": 0.1
+        }
+      ],
+      "totalVotes": 112508
+    },
+    {
+      "Area Name": "Rishikesh",
+      "Address": "225 Ganga vihar Rishikesh District Dehradun Uttarakhand",
+      "Latitude": 30.0869,
+      "Longitude": 78.2676,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Prem Chand Aggarwal",
+          "Votes": 52460,
+          "Vote Share": 50.43
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Jayendra Chand Ramola",
+          "Votes": 33403,
+          "Vote Share": 32.11
+        },
+        {
+          "Party": "Uttarakhand Janekta Party",
+          "CandidateName": "Kanak Dhanai",
+          "Votes": 13080,
+          "Vote Share": 12.57
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Raje Singh Negi",
+          "Votes": 2781,
+          "Vote Share": 2.67
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 819,
+          "Vote Share": 0.79
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Mohan Singh Aswal",
+          "Votes": 761,
+          "Vote Share": 0.73
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Er. Sandeep Basnet",
+          "Votes": 414,
+          "Vote Share": 0.4
+        },
+        {
+          "Party": "Uttarakhand Janata Party",
+          "CandidateName": "Anoop Singh Rana",
+          "Votes": 297,
+          "Vote Share": 0.29
+        },
+        {
+          "Party": "Shiromani Akali Dal (Amritsar) (Simranjit Singh Mann)",
+          "CandidateName": "Jagjeet Singh",
+          "Votes": 231,
+          "Vote Share": 0.22
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Sanjay Srivastava",
+          "Votes": 174,
+          "Vote Share": 0.17
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Kadam Singh Baliyan",
+          "Votes": 173,
+          "Vote Share": 0.17
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Usha Rawat",
+          "Votes": 165,
+          "Vote Share": 0.16
+        },
+        {
+          "Party": "Uttarakhand Raksha Morcha",
+          "CandidateName": "Babli Devi",
+          "Votes": 80,
+          "Vote Share": 0.08
+        }
+      ],
+      "totalVotes": 104019
+    },
+    {
+      "Area Name": "Haridwar",
+      "Address": "H.no. 224-b, Gali No. 7, Khanna Nager Jwalapur, District Haridwar, Haridwar, Uttarakhand",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Madan Kaushik",
+          "Votes": 53147,
+          "Vote Share": 55.77
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Satpal Bramchari",
+          "Votes": 37910,
+          "Vote Share": 39.78
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Sanjay Saini",
+          "Votes": 2142,
+          "Vote Share": 2.25
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Charan Singh",
+          "Votes": 1248,
+          "Vote Share": 1.31
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 548,
+          "Vote Share": 0.57
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Sarita Agarwal",
+          "Votes": 239,
+          "Vote Share": 0.25
+        },
+        {
+          "Party": "Rashtravadi Vikas Party",
+          "CandidateName": "Ajay Kumar Gupta",
+          "Votes": 217,
+          "Vote Share": 0.23
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Adesh Kumar Marwari",
+          "Votes": 157,
+          "Vote Share": 0.16
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mohd Aazam",
+          "Votes": 125,
+          "Vote Share": 0.13
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Anurag Sharma",
+          "Votes": 107,
+          "Vote Share": 0.11
+        }
+      ],
+      "totalVotes": 95292
+    },
+    {
+      "Area Name": "BHEL-Ranipur",
+      "Address": "Manav Seva Sadan, Bahadrabad, District-Haridwar",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Adesh Chauhan",
+          "Votes": 57544,
+          "Vote Share": 50.89
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Rajbir Singh Chauhan",
+          "Votes": 43682,
+          "Vote Share": 38.63
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ompal Singh",
+          "Votes": 5880,
+          "Vote Share": 5.2
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Prashant Rai",
+          "Votes": 3355,
+          "Vote Share": 2.97
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Praveen Surya",
+          "Votes": 1480,
+          "Vote Share": 1.31
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 629,
+          "Vote Share": 0.56
+        },
+        {
+          "Party": "Communist Party of India (Marxist)",
+          "CandidateName": "Ramesh Chand Dhiman",
+          "Votes": 217,
+          "Vote Share": 0.19
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Ishant Kumar",
+          "Votes": 214,
+          "Vote Share": 0.19
+        },
+        {
+          "Party": "Bharatiya Jan Jagriti Party",
+          "CandidateName": "Irfan Ali",
+          "Votes": 187,
+          "Vote Share": 0.17
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Ajay",
+          "Votes": 164,
+          "Vote Share": 0.14
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Sandesh Sharma",
+          "Votes": 146,
+          "Vote Share": 0.13
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Moh Mursleen Qureshi",
+          "Votes": 104,
+          "Vote Share": 0.09
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Pankaj Kumar",
+          "Votes": 100,
+          "Vote Share": 0.09
+        }
+      ],
+      "totalVotes": 113073
+    },
+    {
+      "Area Name": "Jwalapur",
+      "Address": "Puljatwada Harijan Basti Jwalapur Tehsil District Haridwar",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Er. Ravi Bahadur",
+          "Votes": 42372,
+          "Vote Share": 45.92
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Suresh Rathore",
+          "Votes": 29029,
+          "Vote Share": 31.47
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Shishpal Singh",
+          "Votes": 14760,
+          "Vote Share": 16.0
+        },
+        {
+          "Party": "Aajad Samaj Party (Kanshi Ram)",
+          "CandidateName": "S.P Singh Engineer",
+          "Votes": 4208,
+          "Vote Share": 4.56
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Mamta Singh",
+          "Votes": 929,
+          "Vote Share": 1.01
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Sanatan Sonker",
+          "Votes": 601,
+          "Vote Share": 0.65
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 494,
+          "Vote Share": 0.54
+        },
+        {
+          "Party": "Loktantrik Janshakti Party",
+          "CandidateName": "Goutam",
+          "Votes": 206,
+          "Vote Share": 0.22
+        },
+        {
+          "Party": "Nyaydharamsabha",
+          "CandidateName": "Ravindra Kumar",
+          "Votes": 158,
+          "Vote Share": 0.17
+        }
+      ],
+      "totalVotes": 92263
+    },
+    {
+      "Area Name": "Bhagwanpur",
+      "Address": "Nagar Panchayat + Post + Tehsil Bhagwanpur District Haridwar",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Mamta Rakesh",
+          "Votes": 44808,
+          "Vote Share": 45.52
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Subodh Rakesh",
+          "Votes": 39997,
+          "Vote Share": 40.63
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Satyapal Singh",
+          "Votes": 12067,
+          "Vote Share": 12.26
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Amrish Kumar",
+          "Votes": 762,
+          "Vote Share": 0.77
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Prem Singh",
+          "Votes": 678,
+          "Vote Share": 0.69
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 353,
+          "Vote Share": 0.36
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sher Singh",
+          "Votes": 118,
+          "Vote Share": 0.12
+        }
+      ],
+      "totalVotes": 98430
+    },
+    {
+      "Area Name": "Jhabrera",
+      "Address": "Viilage & Post- Sherpur khelmau, Tehsil-Roorkee, District-Haridwar",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Virendra Kumar",
+          "Votes": 39652,
+          "Vote Share": 41.72
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Rajpal Singh",
+          "Votes": 31436,
+          "Vote Share": 33.08
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Aditya Brajwal",
+          "Votes": 17804,
+          "Vote Share": 18.73
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Jitendra Kumar",
+          "Votes": 4654,
+          "Vote Share": 4.9
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Rajoo Singh",
+          "Votes": 403,
+          "Vote Share": 0.42
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 385,
+          "Vote Share": 0.41
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Komal",
+          "Votes": 310,
+          "Vote Share": 0.33
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sunil Kumar",
+          "Votes": 246,
+          "Vote Share": 0.26
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mampal",
+          "Votes": 205,
+          "Vote Share": 0.22
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sulochana",
+          "Votes": 130,
+          "Vote Share": 0.14
+        },
+        {
+          "Party": "Rashtriya Lok Dal",
+          "CandidateName": "Shalabh Kumar",
+          "Votes": 111,
+          "Vote Share": 0.12
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Pratibha",
+          "Votes": 97,
+          "Vote Share": 0.1
+        }
+      ],
+      "totalVotes": 95048
+    },
+    {
+      "Area Name": "Pirankaliyar",
+      "Address": "Village Rampur Post & Tehsil Roorkee Distt. Haridwar",
+      "Latitude": 29.9457,
+      "Longitude": 78.1642,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Furkan Ahmad",
+          "Votes": 43539,
+          "Vote Share": 44.37
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Munish Kumar Saini",
+          "Votes": 27796,
+          "Vote Share": 28.33
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Surendra Singh",
+          "Votes": 11716,
+          "Vote Share": 11.94
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Abdul Wahid",
+          "Votes": 11441,
+          "Vote Share": 11.66
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Sadab Alam",
+          "Votes": 2423,
+          "Vote Share": 2.47
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Md. Shahjad",
+          "Votes": 520,
+          "Vote Share": 0.53
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 470,
+          "Vote Share": 0.48
+        },
+        {
+          "Party": "Peoples Party of India (Democratic)",
+          "CandidateName": "Ajay Kumar",
+          "Votes": 193,
+          "Vote Share": 0.2
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Shahban",
+          "Votes": 188,
+          "Vote Share": 0.19
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Shahjahan",
+          "Votes": 159,
+          "Vote Share": 0.16
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Sheela Rai",
+          "Votes": 149,
+          "Vote Share": 0.15
+        }
+      ],
+      "totalVotes": 98124
+    },
+    {
+      "Area Name": "Roorkee",
+      "Address": "399/5 Jadugar Road 33 Civil Lines Roorkee Haridwar Uttarakhand, Haridwar, Uttarakhand",
+      "Latitude": 29.8543,
+      "Longitude": 77.888,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Pradeep Batra",
+          "Votes": 36986,
+          "Vote Share": 48.4
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Yashpal Rana",
+          "Votes": 34709,
+          "Vote Share": 45.42
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Gulbahar",
+          "Votes": 1961,
+          "Vote Share": 2.57
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Tanveer Ahamad",
+          "Votes": 958,
+          "Vote Share": 1.25
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Nitin Sharma",
+          "Votes": 742,
+          "Vote Share": 0.97
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Naresh Kumar (Prince)",
+          "Votes": 753,
+          "Vote Share": 0.98
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 302,
+          "Vote Share": 0.4
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Rohit Tyagi",
+          "Votes": 178,
+          "Vote Share": 0.23
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Shreshthata",
+          "Votes": 64,
+          "Vote Share": 0.08
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Vaidya Tek Vallabh",
+          "Votes": 61,
+          "Vote Share": 0.08
+        }
+      ],
+      "totalVotes": 76412
+    },
+    {
+      "Area Name": "Khanpur",
+      "Address": "H.N. 204, Vill. Akodha, Aurangzebpur PO. & Teh. Laksar, District Haridwar",
+      "Latitude": 30.3165,
+      "Longitude": 78.0322,
+      "results": [
+        {
+          "Party": "Independent",
+          "CandidateName": "Umesh Kumar Patrkar",
+          "Votes": 38767,
+          "Vote Share": 34.34
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ravindra Singh Paniyala",
+          "Votes": 31915,
+          "Vote Share": 28.27
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Rani Devyani",
+          "Votes": 30834,
+          "Vote Share": 27.31
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Subhash Singh Choudhary",
+          "Votes": 6289,
+          "Vote Share": 5.57
+        },
+        {
+          "Party": "Aajad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Shameem Ahmed Sabri",
+          "Votes": 2082,
+          "Vote Share": 1.84
+        },
+        {
+          "Party": "Rashtrawadi Janlok Party (Satya)",
+          "CandidateName": "Munesh Kumar",
+          "Votes": 1056,
+          "Vote Share": 0.94
+        },
+        {
+          "Party": "Aam Admi Party",
+          "CandidateName": "Manorma Tyagi",
+          "Votes": 805,
+          "Vote Share": 0.71
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Neelu Choudhary",
+          "Votes": 618,
+          "Vote Share": 0.55
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 544,
+          "Vote Share": 0.48
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Rajesh Walia",
+          "Votes": 266,
+          "Vote Share": 0.24
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Didar Singh",
+          "Votes": 259,
+          "Vote Share": 0.23
+        }
+      ],
+      "totalVotes": 112891
+    },
+    {
+      "Area Name": "Manglaur",
+      "Address": "Mohalla Bandertol, Manglore, District Haridwar",
+      "Latitude": 29.7916,
+      "Longitude": 77.879,
+      "results": [
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Sarwat Kareem Ansari",
+          "Votes": 32660,
+          "Vote Share": 37.29
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Qazi Mohammad Nizamuddin",
+          "Votes": 32062,
+          "Vote Share": 36.61
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Dinesh Singh Pawar",
+          "Votes": 18763,
+          "Vote Share": 21.42
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Navneet Kumar (Guddu Bhaiya)",
+          "Votes": 2554,
+          "Vote Share": 2.92
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Qazi Mohd Monis",
+          "Votes": 782,
+          "Vote Share": 0.89
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 265,
+          "Vote Share": 0.3
+        },
+        {
+          "Party": "Rashtriya Lok Dal",
+          "CandidateName": "Vijendra Singh",
+          "Votes": 221,
+          "Vote Share": 0.25
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Rajveer Singh",
+          "Votes": 158,
+          "Vote Share": 0.18
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Satish Kumar",
+          "Votes": 155,
+          "Vote Share": 0.18
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Sharad Pandey",
+          "Votes": 79,
+          "Vote Share": 0.09
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Ubedur Rehaman",
+          "Votes": 79,
+          "Vote Share": 0.09
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Anik Ahmad",
+          "Votes": 67,
+          "Vote Share": 0.08
+        }
+      ],
+      "totalVotes": 87580
+    },
+    {
+      "Area Name": "Laksar",
+      "Address": "Village Lahboli P.O. Manglour Tehsil Roorkee Distt. Haridwar",
+      "Latitude": 29.7597,
+      "Longitude": 78.0419,
+      "results": [
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Shahzad",
+          "Votes": 34899,
+          "Vote Share": 42.93
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Sanjay Gupta",
+          "Votes": 24459,
+          "Vote Share": 30.09
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Antriksh Saini",
+          "Votes": 11584,
+          "Vote Share": 14.25
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Haji Tasleem Ahmad",
+          "Votes": 4161,
+          "Vote Share": 5.12
+        },
+        {
+          "Party": "Rashtrawadi Janlok Party (Satya)",
+          "CandidateName": "Ajay",
+          "Votes": 4126,
+          "Vote Share": 5.07
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Mohd Yusuf",
+          "Votes": 815,
+          "Vote Share": 1.0
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mehar Singh",
+          "Votes": 400,
+          "Vote Share": 0.49
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Reenu Kashyap",
+          "Votes": 402,
+          "Vote Share": 0.49
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 298,
+          "Vote Share": 0.37
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Dhramraj",
+          "Votes": 184,
+          "Vote Share": 0.23
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Dr. Bhagwan Dass Rathor",
+          "Votes": 168,
+          "Vote Share": 0.21
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mursleen",
+          "Votes": 95,
+          "Vote Share": 0.12
+        }
+      ],
+      "totalVotes": 81293
+    },
+    {
+      "Area Name": "Haridwar Rural",
+      "Address": "22/1, Ravindra Nath Tagore Marg-2, Near Passport Office, New Cantt Road, Hathi Barkala, Dehradun, Uttarakhand",
+      "Latitude": 30.0869,
+      "Longitude": 78.2676,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Anupama Rawat",
+          "Votes": 50028,
+          "Vote Share": 46.93
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Yatishwaranand",
+          "Votes": 45556,
+          "Vote Share": 42.73
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Muhammad Yunus",
+          "Votes": 4547,
+          "Vote Share": 4.27
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Naresh Sharma",
+          "Votes": 2906,
+          "Vote Share": 2.73
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "Pankaj Kumar Saini",
+          "Votes": 1539,
+          "Vote Share": 1.44
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 778,
+          "Vote Share": 0.73
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Balram",
+          "Votes": 532,
+          "Vote Share": 0.5
+        },
+        {
+          "Party": "Naki Bharatiya Ekta Party",
+          "CandidateName": "Aslam",
+          "Votes": 318,
+          "Vote Share": 0.3
+        },
+        {
+          "Party": "Rashtrawadi Janlok Party (Satya)",
+          "CandidateName": "Rekha Devi",
+          "Votes": 225,
+          "Vote Share": 0.21
+        },
+        {
+          "Party": "All India Majlis-E-Ittehadul Muslimeen",
+          "CandidateName": "Julfikar Ansari",
+          "Votes": 223,
+          "Vote Share": 0.21
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Upender Singh Malik",
+          "Votes": 216,
+          "Vote Share": 0.2
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mubarak",
+          "Votes": 177,
+          "Vote Share": 0.17
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Rupesh Kumar",
+          "Votes": 169,
+          "Vote Share": 0.16
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Sajid Ali",
+          "Votes": 167,
+          "Vote Share": 0.16
+        }
+      ],
+      "totalVotes": 106603
+    },
+    {
+      "Area Name": "Yamkeshwar",
+      "Address": "Village-Dhaur, Post office- dhansi, Tehsil-jakhanikhal District pauri Garhwal Uttarakhand",
+      "Latitude": 30.0869,
+      "Longitude": 78.2676,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Renu Bisht",
+          "Votes": 28390,
+          "Vote Share": 59.62
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Shailendra Singh Rawat",
+          "Votes": 17980,
+          "Vote Share": 37.76
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Shanti Prasad Bhatt",
+          "Votes": 613,
+          "Vote Share": 1.29
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 526,
+          "Vote Share": 1.1
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Aviral",
+          "Votes": 454,
+          "Vote Share": 0.95
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Veerendra Prasad",
+          "Votes": 175,
+          "Vote Share": 0.37
+        }
+      ],
+      "totalVotes": 47612
+    },
+    {
+      "Area Name": "Pauri",
+      "Address": "Power House Mohalla 'ward No-7 Tehsil & District Pauri Garhwal, Pauri Garhwal, Uttarakhand",
+      "Latitude": 30.1468,
+      "Longitude": 78.7775,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Rajkumar Pori",
+          "Votes": 25865,
+          "Vote Share": 53.33
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Naval Kishor",
+          "Votes": 20127,
+          "Vote Share": 41.5
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 675,
+          "Vote Share": 1.39
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Manohar Lal",
+          "Votes": 736,
+          "Vote Share": 1.52
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Rajendra Prasad",
+          "Votes": 458,
+          "Vote Share": 0.94
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ramesh Chandar",
+          "Votes": 423,
+          "Vote Share": 0.87
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Poonam Singh",
+          "Votes": 358,
+          "Vote Share": 0.74
+        },
+        {
+          "Party": "Uttarakhand Janekta Party",
+          "CandidateName": "Onkar Singh",
+          "Votes": 343,
+          "Vote Share": 0.71
+        },
+        {
+          "Party": "Akhand Bharat Vikas Party",
+          "CandidateName": "Hari Kumar",
+          "Votes": 189,
+          "Vote Share": 0.39
+        }
+      ],
+      "totalVotes": 48499
+    },
+    {
+      "Area Name": "Srinagar",
+      "Address": "Village - Naugaun P.O. Dungrikhal Patti Kandarsyun. District Pauri Garhwal, Uttarakhand",
+      "Latitude": 30.2224,
+      "Longitude": 78.7834,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "(Dr) Dhan Singh Rawat",
+          "Votes": 29618,
+          "Vote Share": 45.55
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Ganesh Godiyal",
+          "Votes": 29031,
+          "Vote Share": 44.65
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Mohan Kala",
+          "Votes": 4271,
+          "Vote Share": 6.57
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 643,
+          "Vote Share": 0.99
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Gajender Singh Chauhan",
+          "Votes": 700,
+          "Vote Share": 1.08
+        },
+        {
+          "Party": "Socialist Unity Centre of India (Communist)",
+          "CandidateName": "Sandeep Kumar",
+          "Votes": 463,
+          "Vote Share": 0.71
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Subhash Negi",
+          "Votes": 157,
+          "Vote Share": 0.24
+        },
+        {
+          "Party": "Akhand Bharat Vikas Party",
+          "CandidateName": "Ganesh Lal",
+          "Votes": 141,
+          "Vote Share": 0.22
+        }
+      ],
+      "totalVotes": 65024
+    },
+    {
+      "Area Name": "Chaubattakhal",
+      "Address": "House No. 45, Sediyagad, P.O. Sediyakhal, Distt. Pauri Garhwal, Uttarakhand",
+      "Latitude": 29.7469,
+      "Longitude": 78.5283,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Satpal Maharaj",
+          "Votes": 24927,
+          "Vote Share": 59.55
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Keshar Singh",
+          "Votes": 13497,
+          "Vote Share": 32.25
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Digmohan Negi",
+          "Votes": 1908,
+          "Vote Share": 4.56
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 590,
+          "Vote Share": 1.41
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Ashwani Gusain",
+          "Votes": 533,
+          "Vote Share": 1.27
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal (Democratic)",
+          "CandidateName": "Anu Pant",
+          "Votes": 316,
+          "Vote Share": 0.75
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Arun Kumar",
+          "Votes": 260,
+          "Vote Share": 0.62
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal (P)",
+          "CandidateName": "Virendra Singh Rawat",
+          "Votes": 180,
+          "Vote Share": 0.43
+        },
+        {
+          "Party": "Uttarakhand Raksha Morcha",
+          "CandidateName": "Shekhar Singh",
+          "Votes": 126,
+          "Vote Share": 0.3
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Jay Prakash",
+          "Votes": 110,
+          "Vote Share": 0.26
+        }
+      ],
+      "totalVotes": 41857
+    },
+    {
+      "Area Name": "Lansdowne",
+      "Address": "Village -Ramisera, P.O. Dhauntiyal, Patti Talla Badalpur, Tehsil Lansdowne, District Pauri Garhwal",
+      "Latitude": 29.8418,
+      "Longitude": 78.6806,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Daleep Singh Rawat",
+          "Votes": 24504,
+          "Vote Share": 59.83
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Anukriti Gusain Rawat",
+          "Votes": 14636,
+          "Vote Share": 35.73
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Anand Prakash",
+          "Votes": 843,
+          "Vote Share": 2.06
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 447,
+          "Vote Share": 1.09
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mamta Devi",
+          "Votes": 437,
+          "Vote Share": 1.07
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Narendra Singh",
+          "Votes": 304,
+          "Vote Share": 0.74
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Narendra Singh Rawat",
+          "Votes": 135,
+          "Vote Share": 0.33
+        },
+        {
+          "Party": "Uttarakhand Raksha Morcha",
+          "CandidateName": "Ramesh Chandra Singh",
+          "Votes": 101,
+          "Vote Share": 0.25
+        }
+      ],
+      "totalVotes": 40960
+    },
+    {
+      "Area Name": "Kotdwar",
+      "Address": "G 305 Som vihar, R.K. Puram New Delhi 110022",
+      "Latitude": 29.7469,
+      "Longitude": 78.5283,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Ritu Khanduri Bhushan",
+          "Votes": 32103,
+          "Vote Share": 41.86
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Surendra Singh Negi",
+          "Votes": 28416,
+          "Vote Share": 37.05
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Dherandra Singh Chauhan",
+          "Votes": 12484,
+          "Vote Share": 16.28
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Arvind Kumar",
+          "Votes": 1975,
+          "Vote Share": 2.57
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Vikas Kumar",
+          "Votes": 579,
+          "Vote Share": 0.75
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 506,
+          "Vote Share": 0.66
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mahima Chaudhary",
+          "Votes": 364,
+          "Vote Share": 0.47
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sunil Bahukhandi",
+          "Votes": 217,
+          "Vote Share": 0.28
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "(Captain Re.) Mukesh Kumar Rawat",
+          "Votes": 181,
+          "Vote Share": 0.24
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal (Democratic)",
+          "CandidateName": "Rohit Dandriyal",
+          "Votes": 172,
+          "Vote Share": 0.22
+        },
+        {
+          "Party": "Bahujan Mukti Party",
+          "CandidateName": "Satish Chandra",
+          "Votes": 119,
+          "Vote Share": 0.16
+        },
+        {
+          "Party": "Right to Recall Party",
+          "CandidateName": "Akash Negi",
+          "Votes": 84,
+          "Vote Share": 0.11
+        }
+      ],
+      "totalVotes": 76694
+    },
+    {
+      "Area Name": "Dharchula",
+      "Address": "Village madkote Tahsil Munsyari District Pithoragarh",
+      "Latitude": 29.8484,
+      "Longitude": 80.5396,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Harish Singh Dhami",
+          "Votes": 27007,
+          "Vote Share": 48.29
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Dhan Sing Dhami (Dhan Da)",
+          "Votes": 25889,
+          "Vote Share": 46.3
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Jeevan Singh Thakur",
+          "Votes": 825,
+          "Vote Share": 1.48
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Narayan Ram",
+          "Votes": 643,
+          "Vote Share": 1.15
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Kailash Singh Pangtey",
+          "Votes": 575,
+          "Vote Share": 1.03
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Govind Ram",
+          "Votes": 394,
+          "Vote Share": 0.7
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Ramesh Singh",
+          "Votes": 406,
+          "Vote Share": 0.73
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 406,
+          "Vote Share": 0.73
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Manju Devi",
+          "Votes": 180,
+          "Vote Share": 0.32
+        }
+      ],
+      "totalVotes": 55919
+    },
+    {
+      "Area Name": "Didihat",
+      "Address": "Jakhni, Bin Tahsil Pithoragarh District Pithoragarh",
+      "Latitude": 29.8062,
+      "Longitude": 80.2833,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Vishan Singh",
+          "Votes": 20594,
+          "Vote Share": 38.27
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Kishan Bhandari",
+          "Votes": 17368,
+          "Vote Share": 32.28
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Pradeep Singh Pal",
+          "Votes": 14298,
+          "Vote Share": 26.57
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 831,
+          "Vote Share": 1.54
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Govind Singh",
+          "Votes": 717,
+          "Vote Share": 1.33
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Diwan Singh Mehta",
+          "Votes": 340,
+          "Vote Share": 0.63
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Anil Singh",
+          "Votes": 313,
+          "Vote Share": 0.58
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Surendra Singh Gurung",
+          "Votes": 180,
+          "Vote Share": 0.33
+        }
+      ],
+      "totalVotes": 53810
+    },
+    {
+      "Area Name": "Pithoragarh",
+      "Address": "Vill-Chaisar, Post- Bin, Tehsil & District- Pithoragarh",
+      "Latitude": 29.5822,
+      "Longitude": 80.2187,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Mayukh Mahar",
+          "Votes": 33269,
+          "Vote Share": 47.86
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Chandra Pant",
+          "Votes": 27215,
+          "Vote Share": 39.15
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Nitin Markana",
+          "Votes": 6585,
+          "Vote Share": 9.47
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Chandra Prakash Punera",
+          "Votes": 730,
+          "Vote Share": 1.05
+        },
+        {
+          "Party": "Aazad Samaj Party (Kanshi Ram)",
+          "CandidateName": "(Engineer) Kartik Tamta",
+          "Votes": 717,
+          "Vote Share": 1.03
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 558,
+          "Vote Share": 0.8
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Khursid Ahmad",
+          "Votes": 526,
+          "Vote Share": 0.76
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Virendera Vir Vikram Singh",
+          "Votes": 470,
+          "Vote Share": 0.68
+        }
+      ],
+      "totalVotes": 69512
+    },
+    {
+      "Area Name": "Gangolihat",
+      "Address": "Village Nagour Post Nagour (Chourmanya) District Pithoragarh",
+      "Latitude": 29.4803,
+      "Longitude": 80.0773,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Fakeer Ram",
+          "Votes": 32296,
+          "Vote Share": 56.74
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Khajan Chandra Guddu",
+          "Votes": 22243,
+          "Vote Share": 39.08
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 1117,
+          "Vote Share": 1.96
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Hari Prasad",
+          "Votes": 1004,
+          "Vote Share": 1.76
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Babita Chandra",
+          "Votes": 554,
+          "Vote Share": 0.97
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Rekha",
+          "Votes": 535,
+          "Vote Share": 0.94
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Bal Ram",
+          "Votes": 283,
+          "Vote Share": 0.5
+        }
+      ],
+      "totalVotes": 56915
+    },
+    {
+      "Area Name": "Kapkot",
+      "Address": "Vill-Seema, P.O-Harshila, District-Bageshwar, State-Uttarakhadn",
+      "Latitude": 29.9229,
+      "Longitude": 79.8913,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Suresh Gariya",
+          "Votes": 31275,
+          "Vote Share": 49.43
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Lalit Farswan",
+          "Votes": 27229,
+          "Vote Share": 43.04
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Bhoopesh Upadhyay",
+          "Votes": 3529,
+          "Vote Share": 5.58
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 785,
+          "Vote Share": 1.24
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Rajendra Singh",
+          "Votes": 513,
+          "Vote Share": 0.81
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Har Govind Joshi",
+          "Votes": 506,
+          "Vote Share": 0.8
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Hari Ram Shastry",
+          "Votes": 215,
+          "Vote Share": 0.34
+        }
+      ],
+      "totalVotes": 63267
+    },
+    {
+      "Area Name": "Bageshwar",
+      "Address": "Bhagirathi post office- Bageshwar Tehsil-Bageshwar District-Bageshwar",
+      "Latitude": 29.8404,
+      "Longitude": 79.7696,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Chandan Ram Dass",
+          "Votes": 32211,
+          "Vote Share": 43.64
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Ranjeet Das",
+          "Votes": 20070,
+          "Vote Share": 27.19
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Basant Kumar",
+          "Votes": 16109,
+          "Vote Share": 21.83
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 864,
+          "Vote Share": 1.17
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Bharav Nath Tamta",
+          "Votes": 1877,
+          "Vote Share": 2.54
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Balkrishna",
+          "Votes": 1512,
+          "Vote Share": 2.05
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Dinesh Ram",
+          "Votes": 798,
+          "Vote Share": 1.08
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Om Prakash",
+          "Votes": 722,
+          "Vote Share": 0.98
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Laxmi Devi",
+          "Votes": 508,
+          "Vote Share": 0.69
+        }
+      ],
+      "totalVotes": 73807
+    },
+    {
+      "Area Name": "Dwarahat",
+      "Address": "VILL-KANALGAON, POST-BAGWALIPOKHAR, TEHSIL DWARAHAT, DISS-ALMORA, PIN-263621",
+      "Latitude": 29.7779,
+      "Longitude": 79.4277,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "MADAN SINGH BISHT",
+          "Votes": 17766,
+          "Vote Share": 36.78
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "ANIL SINGH SHAHI",
+          "Votes": 17584,
+          "Vote Share": 36.4
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "PUSHPESH TRIPATHI",
+          "Votes": 9804,
+          "Vote Share": 20.29
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "BHUPAL SINGH ALIAS PAPPU BHANDARI",
+          "Votes": 1138,
+          "Vote Share": 2.36
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 791,
+          "Vote Share": 1.64
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "PRAKASH CHANDRA",
+          "Votes": 506,
+          "Vote Share": 1.05
+        },
+        {
+          "Party": "Peoples Party of India (Democratic)",
+          "CandidateName": "Dr. PRAMOD KUMAR",
+          "Votes": 427,
+          "Vote Share": 0.88
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "ANAND BALLABH",
+          "Votes": 354,
+          "Vote Share": 0.73
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "GANESH CHANDRA",
+          "Votes": 340,
+          "Vote Share": 0.7
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "NAVEEN CHANDRA JOSHI",
+          "Votes": 207,
+          "Vote Share": 0.43
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "RAJENDRA SINGH",
+          "Votes": 179,
+          "Vote Share": 0.37
+        }
+      ],
+      "totalVotes": 48305
+    },
+    {
+      "Area Name": "Salt",
+      "Address": "Village Sadigaon, PO Syaldey, Dist. Almora",
+      "Latitude": 29.7779,
+      "Longitude": 79.4277,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Mahesh Jeena",
+          "Votes": 22393,
+          "Vote Share": 50.02
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Ranjeet Singh Rawat",
+          "Votes": 18705,
+          "Vote Share": 41.78
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Rakesh Nath",
+          "Votes": 1292,
+          "Vote Share": 2.89
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Suresh Bisht",
+          "Votes": 628,
+          "Vote Share": 1.4
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Surendra Singh",
+          "Votes": 540,
+          "Vote Share": 1.21
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Lalit Mohan Singh",
+          "Votes": 442,
+          "Vote Share": 0.99
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 331,
+          "Vote Share": 0.74
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Bhole Shankar Arya (Advocate)",
+          "Votes": 324,
+          "Vote Share": 0.72
+        },
+        {
+          "Party": "Uttarakhand Parivartan Party",
+          "CandidateName": "Jagdish Chandra",
+          "Votes": 327,
+          "Vote Share": 0.73
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Bhupendra Singh",
+          "Votes": 119,
+          "Vote Share": 0.27
+        }
+      ],
+      "totalVotes": 44770
+    },
+    {
+      "Area Name": "Ranikhet",
+      "Address": "137, Village Danpo (Bhatraujkhan) Post- Bhatraujkhan, Tehsil- Bhikiyasain, Distt Almora",
+      "Latitude": 29.6424,
+      "Longitude": 79.4322,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Pramod Nainwal",
+          "Votes": 21047,
+          "Vote Share": 50.72
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Karan Mahara",
+          "Votes": 18463,
+          "Vote Share": 44.5
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Nandan Singh Bisht",
+          "Votes": 656,
+          "Vote Share": 1.58
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 562,
+          "Vote Share": 1.35
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Deepak Kargeti",
+          "Votes": 519,
+          "Vote Share": 1.25
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Manoj Kumar",
+          "Votes": 416,
+          "Vote Share": 1.0
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Tula Singh Tariyal",
+          "Votes": 288,
+          "Vote Share": 0.69
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Sunita Rikhari",
+          "Votes": 103,
+          "Vote Share": 0.25
+        }
+      ],
+      "totalVotes": 41492
+    },
+    {
+      "Area Name": "Someshwar",
+      "Address": "H.No. 67, Raturath P.O. & Tehsil Someshwar, District Almora",
+      "Latitude": 29.6004,
+      "Longitude": 79.647,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Rekha Arya",
+          "Votes": 26161,
+          "Vote Share": 53.15
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Rajendra Barakoti",
+          "Votes": 20868,
+          "Vote Share": 42.39
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 1007,
+          "Vote Share": 2.05
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Madhubala",
+          "Votes": 735,
+          "Vote Share": 1.49
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Harish Chandra",
+          "Votes": 588,
+          "Vote Share": 1.2
+        },
+        {
+          "Party": "Uttarakhand Parivartan Party",
+          "CandidateName": "Kiran Arya",
+          "Votes": 426,
+          "Vote Share": 0.87
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Govind Lal",
+          "Votes": 195,
+          "Vote Share": 0.4
+        },
+        {
+          "Party": "Peoples Party Of India (Democratic)",
+          "CandidateName": "Dinesh Chandra",
+          "Votes": 155,
+          "Vote Share": 0.31
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Balwant Arya",
+          "Votes": 90,
+          "Vote Share": 0.18
+        }
+      ],
+      "totalVotes": 49218
+    },
+    {
+      "Area Name": "Almora",
+      "Address": "HOUSE No 62, Mohalla Tyunara Tehsil & District- Almora",
+      "Latitude": 29.5972,
+      "Longitude": 79.6606,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Manoj Tewari",
+          "Votes": 24439,
+          "Vote Share": 45.24
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Kailash Sharma",
+          "Votes": 24312,
+          "Vote Share": 45.0
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Vinay Kirola",
+          "Votes": 2067,
+          "Vote Share": 3.83
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Amit Joshi",
+          "Votes": 1665,
+          "Vote Share": 3.08
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 401,
+          "Vote Share": 0.74
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Bhanu Prakash Joshi",
+          "Votes": 518,
+          "Vote Share": 0.96
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Vinod Chandra Tiwari",
+          "Votes": 413,
+          "Vote Share": 0.76
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ashok Kumar",
+          "Votes": 365,
+          "Vote Share": 0.68
+        },
+        {
+          "Party": "Uttarakhand Parivartan Party",
+          "CandidateName": "Gopal Ram",
+          "Votes": 136,
+          "Vote Share": 0.25
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Arjun Singh Bhakuni",
+          "Votes": 112,
+          "Vote Share": 0.21
+        }
+      ],
+      "totalVotes": 54027
+    },
+    {
+      "Area Name": "Jageshwar",
+      "Address": "House No 35 Village And Post Gunaditya Tehsil Bhanoli District Almora, Uttarakhand",
+      "Latitude": 29.6399,
+      "Longitude": 79.8629,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Mohan Singh",
+          "Votes": 27530,
+          "Vote Share": 52.87
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Govind Singh Kunjwal",
+          "Votes": 21647,
+          "Vote Share": 41.57
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Manish Singh Negi",
+          "Votes": 936,
+          "Vote Share": 1.8
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 823,
+          "Vote Share": 1.58
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Taradatt Pandey",
+          "Votes": 840,
+          "Vote Share": 1.61
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Narayan Ram",
+          "Votes": 584,
+          "Vote Share": 1.12
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Ramesh Sanwal",
+          "Votes": 269,
+          "Vote Share": 0.52
+        },
+        {
+          "Party": "Uttarakhand Parivartan Party",
+          "CandidateName": "Narayan Ram",
+          "Votes": 268,
+          "Vote Share": 0.51
+        }
+      ],
+      "totalVotes": 52074
+    },
+    {
+      "Area Name": "Lohaghat",
+      "Address": "Village And Post Simalkhet Tehsil Pati District, Champawat, Uttarakhand",
+      "Latitude": 29.4036,
+      "Longitude": 80.0896,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Khushal Singh Adhikari",
+          "Votes": 32950,
+          "Vote Share": 52.56
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Puran Singh Fartyal",
+          "Votes": 26912,
+          "Vote Share": 42.93
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 1104,
+          "Vote Share": 1.76
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Himesh Chandra Kalkhuriya",
+          "Votes": 1247,
+          "Vote Share": 1.99
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Rajesh Singh Bisht",
+          "Votes": 908,
+          "Vote Share": 1.45
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Nisar Khan",
+          "Votes": 363,
+          "Vote Share": 0.58
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Prakash Singh Dhami",
+          "Votes": 178,
+          "Vote Share": 0.28
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Dheeraj Singh Ladwal",
+          "Votes": 138,
+          "Vote Share": 0.22
+        }
+      ],
+      "totalVotes": 62696
+    },
+    {
+      "Area Name": "Champawat",
+      "Address": "Malli Madli, Champawat, Post and District Champawat",
+      "Latitude": 29.3354,
+      "Longitude": 80.0784,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Kailash Chandra Gahtori",
+          "Votes": 32547,
+          "Vote Share": 51.01
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Hemesh Kharkwal",
+          "Votes": 27243,
+          "Vote Share": 42.69
+        },
+        {
+          "Party": "Aam Admi Party",
+          "CandidateName": "Madan Singh Mahar",
+          "Votes": 2557,
+          "Vote Share": 4.01
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 946,
+          "Vote Share": 1.48
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Rakesh Chandra Verma",
+          "Votes": 506,
+          "Vote Share": 0.79
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Jagdish Bhatt",
+          "Votes": 465,
+          "Vote Share": 0.73
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Deepak Belwal",
+          "Votes": 280,
+          "Vote Share": 0.44
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Mohd. Harun",
+          "Votes": 211,
+          "Vote Share": 0.33
+        }
+      ],
+      "totalVotes": 63809
+    },
+    {
+      "Area Name": "Lalkuan",
+      "Address": "Gram Halduchaud Jaggi P.O. Halduchaud, District Nainital.",
+      "Latitude": 29.0667,
+      "Longitude": 79.5167,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Dr. Mohan Singh Bisht",
+          "Votes": 46307,
+          "Vote Share": 53.23
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Harish Rawat",
+          "Votes": 28780,
+          "Vote Share": 33.08
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sandhya Dalakoti",
+          "Votes": 3908,
+          "Vote Share": 4.49
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Pawan Kumar Chauhan",
+          "Votes": 2339,
+          "Vote Share": 2.69
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Yashpal Arya",
+          "Votes": 901,
+          "Vote Share": 1.04
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Chandra Shekhar Pandey",
+          "Votes": 898,
+          "Vote Share": 1.03
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 689,
+          "Vote Share": 0.79
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Virenderpuri Maharaj",
+          "Votes": 527,
+          "Vote Share": 0.61
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Prithvipal Singh Rawat",
+          "Votes": 410,
+          "Vote Share": 0.47
+        },
+        {
+          "Party": "Communist Party of India (Marxist-Leninist) (Liberation)",
+          "CandidateName": "Bahadur Singh Jangi",
+          "Votes": 324,
+          "Vote Share": 0.37
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Naveen Chandra Pant",
+          "Votes": 162,
+          "Vote Share": 0.19
+        },
+        {
+          "Party": "Republican Party of India (Athawale)",
+          "CandidateName": "Ram Singh",
+          "Votes": 103,
+          "Vote Share": 0.12
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Manoj Pandey",
+          "Votes": 96,
+          "Vote Share": 0.11
+        }
+      ],
+      "totalVotes": 86996
+    },
+    {
+      "Area Name": "Bhimtal",
+      "Address": "Village Kairagaon Post Office Joshura Dhari Nainital, Nainital Uttarakhand",
+      "Latitude": 29.3444,
+      "Longitude": 79.5639,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Ram Singh Kaira",
+          "Votes": 25632,
+          "Vote Share": 39.16
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Dan Singh Bhandari",
+          "Votes": 15788,
+          "Vote Share": 24.12
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Lakhan Singh Negi",
+          "Votes": 12508,
+          "Vote Share": 19.11
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Manoj Sah",
+          "Votes": 5272,
+          "Vote Share": 8.05
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Harish Chandra Joshi",
+          "Votes": 1797,
+          "Vote Share": 2.75
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Prakash Chandra",
+          "Votes": 1662,
+          "Vote Share": 2.54
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Sanjay Kumar Pandey",
+          "Votes": 874,
+          "Vote Share": 1.34
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 799,
+          "Vote Share": 1.22
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Bhuwan Chandra Arya",
+          "Votes": 975,
+          "Vote Share": 1.49
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Vikram Singh",
+          "Votes": 549,
+          "Vote Share": 0.84
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Suresh Chander Arya",
+          "Votes": 399,
+          "Vote Share": 0.61
+        }
+      ],
+      "totalVotes": 65456
+    },
+    {
+      "Area Name": "Nainital",
+      "Address": "Gram Bhumiyadhar Mallidhar, Bhawali, Nainital.",
+      "Latitude": 29.3919,
+      "Longitude": 79.4542,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Sarita Arya",
+          "Votes": 31770,
+          "Vote Share": 52.79
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Sanjeev Arya",
+          "Votes": 23889,
+          "Vote Share": 39.7
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Hem Chandra Arya",
+          "Votes": 2789,
+          "Vote Share": 4.63
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Om Prakash (Subhash Kumar)",
+          "Votes": 904,
+          "Vote Share": 1.5
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Rajkamal Sonkar",
+          "Votes": 830,
+          "Vote Share": 1.38
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 695,
+          "Vote Share": 1.15
+        }
+      ],
+      "totalVotes": 60182
+    },
+    {
+      "Area Name": "Haldwani",
+      "Address": "Sankalan Civil Line Haldwani.",
+      "Latitude": 29.2186,
+      "Longitude": 79.5176,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Sumit Hridyesh",
+          "Votes": 50116,
+          "Vote Share": 50.47
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Dr. Jogender Pal Singh Rautela",
+          "Votes": 42302,
+          "Vote Share": 42.6
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Shoeb Ahmed",
+          "Votes": 2196,
+          "Vote Share": 2.21
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Samit Tikkoo",
+          "Votes": 1759,
+          "Vote Share": 1.77
+        },
+        {
+          "Party": "All India Majlis-E-Ittehadul Muslimeen",
+          "CandidateName": "Abdul Mateen Siddiqui",
+          "Votes": 910,
+          "Vote Share": 0.92
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Jitendra Singh",
+          "Votes": 741,
+          "Vote Share": 0.75
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 567,
+          "Vote Share": 0.57
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Umesh Chandra Joshi (Yog Guru)",
+          "Votes": 291,
+          "Vote Share": 0.29
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Prashant Kumar Negi",
+          "Votes": 270,
+          "Vote Share": 0.27
+        },
+        {
+          "Party": "Jan Ekta Party",
+          "CandidateName": "Anil Kumar Singh",
+          "Votes": 245,
+          "Vote Share": 0.25
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Rajendra Kumar Gupta",
+          "Votes": 177,
+          "Vote Share": 0.18
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Divyanshu Verma",
+          "Votes": 121,
+          "Vote Share": 0.12
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Ravi Valmiki",
+          "Votes": 115,
+          "Vote Share": 0.12
+        },
+        {
+          "Party": "Janta Brigade Party",
+          "CandidateName": "Mahipal Singh",
+          "Votes": 59,
+          "Vote Share": 0.06
+        }
+      ],
+      "totalVotes": 99302
+    },
+    {
+      "Area Name": "Kaladhungi",
+      "Address": "Village Lohriyasal Malla P.O.Katghariya Tehsil Haldwani, District- Nainital, Uttarakhand",
+      "Latitude": 29.2833,
+      "Longitude": 79.35,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Banshidhar Bhagat",
+          "Votes": 67847,
+          "Vote Share": 58.17
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Mahesh Chandra",
+          "Votes": 43916,
+          "Vote Share": 37.66
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Manju Tiwari",
+          "Votes": 1825,
+          "Vote Share": 1.56
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Sunder Lal Arya",
+          "Votes": 1434,
+          "Vote Share": 1.23
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 1436,
+          "Vote Share": 1.23
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sumanlata",
+          "Votes": 473,
+          "Vote Share": 0.41
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Bhagwan Singh",
+          "Votes": 386,
+          "Vote Share": 0.33
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Mohan Kandpal",
+          "Votes": 360,
+          "Vote Share": 0.31
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Jagat Singh Rawat",
+          "Votes": 263,
+          "Vote Share": 0.23
+        },
+        {
+          "Party": "Uttarakhand Parivartan Party",
+          "CandidateName": "Prakash Chandra",
+          "Votes": 152,
+          "Vote Share": 0.13
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Rajendra Kumar Waliya",
+          "Votes": 127,
+          "Vote Share": 0.11
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Chandra Shekhar Tiwari",
+          "Votes": 97,
+          "Vote Share": 0.08
+        }
+      ],
+      "totalVotes": 116880
+    },
+    {
+      "Area Name": "Ramnagar",
+      "Address": "Vill Shankarpur Khajanchi Tehsil Ramnagar Nainital",
+      "Latitude": 29.3925,
+      "Longitude": 79.1283,
+      "results": [
+        {
+          "Party": "Bharatiya Janta Party",
+          "CandidateName": "Deewan Singh Bisht",
+          "Votes": 31094,
+          "Vote Share": 37.85
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Mahendra Singh Pal",
+          "Votes": 26349,
+          "Vote Share": 32.08
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sanjay Negi",
+          "Votes": 16843,
+          "Vote Share": 20.51
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Shishupal Singh Rawat",
+          "Votes": 2375,
+          "Vote Share": 2.89
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Hem Chandra Bhatt",
+          "Votes": 1405,
+          "Vote Share": 1.71
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 915,
+          "Vote Share": 1.11
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mohsin Khan",
+          "Votes": 398,
+          "Vote Share": 0.48
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Shweta Mashiwal",
+          "Votes": 2576,
+          "Vote Share": 3.14
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Abdul Gaffar",
+          "Votes": 349,
+          "Vote Share": 0.43
+        },
+        {
+          "Party": "Uttarakhand Parivartan Party",
+          "CandidateName": "Chinta Ram",
+          "Votes": 335,
+          "Vote Share": 0.41
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Rakesh Chauhan",
+          "Votes": 271,
+          "Vote Share": 0.33
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Jagdish Chandra Pandey",
+          "Votes": 147,
+          "Vote Share": 0.18
+        }
+      ],
+      "totalVotes": 82142
+    },
+    {
+      "Area Name": "Jaspur",
+      "Address": "Vill. Niwarmundi P.O-Jaspur Udham Singh Nagar, Uttarakhand",
+      "Latitude": 29.2792,
+      "Longitude": 78.8278,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Adesh Singh Chauhan",
+          "Votes": 42886,
+          "Vote Share": 44.02
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Dr. Shailendra Mohan Singhal",
+          "Votes": 38714,
+          "Vote Share": 39.74
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Mohd Yoonus Chaudhari",
+          "Votes": 9454,
+          "Vote Share": 9.7
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ajay Agarwal",
+          "Votes": 5061,
+          "Vote Share": 5.19
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 476,
+          "Vote Share": 0.49
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Jameel Ahamad Mansoori",
+          "Votes": 364,
+          "Vote Share": 0.37
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Saleem Ahamad",
+          "Votes": 245,
+          "Vote Share": 0.25
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Sanjay Dutt",
+          "Votes": 230,
+          "Vote Share": 0.24
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Lalman Singh",
+          "Votes": 194,
+          "Vote Share": 0.2
+        },
+        {
+          "Party": "Bharatiya Jan Jagriti Party",
+          "CandidateName": "Nafees Azad",
+          "Votes": 160,
+          "Vote Share": 0.16
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Anita Agarwal",
+          "Votes": 109,
+          "Vote Share": 0.11
+        }
+      ],
+      "totalVotes": 97417
+    },
+    {
+      "Area Name": "Kashipur",
+      "Address": "Tanda Ujjan, Chatti Gaon, P.O Kashipur, Distt- Udham Singh Nagar",
+      "Latitude": 29.2136,
+      "Longitude": 78.9569,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Trilok Singh Cheema",
+          "Votes": 48508,
+          "Vote Share": 43.07
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Narendra Chand Singh",
+          "Votes": 32173,
+          "Vote Share": 28.56
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Deepak Bali",
+          "Votes": 16074,
+          "Vote Share": 14.27
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Gagan Singh Kamboj",
+          "Votes": 14332,
+          "Vote Share": 12.72
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 726,
+          "Vote Share": 0.64
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Manoj Kumar Dobariyal",
+          "Votes": 855,
+          "Vote Share": 0.76
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Baljinder Singh",
+          "Votes": 266,
+          "Vote Share": 0.24
+        },
+        {
+          "Party": "Rashtriya Lok Dal",
+          "CandidateName": "Shameem Jahan",
+          "Votes": 231,
+          "Vote Share": 0.2
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Ashok Kumar",
+          "Votes": 195,
+          "Vote Share": 0.17
+        }
+      ],
+      "totalVotes": 112634
+    },
+    {
+      "Area Name": "Bajpur",
+      "Address": "Chadyal Suyal P.O. Manpur West, Haldwani Nainital, Uttarakhand",
+      "Latitude": 29.165,
+      "Longitude": 79.1611,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Yashpal Arya",
+          "Votes": 40252,
+          "Vote Share": 36.99
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Rajesh Kumar",
+          "Votes": 38641,
+          "Vote Share": 35.51
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Sunita Tamta",
+          "Votes": 20100,
+          "Vote Share": 18.47
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Vijay Pal Singh",
+          "Votes": 8848,
+          "Vote Share": 8.13
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 706,
+          "Vote Share": 0.65
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Manju Arya",
+          "Votes": 581,
+          "Vote Share": 0.53
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Dhanraj Bharti",
+          "Votes": 380,
+          "Vote Share": 0.35
+        }
+      ],
+      "totalVotes": 108802
+    },
+    {
+      "Area Name": "Gadarpur",
+      "Address": "Vill-Santosh Nagar, Post-Gularbhoj, Gadarpur",
+      "Latitude": 29.04,
+      "Longitude": 79.18,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Arvind Pandey",
+          "Votes": 52841,
+          "Vote Share": 48.81
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Premanand Mahajan",
+          "Votes": 51721,
+          "Vote Share": 47.77
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Jarnail Singh Kali",
+          "Votes": 1769,
+          "Vote Share": 1.63
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Jasvant Singh",
+          "Votes": 1294,
+          "Vote Share": 1.19
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 701,
+          "Vote Share": 0.65
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Shaheroom",
+          "Votes": 349,
+          "Vote Share": 0.32
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Lal Bahadur Yadav",
+          "Votes": 293,
+          "Vote Share": 0.27
+        }
+      ],
+      "totalVotes": 108267
+    },
+    {
+      "Area Name": "Rudrapur",
+      "Address": "C-22, Alliance Colony, Kashipur Road, Rudrapur-263153, Udham Singh Nagar, Uttarakhand",
+      "Latitude": 28.98,
+      "Longitude": 79.4,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Shiv Arora",
+          "Votes": 60602,
+          "Vote Share": 45.88
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Meena Sharma",
+          "Votes": 40852,
+          "Vote Share": 30.93
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Rajkumar Thukral",
+          "Votes": 26988,
+          "Vote Share": 20.43
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Nand Lal",
+          "Votes": 1212,
+          "Vote Share": 0.92
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Chandrakeshwar Rao",
+          "Votes": 1095,
+          "Vote Share": 0.83
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 554,
+          "Vote Share": 0.42
+        },
+        {
+          "Party": "Bhartiya Subhash Sena",
+          "CandidateName": "Ganga Sagar",
+          "Votes": 383,
+          "Vote Share": 0.29
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Surendra Singh",
+          "Votes": 373,
+          "Vote Share": 0.28
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Soni Srivastava",
+          "Votes": 305,
+          "Vote Share": 0.23
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Satpal Singh Thukral",
+          "Votes": 287,
+          "Vote Share": 0.22
+        }
+      ],
+      "totalVotes": 132097
+    },
+    {
+      "Area Name": "Kichha",
+      "Address": "A-123 Vivekanand Nagar, Aawas Vikas Rudrapur",
+      "Latitude": 28.9115,
+      "Longitude": 79.5046,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Tilak Raj Behar",
+          "Votes": 49552,
+          "Vote Share": 49.78
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Rajesh Shukla",
+          "Votes": 39475,
+          "Vote Share": 39.66
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Ajay Kumar Tiwari",
+          "Votes": 6219,
+          "Vote Share": 6.25
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Kulavanta Singh",
+          "Votes": 1671,
+          "Vote Share": 1.68
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 554,
+          "Vote Share": 0.56
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ubaid Ullah Khan alias Nawab Rashid Khan",
+          "Votes": 855,
+          "Vote Share": 0.86
+        },
+        {
+          "Party": "All India Majlis-E-Ittehadul Muslimeen",
+          "CandidateName": "Mohd. Ajam",
+          "Votes": 474,
+          "Vote Share": 0.48
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Riyaz Ahmed",
+          "Votes": 309,
+          "Vote Share": 0.31
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Hareram Rai",
+          "Votes": 299,
+          "Vote Share": 0.3
+        },
+        {
+          "Party": "Uttarakhand Kranti Dal",
+          "CandidateName": "Jeewan Singh Negi",
+          "Votes": 245,
+          "Vote Share": 0.25
+        },
+        {
+          "Party": "Peoples Party of India (Democratic)",
+          "CandidateName": "Ram Naresh Dohare",
+          "Votes": 156,
+          "Vote Share": 0.16
+        },
+        {
+          "Party": "Nyaydharmsabha",
+          "CandidateName": "Pramod Kumar Shukla",
+          "Votes": 144,
+          "Vote Share": 0.14
+        },
+        {
+          "Party": "Bhartiya Shakti Chetna Party",
+          "CandidateName": "Surendra Singh Bisht",
+          "Votes": 135,
+          "Vote Share": 0.14
+        }
+      ],
+      "totalVotes": 99534
+    },
+    {
+      "Area Name": "Sitarganj",
+      "Address": "-194-a Pair Pura Ward No. 9, Opposite Radha Swami Satsang Bhawan Sitarganj. Udham Singh Nagar, Uttarakhand",
+      "Latitude": 28.9293,
+      "Longitude": 79.7036,
+      "results": [
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Saurabh Bahuguna",
+          "Votes": 43354,
+          "Vote Share": 45.05
+        },
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Navtej Pal Singh",
+          "Votes": 32416,
+          "Vote Share": 33.69
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Ajay Jaiswal",
+          "Votes": 10135,
+          "Vote Share": 10.53
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Narayan Pal",
+          "Votes": 9258,
+          "Vote Share": 9.62
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 534,
+          "Vote Share": 0.55
+        },
+        {
+          "Party": "Bhartiya Subhash Sena",
+          "CandidateName": "Raghuvir",
+          "Votes": 444,
+          "Vote Share": 0.46
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Mohmmad Ali",
+          "Votes": 350,
+          "Vote Share": 0.36
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mobeen Ali",
+          "Votes": 267,
+          "Vote Share": 0.28
+        }
+      ],
+      "totalVotes": 96224
+    },
+    {
+      "Area Name": "Nanakmatta",
+      "Address": "ward No.19, Bhood Maholiya, Udham Singh Nagar, Uttrakhand",
+      "Latitude": 28.9875,
+      "Longitude": 79.79,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Gopal Singh Rana",
+          "Votes": 48746,
+          "Vote Share": 53.5
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Dr. Prem Singh Rana",
+          "Votes": 35726,
+          "Vote Share": 39.21
+        },
+        {
+          "Party": "Aam Adami Party",
+          "CandidateName": "Anand Singh Rana",
+          "Votes": 3085,
+          "Vote Share": 3.39
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Mukesh Singh",
+          "Votes": 1660,
+          "Vote Share": 1.82
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Vijay Singh Rana",
+          "Votes": 1504,
+          "Vote Share": 1.65
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 962,
+          "Vote Share": 1.06
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Jyoti Rana",
+          "Votes": 392,
+          "Vote Share": 0.43
+        }
+      ],
+      "totalVotes": 91113
+    },
+    {
+      "Area Name": "Khatima",
+      "Address": "Ward No 13 Khatima Po Khatima U S Nagar, Udham Singh Nagar, Uttarakhand",
+      "Latitude": 28.9214,
+      "Longitude": 79.97,
+      "results": [
+        {
+          "Party": "Indian National Congress",
+          "CandidateName": "Bhuwan Chandra Kapri",
+          "Votes": 48177,
+          "Vote Share": 52.26
+        },
+        {
+          "Party": "Bharatiya Janata Party",
+          "CandidateName": "Pushkar Singh Dhami",
+          "Votes": 41598,
+          "Vote Share": 45.12
+        },
+        {
+          "Party": "Bahujan Samaj Party",
+          "CandidateName": "Ramesh Singh",
+          "Votes": 937,
+          "Vote Share": 1.02
+        },
+        {
+          "Party": "Aam Aadmi Party",
+          "CandidateName": "Sawindarjeet Singh Kaler",
+          "Votes": 764,
+          "Vote Share": 0.83
+        },
+        {
+          "Party": "None of the Above",
+          "CandidateName": "NOTA",
+          "Votes": 656,
+          "Vote Share": 0.71
+        },
+        {
+          "Party": "Independent",
+          "CandidateName": "Babu Ram",
+          "Votes": 437,
+          "Vote Share": 0.47
+        },
+        {
+          "Party": "Bhartiya Subhash Sena",
+          "CandidateName": "Rajesh",
+          "Votes": 121,
+          "Vote Share": 0.13
+        },
+        {
+          "Party": "All India Majlis-E- Ittehadul Muslimeen",
+          "CandidateName": "Asif Miyan",
+          "Votes": 80,
+          "Vote Share": 0.09
+        },
+        {
+          "Party": "Samajwadi Party",
+          "CandidateName": "Vijay Pal",
+          "Votes": 80,
+          "Vote Share": 0.09
+        }
+      ],
+      "totalVotes": 92194
+    }
+  ]
+}

@@ -94,20 +94,21 @@ const pollingBoothIcon = new Icon({
   popupAnchor: [0, -12],
 });
 
-const rajyaSabhaIcon = new Icon({
-  iconUrl:
-    'data:image/svg+xml;base64,' +
+
+const vidhanSabhaIcon = new Icon({
+  iconUrl: 'data:image/svg+xml;base64,' +
     btoa(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="#1a1a1a" width="32" height="32">
-      <circle cx="16" cy="16" r="14" fill="#8B5CF6" stroke="#1a1a1a" stroke-width="3"/>
+      <circle cx="16" cy="16" r="14" fill="#FF6B35" stroke="#1a1a1a" stroke-width="3"/>
       <circle cx="16" cy="16" r="8" fill="#ffffff"/>
-      <text x="16" y="20" text-anchor="middle" fill="#1a1a1a" font-size="10" font-weight="bold">RS</text>
+      <text x="16" y="20" text-anchor="middle" fill="#1a1a1a" font-size="10" font-weight="bold">VS</text>
     </svg>
   `),
   iconSize: [32, 32],
   iconAnchor: [16, 16],
   popupAnchor: [0, -16],
 });
+
 
 // Component to update map view
 const MapViewUpdater = ({ center, zoom }) => {
@@ -206,30 +207,30 @@ const Breadcrumb = ({
     { label: 'India', level: 'india', active: mapLevel === 'india' },
     ...(selectedState
       ? [
-          {
-            label: selectedState.name,
-            level: 'state',
-            active: mapLevel === 'state',
-          },
-        ]
+        {
+          label: selectedState.name,
+          level: 'state',
+          active: mapLevel === 'state',
+        },
+      ]
       : []),
     ...(selectedAssembly
       ? [
-          {
-            label: selectedAssembly.name,
-            level: 'assembly',
-            active: mapLevel === 'assembly',
-          },
-        ]
+        {
+          label: selectedAssembly.name,
+          level: 'assembly',
+          active: mapLevel === 'assembly',
+        },
+      ]
       : []),
     ...(selectedPollingBooth
       ? [
-          {
-            label: selectedPollingBooth.name,
-            level: 'polling',
-            active: mapLevel === 'polling',
-          },
-        ]
+        {
+          label: selectedPollingBooth.name,
+          level: 'polling',
+          active: mapLevel === 'polling',
+        },
+      ]
       : []),
   ];
 
@@ -240,9 +241,8 @@ const Breadcrumb = ({
         <React.Fragment key={item.level}>
           <button
             onClick={() => onNavigate(item.level)}
-            className={`hover:text-primary transition-colors ${
-              item.active ? 'text-primary font-bold underline' : 'text-gray-500'
-            }`}
+            className={`hover:text-primary transition-colors ${item.active ? 'text-primary font-bold underline' : 'text-gray-500'
+              }`}
           >
             {item.label}
           </button>
@@ -269,8 +269,8 @@ const InteractiveElectionMap = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [allStatesData, setAllStatesData] = useState([]); // Store all states for reference
-  const [showRajyaSabha, setShowRajyaSabha] = useState(false);
-  const [rajyaSabhaData, setRajyaSabhaData] = useState([]);
+  const [showVidhanSabha, setShowVidhanSabha] = useState(false);
+  const [vidhanSabhaData, setVidhanSabhaData] = useState([]);
 
   // Sample data for charts (you would replace this with real data)
   const generateChartData = () => {
@@ -374,25 +374,26 @@ const InteractiveElectionMap = () => {
     }
   };
 
-  const fetchRajyaSabhaData = async () => {
+
+  const fetchVidhanSabhaData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/map/rajyasabha-data`
-      );
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/map/vidhansabha-data`);
       const data = await response.json();
       if (data.success) {
-        setRajyaSabhaData(data.data.members);
+        setVidhanSabhaData(data.data.bodies || []);
       }
     } catch (error) {
-      console.error('Error fetching Rajya Sabha data:', error);
+      console.error('Error fetching Vidhan Sabha data:', error);
     } finally {
       setLoading(false);
     }
   };
 
+
   useEffect(() => {
     fetchStates();
+    fetchVidhanSabhaData();
   }, []);
 
   const handleStateClick = (state) => {
@@ -495,7 +496,7 @@ const InteractiveElectionMap = () => {
       case 'assembly':
         return () => handlePollingBoothClick(item);
       default:
-        return () => {};
+        return () => { };
     }
   };
 
@@ -514,6 +515,35 @@ const InteractiveElectionMap = () => {
   const statsData = getStatsData();
   const totalVotes = statsData.reduce(
     (sum, item) => sum + (item.electionData?.Total_Votes_Constituency || 0),
+    0
+  );
+
+  const generateVidhanSabhaChartData = () => {
+    const partyData = {};
+    vidhanSabhaData.forEach((area) => {
+      area.results.forEach((result) => {
+        partyData[result.Party] = (partyData[result.Party] || 0) + result.Votes;
+      });
+    });
+
+    return Object.entries(partyData)
+      .map(([party, votes]) => ({
+        name: party,
+        votes: votes,
+        percentage: (
+          (votes / Object.values(partyData).reduce((a, b) => a + b, 0)) *
+          100
+        ).toFixed(1),
+      }))
+      .sort((a, b) => b.votes - a.votes)
+      .slice(0, 8);
+  };
+
+  const vidhanSabhaChartData = generateVidhanSabhaChartData();
+
+
+  const totalVidhanSabhaVotes = vidhanSabhaData.reduce(
+    (sum, area) => sum + (area.totalVotes || 0),
     0
   );
 
@@ -548,7 +578,7 @@ const InteractiveElectionMap = () => {
                 />
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center flex-wrap space-x-4 gap-3 justify-center">
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
@@ -561,18 +591,25 @@ const InteractiveElectionMap = () => {
                 {selectedState?.name === 'Uttarakhand' && (
                   <button
                     onClick={() => {
-                      setShowRajyaSabha(!showRajyaSabha);
-                      if (!showRajyaSabha && rajyaSabhaData.length === 0) {
-                        fetchRajyaSabhaData();
+                      const newShowVidhanSabha = !showVidhanSabha;
+                      setShowVidhanSabha(!showVidhanSabha);
+                      if (newShowVidhanSabha) {
+                        // If showing Vidhan Sabha data, switch to its analytics tab
+                        setActiveTab('vidhanSabhaAnalytics');
+                        if (vidhanSabhaData.length === 0) {
+                          fetchVidhanSabhaData();
+                        }
+                      } else {
+                        // If hiding, switch back to map overview
+                        setActiveTab('overview');
                       }
                     }}
-                    className={`px-4 py-2 rounded-lg transition-colors ${
-                      showRajyaSabha
+                    className={`px-4 py-2 rounded-lg transition-colors ${showVidhanSabha
                         ? 'bg-primary text-white'
                         : 'bg-gray-100 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
-                    Rajya Sabha
+                    Vidhan Sabha
                   </button>
                 )}
 
@@ -644,21 +681,19 @@ const InteractiveElectionMap = () => {
                   <div className="flex space-x-6">
                     <button
                       onClick={() => setActiveTab('overview')}
-                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-                        activeTab === 'overview'
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'overview'
                           ? 'border-primary text-primary'
                           : 'border-transparent text-gray-500 hover:text-gray-700'
-                      }`}
+                        }`}
                     >
                       Map Overview
                     </button>
                     <button
                       onClick={() => setActiveTab('analytics')}
-                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-                        activeTab === 'analytics'
+                      className={`pb-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'analytics'
                           ? 'border-primary text-primary'
                           : 'border-transparent text-gray-500 hover:text-gray-700'
-                      }`}
+                        }`}
                     >
                       Analytics
                     </button>
@@ -752,33 +787,32 @@ const InteractiveElectionMap = () => {
                                       </div>
                                       {item.electionData
                                         .Party_Votes_Assembly_Aggregated && (
-                                        <div className="mt-3">
-                                          <span className="font-medium">
-                                            Top Parties:
-                                          </span>
-                                          <div className="mt-1 space-y-1">
-                                            {Object.entries(
-                                              item.electionData
-                                                .Party_Votes_Assembly_Aggregated
-                                            )
-                                              .sort(([, a], [, b]) => b - a)
-                                              .slice(0, 3)
-                                              .map(([party, votes]) => (
-                                                <div
-                                                  key={party}
-                                                  className="flex justify-between text-xs"
-                                                >
-                                                  <span className="truncate">
-                                                    {party}:
-                                                  </span>
-                                                  <span className="ml-2">
-                                                    {votes.toLocaleString()}
-                                                  </span>
-                                                </div>
-                                              ))}
+                                          <div className="mt-3">
+                                            <span className="font-medium">
+                                              Top Parties:
+                                            </span>
+                                            <div className="mt-1 space-y-1">
+                                              {Object.entries(
+                                                item.electionData
+                                                  .Party_Votes_Assembly_Aggregated
+                                              )
+                                                .sort(([, a], [, b]) => b - a)
+                                                .map(([party, votes]) => (
+                                                  <div
+                                                    key={party}
+                                                    className="flex justify-between text-xs"
+                                                  >
+                                                    <span className="truncate">
+                                                      {party}:
+                                                    </span>
+                                                    <span className="ml-2">
+                                                      {votes.toLocaleString()}
+                                                    </span>
+                                                  </div>
+                                                ))}
+                                            </div>
                                           </div>
-                                        </div>
-                                      )}
+                                        )}
                                     </div>
                                   )}
                                   {item.electionResults && (
@@ -791,10 +825,25 @@ const InteractiveElectionMap = () => {
                                               .candidate
                                           }
                                         </div>
+                                        <div className="text-gray-600">
+                                          Votes: {item.electionResults.winner.votes.toLocaleString()} votes (
+                                          {item.electionResults.winner.percentage}%)
+                                        </div>
+                                        {/* runner up */}
+                                        <div className="text-gray-600">
+                                          Runner-up:{' '}
+                                          {
+                                            item.electionResults.runnerUp.candidate
+                                          }
+                                        </div>
+                                        <div className="text-gray-600">
+                                          Runner-up Votes: {item.electionResults.runnerUp.votes.toLocaleString()} votes (
+                                          {item.electionResults.runnerUp.percentage}%)
+                                        </div>
                                         <div className="text-green-600">
                                           {item.electionResults.winner.party} •{' '}
                                           {item.electionResults.winner.votes.toLocaleString()}{' '}
-                                          votes (
+                                          Winner votes (
                                           {
                                             item.electionResults.winner
                                               .percentage
@@ -815,42 +864,46 @@ const InteractiveElectionMap = () => {
                           )
                       )}
 
-                      {/* Rajya Sabha markers */}
-                      {showRajyaSabha &&
-                        selectedState?.name === 'Uttarakhand' &&
-                        rajyaSabhaData.map(
-                          (member, index) =>
-                            member.Latitude &&
-                            member.Longitude && (
-                              <Marker
-                                key={`rajya-sabha-${index}`}
-                                position={[member.Latitude, member.Longitude]}
-                                icon={rajyaSabhaIcon}
-                              >
-                                <Popup>
-                                  <div className="p-3 min-w-64">
-                                    <h3 className="font-semibold text-lg mb-2">
-                                      {member['Area Name']}
-                                    </h3>
-                                    <div className="space-y-2 text-sm">
-                                      <div>
-                                        <span className="font-medium">
-                                          Candidate:
-                                        </span>{' '}
-                                        {member['Candidate Name']}
-                                      </div>
-                                      <div>
-                                        <span className="font-medium">
-                                          Address:
-                                        </span>{' '}
-                                        {member['Address']}
-                                      </div>
+
+                      {/* Vidhan Sabha markers */}
+                      {showVidhanSabha && vidhanSabhaData.map((area) => (
+                        <Marker
+                          key={`vidhan-${area['Area Name']}`}
+                          position={[area.Latitude, area.Longitude]}
+                          icon={vidhanSabhaIcon}
+                        >
+                          <Popup>
+                            <div className="p-3 min-w-64">
+                              <h3 className="font-semibold text-lg mb-2">{area['Area Name']}</h3>
+                              <div className="space-y-2 text-sm">
+                                <div>
+                                  <span className="font-medium">Address:</span> {area.Address}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Total Votes:</span> {area.totalVotes?.toLocaleString()}
+                                </div>
+                                {area.results && (
+                                  <div className="mt-2">
+                                    <span className="font-medium">Results:</span>
+                                    <div className="mt-1 space-y-1">
+                                      {area.results
+                                        .sort((a, b) => b.Votes - a.Votes)
+                                        .map((result) => (
+                                          <div key={result.Party} className="flex justify-between text-xs">
+                                            <span>{result.Party}:</span>
+                                            <span>
+                                              {result.Votes.toLocaleString()} ({result['Vote Share']}%)
+                                            </span>
+                                          </div>
+                                        ))}
                                     </div>
                                   </div>
-                                </Popup>
-                              </Marker>
-                            )
-                        )}
+                                )}
+                              </div>
+                            </div>
+                          </Popup>
+                        </Marker>
+                      ))}
                     </MapContainer>
                   )}
                 </div>
@@ -939,7 +992,145 @@ const InteractiveElectionMap = () => {
                   </div>
                 </div>
               )}
+              {activeTab === 'vidhanSabhaAnalytics' && (
+                <div className="p-6 h-96 lg:h-[600px] overflow-y-auto">
+                  <div className="space-y-6">
+                    {loading && <Loader />}
+                    {!loading && vidhanSabhaData.length > 0 && (
+                      <>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center">
+                          <BarChart3 className="w-5 h-5 mr-2" />
+                          Vidhan Sabha Election Analysis (Uttarakhand)
+                        </h3>
+
+                        {/* Total Votes across all Vidhan Sabha Areas */}
+                        <StatCard
+                          title="Total Votes Across All Areas"
+                          value={totalVidhanSabhaVotes.toLocaleString()}
+                          icon={Users}
+                          color="bg-indigo-500"
+                        />
+
+                        {/* Party Vote Share Bar Chart */}
+                        <div>
+                          <h4 className="text-md font-semibold mb-3">
+                            Party-wise Vote Distribution
+                          </h4>
+                          <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={vidhanSabhaChartData}>
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis
+                                dataKey="name"
+                                angle={-45}
+                                textAnchor="end"
+                                height={100}
+                              />
+                              <YAxis />
+                              <Tooltip
+                                formatter={(value) => [
+                                  value.toLocaleString(),
+                                  'Votes',
+                                ]}
+                              />
+                              <Bar dataKey="votes" fill="#8B5CF6" /> {/* Purple color */}
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+
+                        {/* Party Vote Share Pie Chart */}
+                        <div>
+                          <h4 className="text-md font-semibold mb-3">
+                            Party Vote Share Percentage
+                          </h4>
+                          <ResponsiveContainer width="100%" height={300}>
+                            <RechartsPieChart>
+                              <Pie
+                                data={vidhanSabhaChartData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ name, percentage }) =>
+                                  `${name}: ${percentage}%`
+                                }
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="votes"
+                              >
+                                {vidhanSabhaChartData.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={COLORS[index % COLORS.length]}
+                                  />
+                                ))}
+                              </Pie>
+                              <Tooltip
+                                formatter={(value, name, props) => [
+                                  `${(value / totalVidhanSabhaVotes * 100).toFixed(2)}%`,
+                                  props.payload.name,
+                                ]}
+                              />
+                            </RechartsPieChart>
+                          </ResponsiveContainer>
+                        </div>
+
+                        {/* Table of results per Area */}
+                        <div>
+                          <h4 className="text-md font-semibold mb-3">
+                            Results by Vidhan Sabha Area
+                          </h4>
+                          <div className="overflow-x-auto">
+                            <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                              <thead>
+                                <tr className="bg-gray-100 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                  <th className="py-3 px-4 border-b">Area Name</th>
+                                  <th className="py-3 px-4 border-b">Party</th>
+                                  <th className="py-3 px-4 border-b text-right">Votes</th>
+                                  <th className="py-3 px-4 border-b text-right">Vote Share (%)</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {vidhanSabhaData.map((area) => (
+                                  <React.Fragment key={area['Area Name']}>
+                                    <tr className="bg-gray-50">
+                                      <td colSpan="4" className="py-2 px-4 text-sm font-semibold text-gray-800 border-b">
+                                        {area['Area Name']} (Total: {area.totalVotes?.toLocaleString()})
+                                      </td>
+                                    </tr>
+                                    {area.results
+                                      .sort((a, b) => b.Votes - a.Votes)
+                                      .map((result, idx) => (
+                                        <tr key={`${area['Area Name']}-${result.Party}`} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
+                                          <td className="py-2 px-4 text-sm text-gray-700 border-b"></td> {/* Empty for alignment */}
+                                          <td className="py-2 px-4 text-sm text-gray-700 border-b">{result.Party}</td>
+                                          <td className="py-2 px-4 text-sm text-gray-700 border-b text-right">{result.Votes.toLocaleString()}</td>
+                                          <td className="py-2 px-4 text-sm text-gray-700 border-b text-right">{result['Vote Share']}%</td>
+                                        </tr>
+                                      ))}
+                                  </React.Fragment>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                      </>
+                    )}
+                    {!loading && vidhanSabhaData.length === 0 && (
+                      <div className="text-center py-12">
+                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-500">
+                          No Vidhan Sabha Analytics Data Available
+                        </h3>
+                        <p className="text-gray-400">
+                          Please ensure data is loaded or available for Uttarakhand.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
+            
           </div>
 
           {/* Enhanced Sidebar */}
@@ -1033,7 +1224,7 @@ const InteractiveElectionMap = () => {
                         (item) => item.electionData || item.electionResults
                       ).length /
                         mapData.length) *
-                        100
+                      100
                     ) || 0}
                     %
                   </div>
@@ -1157,16 +1348,12 @@ const InteractiveElectionMap = () => {
                   {selectedState?.name === 'Uttarakhand' && (
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            RS
-                          </span>
+                        <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">VS</span>
                         </div>
-                        <span className="text-sm font-medium">Rajya Sabha</span>
+                        <span className="text-sm font-medium">Vidhan Sabha</span>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        Toggle from header
-                      </span>
+                      <span className="text-xs text-gray-500">Toggle from header</span>
                     </div>
                   )}
                 </div>
