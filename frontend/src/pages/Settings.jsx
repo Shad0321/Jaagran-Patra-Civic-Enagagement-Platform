@@ -74,25 +74,32 @@ const Settings = () => {
   };
 
   const handleProfileChange = (e) => {
-    const { name, value, type, files } = e.target;
-    if (name === 'avatar' && type === 'file') {
-      const file = files[0];
-      setAvatarFile(file);
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setAvatarPreview(reader.result);
-        };
-        reader.readAsDataURL(file);
-      } else {
+  const { name, value, type, files } = e.target;
+  if (name === 'avatar' && type === 'file') {
+    const file = files[0];
+    if (file) {
+      if (file.size > 1024 * 1024) { // 1MB
+        toast.error('Photo size should not exceed 1MB');
+        setAvatarFile(null);
         setAvatarPreview(profileData.avatar || '');
+        return;
       }
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     } else {
-      setProfileData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      setAvatarFile(null);
+      setAvatarPreview(profileData.avatar || '');
     }
+  } else {
+    setProfileData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
   };
 
   const handlePasswordChange = (e) => {
