@@ -160,7 +160,7 @@ function createEmailTemplate(content: string, title: string) {
 <body>
   <div class="email-container">
     <div class="header">
-      <img src="https://res.cloudinary.com/dib0peewu/image/upload/v1705732714/samples/shoe.jpg" alt="Jaagran Patra Logo" class="logo">
+      <img src="https://res.cloudinary.com/dib0peewu/image/upload/v1753975258/full-JP_ozatse.png" alt="Jaagran Patra Logo" class="logo">
       <div class="brand-name">Jaagran Patra</div>
       <div class="brand-tagline">Empowering Civic Engagement</div>
     </div>

@@ -208,7 +208,7 @@ const CitizenDashboard = () => {
   }
 
   return (
-    <div className="p-2 pt-20 sm:p-4 md:px-20 mx-auto min-h-screen bg-gradient-to-br from-primary/10 via-white to-primary/5">
+    <div className="p-2 pt-20 sm:p-4 md:px-20 w-full mx-auto min-h-screen bg-gradient-to-br from-primary/10 via-white to-primary/5">
       {/* Welcome Section */}
       <div className="mb-8 text-center md:text-left">
         <h1 className="text-3xl md:text-4xl font-bold text-black mb-2 drop-shadow-sm">
