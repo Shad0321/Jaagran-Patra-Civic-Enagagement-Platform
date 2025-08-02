@@ -8,6 +8,8 @@ import {
   ZoomIn,
   ChevronLeft,
   ChevronRight,
+  FileText,
+  Download,
 } from 'lucide-react';
 
 const UpdateMediaDisplay = ({ update, className = '' }) => {
@@ -20,13 +22,44 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-  // Parse images from the update
-  const images = update.imageUrls
-    ? typeof update.imageUrls === 'string'
+  // Parse images from the update - check both imageUrls and attachments
+  let images = [];
+  
+  // First check imageUrls (existing logic)
+  if (update.imageUrls) {
+    images = typeof update.imageUrls === 'string'
       ? JSON.parse(update.imageUrls)
-      : update.imageUrls
-    : [];
-  const audioUrl = update.audioUrl;
+      : update.imageUrls;
+  }
+  
+  // Then check attachments array for image files
+  if (update.attachments && Array.isArray(update.attachments)) {
+    const attachmentImages = update.attachments.filter(url => {
+      if (typeof url !== 'string') return false;
+      const extension = url.split('.').pop()?.toLowerCase() || '';
+      return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension);
+    });
+    images = [...images, ...attachmentImages];
+  }
+
+  // Check for audio in both audioUrl and attachments
+  let audioUrl = update.audioUrl;
+  if (!audioUrl && update.attachments && Array.isArray(update.attachments)) {
+    const audioAttachment = update.attachments.find(url => {
+      if (typeof url !== 'string') return false;
+      const extension = url.split('.').pop()?.toLowerCase() || '';
+      return ['mp3', 'wav', 'ogg', 'webm', 'm4a'].includes(extension);
+    });
+    audioUrl = audioAttachment;
+  }
+
+  // Get non-media attachments (documents, etc.)
+  const documentAttachments = update.attachments ? 
+    update.attachments.filter(url => {
+      if (typeof url !== 'string') return false;
+      const extension = url.split('.').pop()?.toLowerCase() || '';
+      return !['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'mp3', 'wav', 'ogg', 'webm', 'm4a'].includes(extension);
+    }) : [];
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -100,12 +133,30 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
   };
 
   const formatTime = (seconds) => {
+    if (!seconds || !isFinite(seconds) || isNaN(seconds)) {
+      return '0:00';
+    }
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  if (!images.length && !audioUrl) {
+  const getFileName = (url) => {
+    if (typeof url !== 'string') return 'Unknown file';
+    return url.split('/').pop()?.split('?')[0] || 'Unknown file';
+  };
+
+  const handleDownload = (url) => {
+    const link = document.createElement('a');
+    link.href = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+    link.download = getFileName(url);
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  if (!images.length && !audioUrl && !documentAttachments.length) {
     return null;
   }
 
@@ -128,7 +179,7 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                 onClick={() => handleImageClick(index)}
               >
                 <img
-                  src={`${API_BASE_URL}${imageUrl}`}
+                  src={imageUrl.startsWith('http') ? imageUrl : `${API_BASE_URL}${imageUrl}`}
                   alt={`Update attachment ${index + 1}`}
                   className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   crossOrigin="anonymous"
@@ -187,14 +238,14 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
                   <span>{formatTime(currentTime)}</span>
-                  <span>{formatTime(duration)}</span>
+                  <span>{duration ? formatTime(duration) : '--:--'}</span>
                 </div>
               </div>
             </div>
 
             <audio
               ref={audioRef}
-              src={`${API_BASE_URL}${audioUrl}`}
+              src={audioUrl.startsWith('http') ? audioUrl : `${API_BASE_URL}${audioUrl}`}
               onEnded={handleAudioEnded}
               onError={handleAudioError}
               preload="metadata"
@@ -205,9 +256,43 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
         </div>
       )}
 
+      {/* Document Attachments Section */}
+      {documentAttachments.length > 0 && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow border border-primary/10 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="h-4 w-4 text-primary/80" />
+            <span className="text-sm font-semibold text-gray-700">
+              Attachments ({documentAttachments.length})
+            </span>
+          </div>
+          <div className="space-y-2">
+            {documentAttachments.map((docUrl, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <FileText className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                  <span className="text-sm text-gray-700 truncate font-medium">
+                    {getFileName(docUrl)}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleDownload(docUrl)}
+                  className="flex items-center gap-2 px-3 py-1.5 text-xs bg-primary text-white rounded-md hover:bg-primary/90 transition-colors flex-shrink-0"
+                >
+                  <Download className="h-3 w-3" />
+                  Download
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Image Modal */}
       {selectedImageIndex !== null && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center  z-50 p-4 pb-6">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 pb-6">
           <div className="relative max-w-6xl w-full max-h-full flex flex-col">
             {/* Close Button */}
             <button
@@ -250,9 +335,9 @@ const UpdateMediaDisplay = ({ update, className = '' }) => {
                 </div>
               )}
               <img
-                src={`${API_BASE_URL}${images[selectedImageIndex]}`}
+                src={images[selectedImageIndex].startsWith('http') ? images[selectedImageIndex] : `${API_BASE_URL}${images[selectedImageIndex]}`}
                 alt="Update attachment"
-                className={`max-w-full max-h-[80vh] object-contain ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                className={`max-w-full max-h-[50vh] object-contain ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
                 crossOrigin="anonymous"
                 onError={(e) => {
                   e.target.src = '/placeholder-image.svg';

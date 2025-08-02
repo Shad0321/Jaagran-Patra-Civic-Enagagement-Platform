@@ -9,9 +9,41 @@ import {
   TrendingUp,
   Clock as ClockIcon,
   ChevronDown,
+  Loader2,
+  AlertTriangle,
 } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "your_cloud_name";
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "your_upload_preset";
+
+const uploadToCloudinary = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('folder', 'issue_attachments');
+
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Upload failed');
+    }
+
+    const data = await response.json();
+    return data.secure_url;
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    throw error;
+  }
+};
 
 const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -22,8 +54,12 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
     hoursWorked: '',
     nextSteps: '',
     attachments: [],
+    priority: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
+  const [validationErrors, setValidationErrors] = useState({});
 
   // Update form data when issue changes
   useEffect(() => {
@@ -38,7 +74,9 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
         hoursWorked: '',
         nextSteps: '',
         attachments: [],
+        priority: issue.priority || '',
       });
+      setValidationErrors({});
     }
   }, [issue]);
 
@@ -63,6 +101,13 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
     },
   ];
 
+  const priorityOptions = [
+    { value: 'LOW', label: 'Low', color: 'bg-blue-100 text-blue-800' },
+    { value: 'MEDIUM', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'HIGH', label: 'High', color: 'bg-orange-100 text-orange-800' },
+    { value: 'URGENT', label: 'Urgent', color: 'bg-red-100 text-red-800' },
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -72,7 +117,27 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
     }
 
     setIsSubmitting(true);
+    setValidationErrors({});
+
     try {
+      // First upload all attachments to Cloudinary
+      let cloudinaryUrls = [];
+      if (formData.attachments.length > 0) {
+        setUploadingFiles(true);
+        const uploadPromises = formData.attachments.map(async (file) => {
+          try {
+            const url = await uploadToCloudinary(file);
+            return url;
+          } catch (error) {
+            console.error(`Failed to upload ${file.name}:`, error);
+            return null;
+          }
+        });
+
+        cloudinaryUrls = (await Promise.all(uploadPromises)).filter(url => url !== null);
+        setUploadingFiles(false);
+      }
+
       const updateData = {
         ...formData,
         progressPercentage: formData.progressPercentage
@@ -81,6 +146,9 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
         hoursWorked: formData.hoursWorked
           ? parseFloat(formData.hoursWorked)
           : undefined,
+        attachments: cloudinaryUrls,
+        // Ensure estimatedCompletion is undefined if empty
+        estimatedCompletion: formData.estimatedCompletion || undefined,
       };
 
       await api.put(`/issues/${issue.id}/update-progress`, updateData);
@@ -98,36 +166,81 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
         hoursWorked: '',
         nextSteps: '',
         attachments: [],
+        priority: '',
       });
     } catch (error) {
       console.error('Error updating issue progress:', error);
-      toast.error(
-        error.response?.data?.error || 'Failed to update issue progress'
-      );
+      
+      if (error.response?.data?.errors) {
+        // Handle validation errors from backend
+        const newErrors = {};
+        error.response.data.errors.forEach(err => {
+          newErrors[err.path] = err.msg;
+        });
+        setValidationErrors(newErrors);
+        
+        toast.error('Please fix the validation errors');
+      } else {
+        toast.error(
+          error.response?.data?.error || 'Failed to update issue progress'
+        );
+      }
     } finally {
       setIsSubmitting(false);
+      setUploadingFiles(false);
     }
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
-    setFormData((prev) => ({
-      ...prev,
-      attachments: [...prev.attachments, ...files],
-    }));
+    if (files.length === 0) return;
+
+    setUploadingFiles(true);
+    const newUploadProgress = {...uploadProgress};
+    
+    try {
+      setFormData((prev) => ({
+        ...prev,
+        attachments: [...prev.attachments, ...files],
+      }));
+
+      files.forEach(file => {
+        newUploadProgress[file.name] = 0;
+      });
+      setUploadProgress(newUploadProgress);
+    } finally {
+      setUploadingFiles(false);
+    }
   };
 
   const removeAttachment = (index) => {
+    const fileToRemove = formData.attachments[index];
     setFormData((prev) => ({
       ...prev,
       attachments: prev.attachments.filter((_, i) => i !== index),
     }));
+    
+    if (uploadProgress[fileToRemove.name] !== undefined) {
+      const newUploadProgress = {...uploadProgress};
+      delete newUploadProgress[fileToRemove.name];
+      setUploadProgress(newUploadProgress);
+    }
+  };
+
+  const handleDateChange = (e) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, estimatedCompletion: value }));
+    
+    // Clear validation error when user starts typing
+    if (validationErrors.estimatedCompletion) {
+      setValidationErrors(prev => ({ ...prev, estimatedCompletion: undefined }));
+    }
   };
 
   if (!isOpen || !issue) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center  z-50 p-4 pb-6">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 pb-6">
       <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-primary/10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-primary/10">
@@ -170,8 +283,8 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Status and Progress */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Status, Priority, and Progress Percentage */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Status *
@@ -186,6 +299,29 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
                   required
                 >
                   {statusOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary/70" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Update Priority
+              </label>
+              <div className="relative">
+                <select
+                  value={formData.priority}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, priority: e.target.value }))
+                  }
+                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 appearance-none"
+                >
+                  <option value="">Keep current priority</option>
+                  {priorityOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -272,15 +408,20 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
                 <input
                   type="date"
                   value={formData.estimatedCompletion}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      estimatedCompletion: e.target.value,
-                    }))
-                  }
-                  className="w-full px-4 py-2.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80"
+                  onChange={handleDateChange}
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white/80 ${
+                    validationErrors.estimatedCompletion 
+                      ? 'border-red-500 focus:ring-red-200 focus:border-red-300' 
+                      : 'border-primary/20'
+                  }`}
                 />
                 <Calendar className="absolute right-3 top-3 h-4 w-4 text-primary/70" />
+                {validationErrors.estimatedCompletion && (
+                  <div className="flex items-center mt-1 text-red-500 text-xs">
+                    <AlertTriangle className="h-3 w-3 mr-1" />
+                    {validationErrors.estimatedCompletion}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -308,14 +449,21 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
             </label>
             <div className="flex items-center gap-4">
               <label className="flex items-center px-4 py-2.5 border border-primary/20 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors">
-                <Upload className="h-4 w-4 mr-2 text-primary/80" />
-                <span className="text-sm">Upload Files</span>
+                {uploadingFiles ? (
+                  <Loader2 className="h-4 w-4 mr-2 text-primary/80 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4 mr-2 text-primary/80" />
+                )}
+                <span className="text-sm">
+                  {uploadingFiles ? 'Uploading...' : 'Upload Files'}
+                </span>
                 <input
                   type="file"
                   multiple
                   className="hidden"
                   onChange={handleFileUpload}
                   accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                  disabled={uploadingFiles}
                 />
               </label>
               <span className="text-sm text-gray-500">
@@ -330,11 +478,22 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
                     key={index}
                     className="flex items-center justify-between p-3 bg-gray-50/80 rounded-lg border border-primary/10"
                   >
-                    <span className="text-sm text-gray-700">{file.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-700">{file.name}</span>
+                      {uploadProgress[file.name] !== undefined && uploadProgress[file.name] < 100 && (
+                        <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary/80 transition-all duration-300"
+                            style={{ width: `${uploadProgress[file.name]}%` }}
+                          ></div>
+                        </div>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeAttachment(index)}
                       className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-50 transition-colors"
+                      disabled={uploadingFiles}
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -350,19 +509,19 @@ const ProgressUpdateModal = ({ isOpen, onClose, issue, onUpdate }) => {
               type="button"
               onClick={onClose}
               className="px-5 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:shadow-sm"
-              disabled={isSubmitting}
+              disabled={isSubmitting || uploadingFiles}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || !formData.progressUpdate.trim()}
+              disabled={isSubmitting || uploadingFiles || !formData.progressUpdate.trim()}
               className="px-6 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {isSubmitting ? (
+              {isSubmitting || uploadingFiles ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Updating...
+                  {uploadingFiles ? 'Uploading...' : 'Updating...'}
                 </>
               ) : (
                 <>

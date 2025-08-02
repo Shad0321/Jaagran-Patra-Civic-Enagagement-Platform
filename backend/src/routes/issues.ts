@@ -606,19 +606,33 @@ router.get(
             },
           },
           updates: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  role: true,
-                },
-              },
-            },
-            orderBy: {
-              createdAt: 'desc',
-            },
-          },
+  select: {
+    id: true,
+    issueId: true,
+    userId: true,
+    message: true,
+    status: true,
+    updateType: true,
+    mediaType: true,
+    audioUrl: true,
+    imageUrls: true,
+    attachments: true,
+    hoursWorked: true,
+    progressPercentage: true,
+    nextSteps: true,
+    createdAt: true,
+    user: {  // Include user data using select
+      select: {
+        id: true,
+        name: true,
+        role: true,
+      },
+    },
+  },
+  orderBy: {
+    createdAt: 'desc',
+  },
+},
         },
       });
 
@@ -808,6 +822,10 @@ router.put(
       .optional()
       .isArray()
       .withMessage('Attachments must be an array'),
+    body('priority')
+      .optional()
+      .isIn(['LOW', 'MEDIUM', 'HIGH', 'URGENT'])
+      .withMessage('Invalid priority'),
   ],
   handleValidationErrors,
   updateIssueProgress

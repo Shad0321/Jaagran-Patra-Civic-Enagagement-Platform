@@ -369,6 +369,11 @@ export const getProfile = async (
         profile: user.role === 'MLA' ? user.mlaProfile : user.memberProfile,
         createdAt: user.createdAt,
         lastLogin: user.lastLogin,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
+        currentAddress: user.currentAddress,
+        currentLatitude: user.currentLatitude,
+        currentLongitude: user.currentLongitude,
       },
     });
   } catch (error) {
@@ -384,7 +389,15 @@ export const updateProfile = async (
 ): Promise<void> => {
   try {
     const userId = req.user!.id;
-    const { name, phone } = req.body; // Avatar is no longer in the body
+    const {
+      name,
+      phone,
+      dateOfBirth,
+      gender,
+      currentAddress,
+      currentLatitude,
+      currentLongitude,
+    } = req.body;
 
     const currentUser = await prisma.user.findUnique({ where: { id: userId } });
     if (!currentUser) {
@@ -413,15 +426,25 @@ export const updateProfile = async (
         return;
       }
     }
+
     const updateData: any = {};
     if (name) updateData.name = name;
     if (phone) updateData.phone = phone;
+    if (dateOfBirth) updateData.dateOfBirth = new Date(dateOfBirth);
+    if (gender) updateData.gender = gender;
+    if (currentAddress) updateData.currentAddress = currentAddress;
+
+    // Convert string coordinates to numbers
+    if (currentLatitude)
+      updateData.currentLatitude = parseFloat(currentLatitude);
+    if (currentLongitude)
+      updateData.currentLongitude = parseFloat(currentLongitude);
+
     updateData.avatar = avatarUrl; // Set the new or existing avatar URL
 
     const user = await prisma.user.update({
       where: { id: userId },
       data: updateData,
-      // ... include relations as needed
     });
 
     // Return a clean user object
@@ -432,6 +455,12 @@ export const updateProfile = async (
       name: user.name,
       role: user.role,
       avatar: user.avatar,
+      isActive: user.isActive,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
+      currentAddress: user.currentAddress,
+      currentLatitude: user.currentLatitude,
+      currentLongitude: user.currentLongitude,
     };
 
     res.json({

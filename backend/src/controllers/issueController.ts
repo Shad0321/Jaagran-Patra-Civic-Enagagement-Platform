@@ -1673,6 +1673,7 @@ export const updateIssueProgress = async (
       hoursWorked,
       nextSteps,
       attachments,
+      priority,
     } = req.body;
     const userId = req.user!.id;
     const userRole = req.user!.role;
@@ -1803,6 +1804,20 @@ export const updateIssueProgress = async (
         },
       },
     });
+
+    // If priority is provided, update the issue's priority
+    const upperPriority = priority.toUpperCase();
+    if (
+      upperPriority &&
+      Object.values(IssuePriority).includes(upperPriority as IssuePriority)
+    ) {
+      await prisma.issue.update({
+        where: { id },
+        data: {
+          priority: upperPriority as IssuePriority,
+        },
+      });
+    }
 
     // Notify the citizen who reported the issue
     try {

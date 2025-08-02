@@ -145,6 +145,8 @@ router.put(
       .isFloat()
       .withMessage('Longitude must be a number'),
     body('currentAddress').optional().isString(),
+    body('gender').optional().isString(),
+    body('dateOfBirth').optional().isDate(),
   ],
   handleValidationErrors,
   mlaUpload,

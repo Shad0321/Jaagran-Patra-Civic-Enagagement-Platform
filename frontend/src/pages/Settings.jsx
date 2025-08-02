@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLanguage } from '../redux/slices/languageSlice';
 import {
@@ -6,7 +6,7 @@ import {
   changePassword,
   clearError,
 } from '../redux/slices/userSlice';
-import { Check, User, Lock, Globe, Save } from 'lucide-react';
+import { Check, User, Lock, Globe, Save, MapPin, Navigation, Image } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { changeGoogleTranslateLanguage } from '../utils/googletranslatehelper';
 import { languages } from '../utils/constants';
@@ -15,6 +15,12 @@ const Settings = () => {
   const dispatch = useDispatch();
   const { selectedLanguage } = useSelector((state) => state.language);
   const { user, loading, error } = useSelector((state) => state.user);
+
+  // Location state
+  const [addressSelected, setAddressSelected] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const addressInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
   // Show backend error as toast
   useEffect(() => {
@@ -31,9 +37,14 @@ const Settings = () => {
   const [profileData, setProfileData] = useState({
     name: '',
     phone: '',
-    avatar: '', // This will be the URL string
+    avatar: '',
+    dateOfBirth: '',
+    gender: '',
+    currentAddress: '',
+    currentLatitude: '',
+    currentLongitude: '',
   });
-  const [avatarFile, setAvatarFile] = useState(null); // For file upload
+  const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState('');
 
   // Password form state
@@ -44,26 +55,144 @@ const Settings = () => {
   });
   const [passwordError, setPasswordError] = useState('');
 
+  // Initialize Google Places Autocomplete
+  useEffect(() => {
+    if (window.google && addressInputRef.current && !autocompleteRef.current) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        {
+          types: ['address'],
+          componentRestrictions: { country: 'IN' },
+          fields: [
+            'place_id',
+            'geometry',
+            'formatted_address',
+            'address_components',
+          ],
+        }
+      );
+
+      autocompleteRef.current.addListener('place_changed', handlePlaceSelect);
+    }
+
+    return () => {
+      if (autocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(
+          autocompleteRef.current
+        );
+        autocompleteRef.current = null;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (user) {
       setProfileData({
         name: user.name || '',
         phone: user.phone || '',
         avatar: user.avatar || '',
+        dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
+        gender: user.gender || '',
+        currentAddress: user.currentAddress || '',
+        currentLatitude: user.currentLatitude || '',
+        currentLongitude: user.currentLongitude || '',
       });
       setAvatarPreview(user.avatar || '');
       setAvatarFile(null);
+      setAddressSelected(!!(user.currentAddress && user.currentLatitude && user.currentLongitude));
     }
   }, [user]);
+
+  const handlePlaceSelect = () => {
+    const place = autocompleteRef.current.getPlace();
+
+    if (place.geometry) {
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      setProfileData((prev) => ({
+        ...prev,
+        currentAddress: place.formatted_address,
+        currentLatitude: lat.toString(),
+        currentLongitude: lng.toString(),
+      }));
+
+      setAddressSelected(true);
+      toast.success('Address selected successfully!');
+    } else {
+      toast.error('Please select a valid address from the dropdown');
+      setAddressSelected(false);
+    }
+  };
+
+  const handleAddressChange = (e) => {
+    const value = e.target.value;
+    setProfileData((prev) => ({
+      ...prev,
+      currentAddress: value,
+      currentLatitude: '',
+      currentLongitude: '',
+    }));
+    setAddressSelected(false);
+  };
+
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by this browser');
+      return;
+    }
+
+    setIsLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        // Reverse geocoding to get address
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+          setIsLoadingLocation(false);
+
+          if (status === 'OK' && results[0]) {
+            setProfileData((prev) => ({
+              ...prev,
+              currentAddress: results[0].formatted_address,
+              currentLatitude: lat.toString(),
+              currentLongitude: lng.toString(),
+            }));
+            setAddressSelected(true);
+            toast.success('Current location detected!');
+          } else {
+            setProfileData((prev) => ({
+              ...prev,
+              currentAddress: `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`,
+              currentLatitude: lat.toString(),
+              currentLongitude: lng.toString(),
+            }));
+            setAddressSelected(true);
+            toast.success('Location coordinates obtained!');
+          }
+        });
+      },
+      (error) => {
+        setIsLoadingLocation(false);
+        toast.error('Error getting current location: ' + error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  };
 
   const handleLanguageChange = async (language) => {
     try {
       setCurrentLanguage(language);
       dispatch(setLanguage(language));
-      // Get language code for Google Translate
       const selectedLangObj = languages.find((lang) => lang.value === language);
       if (selectedLangObj) {
-        // Change Google Translate language
         await changeGoogleTranslateLanguage(selectedLangObj.code);
       }
     } catch (error) {
@@ -74,32 +203,32 @@ const Settings = () => {
   };
 
   const handleProfileChange = (e) => {
-  const { name, value, type, files } = e.target;
-  if (name === 'avatar' && type === 'file') {
-    const file = files[0];
-    if (file) {
-      if (file.size > 1024 * 1024) { // 1MB
-        toast.error('Photo size should not exceed 1MB');
+    const { name, value, type, files } = e.target;
+    if (name === 'avatar' && type === 'file') {
+      const file = files[0];
+      if (file) {
+        if (file.size > 1024 * 1024) {
+          toast.error('Photo size should not exceed 1MB');
+          setAvatarFile(null);
+          setAvatarPreview(profileData.avatar || '');
+          return;
+        }
+        setAvatarFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setAvatarPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
         setAvatarFile(null);
         setAvatarPreview(profileData.avatar || '');
-        return;
       }
-      setAvatarFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
     } else {
-      setAvatarFile(null);
-      setAvatarPreview(profileData.avatar || '');
+      setProfileData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
-  } else {
-    setProfileData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
   };
 
   const handlePasswordChange = (e) => {
@@ -125,9 +254,9 @@ const Settings = () => {
       } else {
         payload = { ...profileData };
       }
-      // Pass a flag to the thunk so it can set headers
       await dispatch(updateUserProfile({ data: payload, isFormData })).unwrap();
       setSuccessMessage('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Profile update failed:', error);
@@ -227,11 +356,10 @@ const Settings = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`${
-                    activeTab === tab.id
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 cursor-pointer`}
+                  className={`${activeTab === tab.id
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 cursor-pointer`}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.name}
@@ -287,11 +415,142 @@ const Settings = () => {
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="dateOfBirth"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Date of Birth
+                      </label>
+                      <input
+                        type="date"
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        value={profileData.dateOfBirth}
+                        onChange={handleProfileChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="gender"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Gender
+                      </label>
+                      <select
+                        id="gender"
+                        name="gender"
+                        value={profileData.gender}
+                        onChange={handleProfileChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Location Information Section */}
+                  <div className="space-y-4">
+                    <div className="pt-4 border-t border-gray-200">
+                      <h4 className="text-md font-medium text-gray-900 mb-4 flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-primary/80" />
+                        Location Information
+                      </h4>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Current Address
+                        </label>
+                        <button
+                          type="button"
+                          onClick={getCurrentLocation}
+                          disabled={isLoadingLocation}
+                          className="flex items-center gap-1 px-3 py-1.5 text-xs bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors disabled:opacity-50"
+                        >
+                          {isLoadingLocation ? (
+                            <>
+                              <div className="animate-spin rounded-full h-3 w-3 border-b border-primary"></div>
+                              Getting...
+                            </>
+                          ) : (
+                            <>
+                              <Navigation className="h-3 w-3" />
+                              Use Current Location
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <input
+                        ref={addressInputRef}
+                        type="text"
+                        name="currentAddress"
+                        value={profileData.currentAddress}
+                        onChange={handleAddressChange}
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/30 bg-white ${addressSelected
+                            ? 'border-green-300 bg-green-50/50'
+                            : 'border-gray-300'
+                          }`}
+                        placeholder="Start typing address... (Google suggestions will appear)"
+                      />
+                      {addressSelected && (
+                        <div className="flex items-center gap-1 mt-1 text-xs text-green-600">
+                          <Check className="h-3 w-3" />
+                          Valid address selected
+                        </div>
+                      )}
+                      {profileData.currentAddress && !addressSelected && (
+                        <div className="mt-1 text-xs text-amber-600">
+                          Please select an address from Google suggestions
+                        </div>
+                      )}
+                    </div>
+
+                    {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Latitude
+                        </label>
+                        <input
+                          type="text"
+                          name="currentLatitude"
+                          value={profileData.currentLatitude}
+                          readOnly
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 sm:text-sm"
+                          placeholder="Auto-filled from address"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Longitude
+                        </label>
+                        <input
+                          type="text"
+                          name="currentLongitude"
+                          value={profileData.currentLongitude}
+                          readOnly
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 sm:text-sm"
+                          placeholder="Auto-filled from address"
+                        />
+                      </div>
+                    </div> */}
+                  </div>
+
                   <div>
                     <label
                       htmlFor="avatar"
-                      className="block text-sm font-medium text-gray-700"
+                      className="font-medium text-gray-700 flex justify-start items-center gap-1"
                     >
+                      <Image className="inline-block mr-1 text-primary" size={18} />
                       Avatar
                     </label>
                     <div className="flex items-center gap-4 mt-1">
@@ -311,7 +570,6 @@ const Settings = () => {
                         />
                       )}
                     </div>
-                    {/* Optionally show current avatar URL as fallback */}
                     {!avatarPreview && profileData.avatar && (
                       <div className="mt-2 text-xs text-gray-500 break-all">
                         Current: {profileData.avatar}
@@ -340,7 +598,6 @@ const Settings = () => {
                   Change Password
                 </h3>
 
-                {/* Backend error is now shown as toast, not inline */}
                 {passwordError && (
                   <div className="mb-6 rounded-md bg-red-50 p-4">
                     <div className="flex">
@@ -472,11 +729,10 @@ const Settings = () => {
                     <button
                       key={language.id}
                       onClick={() => handleLanguageChange(language.value)}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 flex items-center justify-between ${
-                        currentLanguage === language.value
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
-                      } cursor-pointer`}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 flex items-center justify-between ${currentLanguage === language.value
+                        ? 'bg-primary text-white border-primary'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
+                        } cursor-pointer`}
                     >
                       <span className="font-medium">{language.name}</span>
                       {currentLanguage === language.value && (
