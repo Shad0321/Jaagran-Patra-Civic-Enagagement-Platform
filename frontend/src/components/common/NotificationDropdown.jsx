@@ -18,7 +18,7 @@ const NotificationDropdown = () => {
     // Set up polling for real-time updates
     const interval = setInterval(() => {
       fetchUnreadCount();
-    }, 60000 * 5); // Check every 5 minutes
+    }, 60000 * 60); // Check every hour
 
     return () => clearInterval(interval);
   }, []);
