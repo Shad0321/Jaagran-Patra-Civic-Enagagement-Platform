@@ -5,13 +5,11 @@ import {
   getGroups,
   getPublicGroups,
   getGroupMessages,
-  sendMessage,
   joinGroup,
   leaveGroup,
   inviteMember,
   removeMember,
   getGroupMembers,
-  markMessageAsRead,
 } from '../controllers/chatController';
 import { authenticate } from '../middleware/auth';
 import { body, param } from 'express-validator';
@@ -77,7 +75,7 @@ router.get('/groups/public', getPublicGroups);
 router.get('/groups/:groupId/messages', groupIdValidation, getGroupMessages);
 
 // Send a message to a group
-router.post('/groups/:groupId/messages', sendMessageValidation, sendMessage);
+// router.post('/groups/:groupId/messages', sendMessageValidation, sendMessage);
 
 // Join a public group
 router.post('/groups/:groupId/join', groupIdValidation, joinGroup);
@@ -103,13 +101,13 @@ router.delete(
 router.get('/groups/:groupId/members', groupIdValidation, getGroupMembers);
 
 // Mark message as read
-router.post(
-  '/messages/:messageId/read',
-  [
-    param('messageId').isString().withMessage('Message ID is required'),
-    handleValidationErrors,
-  ],
-  markMessageAsRead
-);
+// router.post(
+//   '/messages/:messageId/read',
+//   [
+//     param('messageId').isString().withMessage('Message ID is required'),
+//     handleValidationErrors,
+//   ],
+//   markMessageAsRead
+// );
 
 export default router;

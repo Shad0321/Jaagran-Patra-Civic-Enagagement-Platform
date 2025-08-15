@@ -1,12 +1,18 @@
 import app from './app';
 import prisma from './config/database';
 import { config } from './config/environment';
+import io from './socket';
+import { createServer } from 'http';
+
+// Start Socket Server
+const socketServer = createServer(app);
+io.listen(socketServer);
 
 // Start server
-const server = app.listen(config.port, () => {
+const server = socketServer.listen(config.port, () => {
   console.log(`🚀 Server running on port ${config.port}`);
   console.log(`📊 Health check: http://localhost:${config.port}/health`);
-  console.log(`🗄️  Database health: http://localhost:${config.port}/health/db`);
+  console.log(`🗄️ Database health: http://localhost:${config.port}/health/db`);
   console.log(`🔧 Environment: ${config.nodeEnv}`);
 });
 

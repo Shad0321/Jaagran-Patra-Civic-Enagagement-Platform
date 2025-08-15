@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'; // Added useCallback
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
+import { socket } from '../utils/socket';
 import Loader from '../components/common/Loader';
 
 // Chat group types
@@ -372,43 +373,25 @@ const ChatPage = () => {
   const [isOnline, setIsOnline] = useState(true);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
-  const autoRefreshIntervalRef = useRef(null);
   const [isGroupListOpen, setIsGroupListOpen] = useState(true); // State for mobile group list visibility
   const isScrollingUp = useRef(false); // New ref to track user's scroll intent
 
-  // Auto-refresh functionality
+  const selectedGroupRef = useRef(null);
+
   useEffect(() => {
-    if (selectedGroup) {
-      const startAutoRefresh = () => {
-        if (autoRefreshIntervalRef.current) {
-          clearInterval(autoRefreshIntervalRef.current);
-        }
+    selectedGroupRef.current = selectedGroup;
+  }, [selectedGroup]);
 
-        autoRefreshIntervalRef.current = setInterval(() => {
-          const container = messagesContainerRef.current;
-          // Only auto-scroll on refresh if the user is at the bottom or hasn't explicitly scrolled up
-          const shouldAutoScroll =
-            !isScrollingUp.current &&
-            container &&
-            container.scrollHeight - container.scrollTop <=
-              container.clientHeight + 50;
+  // Initialize Socket
+  useEffect(() => {
+    socket.on('message.new', onMessageReceived);
+    socket.on('message.read-ack', onMessageReadAck);
 
-          if (selectedGroup && !messagesLoading) {
-            // Fetch messages, and if they were at the bottom or not scrolling, auto-scroll after fetch
-            fetchMessages(selectedGroup.id, 1, true, shouldAutoScroll);
-          }
-        }, 3000); // Refresh every 3 seconds
-      };
-
-      startAutoRefresh();
-
-      return () => {
-        if (autoRefreshIntervalRef.current) {
-          clearInterval(autoRefreshIntervalRef.current);
-        }
-      };
-    }
-  }, [selectedGroup, messagesLoading]);
+    return () => {
+      socket.off('message.new', onMessageReceived);
+      socket.off('message.read-ack', onMessageReadAck);
+    };
+  }, []);
 
   // Online/offline detection
   useEffect(() => {
@@ -436,6 +419,21 @@ const ChatPage = () => {
       setCurrentPage(1);
       setHasMoreMessages(true);
       fetchMessages(selectedGroup.id, 1, false, true); // Scroll to bottom on initial load
+
+      // Mark previous messages as read
+      if (socket) {
+        const unreadMessages = messages.filter(
+          (message) =>
+            message.senderId !== user?.id &&
+            ![message.readBy ?? []].some((item) => item.userId === user?.id)
+        );
+
+        Promise.all(
+          unreadMessages.map((message) =>
+            socket.emit('message.read', { messageId: message.id })
+          )
+        );
+      }
     }
   }, [selectedGroup]);
 
@@ -566,14 +564,22 @@ const ChatPage = () => {
     }
 
     try {
-      await api.post(`/chat/groups/${selectedGroup.id}/messages`, {
-        message,
-        messageType: 'TEXT',
-      });
-      // After successful send, trigger a full refresh for the latest messages
-      // This will replace the temporary message with the actual one from the server
-      // and ensure all new messages are caught.
-      fetchMessages(selectedGroup.id, 1, true, true); // Silent refresh, scroll to bottom
+      socket.emit(
+        'message.send',
+        {
+          messageType: 'TEXT',
+          message,
+          groupId: selectedGroup.id,
+        },
+        (response) => {
+          if (response.success) {
+            // After successful send, trigger a full refresh for the latest messages
+            // This will replace the temporary message with the actual one from the server
+            // and ensure all new messages are caught.
+            fetchMessages(selectedGroup.id, 1, true, true); // Silent refresh, scroll to bottom
+          }
+        }
+      );
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to send message');
       // Remove the temporary message if sending fails
@@ -605,19 +611,50 @@ const ChatPage = () => {
     }
   };
 
-  const markMessageAsRead = async (messageId) => {
-    try {
-      // Optimization: Only mark as read if it's not our own message and not already marked
-      // You might need to check 'readBy' array for user ID here.
-      // For simplicity, I'm leaving it as is, assuming backend handles idempotency.
-      await api.post(`/chat/messages/${messageId}/read`);
-    } catch (err) {
-      console.error(
-        'Failed to mark message as read:',
-        err?.response?.data?.message || 'Unknown error'
+  const onMessageReceived = async (newMessage) => {
+    const currentGroup = selectedGroupRef.current;
+    if (newMessage.groupId !== currentGroup?.id) {
+      console.log('Incorrect group!');
+      return;
+    }
+
+    setMessages((prev) => {
+      const combinedMessages = [...prev, newMessage];
+      const uniqueMessages = Array.from(
+        new Map(combinedMessages.map((msg) => [msg.id, msg])).values()
       );
+      return uniqueMessages.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+    });
+
+    // Mark as read if the user is on the group and the tab is active
+    if (document.hasFocus() && !document.hidden) {
+      socket.emit('message.read', { messageId: newMessage.id });
     }
   };
+
+  const onMessageReadAck = useCallback(
+    (payload) => {
+      const { messageId, userId, readAt, isFor } = payload;
+      if (user?.id !== isFor) return;
+
+      setMessages((prev) =>
+        prev.map((m) => {
+          if (m.id !== messageId) return m;
+
+          const prevReadBy = Array.isArray(m.readBy) ? m.readBy : [];
+          if (prevReadBy.some((r) => r.userId === userId)) return m;
+
+          return {
+            ...m,
+            readBy: [...prevReadBy, { userId, readAt }],
+          };
+        })
+      );
+    },
+    [user?.id]
+  );
 
   const renderGroupItem = (group, isMember = true) => (
     <div
@@ -948,7 +985,6 @@ const ChatPage = () => {
                     <div
                       key={msg.id}
                       className={`flex ${msg.sender?.id === user?.id ? 'justify-end' : 'justify-start'}`}
-                      onMouseEnter={() => markMessageAsRead(msg.id)}
                     >
                       <div
                         className={`max-w-[75%] sm:max-w-xs lg:max-w-md p-3 rounded-2xl shadow-sm transition-all duration-200 ${

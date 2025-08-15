@@ -54,6 +54,7 @@
     "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.5",
     "prisma": "^6.12.0",
+    "socket.io": "^4.8.1",
     "streamifier": "^0.1.1",
     "xss": "^1.0.15"
   }
