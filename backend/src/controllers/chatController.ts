@@ -382,63 +382,63 @@ export const getGroupMessages = asyncHandler(
 );
 
 // Send a message to a group
-export const sendMessage = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { groupId } = req.params;
-    const { message, messageType = 'TEXT', attachments } = req.body;
-    const userId = req.user!.id;
+// export const sendMessage = asyncHandler(
+//   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+//     const { groupId } = req.params;
+//     const { message, messageType = 'TEXT', attachments } = req.body;
+//     const userId = req.user!.id;
 
-    // Check if user is a member of the group
-    const membership = await prisma.chatGroupMember.findFirst({
-      where: {
-        groupId,
-        userId,
-        status: 'ACTIVE',
-      },
-    });
+//     // Check if user is a member of the group
+//     const membership = await prisma.chatGroupMember.findFirst({
+//       where: {
+//         groupId,
+//         userId,
+//         status: 'ACTIVE',
+//       },
+//     });
 
-    if (!membership) {
-      res.status(403).json({
-        success: false,
-        message: 'You are not a member of this group',
-      });
-      return;
-    }
+//     if (!membership) {
+//       res.status(403).json({
+//         success: false,
+//         message: 'You are not a member of this group',
+//       });
+//       return;
+//     }
 
-    // Create the message
-    const newMessage = await prisma.chatGroupMessage.create({
-      data: {
-        groupId,
-        senderId: userId,
-        message,
-        messageType,
-        attachments,
-      },
-      include: {
-        sender: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            avatar: true,
-          },
-        },
-      },
-    });
+//     // Create the message
+//     const newMessage = await prisma.chatGroupMessage.create({
+//       data: {
+//         groupId,
+//         senderId: userId,
+//         message,
+//         messageType,
+//         attachments,
+//       },
+//       include: {
+//         sender: {
+//           select: {
+//             id: true,
+//             name: true,
+//             email: true,
+//             avatar: true,
+//           },
+//         },
+//       },
+//     });
 
-    // Update group's updatedAt timestamp
-    await prisma.chatGroup.update({
-      where: { id: groupId },
-      data: { updatedAt: new Date() },
-    });
+//     // Update group's updatedAt timestamp
+//     await prisma.chatGroup.update({
+//       where: { id: groupId },
+//       data: { updatedAt: new Date() },
+//     });
 
-    res.status(201).json({
-      success: true,
-      message: 'Message sent successfully',
-      data: newMessage,
-    });
-  }
-);
+//     res.status(201).json({
+//       success: true,
+//       message: 'Message sent successfully',
+//       data: newMessage,
+//     });
+//   }
+// );
 
 // Join a public group
 export const joinGroup = asyncHandler(
@@ -794,56 +794,56 @@ export const getGroupMembers = asyncHandler(
 );
 
 // Mark message as read
-export const markMessageAsRead = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { messageId } = req.params;
-    const userId = req.user!.id;
+// export const markMessageAsRead = asyncHandler(
+//   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+//     const { messageId } = req.params;
+//     const userId = req.user!.id;
 
-    // Check if message exists and user is a member of the group
-    const message = await prisma.chatGroupMessage.findUnique({
-      where: { id: messageId },
-      include: {
-        group: {
-          include: {
-            members: {
-              where: {
-                userId,
-                status: 'ACTIVE',
-              },
-            },
-          },
-        },
-      },
-    });
+//     // Check if message exists and user is a member of the group
+//     const message = await prisma.chatGroupMessage.findUnique({
+//       where: { id: messageId },
+//       include: {
+//         group: {
+//           include: {
+//             members: {
+//               where: {
+//                 userId,
+//                 status: 'ACTIVE',
+//               },
+//             },
+//           },
+//         },
+//       },
+//     });
 
-    if (!message || message.group.members.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: 'Message not found or you are not a member of this group',
-      });
-      return;
-    }
+//     if (!message || message.group.members.length === 0) {
+//       res.status(404).json({
+//         success: false,
+//         message: 'Message not found or you are not a member of this group',
+//       });
+//       return;
+//     }
 
-    // Create or update read receipt
-    await prisma.chatMessageRead.upsert({
-      where: {
-        messageId_userId: {
-          messageId,
-          userId,
-        },
-      },
-      create: {
-        messageId,
-        userId,
-      },
-      update: {
-        readAt: new Date(),
-      },
-    });
+//     // Create or update read receipt
+//     await prisma.chatMessageRead.upsert({
+//       where: {
+//         messageId_userId: {
+//           messageId,
+//           userId,
+//         },
+//       },
+//       create: {
+//         messageId,
+//         userId,
+//       },
+//       update: {
+//         readAt: new Date(),
+//       },
+//     });
 
-    res.json({
-      success: true,
-      message: 'Message marked as read',
-    });
-  }
-);
+//     res.json({
+//       success: true,
+//       message: 'Message marked as read',
+//     });
+//   }
+// );
