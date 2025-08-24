@@ -449,6 +449,97 @@ const ChatPage = () => {
     }
   }, [messages]); // Dependency on messages ensures it runs after messages update
 
+  useEffect(() => {
+    // Set the data attribute to hide chat bot only for this page
+    document.documentElement.setAttribute('data-hide-bot', 'true');
+    document.body.setAttribute('data-hide-bot', 'true');
+    
+    // Add a specific class to body for this page
+    document.body.classList.add('chat-page-active');
+
+    // Force hide any existing chat bot elements
+    const hideChatBot = () => {
+      const botSelectors = [
+        '.embedded-agent-container',
+        '.chat-button-variant-2',
+        '.noupe-agent',
+        '.ai-agent-chat-animation-container',
+        '.ai-agent-chat-cover',
+        '.isNoupeAgent',
+        'iframe[src*="noupe.com"]',
+        'iframe[title="Embedded Agent"]',
+        'iframe[id="form-agent-helper"]',
+        '[class*="chatbot"]',
+        '[class*="chat-widget"]',
+        '[id*="chatbot"]',
+        '[id*="chat-widget"]',
+        '.chat-bubble',
+        '.floating-chat'
+      ];
+
+      botSelectors.forEach(selector => {
+        try {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(element => {
+            if (element) {
+              element.style.setProperty('display', 'none', 'important');
+              element.style.setProperty('visibility', 'hidden', 'important');
+              element.style.setProperty('opacity', '0', 'important');
+              element.style.setProperty('pointer-events', 'none', 'important');
+              element.style.setProperty('z-index', '-9999', 'important');
+              element.setAttribute('data-hidden-by-chat-page', 'true');
+            }
+          });
+        } catch (error) {
+          // Ignore errors
+          console.log(error);
+        }
+      });
+    };
+
+    hideChatBot();
+    
+    // Repeat after a short delay to catch any late-loading elements
+    const timeout = setTimeout(hideChatBot, 1000);
+    
+    // Add MutationObserver to catch dynamically added chat bots (only while on chat page)
+    const observer = new MutationObserver(() => {
+      // Only hide if we're still on the chat page
+      if (document.body.classList.contains('chat-page-active')) {
+        hideChatBot();
+      }
+    });
+    
+    // Start observing
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+      
+      // Clean up: Remove the data attributes and class
+      document.documentElement.removeAttribute('data-hide-bot');
+      document.body.removeAttribute('data-hide-bot');
+      document.body.classList.remove('chat-page-active');
+      
+      // Restore hidden chat bot elements
+      const hiddenElements = document.querySelectorAll('[data-hidden-by-chat-page="true"]');
+      hiddenElements.forEach(element => {
+        element.style.removeProperty('display');
+        element.style.removeProperty('visibility');
+        element.style.removeProperty('opacity');
+        element.style.removeProperty('pointer-events');
+        element.style.removeProperty('z-index');
+        element.removeAttribute('data-hidden-by-chat-page');
+      });
+    };
+  }, []);
+
   // Add scroll event listener to detect when user scrolls up
   const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current;
